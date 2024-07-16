@@ -1,0 +1,41 @@
+.header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    height: 150px;
+  }
+  
+  .icon_table {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .icon_text {
+    grid-column: 2 / 3;
+    justify-self: start;
+  
+    font-size: 48px;
+    font-weight: bold;
+    color: #5d5a88;
+  }
+  
+  .text_button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #5d5a88;
+  }
+  
+  .login_button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .login_button img {
+    width: 47px;
+    height: 45px;
+  }

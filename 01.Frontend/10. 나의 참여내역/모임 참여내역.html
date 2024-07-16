@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>아이디 찾기 완료 페이지</title>
+    <link rel="stylesheet" href="모임 참여내역.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="icon_table">
+          <div class="icon_img">
+            <img src="../img/icon.PNG" alt="아이콘 이미지" />
+          </div>
+          <div class="icon_text">I-Fit</div>
+        </div>
+        <div class="text_button">
+          <a href="../1. 메인페이지/main.html">홈</a>
+          <a href="#">모임 생성하기</a>
+          <a href="#">원데이 클래스</a>
+          <a href="#">오운완 챌린지</a>
+          <a href="#">멤버십</a>
+          <a href="#">마이페이지</a>
+        </div>
+        <div class="login_button">
+          <img src="../img/user_img.png" alt="사용자 이미지" />
+          <p>김계란님, 환영합니다!</p>
+          <!-- <div class="join">회원가입</div>
+          <div class="login">로그인</div> -->
+        </div>
+      </header>
+      <main class="content">
+        <div class="nav">
+          <div class="my_button">
+            <div class="group_and_save selector">
+              <p class="text">참여내역</p>
+            </div>
+            <p id="text1">모임 참여내역</p>
+            <p id="text2">찜한 모임내역</p>
+            <div class="membership selector">
+              <p class="text">멤버십</p>
+            </div>
+            <p id="text3">멤버십 혜택</p>
+            <div class="post selector">
+              <p class="text">게시글 관리</p>
+            </div>
+            <p id="text4">나의 게시물 내역</p>
+            <p id="text5">내가 쓴 댓글 내역</p>
+            <p id="text6">내가 좋아요한 게시글</p>
+          </div>
+        </div>
+        <div class="participation">
+          <div class="history">
+            <h2>참여내역</h2>
+            <p class="gubunseon" id="gubunseon_text1">모임 참여내역</p>
+            <p id="gubunseon_text2">찜한 모임 내역</p>
+          </div>
+          <div class="my_group_cham_yeo">
+            <div class="search_box">
+              <input
+                type="text"
+                name="search"
+                id="search_input"
+                placeholder="검색어를 입력하세요."
+              />
+              <img
+                src="../img/search.icon.png"
+                alt="search"
+                class="search_icon"
+              />
+            </div>
+            <select title="정렬" id="sort">
+              <option value="" selected disabled>정렬</option>
+              <option value="popular">인기순</option>
+              <option value="latest">최신순</option>
+            </select>
+            <div class="group_container">
+              <div class="user_jeongbo">
+                <img src="../img/user_img.png" alt="사용자 이미지" />
+                <span>김계란</span>
+              </div>
+              <div class="title_icon">
+                <span class="title_text">수영 같이 하실 분 구함</span>
+                <img src="../img/상세설명 아이콘.png" alt="" id="icon_text" />
+              </div>
+              <p class="date">24.06.14 (금)</p>
+              <p class="time">8:00 PM</p>
+              <div class="block">
+                <span class="size">참여인원: 3/10</span>
+                <span class="location">강남구</span>
+                <span class="delete">취소</span>
+              </div>
+            </div>
+            <!-- <div class="group_container"></div> -->
+          </div>
+        </div>
+      </main>
+      <footer class="footer">
+        <div class="company_name">
+          <p class="name">I-Fit</p>
+          <p class="desc">Copyright @ 2024 KOSTA I-FIT | All Rights Reserved</p>
+        </div>
+        <div class="side_map">
+          <div class="group1">
+            <span class="home">홈</span>
+            <span class="home_list">회원가입</span>
+            <span class="home_list">로그인</span>
+          </div>
+          <div class="group2">
+            <span class="activity">활동</span>
+            <span class="activity_list">모임생성</span>
+            <span class="activity_list">원데이 클래스</span>
+            <span class="activity_list">오운완 챌린지</span>
+          </div>
+          <div class="group3">
+            <span class="mypage">마이페이지</span>
+            <span class="mypage_list">프로필</span>
+            <span class="mypage_list">멤버십</span>
+            <span class="mypage_list">참여내역</span>
+            <span class="mypage_list">나의 게시물</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

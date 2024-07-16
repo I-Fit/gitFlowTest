@@ -1,0 +1,24 @@
+@charset "utf-8";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* #container {
+    width: 1536px;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100vh;
+    margin: 10px;
+} */
+
+#container {
+    width: 1536px;
+    height: 100vh;
+    display: grid;
+  
+    grid-template-rows: 150px 1fr 150px;
+}

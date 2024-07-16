@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>모임생성 페이지</title>
+    <link rel="stylesheet" href="create_group.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="icon_table">
+          <div class="icon_img">
+            <img src="../img/icon.PNG" alt="아이콘 이미지" />
+          </div>
+          <div class="icon_text">I-Fit</div>
+        </div>
+        <div class="text_button">
+          <a href="../1. 메인페이지/main.html">홈</a>
+          <a href="#">모임 생성하기</a>
+          <a href="#">원데이 클래스</a>
+          <a href="#">오운완 챌린지</a>
+          <a href="#">멤버십</a>
+          <a href="#">마이페이지</a>
+        </div>
+        <div class="login_button">
+          <div class="join">회원가입</div>
+          <div class="login">로그인</div>
+        </div>
+      </header>
+      <main class="content">
+        <div class="create_group_container">
+          <div class="text">
+            <form action="process_group_text.php" method="post">
+              <input
+                class="title"
+                type="text"
+                name="title"
+                placeholder="제목을 입력하세요."
+              />
+              <div class="group_explain_container">
+                <textarea
+                  class="group_explain"
+                  type="text"
+                  name="group_explain"
+                  placeholder="내용을 입력하세요."
+                ></textarea>
+              </div>
+              <div class="choose_category">
+                <p class="category1">종목</p>
+                <p>장소</p>
+                <p>날짜</p>
+                <p>시간</p>
+                <p>인원</p>
+              </div>
+            </form>
+          </div>
+          <div class="category">
+            <form action="process_data.php" method="post">
+              <p class="category_text">Choose Category</p>
+              <div class="category_button">
+                <button class="event" type="submit" name="category">
+                  러닝
+                </button>
+                <button class="event" type="submit" name="category">
+                  웨이트
+                </button>
+                <button class="event" type="submit" name="category">
+                  라이딩
+                </button>
+                <button class="event" type="submit" name="category">
+                  요가
+                </button>
+                <button class="event" type="submit" name="category">
+                  수영
+                </button>
+                <button class="event" type="submit" name="category">
+                  등산
+                </button>
+                <button class="event" type="submit" name="category">
+                  테니스
+                </button>
+                <button class="event" type="submit" name="category">
+                  클라이밍
+                </button>
+                <button class="event" type="submit" name="category">
+                  필라테스
+                </button>
+                <button class="event" type="submit" name="category">GX</button>
+              </div>
+              <div class="block">
+                <input
+                  class="block_input"
+                  name="execise_block"
+                  type="text"
+                  placeholder="운동 종목을 입력하세요."
+                />
+                <button class="block_button" type="submit">확인</button>
+              </div>
+              <p>Choose Location</p>
+              <div class="block">
+                <input
+                  class="block_input"
+                  name="execise_block"
+                  type="text"
+                  placeholder="위치를 검색하세요."
+                />
+                <button class="block_button" type="submit">확인</button>
+              </div>
+              <p>Choose Date and Time</p>
+              <div class="date_time">
+                <input type="text" />
+              </div>
+              <p>Choose Group Size</p>
+              <div class="block">
+                <input
+                  class="block_input"
+                  name="execise_block"
+                  type="text"
+                  placeholder="인원을 입력하세요."
+                />
+                <button class="block_button" type="submit">확인</button>
+              </div>
+              <button class="register" type="submit">등록</button>
+            </form>
+          </div>
+        </div>
+      </main>
+      <footer class="footer">
+        <div class="company_name">
+          <p class="name">I-Fit</p>
+          <p class="desc">Copyright @ 2024 KOSTA I-FIT | All Rights Reserved</p>
+        </div>
+        <div class="side_map">
+          <div class="group1">
+            <span class="home">홈</span>
+            <span class="home_list">회원가입</span>
+            <span class="home_list">로그인</span>
+          </div>
+          <div class="group2">
+            <span class="activity">활동</span>
+            <span class="activity_list">모임생성</span>
+            <span class="activity_list">원데이 클래스</span>
+            <span class="activity_list">오운완 챌린지</span>
+          </div>
+          <div class="group3">
+            <span class="mypage">마이페이지</span>
+            <span class="mypage_list">프로필</span>
+            <span class="mypage_list">멤버십</span>
+            <span class="mypage_list">참여내역</span>
+            <span class="mypage_list">나의 게시물</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

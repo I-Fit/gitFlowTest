@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원가입</title>
+    <link rel="stylesheet" href="create_account.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="icon_table">
+          <div class="icon_img">
+            <img src="../img/icon.PNG" alt="아이콘 이미지" />
+          </div>
+          <div class="icon_text">I-Fit</div>
+        </div>
+        <div class="text_button">
+          <a href="../1. 메인페이지/main.html">홈</a>
+          <a href="#">모임 생성하기</a>
+          <a href="#">원데이 클래스</a>
+          <a href="#">오운완 챌린지</a>
+          <a href="#">멤버십</a>
+          <a href="#">마이페이지</a>
+        </div>
+        <div class="login_button">
+          <div class="join">회원가입</div>
+          <div class="login">로그인</div>
+        </div>
+      </header>
+      <main class="content">
+        <form action="process_signup.php" method="post">
+          <div class="account_container">
+            <h1>회원가입</h1>
+            <p>회원이 되어 다양한 헤택을 경험해 보세요!</p>
+            <label class="user">
+              <input type="radio" name="contact" value="user" />
+              <span>일반 회원</span>
+            </label>
+            <label>
+              <input type="radio" name="contact" value="teacher" />
+              <span>강사</span>
+            </label>
+            <div class="id_block input_block">
+              <label for="id">아이디</label>
+              <div class="input_row">
+                <input
+                  type="text"
+                  id="id"
+                  name="id"
+                  placeholder="아이디를 입력하세요."
+                />
+                <button type="submit">확인</button>
+              </div>
+            </div>
+            <div class="pw_block input_block">
+              <label for="password">비밀번호</label>
+              <div class="input_row">
+                <input
+                  type="text"
+                  id="password"
+                  name="password"
+                  placeholder="비밀번호를 입력하세요."
+                />
+                <button type="submit">확인</button>
+              </div>
+            </div>
+            <div class="pw_check_block input_block">
+              <label for="password_check">비밀번호 확인</label>
+              <div class="input_row">
+                <input
+                  type="text"
+                  id="password_check"
+                  name="password_check"
+                  placeholder="비밀번호 재입력"
+                />
+                <button type="submit">확인</button>
+              </div>
+            </div>
+            <div class="name_block input_block">
+              <label for="name">이름</label>
+              <div class="input_row">
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="이름을 입력해주세요."
+                />
+              </div>
+            </div>
+            <div class="phone_block input_block">
+              <label for="phone">전화번호</label>
+              <div class="input_row">
+                <input
+                  type="text"
+                  id="phone"
+                  name="phone"
+                  placeholder="전화번호를 입력해주세요."
+                />
+              </div>
+            </div>
+            <div class="email_block input_block">
+              <label for="email">이메일</label>
+              <div class="input_row">
+                <input
+                  type="text"
+                  id="email"
+                  name="email"
+                  placeholder="이메일을 입력해주세요."
+                />
+                @
+                <select title="주소" name="email_domain" id="domain">
+                  <option value="">주소 선택</option>
+                  <option value="naver">naver.com</option>
+                  <option value="gmail">gmail.com</option>
+                  <option value="daum">daum.net</option>
+                </select>
+                <button type="submit">인증 요청</button>
+              </div>
+            </div>
+            <div class="email_number_block input_block">
+              <label for="email_number">이메일 인증번호</label>
+              <div class="input_row">
+                <input
+                  type="text"
+                  id="email_number"
+                  name="email_number"
+                  placeholder="이메일 인증번호를 입력해주세요."
+                />
+                <button type="submit">확인</button>
+              </div>
+            </div>
+            <div class="terms_block">
+              <label>
+                <input
+                  type="radio"
+                  name="terms"
+                  value="agree"
+                  class="check_all"
+                />
+                <span>이용약관 전체 동의</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="terms1"
+                  value="agree_1"
+                  class="radios"
+                />
+                <span>이용약관 동의(필수)</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="terms2"
+                  value="agree_2"
+                  class="radios"
+                />
+                <span>개인정보 수집 및 이용 동의(필수)</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="terms3"
+                  value="agree_3"
+                  class="radios"
+                />
+                <span>프로모션 정보 수신 동의(선택)</span>
+              </label>
+            </div>
+            <button class="account" type="submit">회원가입</button>
+            <p class="account_jonjae">
+              이미 계정이 있으신가요?<span>로그인 하기</span>
+            </p>
+          </div>
+        </form>
+      </main>
+      <footer class="footer">
+        <div class="company_name">
+          <p class="name">I-Fit</p>
+          <p class="desc">Copyright @ 2024 KOSTA I-FIT | All Rights Reserved</p>
+        </div>
+        <div class="side_map">
+          <div class="group1">
+            <span class="home">홈</span>
+            <span class="home_list">회원가입</span>
+            <span class="home_list">로그인</span>
+          </div>
+          <div class="group2">
+            <span class="activity">활동</span>
+            <span class="activity_list">모임생성</span>
+            <span class="activity_list">원데이 클래스</span>
+            <span class="activity_list">오운완 챌린지</span>
+          </div>
+          <div class="group3">
+            <span class="mypage">마이페이지</span>
+            <span class="mypage_list">프로필</span>
+            <span class="mypage_list">멤버십</span>
+            <span class="mypage_list">참여내역</span>
+            <span class="mypage_list">나의 게시물</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="./js/create_account_fos.js"></script>
+  </body>
+</html>

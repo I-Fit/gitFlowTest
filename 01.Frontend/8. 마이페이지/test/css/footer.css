@@ -1,0 +1,61 @@
+/* 푸터 부분 */
+#footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    align-items: center;
+  }
+  
+  .company_name {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .name {
+    margin: 0px;
+    font-size: 42px;
+    font-weight: bold;
+    color: #5d5a88;
+  }
+  .desc {
+    margin: 0;
+    font-size: 18px;
+    color: #5d5a88;
+  }
+  
+  .side_map {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .side_map .group1,
+  .side_map .group2 {
+    display: inline-block;
+  }
+  .group1 {
+    margin-right: 20px;
+  }
+  
+  .side_map .group1 .home,
+  .side_map .group2 .activity,
+  .side_map .group3 .mypage {
+    font-size: 20px;
+    color: #5d5a88;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  .side_map .group1 .home_list,
+  .side_map .group2 .activity_list,
+  .side_map .group3 .mypage_list {
+    font-size: 18px;
+    font-weight: lighter;
+    color: #9795b5;
+  }
+  
+  .side_map .group1 span:nth-child(3)::before,
+  .side_map .group2 span:nth-child(n + 3)::before,
+  .side_map .group3 span:nth-child(n + 3)::before {
+    content: " | ";
+    color: #888;
+  }

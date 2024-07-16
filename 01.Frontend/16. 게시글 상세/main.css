@@ -1,0 +1,162 @@
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input {
+    outline: none;
+}
+
+#content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 15px;
+    margin-bottom: 200px;
+}
+
+.post-user-info {
+    display: flex;
+    margin: 10px;
+    font-size: 20px;
+    justify-content: space-between;
+}
+
+.post-user-info span {
+    margin: auto 10px;
+}
+
+.post-user-info img {
+    width: 31px;
+    height: 31px;
+    background-image: url('');
+}
+
+#title {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+#post-pro {
+    display: flex;
+}
+
+#post-profile {
+    width: 40px;
+    height: 33px;
+    background-image: url('라이언.png');
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#option-icon {
+    width: 37px;
+    height: 10px;
+    margin-right: 4px;
+    background-image: url('dot.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+
+#heart {
+    width: 40px;
+    height: 40px;
+    background-image: url('heart.png');
+    background-size: contain;
+    /* border: 1px solid #222; */
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.content-image {
+    width: 900px;
+    height: 800px;
+    border: 1px solid #222;
+    margin: 10px;
+}
+
+.post-topic {
+    display: flex;
+    margin: 10px;
+}
+
+.info {
+    width: 65px;
+    height: 30px;
+    cursor: pointer;
+    background: #f2f2f2;
+    border: none;
+    z-index: 96;
+    border-radius: 20px;
+}
+
+.post-topic div {
+    width: 52px;
+    height: 24px;
+    text-align: center;
+    margin-right: 15px;
+    font-size: 13px;
+    color: #757575;
+}
+
+#comment {
+    width: 100%;
+    margin: 10px;
+    margin-top: 100px;
+}
+
+#comment-table {
+    display: flex;
+    flex-direction: column;
+    float: left;
+}
+
+.comments {
+    display: flex;
+    width: 100%;
+    margin: 20px auto;
+}
+
+.comment-user {
+    width: 300px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.comment-item {
+    width: 400px;
+    font-size: 20px;
+    color: #757575;
+}
+
+#add-comment {
+    display: flex;
+    height: 50px;
+    border: 1px solid #53525280;
+    border-radius: 30px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#add-comment input {
+    border: none;
+    margin: 0 20px;
+    font-size: 20px;
+    height: 35px;
+    width: 100%;
+}
+
+/* #add-comment span {
+    font-size: 30px;
+    margin-right: 15px;
+    border: 1px solid #53525280;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    cursor: pointer;
+} */
