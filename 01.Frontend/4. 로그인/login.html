@@ -33,25 +33,42 @@
         <div class="login_container">
           <form action="#">
             <h1>로그인</h1>
-            <p>아이디<span id="id_find">아이디 찾기</span></p>
-            <input id="id" type="text" placeholder="아이디를 입력해주세요." />
-            <p class="pw_find">
-              비밀번호<span id="pw_find">비밀번호 찾기</span>
-            </p>
-            <input id="pw" type="text" placeholder="비밀번호를 입력해주세요." />
-            <button type="submit" class="l_button">로그인</button>
+            <div class="id_block input_block">
+              <label for="id">아이디<span class="id_find">아이디 찾기</span></label>
+              <div class="input_row">
+                <input
+                  type="text"
+                  id="id"
+                  name="id"
+                  placeholder="아이디를 입력하세요."
+                />
+              </div>
+            </div>
+            <div class="pw_block input_block">
+              <label for="id">비밀번호<span class="pw_find">비밀번호 찾기</span></label>
+              <div class="input_row">
+                <input
+                  type="text"
+                  id="pw"
+                  name="id"
+                  placeholder="비밀번호를 입력하세요."
+                />
+              </div>
+            </div>
+            <button type="submit" class="login_btn">로그인</button>
+            <p class="gubunseon">-----or-----</p>
             <div class="social_login">
               <button type="submit" class="social_button">
-                <img src="../img/구글 로그인 이미지.PNG" alt="구글 로그인" />
+                <img src="../img/google.PNG" alt="구글 로그인" />
               </button>
               <button type="submit" class="social_button">
-                <img src="../img/네이버 로그인 버튼.png" alt="네이버 로그인" />
+                <img src="../img/naver.PNG" alt="네이버 로그인" />
               </button>
               <button type="submit" class="social_button">
-                <img src="../img/카카오 로그인 버튼.png" alt="카카오 로그인" />
+                <img src="../img/kakao.PNG" alt="카카오 로그인" />
               </button>
             </div>
-            <p class="account">아직 회원이 아니신가요?<span class="user_account">회원가입</span></p>
+            <p class="account">아직 회원이 아니신가요?<span>회원가입</span></p>
           </form>
         </div>
       </main>

@@ -42,6 +42,7 @@ body {
   font-size: 48px;
   font-weight: bold;
   color: #5d5a88;
+  margin-left: 20px;
 }
 
 .text_button {
@@ -66,7 +67,7 @@ a {
   justify-self: end;
 
   border: 0.5px solid rgba(0, 0, 0, 0.103);
-  padding: 7px;
+  padding: 12px;
   border-radius: 10px;
   font-weight: bold;
 }
@@ -75,7 +76,7 @@ a {
   justify-self: start;
 
   margin: 10px;
-  padding: 7px;
+  padding: 12px;
   border: 0.5px solid rgba(0, 0, 0, 0.103);
   border-radius: 10px;
   background-color: #1a73e8;
@@ -116,12 +117,12 @@ form {
   width: 100%;
 }
 .input_block label {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 .input_row {
   display: flex;
   width: 404px;
-  height: 32px;
+  height: 35px;
 }
 
 .input_row input {
@@ -132,7 +133,7 @@ form {
   box-sizing: border-box;
   margin-right: 10px;
   width: 100px;
-  height: 30px;
+  height: 35px;
 }
 .input_row button {
   padding: 8px 16px;
@@ -181,13 +182,21 @@ form {
   top: 725px;
   left: 55px;
 }
+input::placeholder {
+  font-size: small;
+}
+.at {
+  margin-top: 6px;
+}
 #domain {
   margin-right: 10px;
   margin-left: 10px;
   padding: 8px;
   border: 1px solid rgba(0, 0, 0, 0.253);
+  background-color: white !important;
   border-radius: 5px;
-  font-size: 14px;
+  font-size: 13.3333px;
+  color: rgba(0, 0, 0, 0.616);
 }
 
 .terms_block {
@@ -234,13 +243,11 @@ form {
 .account_jonjae {
   position: absolute;
   top: 1070px;
-  left: 95px;
+  left: 90px;
 }
 .account_jonjae span {
   color: #007bff;
-}
-#domain {
-  background-color: #ccc;
+  margin-left: 20px;
 }
 
 /* 푸터 부분 */

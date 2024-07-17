@@ -24,8 +24,8 @@
           <a href="#">마이페이지</a>
         </div>
         <div class="login_button">
-          <div class="join">회원가입</div>
-          <div class="login">로그인</div>
+          <img src="../img/user_img.png" alt="사용자 이미지" />
+          <p>김계란님, 환영합니다!</p>
         </div>
       </header>
       <main class="content">
@@ -97,7 +97,7 @@
                 />
                 <button class="block_button" type="submit">확인</button>
               </div>
-              <p>Choose Location</p>
+              <p class="Choose_text">Choose Location</p>
               <div class="block">
                 <input
                   class="block_input"
@@ -107,11 +107,14 @@
                 />
                 <button class="block_button" type="submit">확인</button>
               </div>
-              <p>Choose Date and Time</p>
+              <p class="Choose_text">Choose Date and Time</p>
               <div class="date_time">
-                <input type="text" />
+                <button type="submit" class="date"><span class="calendar">&#128198;</span>날짜 선택</button>
+                <select name="time" id="time" class="time">
+                  <option value="" selected disabled>시간</option>
+                </select>
               </div>
-              <p>Choose Group Size</p>
+              <p class="Choose_text">Choose Group Size</p>
               <div class="block">
                 <input
                   class="block_input"

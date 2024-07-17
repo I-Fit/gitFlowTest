@@ -41,6 +41,7 @@ body {
   font-size: 48px;
   font-weight: bold;
   color: #5d5a88;
+  margin-left: 20px;
 }
 
 .text_button {
@@ -59,27 +60,9 @@ a {
   justify-content: center;
   align-items: center;
 }
-
-.join {
-  grid-column: 1 / 2;
-  justify-self: end;
-
-  border: 0.5px solid rgba(0, 0, 0, 0.103);
-  padding: 7px;
-  border-radius: 10px;
-  font-weight: bold;
-}
-.login {
-  grid-column: 2 / 3;
-  justify-self: start;
-
-  margin: 10px;
-  padding: 7px;
-  border: 0.5px solid rgba(0, 0, 0, 0.103);
-  border-radius: 10px;
-  background-color: #1a73e8;
-  color: #fff;
-  font-weight: bold;
+.login_button img {
+  width: 47px;
+  height: 45px;
 }
 
 /* content 부분 */
@@ -112,6 +95,9 @@ a {
   margin-top: 30px;
   box-sizing: border-box;
 }
+.title::placeholder {
+  font-size: smaller;
+}
 
 .group_explain {
   width: 708px;
@@ -121,6 +107,9 @@ a {
   font-size: 24px;
   font-weight: lighter;
   margin-top: 10px;
+}
+.group_explain::placeholder {
+  font-size: smaller;
 }
 
 .group_explain_container::after {
@@ -176,7 +165,7 @@ a {
 .event {
   width: 70px;
   height: 30px;
-  border: 1px solid #ccc;
+  border: none;
   border-radius: 10px;
   margin: 4px;
   padding: 0;
@@ -185,24 +174,60 @@ a {
 .block {
   display: flex;
   margin: 5px 0 15px 0;
+  align-items: center;
+  height: 35px;
 }
 p {
   margin: 10px 0 10px 0;
 }
+.Choose_text {
+  margin-bottom: 10px;
+}
 .block_input {
   width: 250px;
-  height: 30px;
+  height: 35px;
   border: 1px solid #ccc;
   border-radius: 10px;
   text-align: center;
+  margin: 5px;
+}
+input::placeholder {
+  font-size: small;
 }
 .block_button {
   width: 55px;
+  height: 35px;
   margin-left: 7px;
   border: none;
   background-color: #1a73e8;
   color: white;
   border-radius: 10px;
+}
+.date_time {
+  display: flex;
+  margin: 5px 0 15px 0;
+}
+.date {
+  width: 160px;
+  height: 35px;
+  font-size: 13.3333px !important;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 10px;
+  font-weight: lighter !important;
+}
+
+.calendar {
+  margin-right: 7px;
+}
+.time {
+  width: 80px;
+  height: 35px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-left: 10px;
+  font-size: 13.3333px;
 }
 .register {
   margin-top: 115px;

@@ -41,6 +41,7 @@ body {
   font-size: 48px;
   font-weight: bold;
   color: #5d5a88;
+  margin-left: 20px;
 }
 
 .text_button {
@@ -65,7 +66,7 @@ a {
   justify-self: end;
 
   border: 0.5px solid rgba(0, 0, 0, 0.103);
-  padding: 7px;
+  padding: 12px;
   border-radius: 10px;
   font-weight: bold;
 }
@@ -74,7 +75,7 @@ a {
   justify-self: start;
 
   margin: 10px;
-  padding: 7px;
+  padding: 12px;
   border: 0.5px solid rgba(0, 0, 0, 0.103);
   border-radius: 10px;
   background-color: #1a73e8;

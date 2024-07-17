@@ -57,30 +57,26 @@
             <p id="gubunseon_text3">좋아요 한 게시물 내역</p>
           </div>
           <div class="post_container">
-            <div class="search_box">
-              <input
-                type="text"
-                name="search"
-                id="search_input"
-                placeholder="검색어를 입력하세요."
-              />
-              <img
-                src="../img/search.icon.png"
-                alt="search"
-                class="search_icon"
-              />
+            <div class="search_box_and_sort">
+              <div class="search_box">
+                <input
+                  type="text"
+                  name="search"
+                  id="search_input"
+                  placeholder="검색어를 입력하세요."
+                />
+                <img
+                  src="../img/search.icon.png"
+                  alt="search"
+                  class="search_icon"
+                />
+              </div>
+              <select title="정렬" id="sort">
+                <option value="" selected disabled>정렬</option>
+                <option value="popular">인기순</option>
+                <option value="latest">최신순</option>
+              </select>
             </div>
-            <select title="정렬" id="sort">
-              <option id="sort1" value="" selected disabled>정렬</option>
-              <option id="sort1" value="popular">인기순</option>
-              <option id="sort1" value="latest">최신순</option>
-            </select>
-            <!-- <div class="group_container">
-              <img id="modify_icon" src="./img/수정_icon.png" alt="수정 및 삭제">
-              <p id="my_comment">내가 쓴 댓글 내용~~</p>
-              <p id="post_title">게시글 : 멤버들이랑 현충일 번개운동</p>
-              <img id="post_img" src="./img/게시글 이미지.png" alt="게시글 이미지">   
-            </div> -->
             <div class="group_container">
               <img
                 id="modify_icon"

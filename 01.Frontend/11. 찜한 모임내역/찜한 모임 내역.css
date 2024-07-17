@@ -40,6 +40,7 @@ body {
   font-size: 48px;
   font-weight: bold;
   color: #5d5a88;
+  margin-left: 20px;
 }
 
 .text_button {
@@ -123,7 +124,7 @@ a {
 .history::after {
   content: "";
   display: block;
-  width: 92%;
+  width: 90%;
   height: 2px;
   background-color: #ccc;
 }
@@ -132,7 +133,7 @@ h2 {
   font-weight: bold;
   color: #5d5a88;
   margin: 0;
-  margin-left: 890px;
+  margin-left: 1008px;
 }
 .gubunseon::after {
   content: "|";
@@ -152,6 +153,11 @@ h2 {
   font-weight: lighter;
 }
 
+.search_box_and_sort {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
 .search_box {
   display: flex;
   align-items: center;
@@ -160,7 +166,6 @@ h2 {
   padding: 5px;
   width: 250px;
   margin-left: 850px;
-  margin-top: 20px;
 }
 #search_input {
   flex: 1;
@@ -179,7 +184,7 @@ h2 {
   width: 75px;
   height: 37px;
   font-size: 14px;
-  margin-left: 1125px;
+  margin-left: 30px;
   border: 1px solid #ccc;
   border-radius: 10px;
   text-align: center;

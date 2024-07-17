@@ -57,42 +57,51 @@
             <p id="gubunseon_text2">찜한 모임 내역</p>
           </div>
           <div class="my_group_cham_yeo">
-            <div class="search_box">
-              <input
-                type="text"
-                name="search"
-                id="search_input"
-                placeholder="검색어를 입력하세요."
-              />
-              <img
-                src="../img/search.icon.png"
-                alt="search"
-                class="search_icon"
-              />
+            <div class="search_box_and_sort">
+              <div class="search_box">
+                <input
+                  type="text"
+                  name="search"
+                  id="search_input"
+                  placeholder="검색어를 입력하세요."
+                />
+                <img
+                  src="../img/search.icon.png"s
+                  alt="search"
+                  class="search_icon"
+                />
+              </div>
+              <select title="정렬" id="sort">
+                <option value="" selected disabled>정렬</option>
+                <option value="popular">인기순</option>
+                <option value="latest">최신순</option>
+              </select>
             </div>
-            <select title="정렬" id="sort">
-              <option value="" selected disabled>정렬</option>
-              <option value="popular">인기순</option>
-              <option value="latest">최신순</option>
-            </select>
-            <div class="group_container">
-              <div class="user_jeongbo">
-                <img src="../img/user_img.png" alt="사용자 이미지" />
-                <span>김계란</span>
+            <div class="cham-yeo_block">
+              <div class="group_container">
+                <div class="user_jeongbo">
+                  <img src="../img/user_img.png" alt="사용자 이미지" class="group_create_user_img" />
+                  <span>김계란</span>
+                  <img src="../img/상세설명 아이콘.png" alt="" class="explain_icon" />
+                </div>
+                <div class="title_icon">
+                  <span class="title_text">수영 같이 하실 분 구함</span>
+                </div>
+                <p class="date">24.06.14 (금)</p>
+                <p class="time">8:00 PM</p>
+                <div class="block">
+                  <span class="size">참여인원: 3/10</span>
+                  <span class="location">강남구</span>
+                  <span class="delete">취소</span>
+                </div>
               </div>
-              <div class="title_icon">
-                <span class="title_text">수영 같이 하실 분 구함</span>
-                <img src="../img/상세설명 아이콘.png" alt="" id="icon_text" />
-              </div>
-              <p class="date">24.06.14 (금)</p>
-              <p class="time">8:00 PM</p>
-              <div class="block">
-                <span class="size">참여인원: 3/10</span>
-                <span class="location">강남구</span>
-                <span class="delete">취소</span>
-              </div>
+              <div class="group_container"></div>
+              <div class="group_container"></div>
+              <div class="group_container"></div>
+              <div class="group_container"></div>
+              <div class="group_container"></div>
             </div>
-            <!-- <div class="group_container"></div> -->
+            
           </div>
         </div>
       </main>

@@ -1,43 +1,43 @@
 @charset "utf-8";
 
 main {
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    width: 100%;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  width: 100%;
 }
 
 input {
-    outline: none;
+  outline: none;
 }
 
 #post-set {
-    width: 100%;
-    height: 800px;
-    justify-content: center;  
-    align-items: center;
-    /* border: 1px solid #222; */
+  width: 100%;
+  height: 800px;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid #222; */
 }
 
 #post-items {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    margin-left: 70px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin-left: 70px;
 }
 
 .conversion {
-    width: 46px;
-    height: 54px;
-    background-color: #fff;
-    position: absolute;
-    top: 300px;
-    left: 950px;
+  width: 46px;
+  height: 54px;
+  background-color: #fff;
+  position: absolute;
+  top: 300px;
+  left: 950px;
 }
 
 .conversion span {
-    font-size: 15px;
-    line-height: 22.5px;
-    color: #6B7280;
+  font-size: 15px;
+  line-height: 22.5px;
+  color: #6b7280;
 }
 
 /* .fix{
@@ -60,299 +60,307 @@ input {
     cursor: pointer;
 } */
 
+main {
+  margin-top: 50px;
+}
+
 #post-feature {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
 }
 
 #post-feature::after {
-    content: "";
-    display: block;
-    width: 98%;
-    height: 2px;
-    background-color: #ccc;
-    margin: 5px 0 0 10px;
-    position: absolute;
-    bottom: -10px; /* Adjust to position the line properly */
-    left: 50%;
-    transform: translateX(-50%);
+  content: "";
+  display: block;
+  width: 98%;
+  height: 2px;
+  background-color: #ccc;
+  margin: 5px 0 0 10px;
+  position: absolute;
+  bottom: -10px; /* Adjust to position the line properly */
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 #add {
-    display: flex;
-    align-items: center;
-    margin-left: 25px;
+  display: flex;
+  align-items: center;
+  margin-left: 25px;
 }
 
 #add-button {
-    width: 34px;
-    height: 34px;
-    background-color: #00000014;
-    border-radius: 100%;
-    font-size: 50px;
-    text-align: center;
-    line-height: 22px;
-    cursor: pointer;
+  width: 34px;
+  height: 34px;
+  background-color: #00000014;
+  border-radius: 100%;
+  font-size: 50px;
+  text-align: center;
+  line-height: 32px;
+  cursor: pointer;
 }
 
 #add span {
-    margin-left: 10px;
-    font-size: 20px;
+  margin-left: 10px;
+  font-size: 20px;
 }
 
-/* #post-sort {
-    width: 77px;
-    height: 39px;
-    text-align: center;
-    justify-content: center;
-    margin-right: 25px;
-} */
+#post-sort {
+  border: 1px solid whitesmoke !important;
+  border-radius: 10px;
+}
 
 #order {
-    width: 75px;
-    height: 35px;
-    text-align: center;
-    /* background-color: #00000014; */
-    border: 1px solid whitesmoke;
-    background-color: whitesmoke;
-    box-sizing: border-box;
-    outline: none;
-  }
+  width: 75px;
+  height: 35px;
+  text-align: center;
+  border: 1px solid #fff !important;
+  background-color: white !important;
+  box-sizing: border-box;
+  /* outline: none; */
+}
 
 #post-list {
-    display: flex;
-    flex-direction: column;
-    /* justify-content: center; */
-    height: 100%;
-    margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  height: 100%;
+  margin-top: 20px;
 }
 
 .post {
-    display: flex;
-    width: 100%;
-    height: 170px;
-    margin: 10px 0;
-    justify-content: center;
-    position: relative;
-    margin-top: 20px;
+  display: flex;
+  width: 100%;
+  height: 170px;
+  margin: 10px 0;
+  justify-content: center;
+  position: relative;
+  margin-top: 20px;
+  border: 1px solid whitesmoke;
+  border-radius: 10px;
 }
 
 .post::after {
-    content: "";
-    display: block;
-    width: 96%;
-    height: 2px;
-    background-color: #ccc;
-    margin: 5px 0 0 10px;
-    position: absolute;
-    bottom: -10px; /* Adjust to position the line properly */
-    left: 50%;
-    transform: translateX(-50%);
+  content: "";
+  display: block;
+  width: 98%;
+  height: 2px;
+  background-color: #ccc;
+  margin: 5px 0 0 10px;
+  position: absolute;
+  bottom: -10px; /* Adjust to position the line properly */
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .posting {
-    display: flex;
-    flex-direction: column;
-    width: 80%;
-    margin-left: 10px;
-    justify-content: space-around;
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin-left: 10px;
+  justify-content: space-around;
 }
 
 .post-user-info {
-    display: flex;
+  display: flex;
 }
 
 .post-profile {
-    width: 31px;
-    height: 31px;
-    background-image: url('라이언.png');
-    background-size: 80% 80%;
-    background-repeat: no-repeat;
-    background-position: center;
+  width: 31px;
+  height: 31px;
+  background-image: url("라이언.png");
+  background-size: 80% 80%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .post-user-info span {
-    margin: auto 10px;
+  margin: auto 10px;
 }
 
 .post-content h2 {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .post-info {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
+/* 게시글 작성한 사용자 이미지 */
 .post-image {
-    border: 1px solid #222;
-    width: 140px;
-    height: 139px;
-    border-radius: 5%;
-    background-image: url('../img/post_img.png');
+  border: 1px solid #222;
+  width: 140px;
+  height: 139px;
+  border-radius: 5%;
+  /* background-image: url("../img/post_img.png"); */
+}
+/* 게시글에 올라간 사진 이미지 */
+.post_img {
+  width: 180px;
+  height: 150px;
+  border-radius: 10px;
+  margin-top: 10px;
+  margin-right: 5px;
 }
 .recommend_category {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .category_button {
-    width: 340px;
-    height: 180px;
-  }
-  .event {
-    width: 70px;
-    height: 30px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    margin: 6px;
-    padding: 0;
-  }
+  width: 340px;
+  height: 180px;
+}
+.event {
+  width: 70px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 0;
+}
 
 .post-topic {
-    display: flex;
+  display: flex;
 }
 
 .post-topic div {
-    width: 52px;
-    height: 24px;
-    /* border: 1px solid #222; */
-    text-align: center;
-    margin-right: 15px;
+  width: 52px;
+  height: 24px;
+  /* border: 1px solid #222; */
+  text-align: center;
+  margin-right: 15px;
 }
 
 .topic {
-    width: 65px;
-    height: 30px;
-    cursor: pointer;
-    background: #f2f2f2;
-    border: none;
-    z-index: 96;
-    border-radius: 20px;
+  width: 65px;
+  height: 30px;
+  cursor: pointer;
+  background: #f2f2f2;
+  border: none;
+  z-index: 96;
+  border-radius: 20px;
 }
 
 .post-popularity {
-    display: flex;
-    /* border: 1px solid #222; */
+  display: flex;
+  /* border: 1px solid #222; */
 }
 
 .popularity {
-    display: flex;
-    margin: 0 10px;
+  display: flex;
+  margin: 0 10px;
 }
 
 .post-popularity span {
-    font-size: 15px;
-    color: #757575;
+  font-size: 15px;
+  color: #757575;
 }
 
 .heart {
-    width: 20px;
-    height: 20px;
-    background-image: url('heart.png');
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
+  width: 20px;
+  height: 20px;
+  background-image: url("heart.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
 }
 
 .comment {
-    display: flex;
-    margin: 0 10px;
+  display: flex;
+  margin: 0 10px;
 }
 
 .comment-icon {
-    width: 20px;
-    height: 20px;
-    background-image: url('comment.png');
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
+  width: 20px;
+  height: 20px;
+  background-image: url("comment.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
 }
 
 .option {
-    width: 24px;
-    height: 24px;
-    margin: 0 10px;
-    background-image: url('dot.png');
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
-    cursor: pointer;
+  width: 24px;
+  height: 24px;
+  margin: 0 10px;
+  background-image: url("dot.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  cursor: pointer;
 }
-
-
 
 /* features */
 
 #features {
-    width: 40%;
-    border: 1px solid #222;
+  width: 40%;
+  border: 1px solid #222;
 }
 
 #feature-item {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 #search {
-    width: 331px;
-    height: 31px;
-    border: 1px solid #53525280;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 20px;
-    margin-top: 40px;
+  width: 331px;
+  height: 31px;
+  border: 1px solid #53525280;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px;
+  margin-top: 40px;
 }
 
 .search-box {
-    border: none;
-    width: 80%;
-    height: 100%;
-    border-radius: 10px;
-    margin-left: 15px;
+  border: none;
+  width: 80%;
+  height: 100%;
+  border-radius: 10px;
+  margin-left: 15px;
 }
 
 #search-icon {
-    width: 21px;
-    height: 17px;
-    background-image: url('search.png');
-    background-size: contain;
-    /* border: 1px solid #222; */
-    cursor: pointer;
-    margin: 0 10px;
+  width: 21px;
+  height: 17px;
+  background-image: url("search.png");
+  background-size: contain;
+  /* border: 1px solid #222; */
+  cursor: pointer;
+  margin: 0 10px;
 }
 
 #feature-topic {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    height: 300px;
-
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 300px;
 }
 
 #feature-topic p {
-    justify-content: left;
+  justify-content: left;
 }
 
 .topic-table {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 210px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 210px;
 }
 
 .topic-line {
-    display: flex;
-    width: 100%;
+  display: flex;
+  width: 100%;
 }
 
-.topic-line .topic{
-    margin: 10px;
-    text-align: center;
-    font-size: 14px;
+.topic-line .topic {
+  margin: 10px;
+  text-align: center;
+  font-size: 14px;
 }
