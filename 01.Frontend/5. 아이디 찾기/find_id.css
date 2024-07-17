@@ -40,6 +40,7 @@ body {
   font-size: 48px;
   font-weight: bold;
   color: #5d5a88;
+  margin-left: 20px;
 }
 
 .text_button {
@@ -64,7 +65,7 @@ a {
   justify-self: end;
 
   border: 0.5px solid rgba(0, 0, 0, 0.103);
-  padding: 7px;
+  padding: 12px;
   border-radius: 10px;
   font-weight: bold;
 }
@@ -73,7 +74,7 @@ a {
   justify-self: start;
 
   margin: 10px;
-  padding: 7px;
+  padding: 12px;
   border: 0.5px solid rgba(0, 0, 0, 0.103);
   border-radius: 10px;
   background-color: #1a73e8;
@@ -98,7 +99,7 @@ a {
 }
 .find_id_text {
   text-align: center;
-  margin: 0;
+  margin-top: 20px;
 }
 .input_block {
   display: flex;
@@ -108,12 +109,13 @@ a {
   width: 100%;
 }
 .input_block label {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 .input_row {
   display: flex;
+  text-align: center;
   width: 404px;
-  height: 32px;
+  height: 35px;
 }
 
 .input_row input {
@@ -124,7 +126,7 @@ a {
   box-sizing: border-box;
   margin-right: 10px;
   width: 100px;
-  height: 30px;
+  height: 35px;
 }
 .input_row button {
   padding: 8px 16px;
@@ -139,13 +141,18 @@ a {
   background-color: #0056b3;
 }
 
+.at {
+  margin-top: 6px;
+}
 #domain {
   margin-right: 10px;
   margin-left: 10px;
   padding: 8px;
   border: 1px solid rgba(0, 0, 0, 0.253);
   border-radius: 5px;
-  font-size: 14px;
+  background-color: #fff !important;
+  font-size: 13.3333px;
+  font-weight: lighter !important;
 }
 
 h1 {

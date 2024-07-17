@@ -16,6 +16,7 @@ body {
     display: grid;
 
     grid-template-rows: 150px 1fr 150px;
+    overflow-x: auto;
 }
 
 
@@ -38,7 +39,7 @@ body {
     width: 50px;
     height: 45px;
     border-radius: 100%;
-    background-image: url('라이언.png');
+    background-image: url('../img/user_img.png');
     background-size: 80% 80%;
     background-repeat: no-repeat;
     background-position: center;

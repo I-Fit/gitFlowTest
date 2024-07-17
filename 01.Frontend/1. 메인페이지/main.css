@@ -40,7 +40,7 @@ body {
   font-size: 48px;
   font-weight: bold;
   color: #5d5a88;
-  font-family: DM Sans, var(--default-font-family);
+  margin-left: 20px;
 }
 
 .text_button {
@@ -65,7 +65,7 @@ a {
   justify-self: end;
 
   border: 0.5px solid rgba(0, 0, 0, 0.103);
-  padding: 7px;
+  padding: 12px;
   border-radius: 10px;
   font-weight: bold;
 }
@@ -74,7 +74,7 @@ a {
   justify-self: start;
 
   margin: 10px;
-  padding: 7px;
+  padding: 12px;
   border: 0.5px solid rgba(0, 0, 0, 0.103);
   border-radius: 10px;
   background-color: #1a73e8;
@@ -201,48 +201,54 @@ a {
 }
 
 .group_container {
-  width: 344px;
-  height: 286px;
+  width: 360px;
+  height: 300px;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 20px;
   margin-left: 114px;
 }
-.group_container img {
+.group_create_user_img {
   width: 30px;
   height: 27px;
-  margin-right: 3px;
+  margin-left: 10px;
 }
 .user_jeongbo {
   display: flex;
   align-items: center;
-  margin: 20px 0 0 20px;
+  margin: 34px 0 0 20px;
 }
 .title_icon {
   display: flex;
   align-items: center;
-  margin: 15px 0 0 13px;
+  margin-top: 15px;
+  justify-content: center;
 }
 .title_text {
   font-size: 28px;
   font-weight: bold;
   color: #5d5a88;
 }
+.explain_icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 194px;
+}
 .date {
   font-size: 18px;
   color: #9795b5;
-  margin-left: 200px;
-  margin-top: 7px;
+  margin-left: 218px;
+  margin-top: 20px;
   padding: 5px;
 }
 .time {
   font-size: 18px;
   color: #9795b5;
-  margin-left: 233px;
+  margin-left: 252px;
   padding: 5px;
 }
 
 .block {
-  margin: 44px 0 0 80px;
+  margin: 30px 0 0 97px;
 }
 .size {
   padding: 10px;
@@ -257,12 +263,15 @@ a {
   font-size: 12px;
 }
 .delete {
-  padding: 7px 18px;
+  padding: 11px 17px;
   border: none;
   border-radius: 10px;
   background-color: #1a73e8;
   color: white;
-  font-size: 18px;
+  font-size: 12px;
+  font-weight: bold;
+  width: 58px;
+  height: 38px;
 }
 
 /* footer 부분 */

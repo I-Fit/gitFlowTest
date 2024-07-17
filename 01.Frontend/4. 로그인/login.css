@@ -41,6 +41,7 @@ body {
   font-size: 48px;
   font-weight: bold;
   color: #5d5a88;
+  margin-left: 20px;
 }
 
 .text_button {
@@ -65,7 +66,7 @@ a {
   justify-self: end;
 
   border: 0.5px solid rgba(0, 0, 0, 0.103);
-  padding: 7px;
+  padding: 12px;
   border-radius: 10px;
   font-weight: bold;
 }
@@ -74,7 +75,7 @@ a {
   justify-self: start;
 
   margin: 10px;
-  padding: 7px;
+  padding: 12px;
   border: 0.5px solid rgba(0, 0, 0, 0.103);
   border-radius: 10px;
   background-color: #1a73e8;
@@ -99,89 +100,105 @@ a {
   align-items: center;
   border: 1px solid rgba(0, 0, 0, 0.164);
 }
-#id,
-#pw {
-  width: 394px;
-  height: 25px;
-  border-radius: 10px;
-  border: 1px solid #d9d9d9;
-  font-weight: 100;
-  padding: 10px;
+.input_block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   margin: 10px 0;
+  width: 100%;
+}
+.input_block label {
+  margin-bottom: 10px;
+}
+.input_row {
+  display: flex;
+  width: 404px;
+  height: 35px;
+}
+
+.input_row input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.253);
+  border-radius: 5px;
+  box-sizing: border-box;
+  margin-right: 10px;
+  width: 100px;
+  height: 35px;
+}
+.input_row button {
+  padding: 8px 16px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
 }
 h1 {
   text-align: center;
   font-weight: bold;
-  margin: 20px 0;
+  margin: 8px 0;
 }
 
-p {
-  font-size: 14px;
-  font-weight: 500;
-}
-p span {
-  margin-left: 300px;
+.id_find {
+  margin-left: 288px;
   font-size: 10px;
-  color: #0c2a92;
+  color: #1a73e8;
 }
 
-.pw_find span {
-  margin-left: 285px;
+.pw_find {
+  margin-left: 263px;
   font-size: 10px;
-  color: #0c2a92;
+  color: #1a73e8;
 }
 
-.l_button {
-  display: block;
+.login_btn {
   width: 394px;
-  height: 30px;
+  height: 35px;
   margin-top: 20px;
   border-radius: 10px;
   border: 1px solid;
+  text-align: center;
   background-color: #1a73e8;
   color: white;
 }
 
-.l_button::after {
-  content: "------or------";
-  display: block;
+.gubunseon {
   text-align: center;
-  margin-top: 30px;
-  color: black;
+  margin-top: 20px;
 }
 .social_login {
-  margin-top: 60px;
+  margin-top: 30px;
   display: flex;
   justify-content: space-between;
 }
 
 .social_button {
-  width: 100px;
-  height: 20px;
+  width: 60px;
+  height: 48px;
   display: flex;
   align-items: center;
   border: none;
   cursor: pointer;
   background-color: white;
+  border-radius: 10px;
 }
 
 .social_login .social_button img {
-  width: 100px;
-  height: 30px;
+  width: 60px;
+  height: 48px;
 }
 
 .account {
-  text-align: center;
   font-size: 14px;
-  margin-top: 40px;
+  margin-top: 35px;
+  margin-left: 80px;
   position: relative;
 }
-.user_account {
-  display: block;
-  position: absolute;
-  left: 0px;
-  top: 3px;
-  cursor: pointer;
+.account span {
+  margin-left: 20px;
+  color: #1a73e8;
+  font-size: 14px;
 }
 
 /* 푸터 부분 */

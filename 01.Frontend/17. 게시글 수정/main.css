@@ -146,6 +146,23 @@ input {
     /* top: 10%; */
 
 }
+.category_text {
+    text-align: start;
+    margin-top: 30px;
+    margin-bottom: 10px;
+  }
+  .category_button {
+    width: 340px;
+    height: 130px;
+  }
+  .event {
+    width: 70px;
+    height: 30px;
+    border: none;
+    border-radius: 10px;
+    margin: 4px;
+    padding: 0;
+  }
 
 #feature-topic p {
     justify-content: left;
