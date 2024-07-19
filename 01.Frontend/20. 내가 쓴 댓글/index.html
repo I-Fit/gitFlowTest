@@ -3,8 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>아이디 찾기 완료 페이지</title>
-    <link rel="stylesheet" href="나의 게시물 내역.css" />
+    <title>내가 쓴 댓글 내역</title>
+    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="../frame.css" />
+    <!-- <link rel="stylesheet" href="./css_flex/반응형 연습.css"> -->
   </head>
   <body>
     <div class="container">
@@ -47,17 +49,17 @@
             </div>
             <p id="text4">나의 게시물 내역</p>
             <p id="text5">내가 쓴 댓글 내역</p>
-            <p id="text6">내가 좋아요한 게시글</p>
+            <p id="text6">좋아요 한 게시글</p>
           </div>
         </div>
-        <div class="my_post">
+        <div class="page_title">
           <div class="history">
-            <h2>게시글 내역</h2>
+            <h2>내가 쓴 댓글 내역</h2>
             <p class="gubunseon" id="gubunseon_text1">나의 게시물 내역</p>
             <p class="gubunseon" id="gubunseon_text2">내가 쓴 댓글</p>
-            <p id="gubunseon_text3">좋아요 한 게시물 내역</p>
+            <p id="gubunseon_text3">좋아요 한 게시물</p>
           </div>
-          <div class="post_container">
+          <div class="my_group_cham_yeo">
             <div class="search_box_and_sort">
               <div class="search_box">
                 <input
@@ -68,6 +70,7 @@
                 />
                 <img
                   src="../img/search.icon.png"
+                  s
                   alt="search"
                   class="search_icon"
                 />
@@ -78,42 +81,26 @@
                 <option value="latest">최신순</option>
               </select>
             </div>
-            <div class="group_container">
-              <div class="sujeong_delete_icon">
-                <img
-                  id="sujeong_icon"
-                  src="../img/수정_icon.png"
-                  alt="점점점"
-                />
-                <!-- 클릭했을 때 수정, 삭제가 나와야됨 -->
-              </div>
-              <div class="post_img">
-                <img src="../img/post_img.png" alt="게시글 이미지" />
-              </div>
-              <div class="heart_comment_icon">
-                <img
-                  id="icon_img"
-                  src="../img/white_heart_icon.png"
-                  alt="좋아요 아이콘"
-                />
-                <span id="heart_count">101</span>
-                <img
-                  id="icon_img"
-                  src="../img/comment_icon.png"
-                  alt="댓글 아이콘"
-                />
-                <span id="comment_count">5</span>
-              </div>
-              <div class="post_title">
-                <p id="post_title">멤버들이랑 현충일 번개운동</p>
-              </div>
-              <div class="post_text">
-                <p id="post_text">
-                  공휴일에 멤버들이랑 kosta짐에서<br />웨이트 했습니다 ~
-                </p>
+            <div class="table">
+              <div class="group_container">
+                <div class="group_container_title">
+                  <p>내가 쓴 댓글 내용~~</p>
+                  <div id="modify_icon"></div>
+                </div>
+                <div class="group_container_content">
+                  <div class="content_text">
+                    <p>게시글 : 멤버들이랑 현충일 번개운동</p>
+                    <p>오후 1:45</p>
+                  </div>
+                  <div id="post_img"></div>
+                  <!-- <img
+                    id="post_img"
+                    src="../img/게시글 이미지.png"
+                    alt="게시글 이미지"
+                  /> -->
+                </div>
               </div>
             </div>
-            <!-- <div class="group_container"></div> -->
           </div>
         </div>
       </main>

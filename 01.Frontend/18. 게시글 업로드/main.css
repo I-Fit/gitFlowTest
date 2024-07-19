@@ -19,7 +19,7 @@ input {
 
 #change-image {
     display: flex;
-    width: 95%;
+    width: 98%;
     align-items: center;
 }
 
@@ -32,54 +32,60 @@ input {
     background-size: 80% 80%;
     background-position: center;
     border-radius: 100%;
-    margin: 10px;
+    margin: 10px 0;
+    margin-right: 10px;
     cursor: pointer;
 }
 
 #change-image span {
     color: #00000099;
-    /* margin-left: 15px; */
 }
 
 #title {
     display: flex;
+    flex-direction: column;
     width: 700px;
     height: 60px;
     border-radius: 10px;
-    align-items: center;
-    justify-content: center;
-    /* background-color: #F2F2F2; */
-    margin: 10px;
+    margin: 10px 0;
 }
 
-#title input {
+#title textarea {
     border: none;
     font-size: 20px;
-    /* font-weight: bold; */
-    width: 95%;
-    height: 100%;
-    /* background-color: #F2F2F2; */
+    width: 100%;
+    height: 40px;
     color: #202020;
-}
-
-#text-box {
-    width: 90%;
-    height: 500px;
+    border: none;
+    outline: none;
+    resize: none;
     overflow: hidden;
-    cursor: text;
 }
 
-#text-box::after {
+#title::after {
     content: "";
     display: block;
-    width: 110%;
+    width: 100%;
     height: 1px;
+    align-items: center;
     background-color: #eee5e5;
-    margin: 5px 0 0 10px;
+    margin-top: 5px;
     position: relative;
     bottom: -5px;
     left: 50%;
     transform: translateX(-50%);
+}
+
+#text-box {
+    display: block;
+    width: 715px;
+    overflow: hidden;
+    cursor: text;
+}
+
+#content-box {
+    width: 100%;
+    min-height: 500px;
 }
 
 #image {
@@ -103,14 +109,12 @@ input {
 .post-topic {
     display: flex;
     width: 100%;
-    margin-left: 8%;
-    margin-top: 20px;
+    margin-top: 0px;
 }
 
 .post-topic div {
     width: 52px;
     height: 24px;
-    /* border: 1px solid #222; */
     text-align: center;
     margin-right: 15px;
 }
