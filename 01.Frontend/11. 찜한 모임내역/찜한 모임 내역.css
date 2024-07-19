@@ -60,8 +60,8 @@ a {
   align-items: center;
 }
 .login_button img {
-  width: 47px;
-  height: 45px;
+  width: 50px;
+  height: 40px;
 }
 
 /* content 부분 */
@@ -111,7 +111,7 @@ a {
 }
 
 .participation {
-  width: 100%;
+  width: 1252px;
   height: 100%;
   display: grid;
   grid-template-rows: 150px 1fr;
@@ -124,7 +124,7 @@ a {
 .history::after {
   content: "";
   display: block;
-  width: 90%;
+  width: 100%;
   height: 2px;
   background-color: #ccc;
 }
@@ -132,8 +132,7 @@ h2 {
   font-size: 50px;
   font-weight: bold;
   color: #5d5a88;
-  margin: 0;
-  margin-left: 1008px;
+  margin-left: 1038px;
 }
 .gubunseon::after {
   content: "|";
@@ -153,10 +152,17 @@ h2 {
   font-weight: lighter;
 }
 
+.my_group_cham_yeo {
+  width: 1250px;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 95px 1fr;
+}
+
 .search_box_and_sort {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  padding: 10px 5px;
 }
 .search_box {
   display: flex;
@@ -165,7 +171,7 @@ h2 {
   border-radius: 10px;
   padding: 5px;
   width: 250px;
-  margin-left: 850px;
+  margin-left: 894px;
 }
 #search_input {
   flex: 1;
@@ -191,52 +197,63 @@ h2 {
   font-weight: lighter;
 }
 
-.group_container {
-  width: 344px;
-  height: 286px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  margin-left: 20px;
+.cham-yeo_block {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
-.group_container img {
-  width: 30px;
-  height: 27px;
-  margin-right: 3px;
+.group_container {
+  width: 360px;
+  height: 300px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+}
+.group_create_user_img {
+  width: 50px;
+  height: 40px;
+  margin-left: 10px;
 }
 .user_jeongbo {
   display: flex;
   align-items: center;
-  margin: 20px 0 0 20px;
+  margin: 29px 0 0 20px;
 }
-#heart {
-  margin-left: 180px;
+.explain_icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 173px;
 }
+
 .title_icon {
   display: flex;
   align-items: center;
-  margin: 15px 0 0 13px;
+  margin-top: 15px;
+  justify-content: center;
 }
 .title_text {
   font-size: 28px;
   font-weight: bold;
   color: #5d5a88;
 }
+
 .date {
   font-size: 18px;
   color: #9795b5;
-  margin-left: 200px;
-  margin-top: 7px;
+  margin-left: 218px;
+  margin-top: 20px;
   padding: 5px;
 }
 .time {
   font-size: 18px;
   color: #9795b5;
-  margin-left: 233px;
+  margin-left: 252px;
   padding: 5px;
 }
 
 .block {
-  margin: 44px 0 0 80px;
+  margin: 30px 0 0 97px;
 }
 .size {
   padding: 10px;
@@ -251,12 +268,15 @@ h2 {
   font-size: 12px;
 }
 .delete {
-  padding: 7px 18px;
+  padding: 11px 17px;
   border: none;
   border-radius: 10px;
   background-color: #1a73e8;
   color: white;
-  font-size: 18px;
+  font-size: 12px;
+  font-weight: bold;
+  width: 58px;
+  height: 38px;
 }
 /* 푸터 부분 */
 .footer {

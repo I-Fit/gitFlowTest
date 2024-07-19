@@ -12,10 +12,11 @@ main {
 #main-top {
   display: flex;
   flex-direction: column;
+  width: 1250px;
 }
 
 #my-page {
-  width: 100%;
+  width: 1250px;
   text-align: right;
   color: #5d5988;
   font-family: DM Sans, var(--default-font-family);
@@ -26,7 +27,7 @@ main {
 
 #my-page span {
   position: relative;
-  right: 10px;
+  /* right: 10px; */
 }
 
 #briefly-profile {
@@ -103,6 +104,7 @@ main {
 
 /* main-bottom */
 #main-bottom {
+  width: 1250px;
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
@@ -119,18 +121,25 @@ main {
   flex-direction: column;
 }
 
-.info {
+.left-info {
   display: flex;
   width: 600px;
-  margin-top: 50px;
+  margin-top: 20px;
   margin-left: 50px;
+  align-items: center;
+}
+.right-info {
+  display: flex;
+  width: 600px;
+  margin-top: 20px;
+  margin-left: 0px;
   align-items: center;
 }
 
 .info-title {
   display: flex;
   width: 100px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   line-height: 24px;
   margin: 24px;
@@ -141,8 +150,8 @@ main {
   font-size: 16px;
   margin: 24px;
   background: #00000014;
-  width: 264px;
-  height: 36px;
+  width: 265px;
+  height: 40px;
   border-radius: 10px;
   text-align: center;
   color: #a5a5a9;

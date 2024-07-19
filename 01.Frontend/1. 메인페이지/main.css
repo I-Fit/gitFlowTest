@@ -83,6 +83,8 @@ a {
 }
 
 /* content 부분 */
+
+/* 캐러셀 */
 .content {
   display: grid;
   grid-template-rows: 1fr 2fr;
@@ -111,6 +113,7 @@ a {
   opacity: 0.4;
 }
 
+/* 필터 */
 .group {
   display: grid;
   grid-template-rows: 100px 40px 4fr;
@@ -171,7 +174,7 @@ a {
   border: 1px solid whitesmoke;
   box-sizing: border-box;
 }
-/* -------------------- */
+/* 검색창 */
 .search_box {
   display: flex;
   align-items: center;
@@ -195,11 +198,11 @@ a {
   cursor: pointer;
 }
 
+/* 생성 모임 영역 */
 .group_list {
   display: flex;
   margin-top: 10px;
 }
-
 .group_container {
   width: 360px;
   height: 300px;
@@ -208,15 +211,21 @@ a {
   margin-left: 114px;
 }
 .group_create_user_img {
-  width: 30px;
-  height: 27px;
+  width: 50px;
+  height: 40px;
   margin-left: 10px;
 }
 .user_jeongbo {
   display: flex;
   align-items: center;
-  margin: 34px 0 0 20px;
+  margin: 29px 0 0 20px;
 }
+.explain_icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 173px;
+}
+
 .title_icon {
   display: flex;
   align-items: center;
@@ -228,11 +237,7 @@ a {
   font-weight: bold;
   color: #5d5a88;
 }
-.explain_icon {
-  width: 20px;
-  height: 20px;
-  margin-left: 194px;
-}
+
 .date {
   font-size: 18px;
   color: #9795b5;

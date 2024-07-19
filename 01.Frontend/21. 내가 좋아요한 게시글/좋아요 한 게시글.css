@@ -6,6 +6,7 @@
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
 }
+
 body {
   display: flex;
   justify-content: center;
@@ -60,8 +61,8 @@ a {
   align-items: center;
 }
 .login_button img {
-  width: 47px;
-  height: 45px;
+  width: 50px;
+  height: 40px;
 }
 
 /* content 부분 */
@@ -110,8 +111,8 @@ a {
   padding: 5px;
 }
 
-.my_post {
-  width: 100%;
+.participation {
+  width: 1252px;
   height: 100%;
   display: grid;
   grid-template-rows: 150px 1fr;
@@ -124,7 +125,7 @@ a {
 .history::after {
   content: "";
   display: block;
-  width: 90%;
+  width: 100%;
   height: 2px;
   background-color: #ccc;
 }
@@ -133,14 +134,13 @@ h2 {
   font-weight: bold;
   color: #5d5a88;
   margin: 0;
-  margin-left: 947px;
+  margin-left: 988px;
 }
 .gubunseon::after {
   content: "|";
   color: #ccc;
   margin: 0 5px 0 5px;
 }
-
 #gubunseon_text1,
 #gubunseon_text2,
 #gubunseon_text3 {
@@ -156,17 +156,25 @@ h2 {
   font-weight: lighter;
 }
 
+.my_group_cham_yeo {
+  width: 100px;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 95px 1fr;
+}
 .search_box_and_sort {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  padding: 10px 5px;
 }
 .search_box {
+  display: flex;
+  align-items: center;
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 5px;
   width: 250px;
-  margin-left: 850px;
+  margin-left: 894px;
 }
 #search_input {
   flex: 1;
@@ -177,9 +185,10 @@ h2 {
 .search_icon {
   width: 20px;
   height: 20px;
-  margin-left: 30px;
+  margin-left: 5px;
   cursor: pointer;
 }
+
 #sort {
   width: 75px;
   height: 37px;
@@ -187,10 +196,18 @@ h2 {
   margin-left: 30px;
   border: 1px solid #ccc;
   border-radius: 10px;
+  background-color: #fff !important;
   text-align: center;
   font-weight: lighter;
 }
 
+.cham-yeo_block {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
 .group_container {
   width: 344px;
   height: 456px;
@@ -204,9 +221,10 @@ h2 {
   justify-content: end;
 }
 .sujeong_delete_icon img {
-  width: 50px;
-  height: 45px;
-  margin-right: 20px;
+  width: 45px;
+  height: 40px;
+  margin-right: 36px;
+  cursor: pointer;
 }
 
 .post_img {
@@ -227,7 +245,7 @@ h2 {
 
 #icon_img {
   width: 20px;
-  height: 25px;
+  height: 20px;
   margin: 5px;
 }
 .heart_comment_icon span {
@@ -253,6 +271,7 @@ h2 {
   font-size: 18px;
   color: #9795b5;
 }
+
 /* 푸터 부분 */
 .footer {
   display: grid;
