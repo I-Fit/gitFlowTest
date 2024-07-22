@@ -28,55 +28,72 @@
           <div class="login">로그인</div>
         </div>
       </header>
-      <main class="content">
-        <div class="find_id_container">
-          <form action="#">
+      <main class="main">
+        <div class="main--box">
+          <form action="#" class="signup-form">
             <h1>아이디 찾기</h1>
-            <p class="find_id_text">아이디를 잊어버리셨나요?</p>
-            <div class="id_block input_block">
-              <label for="id">아이디</label>
-              <div class="input_row">
+            <p class="signup-form__text">아이디를 잊어버리셨나요?</p>
+            <div class="signup-form__id input_block">
+              <label class="signup-form__label" for="id">아이디</label>
+              <div class="signup-form__field">
                 <input
                   type="text"
                   id="id"
                   name="id"
                   placeholder="아이디를 입력하세요."
+                  class="signup-form__field_input"
                 />
-                <button type="submit">확인</button>
+                <button class="signup-form__field_button" type="submit">
+                  확인
+                </button>
               </div>
             </div>
-            <div class="email_block input_block">
-              <label for="email">이메일</label>
-              <div class="input_row">
+            <div class="signup-form__email input_block">
+              <label class="signup-form__label" for="email">이메일</label>
+              <div class="signup-form__field">
                 <input
                   type="text"
                   id="email"
                   name="email"
                   placeholder="이메일을 입력하세요."
+                  class="signup-form__field_input"
                 />
                 <span class="at">@</span>
-                <select title="주소" name="email_domain" id="domain">
+                <select
+                  title="주소"
+                  name="email_domain"
+                  class="signup-form__domain"
+                >
                   <option value="">주소 선택</option>
                   <option value="naver">naver.com</option>
                   <option value="gmail">gmail.com</option>
                   <option value="daum">daum.net</option>
                 </select>
-                <button type="submit">인증요청</button>
+                <button class="signup-form__field_button" type="submit">
+                  인증요청
+                </button>
               </div>
             </div>
-            <div class="email_number_block input_block">
-              <label for="email_number">이메일 인증번호</label>
-              <div class="input_row">
+            <div class="signup-form__email-number input_block">
+              <label class="signup-form__label" for="email_number"
+                >이메일 인증번호</label
+              >
+              <div class="signup-form__field">
                 <input
                   type="text"
                   id="email_number"
                   name="email_number"
                   placeholder="인증번호를 입력해주세요."
+                  class="signup-form__field_input"
                 />
-                <button type="submit">확인</button>
+                <button class="signup-form__field_button" type="submit">
+                  확인
+                </button>
               </div>
             </div>
-            <button type="submit" class="find_id_complete">아이디 찾기</button>
+            <button type="submit" class="signup-form__find_id_complete">
+              아이디 찾기
+            </button>
           </form>
         </div>
       </main>

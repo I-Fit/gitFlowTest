@@ -75,7 +75,7 @@ a {
 }
 
 /* content 부분 */
-.content {
+.main {
   display: flex;
   flex-direction: column;
   justify-content: center;

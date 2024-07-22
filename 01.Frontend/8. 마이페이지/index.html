@@ -13,6 +13,7 @@
         <header class="header">
             <div class="icon_table">
                 <div id="icon_img">
+                    <img src="../img/icon.PNG" alt="">
                 </div>
                 <div class="icon_text">I-Fit</div>
             </div>
@@ -30,92 +31,81 @@
                 <p>김계란님, 환영합니다!</p>
             </div>
         </header>
-        <main class="content">
-            <div class="nav">
-                <div class="my_button">
-                    <div class="nav-item">
-                        <div class="group_and_save selector">
-                            <p class="text">참여내역</p>
-                        </div>
-                        <p id="text1">모임 참여내역</p>
-                        <p id="text2">찜한 모임내역</p>
-                    </div>
-
-                    <div class="nav-item">
-                        <div class="membership selector">
-                            <p class="text">멤버십</p>
-                        </div>
-                        <p id="text3">멤버십 혜택</p>
-                    </div>
-
-                    <div class="nav-item">
-                        <div class="post selector">
-                            <p class="text">게시글 관리</p>
-                        </div>
-                        <p id="text4">나의 게시물 내역</p>                                      <!-- set below spacing to nav item  -->
-                        <p id="text5">내가 쓴 댓글 내역</p>
-                        <p id="text6">좋아요 한 게시글</p>
-                    </div>
-
+        <main class="main">
+            <div class="main--nav">
+                <div class="main--nav__list">
+                  <div class="group_and_save selector">
+                    <p class="nav__text">참여 내역</p>
+                  </div>
+                  <p class="nav__item">모임 참여 내역</p>
+                  <p class="nav__item">찜한 모임 내역</p>
+                  <div class="membership selector">
+                    <p class="nav__text">멤버십</p>
+                  </div>
+                  <p class="nav__item">멤버십 혜택</p>
+                  <div class="post selector">
+                    <p class="nav__text">게시글 관리</p>
+                  </div>
+                  <p class="nav__item">나의 게시물 내역</p>
+                  <p class="nav__item">내가 쓴 댓글 내역</p>
+                  <p class="nav__item">좋아요 한 게시글</p>
                 </div>
             </div>
-            <main>
-                <div id="main-top">
-                    <div id="my-page"><span>마이페이지</span></div>
-                    <div id="briefly-profile">
-                        <div id="briefly-image-set">
-                            <div id="profile-image-1"></div>
-                            <div id="vector"><a href="#">&#43</a></div>
+            <div class="main--item">
+                <div class="main--item__top">
+                    <h2>마이페이지</h2>
+                    <div class="main--top__profile">
+                        <div class="top__image_box">
+                            <div class="top__box_img"></div>
+                            <div class="top__box_icon"><a href="#">&#43;</a></div>
                         </div>
-                        <div id="briefly-info-set">
+                        <div class="top__boxinfo">
                             <div>
-                                <span id="user-name">김계란</span>
-                                <span id="log-out">로그아웃</span>
+                                <span class="top__boxinfo__user_name">김계란</span>
+                                <span class="top__boxinfo__log_out">로그아웃</span>
                             </div>
-                            <span id="membership">나는야 득근을 꿈꾸는 근린이!</span>
+                            <span class="top__boxinfo__membership">나는야 득근을 꿈꾸는 근린이!</span>
                         </div>
                     </div>
                 </div>
-                <div id="main-bottom">
-
-                    <div id="left-section">
+                <div class="main--item__bottom">
+                    <div class="bottom__left-section">
                         <div>
-                            <div class="left-info">
+                            <div class="bottom__left-info">
                                 <div class="info-title">포인트</div>
                                 <div class="profile-frame"><span id="point">100P</span></div>
                             </div>
-                            <div class="left-info">
+                            <div class="bottom__left-info">
                                 <div class="info-title">ID</div>
                                 <div class="profile-frame"><span id="id">ifitkosta</span></div>
                             </div>
-                            <div class="left-info">
+                            <div class="bottom__left-info">
                                 <div class="info-title">연락처</div>
                                 <div class="profile-frame"><span id="phone">010-1234-5678</span></div>
                             </div>
                         </div>
                     </div>
-                    <div id="right-section">
+                    <div id="bottom__right-section">
                         <div>
-                            <div class="right-info">
+                            <div class="bottom__right-info">
                                 <div class="info-title">멤버 등급</div>
                                 <div class="profile-frame"><span id="member-rank">근린이</span></div>
                                 <button class="change">변경</button>
                             </div>
-                            <div class="right-info">
+                            <div class="bottom__right-info">
                                 <div class="info-title">비밀번호</div>
                                 <div class="profile-frame"><span id="password">*******</span></div>
                                 <button class="change">변경</button>
                             </div>
-                            <div class="right-info">
+                            <div class="bottom__right-info">
                                 <div class="info-title">이메일</div>
                                 <div class="profile-frame"><span id="email">ifitkosta@gmail.com</span></div>
                             </div>
-                            <button id="secession">회원 탈퇴</button>
+                            <button class="secession">회원 탈퇴</button>
                         </div>
                     </div>
-
                 </div>
-            </main>
+            </div>
         </main>
         <footer class="footer">
             <div class="company_name">

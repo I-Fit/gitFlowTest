@@ -30,71 +30,90 @@
           <div class="login">로그인</div> -->
         </div>
       </header>
-      <main class="content">
-        <div class="nav">
-          <div class="my_button">
+      <main class="main">
+        <div class="main--nav">
+          <div class="main--nav__list">
             <div class="group_and_save selector">
-              <p class="text">참여 내역</p>
+              <p class="nav__text">참여 내역</p>
             </div>
-            <p id="text1">모임 참여 내역</p>
-            <p id="text2">찜한 모임 내역</p>
+            <p class="nav__item">모임 참여 내역</p>
+            <p class="nav__item">찜한 모임 내역</p>
             <div class="membership selector">
-              <p class="text">멤버십</p>
+              <p class="nav__text">멤버십</p>
             </div>
-            <p id="text3">멤버십 혜택</p>
+            <p class="nav__item">멤버십 혜택</p>
             <div class="post selector">
-              <p class="text">게시글 관리</p>
+              <p class="nav__text">게시글 관리</p>
             </div>
-            <p id="text4">나의 게시물 내역</p>
-            <p id="text5">내가 쓴 댓글 내역</p>
-            <p id="text6">좋아요 한 게시글</p>
+            <p class="nav__item">나의 게시물 내역</p>
+            <p class="nav__item">내가 쓴 댓글 내역</p>
+            <p class="nav__item">좋아요 한 게시글</p>
           </div>
         </div>
-        <div class="participation">
-          <div class="history">
+        <div class="main--participation">
+          <div class="participation__topside">
             <h2>참여 내역</h2>
-            <p class="gubunseon" id="gubunseon_text1">모임 참여 내역</p>
-            <p id="gubunseon_text2">찜한 모임 내역</p>
+            <p id="boundary" class="boundary_text01">모임 참여 내역</p>
+            <p class="boundary_text02">찜한 모임 내역</p>
           </div>
-          <div class="my_group_cham_yeo">
-            <div class="search_box_and_sort">
-              <div class="search_box">
+          <div class="participation__downside">
+            <div class="downside--filter">
+              <div class="downside--filter__searchbox">
                 <input
                   type="text"
                   name="search"
                   id="search_input"
                   placeholder="검색어를 입력하세요."
+                  class="downside--filter__searchbox_input"
                 />
                 <img
                   src="../img/search.icon.png"
                   alt="search"
-                  class="search_icon"
+                  class="downside--filter__searchbox_icon"
                 />
               </div>
-              <select title="정렬" id="sort">
+              <select title="정렬" class="downside--filter__sort">
                 <option value="" selected disabled>정렬</option>
                 <option value="popular">인기순</option>
                 <option value="latest">최신순</option>
               </select>
             </div>
-            <div class="cham-yeo_block">
-              <div class="group_container">
-                <div class="user_jeongbo">
-                  <img src="../img/user_img.png" alt="사용자 이미지" class="group_create_user_img" />
+            <div class="main--group">
+              <div class="main--group_box">
+                <div class="main--group__user-info">
+                  <img
+                    src="../img/user_img.png"
+                    alt="사용자 이미지"
+                    class="main--group__user-info_img"
+                  />
                   <span>김계란</span>
-                  <img src="../img/상세설명 아이콘.png" alt="" class="explain_icon" />
+                  <img
+                    src="../img/상세설명 아이콘.png"
+                    alt=""
+                    class="main--group__user-info_icon"
+                  />
                 </div>
-                <div class="title_icon">
-                  <span class="title_text">수영 같이 하실 분 구함</span>
+                <div class="main--group__details">
+                  <span class="main--group__details_title"
+                    >수영 같이 하실 분 구함</span
+                  >
                 </div>
-                <p class="date">24.06.14 (금)</p>
-                <p class="time">8:00 PM</p>
-                <div class="block">
-                  <span class="size">참여인원: 3/10</span>
-                  <span class="location">강남구</span>
-                  <span class="delete">취소</span>
+                <p class="main--group__date">24.06.14 (금)</p>
+                <p class="main--group__time">8:00 PM</p>
+                <div class="main--group__status">
+                  <img
+                    src="../img/black-heart.png"
+                    alt="찜 하트"
+                    class="main--group__status_likeheart"
+                  />
+                  <span class="main--group__status_size">참여인원: 3/10</span>
+                  <span class="main--group__status_location">강남구</span>
+                  <span class="main--group__status_cancel">취소</span>
                 </div>
               </div>
+              <div class="main--group_box"></div>
+              <div class="main--group_box"></div>
+              <div class="main--group_box"></div>
             </div>
           </div>
         </div>
