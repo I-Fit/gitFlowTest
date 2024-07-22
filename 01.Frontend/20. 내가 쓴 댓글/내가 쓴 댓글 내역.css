@@ -257,6 +257,43 @@ h2 {
   left: 45px;
 }
 
+.comment_details {
+  width: 600px;
+  height: 300px;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+.comment_detail_user {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.comment_detail__img {
+  width: 50px;
+  height: 40px;
+}
+.user_name {
+  font-size: 18px;
+}
+.comment_detail__icon {
+  width: 40px;
+  height: 40px;
+  margin-left: 420px;
+}
+.my_comment_detail {
+  font-size: 16px;
+  padding: 5px;
+  margin-left: 10px;
+  margin-top: 20px;
+}
+.post_comment {
+  margin: 10px 0 10px 10px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: lighter;
+}
+
 /* 푸터 부분 */
 .footer {
   display: grid;

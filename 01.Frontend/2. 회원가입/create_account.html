@@ -28,147 +28,191 @@
           <div class="login">로그인</div>
         </div>
       </header>
-      <main class="content">
-        <form action="process_signup.php" method="post">
-          <div class="account_container">
+      <main class="main">
+        <form
+          action="process_signup.php"
+          method="post"
+          class="main--signup-form"
+        >
+          <div class="main--signup-form__container">
             <h1>회원가입</h1>
             <p>회원이 되어 다양한 헤택을 경험해 보세요!</p>
-            <label class="user">
-              <input type="radio" name="contact" value="user" />
-              <span>일반 회원</span>
+            <label class="main--signup-form__radio-label">
+              <input
+                type="radio"
+                name="contact"
+                value="user"
+                class="signup-form__radio-input"
+              />
+              <span class="signup-form__radio-text user">일반 회원</span>
             </label>
-            <label>
-              <input type="radio" name="contact" value="teacher" />
-              <span>강사</span>
+            <label class="main--signup-form__radio-label">
+              <input
+                type="radio"
+                name="contact"
+                value="teacher"
+                class="signup-from__radio-input"
+              />
+              <span class="signup-form__radio-text">강사</span>
             </label>
-            <div class="id_block input_block">
-              <label for="id">아이디</label>
-              <div class="input_row">
+            <div class="signup-form__id input_block">
+              <label class="signup-form__label" for="id">아이디</label>
+              <div class="signup-form__field">
                 <input
                   type="text"
                   id="id"
                   name="id"
                   placeholder="아이디를 입력하세요."
+                  class="signup-form__field-input"
                 />
-                <button type="submit">중복 확인</button>
+                <button type="submit" class="signup-form__field-button">
+                  중복 확인
+                </button>
               </div>
             </div>
-            <div class="pw_block input_block">
-              <label for="password">비밀번호</label>
-              <div class="input_row">
+            <div class="signup-form__pw input_block">
+              <label class="signup-form__label" for="password">비밀번호</label>
+              <div class="signup-form__field">
                 <input
                   type="text"
                   id="password"
                   name="password"
                   placeholder="비밀번호를 입력하세요."
+                  class="signup-form__field-input"
                 />
               </div>
             </div>
-            <div class="pw_check_block input_block">
-              <label for="password_check">비밀번호 확인</label>
-              <div class="input_row">
+            <div class="signup-form__pw-check input_block">
+              <label class="signup-form__label" for="password_check"
+                >비밀번호 확인</label
+              >
+              <div class="signup-form__field">
                 <input
                   type="text"
                   id="password_check"
                   name="password_check"
                   placeholder="비밀번호 재입력"
+                  class="signup-form__field-input"
                 />
               </div>
             </div>
-            <div class="name_block input_block">
-              <label for="name">이름</label>
-              <div class="input_row">
+            <div class="signup-form__name input_block">
+              <label class="signup-form__label" for="name">이름</label>
+              <div class="signup-form__field">
                 <input
                   type="text"
                   id="name"
                   name="name"
                   placeholder="이름을 입력해주세요."
+                  class="signup-form__field-input"
                 />
               </div>
             </div>
-            <div class="phone_block input_block">
-              <label for="phone">전화번호</label>
-              <div class="input_row">
+            <div class="signup-form__phone input_block">
+              <label class="signup-form__label" for="phone">전화번호</label>
+              <div class="signup-form__field">
                 <input
                   type="text"
                   id="phone"
                   name="phone"
                   placeholder="전화번호를 입력해주세요."
+                  class="signup-form__field-input"
                 />
               </div>
             </div>
-            <div class="email_block input_block">
-              <label for="email">이메일</label>
-              <div class="input_row">
+            <div class="signup-form__email input_block">
+              <label class="signup-form__label" for="email">이메일</label>
+              <div class="signup-form__field">
                 <input
                   type="text"
                   id="email"
                   name="email"
                   placeholder="이메일을 입력해주세요."
+                  class="signup-form__field-input"
                 />
                 <span class="at">@</span>
-                <select title="주소" name="email_domain" id="domain">
+                <select
+                  title="주소"
+                  name="email_domain"
+                  class="signup-form__email-domain"
+                >
                   <option value="">주소 선택</option>
                   <option value="naver">naver.com</option>
                   <option value="gmail">gmail.com</option>
                   <option value="daum">daum.net</option>
                 </select>
-                <button type="submit">인증 요청</button>
+                <button type="submit" class="signup-form__field-button">
+                  인증 요청
+                </button>
               </div>
             </div>
             <div class="email_number_block input_block">
-              <label for="email_number">이메일 인증번호</label>
-              <div class="input_row">
+              <label class="signup-form__label" for="email_number"
+                >이메일 인증번호</label
+              >
+              <div class="signup-form__field">
                 <input
                   type="text"
                   id="email_number"
                   name="email_number"
                   placeholder="이메일 인증번호를 입력해주세요."
+                  class="signup-form__field-input"
                 />
-                <button type="submit">확인</button>
+                <button type="submit" class="signup-form__field-button">
+                  확인
+                </button>
               </div>
             </div>
-            <div class="terms_block">
-              <label>
+            <div class="signup-form__terms">
+              <label class="signup-form__terms-label">
                 <input
                   type="radio"
                   name="terms"
                   value="agree"
                   class="check_all"
                 />
-                <span>이용약관 전체 동의</span>
+                <span class="signup-form__terms-text">이용약관 전체 동의</span>
               </label>
-              <label>
+              <label class="signup-form__terms-label">
                 <input
                   type="radio"
                   name="terms1"
                   value="agree_1"
                   class="radios"
                 />
-                <span>이용약관 동의(필수)</span>
+                <span class="signup-form__terms-text">이용약관 동의(필수)</span>
               </label>
-              <label>
+              <label class="signup-form__terms-label">
                 <input
                   type="radio"
                   name="terms2"
                   value="agree_2"
                   class="radios"
                 />
-                <span>개인정보 수집 및 이용 동의(필수)</span>
+                <span class="signup-form__terms-text"
+                  >개인정보 수집 및 이용 동의(필수)</span
+                >
               </label>
-              <label>
+              <label class="signup-form__terms-label">
                 <input
                   type="radio"
                   name="terms3"
                   value="agree_3"
                   class="radios"
                 />
-                <span>프로모션 정보 수신 동의(선택)</span>
+                <span class="signup-form__terms-text"
+                  >프로모션 정보 수신 동의(선택)</span
+                >
               </label>
             </div>
-            <button class="account" type="submit">회원가입</button>
-            <p class="account_jonjae">
-              이미 계정이 있으신가요?<span>로그인 하기</span>
+            <button class="signup-form__terms-button" type="submit">
+              회원가입
+            </button>
+            <p class="signup-form__terms-account">
+              이미 계정이 있으신가요?<span
+                class="signup-form__terms-account__text"
+                >로그인 하기</span
+              >
             </p>
           </div>
         </form>

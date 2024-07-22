@@ -85,24 +85,24 @@ a {
 }
 /* content 부분 */
 
-.content {
+.main {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-form {
+.main--signup-form {
   margin-top: 50px;
 }
-.account_container {
+.main--signup-form__container {
   width: 500px;
   height: 1300px;
   text-align: center;
   position: relative;
 }
-.account_container h1 {
+.main--signup-form__container h1 {
   margin: 22px 0px;
 }
-.account_container p {
+.main--signup-form__container p {
   margin: 16px 0px;
 }
 .user::after {
@@ -116,16 +116,16 @@ form {
   /* margin: 10px 0; */
   width: 100%;
 }
-.input_block label {
+.signup-form__label {
   margin-bottom: 10px;
 }
-.input_row {
+.signup-form__field {
   display: flex;
   width: 404px;
   height: 35px;
 }
 
-.input_row input {
+.signup-form__field-input {
   flex: 1;
   padding: 8px;
   border: 1px solid rgba(0, 0, 0, 0.253);
@@ -135,7 +135,7 @@ form {
   width: 100px;
   height: 35px;
 }
-.input_row button {
+.signup-form__field-button {
   padding: 8px 16px;
   border: none;
   background-color: #007bff;
@@ -144,35 +144,35 @@ form {
   cursor: pointer;
 }
 
-.input_row button:hover {
+/* .input_row button:hover {
   background-color: #0056b3;
-}
-.id_block {
+} */
+.signup-form__id {
   position: absolute;
   top: 200px;
   left: 55px;
 }
-.pw_block {
+.signup-form__pw {
   position: absolute;
   top: 280px;
   left: 55px;
 }
-.pw_check_block {
+.signup-form__pw-check {
   position: absolute;
   top: 370px;
   left: 55px;
 }
-.name_block {
+.signup-form__name {
   position: absolute;
   top: 450px;
   left: 55px;
 }
-.phone_block {
+.signup-form__phone {
   position: absolute;
   top: 540px;
   left: 55px;
 }
-.email_block {
+.signup-form__email {
   position: absolute;
   top: 630px;
   left: 55px;
@@ -188,7 +188,7 @@ input::placeholder {
 .at {
   margin-top: 6px;
 }
-#domain {
+.signup-form__email-domain {
   margin-right: 10px;
   margin-left: 10px;
   padding: 8px;
@@ -199,7 +199,7 @@ input::placeholder {
   color: rgba(0, 0, 0, 0.616);
 }
 
-.terms_block {
+.signup-form__terms {
   text-align: left;
   margin-top: 10px;
   position: absolute;
@@ -207,12 +207,12 @@ input::placeholder {
   left: 55px;
 }
 
-.terms_block label {
+.signup-form__terms-label {
   display: block;
   margin-top: 20px;
   position: relative;
 }
-.terms_block label::after {
+.signup-form__terms-label::after {
   content: ">";
   position: absolute;
   left: 370px;
@@ -221,11 +221,11 @@ input::placeholder {
   font-size: 14px;
   font-weight: bold;
 }
-.terms_block span {
+.signup-form__terms-text {
   font-size: 10px;
 }
 
-.account {
+.signup-form__terms-button {
   position: absolute;
   top: 1010px;
   left: 135px;
@@ -233,19 +233,18 @@ input::placeholder {
   height: 40px;
   border: none;
   border-radius: 4px;
-  /* margin: 16px 8px; */
   background-color: #007bff;
   color: white;
   cursor: pointer;
   font-size: 20px;
 }
 
-.account_jonjae {
+.signup-form__terms-account {
   position: absolute;
   top: 1070px;
   left: 90px;
 }
-.account_jonjae span {
+.signup-form__terms-account__text {
   color: #007bff;
   margin-left: 20px;
 }
