@@ -1,0 +1,160 @@
+@charset "utf-8";
+
+/* content 부분 */
+main {
+  width: 100%;
+  height: 800px;
+  display: flex;
+  justify-content: center;
+}
+
+.content-container {
+  width: 1536px;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.payment-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.payment-content {
+  width: 490px;
+  height: 100%;
+}
+
+.username, 
+.phone, 
+.product {
+  color: #8d8ba7;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px;
+}
+
+.card-pay,
+.kakao-pay,
+.naver-pay {
+  width: 144px;
+  height: 47px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1a73e8;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.coupon-container, 
+.point-container {
+  margin-top: 30px;
+}
+
+.point,
+.coupon {
+  font-size: 18px;
+  font-weight: bold;
+  color: #8d8ba7;
+}
+
+.coupon-input,
+.point-input {
+  margin-top: 10px;
+  padding-left: 10px;
+  width: 450px;
+  height: 47px;
+  border: 1px solid rgba(0, 0, 0, 0.281);
+  border-radius: 5px;
+}
+
+.coupon-select-btn,
+.point-full-use-btn {
+  width: 72px;
+  height: 47px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1a73e8;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.available-point {
+  font-size: 12px;
+  font-weight: bold;
+  color: red;
+  margin-left: 270px;
+}
+
+.price-container {
+  display: flex;
+  justify-self: center;
+  align-items: center;
+}
+
+.price-box {
+  /* margin-bottom: 20px; */
+  width: 100%;
+  height: 250px;
+}
+
+.title {
+  margin: 65px 0 20px 0px;
+  font-size: 24px;
+  color: #8d8ba7;
+  font-weight: bold;
+}
+
+.account-payment-title {
+  margin: 0px 0 20px 0px;
+  font-size: 24px;
+  color: #8d8ba7;
+  font-weight: bold;
+}
+
+.price-content {
+  width: 490px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+}
+
+.payment-title {
+  font-size: 44px;
+  font-weight: bold;
+  color: #5d5a88;
+  margin: 0px 0px 382px 160px;
+}
+
+.main--container__payment__container__price__amount {
+  font-size: 24px;
+  font-weight: bold;
+  color: #8d8ba7;
+  padding: 10px;
+}
+
+.product-price, 
+.coupon-amount, 
+.point-amount, 
+.payment-amount {
+  font-size: 18px;
+  color: #8d8ba7;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.payment-btn {
+  width: 423px;
+  height: 47px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  background-color: #1a73e8;
+  font-weight: bold;
+  font-size: 15px;
+  margin-top: 7px;
+}
