@@ -1,0 +1,278 @@
+@charset "utf-8";
+
+/* content 부분 */
+main {
+  width: 100%;
+  height: 1800px;
+  display: grid;
+  grid-template-rows: 1fr 1000px;
+}
+
+.content-top {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 850px;
+}
+
+.content-text {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.text-membership {
+  width: 400px;
+  height: 200px;
+}
+
+.text-membership::after {
+  content: "";
+  width: 100%;
+  height: 2px;
+  background-color: black;
+  display: block;
+}
+
+.content-title {
+  font-size: 68px;
+  font-weight: bold;
+  color: #5d5a88;
+  margin: 245px 0px 30px 0px;
+}
+
+.content-text-rank {
+  margin-right: 45px;
+  margin-top: 255px;
+}
+
+.content-text-rank span {
+  font-size: 32px;
+  font-weight: bold;
+  color: #5d5a88;
+  padding: 20px;
+}
+
+.benefit-table {
+  position: relative;
+}
+
+.benefit01-bubble {
+  width: 387px;
+  height: 362px;
+  position: absolute;
+  top: 45px;
+  left: 0px;
+}
+
+.benefit01-text {
+  position: absolute;
+  top: 26%;
+  left: 31%;
+  font-size: 44px;
+  font-weight: bold;
+  color: #1e285f;
+}
+
+.benefit01-title {
+  position: absolute;
+  top: 47%;
+  left: 17%;
+  font-size: 22px;
+  font-weight: bold;
+  color: #5d5a88;
+}
+
+.benefit01-content {
+  position: absolute;
+  top: 61%;
+  left: 15%;
+  color: #9795b5;
+}
+
+.benefit02-bubble {
+  width: 387px;
+  height: 362px;
+  position: absolute;
+  top: 170px;
+  left: 400px;
+}
+
+.benefit02-text {
+  position: absolute;
+  top: 25%;
+  left: 31%;
+  font-size: 44px;
+  font-weight: bold;
+  color: #1e285f;
+}
+
+.benefit02-title {
+  position: absolute;
+  top: 46%;
+  left: 2%;
+  font-size: 22px;
+  font-weight: bold;
+  color: #5d5a88;
+}
+
+.benefit02-content {
+  position: absolute;
+  top: 61%;
+  left: 23%;
+  color: #9795b5;
+}
+
+.benefit03-bubble {
+  width: 387px;
+  height: 362px;
+  position: absolute;
+  top: 435px;
+  left: 75px;
+}
+
+.benefit03-text {
+  position: absolute;
+  top: 25%;
+  left: 31%;
+  font-size: 44px;
+  font-weight: bold;
+  color: #1e285f;
+}
+
+.benefit03-title {
+  position: absolute;
+  top: 47%;
+  left: 7%;
+  font-size: 22px;
+  font-weight: bold;
+  color: #5d5a88;
+}
+
+.benefit03-content {
+  position: absolute;
+  top: 61%;
+  left: 17%;
+  color: #9795b5;
+}
+
+.circle {
+  width: 400px;
+  height: 370px;
+  display: block;
+  position: relative;
+}
+
+/* 혜택받기 box */
+.content-bottom {
+  display: flex;
+  justify-content: center;
+
+  position: relative;
+}
+
+.bottom-title {
+  font-size: 56px;
+  font-weight: bold;
+  color: #5d5a88;
+
+  margin-top: 100px;
+  margin-bottom: 50px;
+
+}
+
+.bottom-subtitle {
+  font-size: 25px;
+  font-weight: bold;
+  color: #5d5a88;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.benefit01-box {
+  width: 387px;
+  height: 671px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  position: absolute;
+  top: 220px;
+  left: 140px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.emoji {
+  width: 100px;
+  height: 100px;
+  margin-top: 120px;
+  background: none;
+  background-size: cover;
+}
+
+.benefit-price {
+  font-size: 44px;
+  font-weight: bold;
+  color: #5d5a88;
+  margin-top: 40px;
+}
+
+.benefit-rank {
+  font-size: 20px;
+  font-weight: bold;
+  color: #8d8ba7;
+  margin-top: 10px;
+}
+
+.benefit-full-text {
+  font-size: 18px;
+  color: #9795b5;
+  text-align: center;
+  margin-top: 40px;
+  padding: 10px;
+}
+
+.btn {
+  width: 320px;
+  height: 60px;
+  border: none;
+  background-color: #1a73e8;
+  border-radius: 30px;
+  color: white;
+  font-size: 20px;
+  align-items: center;
+  margin-top: 40px;
+  cursor: pointer;
+  z-index: 1;
+  font-weight: bold;
+}
+
+.benefit02-box {
+  width: 387px;
+  height: 671px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  position: absolute;
+  top: 220px;
+  left: 575px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.benefit03-box {
+  width: 387px;
+  height: 671px;
+  border: 1px solid grey;
+  border-radius: 10px;
+  position: absolute;
+  top: 220px;
+  left: 1005px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

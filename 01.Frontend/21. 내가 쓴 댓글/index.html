@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>내가 쓴 댓글 내역</title>
+        <link rel="stylesheet" href="내가 쓴 댓글 내역.css"/>
+        <link rel="stylesheet" href="../logged-in-status.css"/>
+        <link rel="stylesheet" href="../nav.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <header>
+                <div class="icon-table">
+                    <div id="icon-img">
+                        <img src="../img/icon.PNG" alt="I-FIT-icon">
+                    </div>
+                    <div class="icon-text">I-Fit</div>
+                </div>
+                <div class="text-btn">
+                    <a href="/main.html">홈</a>
+                    <a href="#">모임 생성하기</a>
+                    <a href="#">오운완 챌린지</a>
+                    <a href="#">멤버십</a>
+                    <a href="#">마이페이지</a>
+                    <div class="login-btn">
+                        <img src="../img/user_img.png" alt="사용자 이미지"/>
+                        <div id="user-image"></div>
+                        <p class="login-user-name">김계란</p>
+                        <span>님, 환영합니다!</span>
+                    </div>
+                </div>
+            </header>
+            <main>
+                <nav>
+                    <div class="nav-list">
+                        <div class="selector">
+                            <p class="selector-title">모임 관리</p>
+                        </div>
+                        <p class="selector-text">내가 만든 모임</p>
+                        <p class="selector-text">모임 참여 내역</p>
+                        <p class="selector-text">찜한 모임 내역</p>
+                        <div class="selector">
+                            <p class="selector-title">멤버십</p>
+                        </div>
+                        <p class="selector-text">멤버십 혜택</p>
+                        <div class="selector">
+                            <p class="selector-title">게시글 관리</p>
+                        </div>
+                        <p class="selector-text">나의 게시물 내역</p>
+                        <p class="selector-text">내가 쓴 댓글 내역</p>
+                        <p class="selector-text">좋아요 한 게시글</p>
+                    </div>
+                </nav>
+                <div class="comment">
+                    <div class="comment-top">
+                        <h2>게시글 관리</h2>
+                        <p class="line text01">나의 게시물 내역</p>
+                        <p class="line text02">내가 쓴 댓글</p>
+                        <p class="text03">좋아요 한 게시물</p>
+                    </div>
+                    <div class="comment-middle">
+                        <div class="middle-filter">
+                            <div class="middle-filter-search-box">
+                                <input
+                                    type="text"
+                                    name="search"
+                                    class="search-box-input"
+                                    placeholder="검색어를 입력하세요."/>
+                                <img src="../img/search.icon.png" s="s" alt="search" class="search-box-icon"/>
+                            </div>
+                            <select title="정렬" class="middle-filter-sort">
+                                <option value="" selected="selected" disabled="disabled">정렬</option>
+                                <option value="popular">인기순</option>
+                                <option value="latest">최신순</option>
+                            </select>
+                        </div>
+                        <div class="comment-bottom-table">
+                            <div class="bottom-table">
+                                <div class="user-info">
+                                    <img class="user-info-img" src="../img/user_img.png" alt="">
+                                    <p class="user-info-name">김계란</p>
+                                    <img class="modify-icon" src="../img/dot.png" alt="">
+                                </div>
+                                <div class="user-comment">
+                                    ‘카페 메이플스토리’는 핑크 컬러 테마의 카페 식음 공간과 함께 몬스터 형태의 오브제로 세련된 분위기를 연출한 테라스, 포토 스팟이 마련된
+                                    굿즈존 등으로 구성됐다.
+                                </div>
+                                <div class="post-comment">
+                                    <p class="post-title">게시글 : 멤버들과 현충일 번개운동
+                                        <span class="creation-date">6일 전</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="bottom-table">
+                                <div class="user-info">
+                                    <img class="user-info-img" src="../img/user_img.png" alt="">
+                                    <p class="user-info-name">김계란</p>
+                                    <img class="modify-icon" src="../img/dot.png" alt="">
+                                </div>
+                                <div class="user-comment">
+                                    ‘카페 메이플스토리’는 핑크 컬러 테마의 카페 식음 공간과 함께 몬스터 형태의 오브제로 세련된 분위기를 연출한 테라스, 포토 스팟이 마련된
+                                    굿즈존 등으로 구성됐다.
+                                </div>
+                                <div class="post-comment">
+                                    <p class="post-title">게시글 : 멤버들과 현충일 번개운동
+                                        <span class="creation-date">6일 전</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <footer>
+                <div class="company-name">
+                    <p class="name">I-Fit</p>
+                    <p class="desc">Copyright @ 2024 KOSTA I-FIT | All Rights Reserved</p>
+                </div>
+                <div class="side-map">
+                    <div class="group1">
+                        <span class="home">홈</span>
+                        <span class="home-list">회원가입</span>
+                        <span class="home-list">로그인</span>
+                    </div>
+                    <div class="group2">
+                        <span class="activity">활동</span>
+                        <span class="activity-list">모임생성</span>
+                        <span class="activity-list">원데이 클래스</span>
+                        <span class="activity-list">오운완 챌린지</span>
+                    </div>
+                    <div class="group3">
+                        <span class="mypage">마이페이지</span>
+                        <span class="mypage-list">프로필</span>
+                        <span class="mypage-list">멤버십</span>
+                        <span class="mypage-list">참여내역</span>
+                        <span class="mypage-list">나의 게시물</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>

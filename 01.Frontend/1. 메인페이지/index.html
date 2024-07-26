@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>메인 페이지</title>
+    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="../non-logged-in-status.css">
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="icon-table">
+          <div class="icon-img">
+            <img src="../img/icon.PNG" alt="아이콘 이미지" />
+          </div>
+          <div class="icon-text">I-Fit</div>
+        </div>
+        <div class="text-btn">
+          <a href="#">홈</a>
+          <a href="#">모임 생성하기</a>
+          <a href="#">오운완 챌린지</a>
+          <a href="#">멤버십</a>
+          <a href="#">마이페이지</a>
+          <div class="login-btn">
+            <div class="join">회원가입</div>
+            <div class="login">로그인</div>
+          </div>
+        </div>
+      </header>
+      <main>
+        <!-- 캐러셀 부분 -->
+        <div class="carousel">
+          <div class="carousel-box">
+            <div class="arrow" id="left">&lang;</div>
+            <div class="arrow" id="right">&rang;</div>
+            <div class="carousel-in-content">
+              <p class="carousel-in-title">마감 임박 모임</p>
+              <p class="carousel-in-text">
+                곧 모집 인원 마감되는 모임을 알려드려요<br />상세 정보를 확인하신 후
+                참여해보세요
+              </p>
+            </div>
+            <div class="carousel-pagination">
+              <div class="carousel-circle"></div>
+              <div class="carousel-circle"></div>
+              <div class="carousel-circle"></div>
+              <div class="carousel-circle"></div>
+            </div>
+            <button type="button" class="carousel-btn">참석하기</button>
+
+          </div>
+        </div>
+
+        <!-- 종목, 장소, 날짜, 시간 필터 -->
+         <div class="main-bottom">
+           <div class="filter">
+             <div class="filter-list">
+               <select class="list-select" title="운동 종목">
+                 <option value="" selected disabled>운동 종목</option>
+               </select>
+               <select class="list-select" title="장소">
+                 <option value="" selected disabled>장소</option>
+               </select>
+               <select class="list-select" title="날짜">
+                 <option value="" selected disabled>날짜</option>
+               </select>
+               <select class="list-select" title="시간">
+                 <option value="" selected disabled>시간</option>
+               </select>
+               <form class="search-box">
+                 <input
+                   type="text"
+                   name="search"
+                   class="search-input"
+                   placeholder="검색어를 입력하세요."
+                 />
+                 <img
+                   src="../img/search.icon.png"
+                   alt="search"
+                   class="search-icon"
+                 />
+               </form>
+             </div>
+             <div class="sort">
+               <select class="sort-title" title="정렬">
+                 <option value="" selected disabled>정렬</option>
+                 <option value="1">인기순</option>
+                 <option value="2">오름차순</option>
+                 <option value="3">내림차순</option>
+                 <option value="4">최신순</option>
+               </select>
+             </div>
+   
+             <!-- 생성된 모임 영역 -->
+             <div class="group">
+               <div class="group-container">
+                 <div class="user-info">
+                   <img
+                     src="../img/user_img.png"
+                     alt="사용자 이미지"
+                     class="user-img"
+                   />
+                   <span>김계란</span>
+                   <img
+                     src="../img/상세설명 아이콘.png"
+                     alt=""
+                     class="detail-icon"
+                   />
+                 </div>
+                 <div class="group-content">
+                   <span class="title"> 수영 같이 하실 분 구함 </span>
+                 </div>
+                 <p class="date">24.06.14 (금)</p>
+                 <p class="time">8:00 PM</p>
+                 <div class="group-info">
+                   <img class="like-img" src="../img/heart.png" alt="하트" />
+                   <span class="size">참여인원: 3/10</span>
+                   <span class="location">강남구</span>
+                   <span class="cancel">참석</span>
+                 </div>
+               </div>
+               <div class="group-container"></div>
+               <div class="group-container"></div>
+               <div class="group-container"></div>
+             </div>
+           </div>
+         </div>
+      </main>
+      <footer>
+        <div class="company-name">
+          <p class="name">I-Fit</p>
+          <p class="desc">Copyright @ 2024 KOSTA I-FIT | All Rights Reserved</p>
+        </div>
+        <div class="side-map">
+          <div class="group1">
+            <span class="home">홈</span>
+            <span class="home-list">회원가입</span>
+            <span class="home-list">로그인</span>
+          </div>
+          <div class="group2">
+            <span class="activity">활동</span>
+            <span class="activity-list">모임생성</span>
+            <span class="activity-list">원데이 클래스</span>
+            <span class="activity-list">오운완 챌린지</span>
+          </div>
+          <div class="group3">
+            <span class="mypage">마이페이지</span>
+            <span class="mypage-list">프로필</span>
+            <span class="mypage-list">멤버십</span>
+            <span class="mypage-list">참여내역</span>
+            <span class="mypage-list">나의 게시물</span>
+          </div>
+        </div>
+      </footer>
+      <script src="./js/main.js"></script>
+      <script src="./js/main_carusel.js"></script>
+    </div>
+  </body>
+</html>
