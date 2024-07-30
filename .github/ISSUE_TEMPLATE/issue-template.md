@@ -7,12 +7,12 @@ assignees: ''
 
 ---
 
-## Description
+## 🔎 Description
 기능 설명
 
-## Todo
+## ✅ Todo
 - [ ] todo1
 - [ ] todo2
 
-## etc
+## 🌵 etc
 기타사항
