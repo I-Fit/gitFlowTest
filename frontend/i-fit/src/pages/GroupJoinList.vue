@@ -31,9 +31,7 @@
               <img src="@/assets/image/상세설명 아이콘.png" alt="" class="detail-icon" />
             </div>
             <div class="group-content">
-              <span class="title">
-                수영 같이 하실 분 구함
-              </span>
+              <span class="title"> 수영 같이 하실 분 구함 </span>
             </div>
             <p class="date">24.06.14 (금)</p>
             <p class="time">8:00 PM</p>
@@ -41,7 +39,9 @@
               <img class="like-image" src="@/assets/image/heart.png" alt="하트" />
               <span class="size">참여인원: 3/10</span>
               <span class="location">강남구</span>
-              <button type="button" class="cancel" @click="showConfirmPopup = true">취소</button>
+              <button type="button" class="cancel" @click="showConfirmPopup = true">
+                취소
+              </button>
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임 참여를 취소하시겠습니까?</p>
@@ -106,11 +106,11 @@
 </template>
 
 <script>
-import AppNav from '@/components/layout/AppNav.vue';
+import AppNav from "@/components/layout/AppNav.vue";
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 // import { useStore } from "vuex";
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   name: "GroupJoinList",
@@ -135,7 +135,7 @@ export default {
           console.error("Error", error);
         }
       }
-    }
+    };
     onMounted(() => {
       loadGroup();
     });
@@ -146,12 +146,12 @@ export default {
     const openModal = (item) => {
       selectedItem.value = item;
       isModalOpen.value = true;
-    }
+    };
 
     const closeModal = () => {
       isModalOpen.value = false;
       selectedItem.value = null;
-    }
+    };
     // 참석 모달 열기
     const isTooltipVisible = ref(true);
 
@@ -174,8 +174,8 @@ export default {
       showConfirmPopup,
       confirmDeletion,
       cancelDeletion,
-    }
-  }
+    };
+  },
 };
 </script>
 

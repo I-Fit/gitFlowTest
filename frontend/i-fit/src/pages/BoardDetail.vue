@@ -7,18 +7,14 @@
           <span class="user-name">김계란</span>
           <span class="creation-date">4 days ago</span>
         </div>
-        <div 
-          class="user-option"
-          src="@/assets/image/dot/png"
-          @click="toggleActions"
-          >
+        <div class="user-option" src="@/assets/image/dot/png" @click="toggleActions">
           <PostActions :visible="showActions" @navigate="handleNavigation" />
         </div>
       </div>
       <div class="content-title">
         <h1>멤버들이랑 현충일 번개 운동</h1>
         <div class="title-heart" @click="toggleHeart">
-          <div :class="{'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled}"></div>
+          <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
         </div>
       </div>
       <div class="content-image">
@@ -66,13 +62,7 @@
         </div>
       </div>
       <div class="content-add">
-        <input
-          v-model="comment"
-          placeholder="댓글을 입력해주세요."
-          @keydown="checkEnter"
-          @input="autoResize"
-            ref="input"
-        />
+        <input v-model="comment" placeholder="댓글을 입력해주세요." @keydown="checkEnter" @input="autoResize" ref="input" />
         <span class="comment-upload" @click="submit">&#10550;</span>
       </div>
     </div>
@@ -80,8 +70,8 @@
 </template>
 
 <script>
-  import PostActions from "./PostActions.vue";
-  /* import { useRouter } from "vue-router"; */
+import PostActions from "./PostActions.vue";
+/* import { useRouter } from "vue-router"; */
 
 export default {
   name: "BoardDetail",
@@ -100,20 +90,20 @@ export default {
 
   methods: {
     toggleActions() {
-        console.log("toggleActions called");
-        this.showActions = !this.showActions;
-      },
-      handleNavigation(action) {
-        if (action === "PostModify") {
-          this.$router.push("/PostModify"); // 수정 페이지로 이동
-        } else if (action === "delete") {
-          this.$router.push("/MainBoard"); // 메인 게시판으로 이동
-        }
-      },
+      console.log("toggleActions called");
+      this.showActions = !this.showActions;
+    },
+    handleNavigation(action) {
+      if (action === "PostModify") {
+        this.$router.push("/PostModify"); // 수정 페이지로 이동
+      } else if (action === "delete") {
+        this.$router.push("/MainBoard"); // 메인 게시판으로 이동
+      }
+    },
 
-      toggleHeart() {
-    this.isHeartFilled = !this.isHeartFilled; // 하트 상태 토글
-  },
+    toggleHeart() {
+      this.isHeartFilled = !this.isHeartFilled; // 하트 상태 토글
+    },
 
     checkEnter(event) {
       if (event.key === 'Enter' && !event.shiftKey) {
@@ -221,31 +211,41 @@ input {
 .title-heart {
   cursor: pointer;
   display: inline-block;
-  width: 40px; /* 하트의 크기를 조정합니다 */
-  height: 40px; /* 하트의 크기를 조정합니다 */
+  width: 35px;
+  /* 하트의 크기를 조정합니다 */
+  height: 35px;
+  /* 하트의 크기를 조정합니다 */
   position: relative;
 }
 
-  .title-heart div {
+.title-heart div {
   width: 100%;
   height: 100%;
   position: absolute;
   top: -4px;
-  left: 0;
+  right: 4px;
 }
 
 .empty-heart::before {
-  content: '\2764'; /* 빈 하트 문자 */
-  font-size: 35px; /* 하트의 크기 */
-  color: transparent; /* 하트의 내부는 투명하게 */
-  -webkit-text-stroke: 1px black; /* 하트의 테두리 색상 */
+  content: '\2764';
+  /* 빈 하트 문자 */
+  font-size: 35px;
+  /* 하트의 크기 */
+  color: transparent;
+  /* 하트의 내부는 투명하게 */
+  -webkit-text-stroke: 1px black;
+  /* 하트의 테두리 색상 */
 }
 
 .filled-heart::before {
-  content: '\2764'; /* 채워진 하트 문자 */
-  font-size: 35px; /* 하트의 크기 */
-  color: red; /* 채워진 하트의 색상 */
-  -webkit-text-stroke: none; /* 채워진 하트의 테두리 제거 */
+  content: '\2764';
+  /* 채워진 하트 문자 */
+  font-size: 35px;
+  /* 하트의 크기 */
+  color: red;
+  /* 채워진 하트의 색상 */
+  -webkit-text-stroke: none;
+  /* 채워진 하트의 테두리 제거 */
 }
 
 .content-image {
@@ -329,7 +329,8 @@ input {
   border-radius: 5px;
   justify-content: space-between;
   align-items: center;
-  position: relative; /* 추가했는데 별로면 수정. */
+  position: relative;
+  /* 추가했는데 별로면 수정. */
 }
 
 .content-add input {

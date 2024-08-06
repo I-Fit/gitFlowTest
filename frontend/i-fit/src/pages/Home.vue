@@ -56,10 +56,14 @@
             <p class="date">24.06.14 (금)</p>
             <p class="time">8:00 PM</p>
             <div class="group-info">
-              <img class="like-img" src="../assets/image/heart.png" alt="하트" />
+              <div class="title-heart" @click="toggleHeart">
+                <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
+              </div>
               <span class="size">참여인원: 3/10</span>
               <span class="location">강남구</span>
-              <button type="button" class="attend" @click="showConfirmPopup = true">참석</button>
+              <button type="button" class="attend" @click="showConfirmPopup = true">
+                참석
+              </button>
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
@@ -85,7 +89,9 @@
             <p class="date">24.06.14 (금)</p>
             <p class="time">{{ group.selectedTime }}</p>
             <div class="group-info">
-              <img class="like-img" src="../assets/image/heart.png" alt="하트" />
+              <div class="title-heart" @click="toggleHeart">
+                <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
+              </div>
               <span class="size">참여인원: {{ group.person }}</span>
               <span class="location">{{ group.location }}</span>
               <button type="button" class="attend" @click="showConfirmPopup = true">
@@ -238,6 +244,11 @@ export default {
     const cancelDeletion = () => {
       showConfirmPopup.value = false;
     };
+    // 모임 찜 이벤트
+    const isHeartFilled = ref(false);
+    const toggleHeart = () => {
+      isHeartFilled.value = !isHeartFilled.value;
+    }
 
     return {
       formData,
@@ -247,6 +258,8 @@ export default {
       showConfirmPopup,
       confirmDeletion,
       cancelDeletion,
+      isHeartFilled,
+      toggleHeart,
     };
   },
 };
@@ -566,5 +579,46 @@ main {
   background-color: #87cefa;
   transform: scale(0.98);
   /* 클릭 시 버튼 크기 살짝 축소 */
+}
+
+/* 하트 색상 변경 */
+.title-heart {
+  cursor: pointer;
+  display: inline-block;
+  width: 35px;
+  /* 하트의 크기를 조정합니다 */
+  height: 35px;
+  /* 하트의 크기를 조정합니다 */
+  position: relative;
+}
+
+.title-heart div {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  bottom: 9px;
+  right: 10px;
+}
+
+.empty-heart::before {
+  content: '\2764';
+  /* 빈 하트 문자 */
+  font-size: 35px;
+  /* 하트의 크기 */
+  color: transparent;
+  /* 하트의 내부는 투명하게 */
+  -webkit-text-stroke: 1px black;
+  /* 하트의 테두리 색상 */
+}
+
+.filled-heart::before {
+  content: '\2764';
+  /* 채워진 하트 문자 */
+  font-size: 35px;
+  /* 하트의 크기 */
+  color: red;
+  /* 채워진 하트의 색상 */
+  -webkit-text-stroke: none;
+  /* 채워진 하트의 테두리 제거 */
 }
 </style>
