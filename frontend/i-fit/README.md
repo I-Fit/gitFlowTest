@@ -1,4 +1,4 @@
-# i-fit
+# vue-pro
 
 ## Project setup
 ```
