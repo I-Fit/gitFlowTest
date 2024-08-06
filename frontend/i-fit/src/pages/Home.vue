@@ -84,7 +84,7 @@
               />
               <span class="size">참여인원: 3/10</span>
               <span class="location">강남구</span>
-              <span class="cancel">참석</span>
+              <button type="button" class="cancel">참석</button>
             </div>
           </div>
           <div class="group-container">
