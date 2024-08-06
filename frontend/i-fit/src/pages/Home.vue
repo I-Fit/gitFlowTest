@@ -2,10 +2,7 @@
   <main>
     <!-- 캐러셀 부분 -->
     <carousel class="carousel">
-      <carousel-box
-        class="carousel-box"
-        :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
-      >
+      <carousel-box class="carousel-box" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
         <div class="carousel-item" v-for="item in items" :key="item.id">
           {{ item.content }}
         </div>
@@ -31,17 +28,8 @@
             <option value="" selected disabled>시간</option>
           </select>
           <form class="search-box">
-            <input
-              type="text"
-              name="search"
-              class="search-input"
-              placeholder="검색어를 입력하세요."
-            />
-            <img
-              src="../assets/image/search.icon.png"
-              alt="search"
-              class="search-icon"
-            />
+            <input type="text" name="search" class="search-input" placeholder="검색어를 입력하세요." />
+            <img src="../assets/image/search.icon.png" alt="search" class="search-icon" />
           </form>
         </div>
         <div class="sort">
@@ -58,18 +46,9 @@
         <div class="group">
           <div class="group-container">
             <div class="user-info">
-              <img
-                src="../assets/image/user_img.png"
-                alt="사용자 이미지"
-                class="user-img"
-              />
+              <img src="../assets/image/user_img.png" alt="사용자 이미지" class="user-img" />
               <span>김계란</span>
-              <img
-                src="../assets/image/상세설명 아이콘.png"
-                alt=""
-                class="detail-icon"
-                @click="openModal(item)"
-              />
+              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal(item)" />
             </div>
             <div class="group-content">
               <span class="title"> 수영 같이 하실 분 구함 </span>
@@ -77,49 +56,54 @@
             <p class="date">24.06.14 (금)</p>
             <p class="time">8:00 PM</p>
             <div class="group-info">
-              <img
-                class="like-img"
-                src="../assets/image/heart.png"
-                alt="하트"
-              />
+              <img class="like-img" src="../assets/image/heart.png" alt="하트" />
               <span class="size">참여인원: 3/10</span>
               <span class="location">강남구</span>
-              <button type="button" class="cancel">참석</button>
+              <button type="button" class="attend" @click="showConfirmPopup = true">참석</button>
+              <div v-if="showConfirmPopup" class="confirm-popup">
+                <div class="popup-content">
+                  <p>모임에 참여하시겠습니까?</p>
+                  <button class="confirm-btn" @click="confirmDeletion">
+                    확인
+                  </button>
+                  <button class="cancle-btn" @click="cancelDeletion">
+                    취소
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="group-container">
+          <div v-for="group in groups" :key="group.communityId" class="group-container">
             <div class="user-info">
-              <img
-                :src="additionalData.userImg"
-                alt="사용자 이미지"
-                class="user-img"
-              />
-              <span>{{ additionalData.username }}</span>
-              <img
-                src="../assets/image/상세설명 아이콘.png"
-                alt=""
-                class="detail-icon"
-                @click="openModal"
-              />
+              <img :src="group.user_img || '/default-profile.png'" alt="사용자 이미지" class="user-img" />
+              <span>{{ group.username }}</span>
+              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
-              <span class="title">{{ formData.title }}</span>
+              <span class="title">{{ group.title }}</span>
             </div>
             <p class="date">24.06.14 (금)</p>
-            <p class="time">{{ formData.selectedTime }}</p>
+            <p class="time">{{ group.selectedTime }}</p>
             <div class="group-info">
-              <img
-                class="like-img"
-                src="../assets/image/heart.png"
-                alt="하트"
-              />
-              <span class="size">참여인원: {{ formData.person }}</span>
-              <span class="location">{{ formData.location }}</span>
-              <span class="cancel">참석</span>
+              <img class="like-img" src="../assets/image/heart.png" alt="하트" />
+              <span class="size">참여인원: {{ group.person }}</span>
+              <span class="location">{{ group.location }}</span>
+              <button type="button" class="attend" @click="showConfirmPopup = true">
+                참석
+              </button>
+              <div v-if="showConfirmPopup" class="confirm-popup">
+                <div class="popup-content">
+                  <p>모임에 참여하시겠습니까?</p>
+                  <button class="confirm-btn" @click="confirmDeletion">
+                    확인
+                  </button>
+                  <button class="cancle-btn" @click="cancelDeletion">
+                    취소
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="group-container"></div>
-          <div class="group-container"></div>
         </div>
       </div>
     </div>
@@ -137,6 +121,7 @@
 <script>
 import { ref, computed } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
 export default {
   name: "Home",
@@ -229,21 +214,39 @@ export default {
 
   setup() {
     const store = useStore();
-
+    const router = useRouter();
+    // 모임 생성 vuex 상태 가져오기?
     const formData = computed(() => store.getters["creategroup/formData"]);
+    // 서버로 부터 추가적으로 받은 데이터 가져오기?
     const additionalData = computed(
       () => store.getters["creategroup/additionalData"]
     );
+    // 그룹 목록을 vuex 상태에서 가져오기
+    const groups = computed(() => store.getters["groupList/groups"]);
 
+    // 참석 모달 열기
     const isTooltipVisible = ref(true);
 
     const toggleTooltip = () => {
       isTooltipVisible.value = !isTooltipVisible.value;
     };
+    // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
+    const showConfirmPopup = ref(false);
+    const confirmDeletion = (communityId) => {
+      router.push({ name: "GroupJoinList", query: { communityId } });
+    };
+    const cancelDeletion = () => {
+      showConfirmPopup.value = false;
+    };
+
     return {
       formData,
       additionalData,
+      groups,
       toggleTooltip,
+      showConfirmPopup,
+      confirmDeletion,
+      cancelDeletion,
     };
   },
 };
@@ -467,7 +470,7 @@ main {
   margin-right: 5px;
 }
 
-.cancel {
+.attend {
   padding: 11px 17px;
   border: none;
   border-radius: 10px;
@@ -478,6 +481,16 @@ main {
   width: 58px;
   height: 38px;
   cursor: pointer;
+}
+
+.attend:hover {
+  background-color: #87cefa;
+}
+
+.attend:active {
+  background-color: #87cefa;
+  transform: scale(0.98);
+  /* 클릭 시 버튼 크기 살짝 축소 */
 }
 
 /* 모달 창 스타일 */
@@ -509,5 +522,49 @@ main {
   right: 10px;
   font-size: 24px;
   cursor: pointer;
+}
+
+/* 팝업 스타일링 */
+.confirm-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-weight: bold;
+}
+
+.popup-content button {
+  margin: 20px;
+  width: 100px;
+  height: 35px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  border: none;
+  color: white;
+  background-color: #1a73e8;
+}
+
+.popup-content button:hover {
+  background-color: #87cefa;
+}
+
+.popup-content button:active {
+  background-color: #87cefa;
+  transform: scale(0.98);
+  /* 클릭 시 버튼 크기 살짝 축소 */
 }
 </style>

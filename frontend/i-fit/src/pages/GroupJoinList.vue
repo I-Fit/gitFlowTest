@@ -11,18 +11,8 @@
       <div class="party-middle">
         <div class="middle-filter">
           <div class="middle-filter-search-box">
-            <input
-              type="text"
-              name="search"
-              id="search_input"
-              placeholder="검색어를 입력하세요."
-              class="search-box-input"
-            />
-            <img
-              src="@/assets/image/search.icon.png"
-              alt="search"
-              class="search-box-icon"
-            />
+            <input type="text" name="search" id="search_input" placeholder="검색어를 입력하세요." class="search-box-input" />
+            <img src="@/assets/image/search.icon.png" alt="search" class="search-box-icon" />
           </div>
           <select title="정렬" class="middle-filter-sort">
             <option value="" selected="selected" disabled="disabled">
@@ -36,35 +26,79 @@
         <div class="group">
           <div class="group-container">
             <div class="user-info">
-              <img
-                src="@/assets/image/user_img.png"
-                alt="사용자 이미지"
-                class="user-image"
-              />
-              <span>{{ userName }}</span>
-              <img
-                src="@/assets/image/상세설명 아이콘.png"
-                alt=""
-                class="detail-icon"
-              />
+              <img src="@/assets/image/user_img.png" alt="사용자 이미지" class="user-image" />
+              <span>김계란</span>
+              <img src="@/assets/image/상세설명 아이콘.png" alt="" class="detail-icon" />
             </div>
             <div class="group-content">
-              <span class="title">{{ groupTitle }}</span>
+              <span class="title">
+                수영 같이 하실 분 구함
+              </span>
             </div>
-            <p class="date">{{ groupDate }}</p>
-            <p class="time">{{ groupTime }}</p>
+            <p class="date">24.06.14 (금)</p>
+            <p class="time">8:00 PM</p>
             <div class="group-info">
               <img class="like-image" src="@/assets/image/heart.png" alt="하트" />
-              <span class="size">참여인원: {{ participants }}</span>
-              <span class="location">{{ location }}</span>
-              <span class="cancel" @click="cancelGroup">취소</span>
+              <span class="size">참여인원: 3/10</span>
+              <span class="location">강남구</span>
+              <button type="button" class="cancel" @click="showConfirmPopup = true">취소</button>
+              <div v-if="showConfirmPopup" class="confirm-popup">
+                <div class="popup-content">
+                  <p>모임 참여를 취소하시겠습니까?</p>
+                  <button class="confirm-btn" @click="confirmDeletion">
+                    확인
+                  </button>
+                  <button class="cancle-btn" @click="cancelDeletion">
+                    취소
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
+          <div v-for="group in groups" :key="group.communityId" class="group-container">
+            <div class="user-info">
+              <img :src="group.user_img || defaultProfileImage" alt="사용자 이미지" class="user-img" />
+              <span>{{ group.username }}</span>
+              <img src="@/assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
+            </div>
+            <div class="group-content">
+              <span class="title">{{ group.title }}</span>
+            </div>
+            <p class="date">24.06.14 (금)</p>
+            <p class="time">{{ group.selectedTime }}</p>
+            <div class="group-info">
+              <img class="like-img" src="@/assets/image/heart.png" alt="하트" />
+              <span class="size">참여인원: {{ group.person }}</span>
+              <span class="location">{{ group.location }}</span>
+              <button type="button" class="cancel" @click="showConfirmPopup = true">
+                취소
+              </button>
+              <div v-if="showConfirmPopup" class="confirm-popup">
+                <div class="popup-content">
+                  <p>모임 참여를 취소하시겠습니까?</p>
+                  <button class="confirm-btn" @click="confirmDeletion">
+                    확인
+                  </button>
+                  <button class="cancle-btn" @click="cancelDeletion">
+                    취소
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="group-container"></div>
           <div class="group-container"></div>
           <div class="group-container"></div>
         </div>
         <!-- <div class="next_page"></div> -->
+      </div>
+    </div>
+    <div class="modal" v-if="isModalOpen">
+      <div class="modal-content">
+        <span class="close" @click="closeModal">&times;</span>
+        <h2>{{ formData.topboxContent }}</h2>
+        <p>{{ selectedItem ? selectedItem.content : "" }}</p>
       </div>
     </div>
   </main>
@@ -73,28 +107,75 @@
 
 <script>
 import AppNav from '@/components/layout/AppNav.vue';
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+// import { useStore } from "vuex";
+import axios from 'axios';
 
 export default {
-    name: "GroupJoinList",
-    components: {
-      AppNav,
-    },
+  name: "GroupJoinList",
+  components: {
+    AppNav,
+  },
 
-  data() {
-    return {
-      userName: "김계란",
-      groupTitle: "수영 같이 하실 분 구함",
-      groupDate: "24.06.14 (금)",
-      groupTime: "8:00 PM",
-      participants: "3/10",
-      location: "강남구",
+  setup() {
+    const router = useRouter();
+    // const store = useStore();
+    const route = useRoute();
+
+    const group = ref(null);
+
+    const loadGroup = async () => {
+      const { communityId } = route.query;
+      if (communityId) {
+        try {
+          const response = await axios.get(`/api/groups/${communityId}`);
+          group.value = response.data;
+        } catch (error) {
+          console.error("Error", error);
+        }
+      }
+    }
+    onMounted(() => {
+      loadGroup();
+    });
+
+    const isModalOpen = ref(false);
+    const selectedItem = ref(null);
+
+    const openModal = (item) => {
+      selectedItem.value = item;
+      isModalOpen.value = true;
+    }
+
+    const closeModal = () => {
+      isModalOpen.value = false;
+      selectedItem.value = null;
+    }
+    // 참석 모달 열기
+    const isTooltipVisible = ref(true);
+
+    const toggleTooltip = () => {
+      isTooltipVisible.value = !isTooltipVisible.value;
     };
-  },
-  methods: {
-    cancelGroup() {
-      this.$el.remove();
-    },
-  },
+    // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
+    const showConfirmPopup = ref(false);
+    const confirmDeletion = (communityId) => {
+      router.push({ name: "GroupJoinList", query: { communityId } });
+    };
+    const cancelDeletion = () => {
+      showConfirmPopup.value = false;
+    };
+
+    return {
+      openModal,
+      closeModal,
+      toggleTooltip,
+      showConfirmPopup,
+      confirmDeletion,
+      cancelDeletion,
+    }
+  }
 };
 </script>
 
@@ -309,6 +390,91 @@ h2 {
   width: 58px;
   height: 38px;
   cursor: pointer;
+}
+
+.cancel:hover {
+  background-color: #87cefa;
+}
+
+.cancel:active {
+  background-color: #87cefa;
+  transform: scale(0.98);
+  /* 클릭 시 버튼 크기 살짝 축소 */
+}
+
+/* 모달 창 스타일 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 600px;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* 팝업 스타일링 */
+.confirm-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-weight: bold;
+}
+
+.popup-content button {
+  margin: 20px;
+  width: 100px;
+  height: 35px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  border: none;
+  color: white;
+  background-color: #1a73e8;
+}
+
+.popup-content button:hover {
+  background-color: #87cefa;
+}
+
+.popup-content button:active {
+  background-color: #87cefa;
+  transform: scale(0.98);
+  /* 클릭 시 버튼 크기 살짝 축소 */
 }
 
 .null {

@@ -86,7 +86,7 @@
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { registerGroupOnServer } from "@/api/registerGroupOnServer";
+// import { registerGroupOnServer } from "@/api/registerGroupOnServer";
 
 export default {
   name: "CreateGroup",
@@ -102,6 +102,7 @@ export default {
 
     const formData = computed(() => store.getters["creategroup/formData"]);
     const categories = computed(() => store.getters["creategroup/categories"]);
+    const additionalData = computed(() => store.getters["creategroup/additionalData"]);
     const times = ["오전", "오후", "저녁"];
 
     const selectedCategory = ref(null);
@@ -148,21 +149,27 @@ export default {
     
     const registerGroup = async () => {
       try {
-        await store.dispatch('creategroup/updateTitle', title.value);
-        const formData = store.getters['creategroup/formData'];
-
-        // 서버에 formData를 전송
-        const response = await registerGroupOnServer(formData);
-        // 서버에서 받은 추가 데이터를 상태에 저장
-        const { user_img, username } = response;
-        store.dispatch('creategroup/updateAdditionalData', { user_img, username });
-        
-        // 서버 응답 후 페이지를 이동
+        const { title, topboxContent, sport, location, selectedTime, person } = formData.value;
+        let { communityId, user_img, username } = additionalData.value;
+        if (!user_img) {
+          user_img = ref(require('@/assets/image/default-profile.png'));
+        }
+        await store.dispatch('creategroup/createGroup', {
+          title,
+          topboxContent,
+          selectedTime,
+          person,
+          location,
+          sport,
+          user_img,
+          username,
+          communityId,
+        });
         alert("모임이 등록되었습니다.");
         router.push({ name: "Home" });
       } catch (error) {
-        console.error('Error server communication: ', error);
-        alert("모임 등록에 실패했습니다.");
+        console.error('Error', error);
+        alert('모임 생성에 실패했습니다');
       }
     };
 

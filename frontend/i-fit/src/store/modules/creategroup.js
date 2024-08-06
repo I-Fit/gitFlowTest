@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const state = () => ({
   formData: {
     title: "",
@@ -10,6 +12,7 @@ const state = () => ({
   categories: ['러닝', '웨이트', '라이딩', '요가', '수영', '등산', '테니스', '클라이밍', '필라테스', 'GX'],
   
   additionalData: {
+    communityId: "",
     user_img: "",
     username: "",
   },
@@ -49,7 +52,7 @@ const mutations = {
   // 서버가 준 데이터 추가
   UPDATE_ADDITIONAL_DATA(state, additionalData) {
     state.additionalData = additionalData;
-  }
+  },
 
 };
 
@@ -84,8 +87,30 @@ const actions = {
   // 서버에서 준 데이터 관련 코드
   updateAdditionalData({ commit }, additionalData) {
     commit("UPDATE_ADDITIONAL_DATA", additionalData);
+  },
+
+  async createGroup({ dispatch, state }) {
+    try {
+      const response = await axios.post('', state.formData);  // 모임 생성 요청
+      const { communityId, user_img, username } = response.data;
+
+      // 서버에서 받은 추가 데이터를 vuex 상태에 저장
+      await dispatch('updateAdditionalData', { communityId, user_img, username });
+
+      // 그룹 목록에 새 그룹 추가
+      await dispatch('groupList/addGroup', {
+        communityId,
+        ...state.formData,
+        user_img,
+        username
+      }, { root: true });
+
+      return response.data;
+    } catch (error) {
+      console.error('Error', error);
+      throw error;
+    }
   }
-  
 };
 
 const getters = {

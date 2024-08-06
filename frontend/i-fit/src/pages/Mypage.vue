@@ -157,7 +157,7 @@ export default {
   setup() {
     const router = useRouter();
 
-    const profileImage = ref('@/public/images/default-profile.png');
+    const profileImage = ref(require("@/assets/image/default-profile.png"));
     const fileInput = ref(null)
 
     //파일 선택 창 트리거 함수
