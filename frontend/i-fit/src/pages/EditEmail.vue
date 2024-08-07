@@ -1,72 +1,108 @@
 <template>
-    <main>
-        <div class="edit-box">
-              <form @submit.prevent="handleSubmit" class="edit-form">
-                <h1>이메일 변경</h1>
-                <div class="edit-contact input-block">
-                    <label class="edit-label" for="id">이메일 주소</label>
-                    <div class="edit-field">
-                        <input type="text" id="id" name="id" placeholder="변경할 이메일을 입력하세요."
-                            class="edit-field-input" v-model="phoneNumber" />
-                        <button class="confirm-btn" type="button" @click="sendVerification">인증</button>
-                    </div>
-                </div>
-                <div class="auth input-block">
-                    <label class="edit-label" for="auth-number">인증번호</label>
-                    <div class="edit-field">
-                        <input type="text" id="auth-number" name="auth-number" placeholder="메일로 전송된 인증번호를 입력해주세요."
-                            class="edit-field-input" v-model="authCode" />
-                        <button class="confirm-btn" type="button" @click="verifyCode">확인</button>
-                    </div>
-                </div>
-                <button type="submit" class="completed-btn">변경 완료</button>
-            </form>
+  <main>
+    <div class="edit-box">
+      <form @submit.prevent="handleSubmit" class="edit-form">
+        <h1>이메일 변경</h1>
+        <div class="edit-contact input-block">
+          <label class="edit-label" for="id">이메일</label>
+          <div class="edit-field">
+            <input type="text" id="email" name="email" placeholder="변경할 이메일을 입력하세요." class="edit-field-input"
+              v-model="email" />
+            <button class="confirm-btn" type="submit" @click="sendVerification">인증</button>
+          </div>
         </div>
-    </main>
+        <div class="auth input-block">
+          <label class="edit-label" for="auth-number">인증번호</label>
+          <span v-if="timerStarted && timeLeft > 0" class="timer">{{ minutes }}:{{ seconds }}</span>
+          <button v-if="!timerStarted && timeLeft === 0" class="re-request-btn" @click="handleReRequest">
+            재전송
+          </button>
+          <div class="edit-field">
+            <input type="text" id="auth-number" name="auth-number" placeholder="메일로 전송된 인증번호를 입력해주세요."
+              class="edit-field-input" v-model="authCode" />
+            <button class="confirm-btn" type="sumbit" @click="verifyCode">확인</button>
+          </div>
+        </div>
+        <button type="submit" class="completed-btn" @click="goToMypage">변경 완료</button>
+      </form>
+    </div>
+  </main>
 </template>
 
 <script>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useEmail } from "@/services/sendEmail";
 
 export default {
-    name: 'EditEmailComponent',
-    setup() {
-        const router = useRouter();
-        
-        // TODO - SMTP 활용한 메일 인증 구현방식으로 수정
-        const phoneNumber = ref('');
-        const authCode = ref('');
+  name: 'EditEmailComponent',
+  setup() {
+    const router = useRouter();
 
-        const sendVerification = () => {
-            // 폰 번호로 인증 코드 전송 로직
-            console.log('인증 코드 전송:', phoneNumber.value);
+    // TODO - SMTP 활용한 메일 인증 구현방식으로 수정
+    const authCode = ref('');
 
-            // 인증번호가 전송되었다는 알림
-            alert('인증번호가 전송되었습니다.');
-        };
+    const {
+      email,
+      emailKey,
+      sendEmail,
+      emailCheck,
+      timeLeft,
+      minutes,
+      seconds,
+      timerStarted,
+      handleReRequest,
+    } = useEmail();
 
-        const verifyCode = () => {
-            // 인증 코드 확인 로직
-            console.log('인증 코드 확인:', authCode.value);
-        };
+    const sendVerification = () => {
+      // 이메일로 인증 코드 전송 로직
+      console.log('인증 코드 전송:', email.value);
 
-        const handleSubmit = () => {
-            // 폼 데이터 처리 로직 (예: 서버로 보내기)
-            console.log('폼 제출:', phoneNumber.value, authCode.value);
-            
-            // 폼 데이터가 유효하다고 가정하고 페이지 이동
-            router.push('/mypage');
-        };
+      // 인증번호가 전송되었다는 알림
+      alert('인증번호가 전송되었습니다.');
+    };
 
-        return { phoneNumber, authCode, sendVerification, verifyCode, handleSubmit };
-    },
+    const verifyCode = () => {
+      // 인증 코드 확인 로직
+      console.log('인증 코드 확인:', authCode.value);
+
+      alert('본인 인증 완료!');
+    };
+
+    const handleSubmit = () => {
+      // 폼 데이터 처리 로직 (예: 서버로 보내기)
+      console.log('폼 제출:', email.value, authCode.value);
+
+      // // 폼 데이터가 유효하다고 가정하고 페이지 이동
+      // router.push('/mypage');
+    };
+
+    const goToMypage = () => {
+      router.push('/mypage')
+    }
+
+    return {
+      router, 
+      authCode, 
+      sendVerification, 
+      verifyCode, 
+      handleSubmit,
+      email, 
+      timeLeft,
+      minutes,
+      seconds,
+      timerStarted,
+      handleReRequest, 
+      emailKey,
+      sendEmail,
+      emailCheck,
+      goToMypage
+    };
+  },
 }
 </script>
 
 <style scoped>
-@charset "utf-8";
-
 /* content 부분 */
 main {
   width: 100%;

@@ -308,6 +308,17 @@ main {
   cursor: pointer;
   user-select: none;
   z-index: 1;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.arrow:hover {
+  transform: translateY(-50%) scale(1.1);
 }
 
 #left {

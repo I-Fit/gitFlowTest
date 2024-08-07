@@ -66,7 +66,7 @@
               <button
                 type="submit"
                 class="changec-btn"
-                @click="goToEditContact"
+                @click="goToEditEmail"
               >
                 변경
               </button>
@@ -211,15 +211,15 @@ export default {
     };
 
     const goToChangePassword = () => {
-      router.push('/edit-email');
+      router.push('/change-pwd');
     }
 
     const goToAccountDeleted = () => {
       router.push('/account-deleted')
     }
 
-    const goToEditContact = () => {
-      router.push('/edit-contact')
+    const goToEditEmail = () => {
+      router.push('/edit-email')
     }
 
     const goToHome = () => {
@@ -273,7 +273,7 @@ export default {
       goToMembershipMain,
       goToChangePassword,
       goToAccountDeleted,
-      goToEditContact,
+      goToEditEmail,
       goToHome
     }
   }
