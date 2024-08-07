@@ -7,56 +7,30 @@
         <div class="finder-id input-block">
           <label class="finder-label" for="id">이름</label>
           <div class="finder-field">
-            <input
-              type="text"
-              id="id"
-              name="id"
-              placeholder="이름을 입력하세요."
-              class="finder-field-input"
-              v-model="name"
-            />
+            <input type="text" id="id" name="id" placeholder="이름을 입력하세요." class="finder-field-input" v-model="name" />
             <button class="finder-field-btn" type="submit">확인</button>
           </div>
         </div>
         <div class="finder-email input-block">
           <label class="finder-label" for="email">이메일</label>
           <div class="finder-field">
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="이메일을 입력하세요."
-              class="finder-field-input"
-              v-model="email"
-            />
+            <input type="email" id="email" name="email" placeholder="이메일을 입력하세요." class="finder-field-input"
+              v-model="email" />
             <button class="finder-field-btn" type="submit" @click="sendEmail">
               인증요청
             </button>
           </div>
         </div>
         <div class="finder-email-auth input-block">
-          <label class="finder-label" for="email-number"
-            >이메일 인증번호
-            <span v-if="timerStarted && timeLeft > 0" class="timer"
-              >{{ minutes }}:{{ seconds }}</span
-            >
-            <button
-              v-if="!timerStarted && timeLeft === 0"
-              class="re-request-btn"
-              @click="handleReRequest"
-            >
+          <label class="finder-label" for="email-number">이메일 인증번호
+            <span v-if="timerStarted && timeLeft > 0" class="timer">{{ minutes }}:{{ seconds }}</span>
+            <button v-if="!timerStarted && timeLeft === 0" class="re-request-btn" @click="handleReRequest">
               재전송
             </button>
           </label>
           <div class="finder-field">
-            <input
-              type="text"
-              id="email-number"
-              name="email-number"
-              placeholder="인증번호를 입력해주세요."
-              class="finder-field-input"
-              v-model="enteredCode"
-            />
+            <input type="text" id="email-number" name="email-number" placeholder="인증번호를 입력해주세요."
+              class="finder-field-input" v-model="enteredCode" />
             <button class="finder-field-btn" type="submit" @click="emailCheck">
               확인
             </button>
@@ -222,5 +196,6 @@ h1 {
   background-color: #1a73e8;
   color: white;
   font-weight: bold;
+  cursor: pointer;
 }
 </style>

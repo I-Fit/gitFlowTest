@@ -6,41 +6,23 @@
         <p>회원이 되어 다양한 헤택을 경험해 보세요!</p>
         <div class="choose-member">
           <label class="general-user">
-            <input
-              type="radio"
-              name="contact"
-              value="user"
-              v-model="formData.contact"
-            />
+            <input type="radio" name="contact" value="user" v-model="formData.contact" />
             <span>일반 회원</span>
           </label>
           <label>
-            <input
-              type="radio"
-              name="contact"
-              value="teacher"
-              v-model="formData.contact"
-            />
+            <input type="radio" name="contact" value="teacher" v-model="formData.contact" />
             <span>강사</span>
           </label>
         </div>
         <div class="signup-id input-block">
-          <label class="signup-label" for="id"
-            >아이디
+          <label class="signup-label" for="id">아이디
             <p v-if="idAvailable === true">사용 가능한 아이디입니다.</p>
             <p v-else-if="idAvailable === false">
               이미 사용 중인 아이디입니다.
             </p>
           </label>
           <div class="signup-field">
-            <input
-              type="text"
-              id="id"
-              name="id"
-              placeholder="아이디를 입력하세요."
-              class="signup-input"
-              v-model="formData.id"
-            />
+            <input type="text" id="id" name="id" placeholder="아이디를 입력하세요." class="signup-input" v-model="formData.id" />
             <button type="submit" class="signup-btn" @click="checkId">
               중복 확인
             </button>
@@ -49,184 +31,84 @@
         <div class="signup-pw input-block">
           <label class="signup-label" for="password">비밀번호</label>
           <div class="signup-field">
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="비밀번호를 입력하세요."
-              class="signup-input"
-              v-model="formData.password"
-            />
+            <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요." class="signup-input"
+              v-model="formData.password" />
           </div>
         </div>
         <div class="signup-pw-check input-block">
-          <label class="signup-label" for="password-check"
-            >비밀번호 확인
+          <label class="signup-label" for="password-check">비밀번호 확인
             <!-- 일치하면 메세지 -->
-            <span v-if="Bothpasswords && passwordsMatch" class="password-match"
-              >일치합니다</span
-            >
+            <span v-if="Bothpasswords && passwordsMatch" class="password-match">일치합니다</span>
             <!-- 불일치하면 메세지 -->
-            <span
-              v-else-if="Bothpasswords && !passwordsMatch"
-              class="password-mismatch"
-              >일치하지 않습니다</span
-            >
+            <span v-else-if="Bothpasswords && !passwordsMatch" class="password-mismatch">일치하지 않습니다</span>
           </label>
           <div class="signup-field">
-            <input
-              type="password"
-              id="password-check"
-              name="passwordcheck"
-              placeholder="비밀번호 재입력"
-              class="signup-input"
-              v-model="formData.passwordCheck"
-            />
+            <input type="password" id="password-check" name="passwordcheck" placeholder="비밀번호 재입력" class="signup-input"
+              v-model="formData.passwordCheck" />
           </div>
         </div>
         <div class="signup-name input-block">
           <label class="signup-label" for="name">이름</label>
           <div class="signup-field">
-            <input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="이름을 입력해주세요."
-              class="signup-input"
-              v-model="formData.name"
-            />
+            <input type="text" id="name" name="name" placeholder="이름을 입력해주세요." class="signup-input"
+              v-model="formData.name" />
           </div>
         </div>
         <div class="signup-phone input-block">
           <label class="signup-label" for="phone">전화번호</label>
           <div class="signup-field">
-            <input
-              type="text"
-              id="phone"
-              name="phone"
-              placeholder="전화번호를 입력해주세요."
-              class="signup-input"
-              v-model="formData.phone"
-            />
+            <input type="text" id="phone" name="phone" placeholder="전화번호를 입력해주세요." class="signup-input"
+              v-model="formData.phone" />
           </div>
         </div>
         <div class="signup-email input-block">
           <label class="signup-label" for="email">이메일</label>
           <div class="signup-field">
-            <input
-              type="text"
-              id="email"
-              name="email"
-              placeholder="이메일을 입력해주세요."
-              class="signup-input"
-              v-model="email"
-            />
-            <button
-              type="submit"
-              class="signup-btn"
-              @click="sendEmail"
-              :disabled="timerStarted"
-            >
+            <input type="text" id="email" name="email" placeholder="이메일을 입력해주세요." class="signup-input"
+              v-model="email" />
+            <button type="submit" class="signup-btn" @click="sendEmail" :disabled="timerStarted">
               인증 요청
             </button>
           </div>
         </div>
         <div class="signup-email-auth input-block">
-          <label class="signup-label" for="email-number"
-            >이메일 인증번호
-            <span v-if="timerStarted && timeLeft > 0" class="timer"
-              >{{ minutes }}:{{ seconds }}</span
-            >
-            <button
-              v-if="!timerStarted && timeLeft === 0"
-              class="re-request-btn"
-              @click="handleReRequest"
-            >
+          <label class="signup-label" for="email-number">이메일 인증번호
+            <span v-if="timerStarted && timeLeft > 0" class="timer">{{ minutes }}:{{ seconds }}</span>
+            <button v-if="!timerStarted && timeLeft === 0" class="re-request-btn" @click="handleReRequest">
               재전송
             </button>
           </label>
           <div class="signup-field">
-            <input
-              type="text"
-              id="email-number"
-              name="email-number"
-              placeholder="인증번호를 입력해주세요."
-              class="signup-input"
-              v-model="enteredCode"
-            />
-            <button
-              type="submit"
-              class="signup-btn"
-              @click="emailCheck"
-              :disabled="timerStarted && timeLeft > 0"
-            >
+            <input type="text" id="email-number" name="email-number" placeholder="인증번호를 입력해주세요." class="signup-input"
+              v-model="enteredCode" />
+            <button type="submit" class="signup-btn" @click="emailCheck" :disabled="timerStarted && timeLeft > 0">
               확인
             </button>
           </div>
         </div>
         <div class="signup-terms">
           <label class="signup-terms-label">
-            <input
-              type="checkbox"
-              name="terms"
-              value="agree"
-              v-model="agreeAll"
-              @click="selectAll"
-            />
-            <span class="signup-terms-text"
-              >이용약관 전체 동의<span @click="goTos">&#62;</span></span
-            >
+            <input type="checkbox" name="terms" value="agree" v-model="agreeAll" @click="selectAll" />
+            <span class="signup-terms-text">이용약관 전체 동의<span @click="goTos">&#62;</span></span>
           </label>
           <label class="signup-terms-label">
-            <input
-              type="checkbox"
-              name="terms1"
-              value="agree-1"
-              id="agree01"
-              v-model="agree01"
-            />
-            <span class="signup-terms-text"
-              >이용약관 동의(필수)<span @click="goTos">&#62;</span></span
-            >
+            <input type="checkbox" name="terms1" value="agree-1" id="agree01" v-model="agree01" />
+            <span class="signup-terms-text">이용약관 동의(필수)<span @click="goTos">&#62;</span></span>
           </label>
           <label class="signup-terms-label">
-            <input
-              type="checkbox"
-              name="terms2"
-              value="agree-2"
-              id="agree02"
-              v-model="agree02"
-            />
-            <span class="signup-terms-text"
-              >개인정보 수집 및 이용 동의(필수)<span @click="goTos"
-                >&#62;</span
-              ></span
-            >
+            <input type="checkbox" name="terms2" value="agree-2" id="agree02" v-model="agree02" />
+            <span class="signup-terms-text">개인정보 수집 및 이용 동의(필수)<span @click="goTos">&#62;</span></span>
           </label>
           <label class="signup-terms-label">
-            <input
-              type="checkbox"
-              name="terms3"
-              value="agree-3"
-              id="agree03"
-              v-model="agree03"
-            />
-            <span class="signup-terms-text"
-              >프로모션 정보 수신 동의(선택)<span @click="goTos"
-                >&#62;</span
-              ></span
-            >
+            <input type="checkbox" name="terms3" value="agree-3" id="agree03" v-model="agree03" />
+            <span class="signup-terms-text">프로모션 정보 수신 동의(선택)<span @click="goTos">&#62;</span></span>
           </label>
         </div>
         <button class="signup-terms-btn" type="submit" @click="account">
           회원가입
         </button>
         <p class="signup-account-check">
-          이미 계정이 있으신가요?<span
-            class="signup-account-check-text"
-            @click="goLogin"
-            >로그인 하기</span
-          >
+          이미 계정이 있으신가요?<span class="signup-account-check-text" @click="goLogin">로그인 하기</span>
         </p>
       </div>
     </form>

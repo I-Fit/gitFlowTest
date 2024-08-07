@@ -7,55 +7,30 @@
         <div class="finder-id input-block">
           <label class="finder-label" for="id">아이디</label>
           <div class="finder-field">
-            <input
-              type="text"
-              id="id"
-              name="id"
-              placeholder="아이디를 입력하세요."
-              class="finder-field-input"
-            />
+            <input type="text" id="id" name="id" placeholder="아이디를 입력하세요." class="finder-field-input" />
             <button class="finder-field-btn" type="submit">확인</button>
           </div>
         </div>
         <div class="finder-email input-block">
           <label class="finder-label" for="email">이메일</label>
           <div class="finder-field">
-            <input
-              type="text"
-              id="email"
-              name="email"
-              placeholder="이메일을 입력하세요."
-              class="finder-field-input"
-              v-model="email"
-            />
+            <input type="text" id="email" name="email" placeholder="이메일을 입력하세요." class="finder-field-input"
+              v-model="email" />
             <button class="finder-field-btn" type="submit" @click="sendEmail">
               인증 요청
             </button>
           </div>
         </div>
         <div class="finder-email-auth input-block">
-          <label class="finder-label" for="email-auth"
-            >이메일 인증번호
-            <span v-if="timerStarted && timeLeft > 0" class="timer"
-              >{{ minutes }}:{{ seconds }}</span
-            >
-            <button
-              v-if="!timerStarted && timeLeft === 0"
-              class="re-request-btn"
-              @click="handleReRequest"
-            >
+          <label class="finder-label" for="email-auth">이메일 인증번호
+            <span v-if="timerStarted && timeLeft > 0" class="timer">{{ minutes }}:{{ seconds }}</span>
+            <button v-if="!timerStarted && timeLeft === 0" class="re-request-btn" @click="handleReRequest">
               재전송
             </button>
           </label>
           <div class="finder-field">
-            <input
-              type="text"
-              id="email-auth"
-              name="email-auth"
-              placeholder="인증번호를 입력해주세요."
-              class="finder-field-input"
-              v-model="enteredCode"
-            />
+            <input type="text" id="email-auth" name="email-auth" placeholder="인증번호를 입력해주세요." class="finder-field-input"
+              v-model="enteredCode" />
             <button class="finder-field-btn" type="submit" @click="emailCheck">
               확인
             </button>
@@ -64,38 +39,19 @@
         <div class="finder-pw input-block">
           <label class="finder-label" for="password">새 비밀번호</label>
           <div class="finder-field">
-            <input
-              type="text"
-              id="password"
-              name="password"
-              placeholder="비밀번호를 입력하세요."
-              class="finder-field-input"
-              v-model="newPassword"
-            />
+            <input type="text" id="password" name="password" placeholder="비밀번호를 입력하세요." class="finder-field-input"
+              v-model="newPassword" />
             <!-- <button class="finder-field-btn" type="submit">확인</button> -->
           </div>
         </div>
         <div class="finder-pw-check input-block">
-          <label class="finder-label" for="pw-check"
-            >새 비밀번호 확인
-            <span v-if="Bothpasswords && passwordMatch" class="password-same"
-              >일치합니다.</span
-            >
-            <span
-              v-else-if="Bothpasswords && !passwordMatch"
-              class="password-different"
-              >일치하지 않습니다.</span
-            >
+          <label class="finder-label" for="pw-check">새 비밀번호 확인
+            <span v-if="Bothpasswords && passwordMatch" class="password-same">일치합니다.</span>
+            <span v-else-if="Bothpasswords && !passwordMatch" class="password-different">일치하지 않습니다.</span>
           </label>
           <div class="finder-field">
-            <input
-              type="text"
-              id="password-check"
-              name="pw-check"
-              placeholder="비밀번호 재입력"
-              class="finder-field-input"
-              v-model="newPasswordCheck"
-            />
+            <input type="text" id="password-check" name="pw-check" placeholder="비밀번호 재입력" class="finder-field-input"
+              v-model="newPasswordCheck" />
             <!-- <button class="finder-field-btn" type="submit">확인</button> -->
           </div>
         </div>
@@ -280,6 +236,7 @@ h1 {
   height: 35px;
   outline: none;
 }
+
 .finder-field-btn {
   padding: 8px 16px;
   border: none;
@@ -314,5 +271,6 @@ input::placeholder {
   color: white;
   margin-top: 20px;
   font-weight: bold;
+  cursor: pointer;
 }
 </style>

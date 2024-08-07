@@ -4,37 +4,17 @@
       <form action="#" class="signup-form">
         <h1>로그인</h1>
         <div class="signup-id input-block">
-          <label class="signup-label" for="id"
-            >아이디<span class="signup-id-find" @click="FindId"
-              >아이디 찾기</span
-            ></label
-          >
+          <label class="signup-label" for="id">아이디<span class="signup-id-find" @click="FindId">아이디 찾기</span></label>
           <div class="signup-field">
-            <input
-              type="text"
-              id="id"
-              name="id"
-              placeholder="아이디를 입력하세요."
-              class="signup-field-input"
-              v-model="formData.id"
-            />
+            <input type="text" id="id" name="id" placeholder="아이디를 입력하세요." class="signup-field-input"
+              v-model="formData.id" />
           </div>
         </div>
         <div class="signup-pw input-block">
-          <label class="signup-label" for="id"
-            >비밀번호<span class="signup-pw-find" @click="FindPw"
-              >비밀번호 재설정</span
-            ></label
-          >
+          <label class="signup-label" for="id">비밀번호<span class="signup-pw-find" @click="FindPw">비밀번호 재설정</span></label>
           <div class="signup-field">
-            <input
-              type="text"
-              id="pw"
-              name="id"
-              placeholder="비밀번호를 입력하세요."
-              class="signup-field-input"
-              v-model="formData.password"
-            />
+            <input type="text" id="pw" name="id" placeholder="비밀번호를 입력하세요." class="signup-field-input"
+              v-model="formData.password" />
           </div>
         </div>
         <button type="submit" class="signup-login-btn" @click="Complete">
@@ -42,33 +22,17 @@
         </button>
         <div class="signup-social">
           <button type="submit" class="signup-social-btn" @click="signInGoogle">
-            <img
-              src="../assets/image/google.png"
-              alt="구글 로그인"
-              class="signup-social-image"
-            />
+            <img src="../assets/image/google.png" alt="구글 로그인" class="signup-social-image" />
           </button>
           <button type="submit" class="signup-social-btn" @click="signInNaver">
-            <img
-              src="../assets/image/naver.png"
-              alt="네이버 로그인"
-              class="signup-social-image"
-            />
+            <img src="../assets/image/naver.png" alt="네이버 로그인" class="signup-social-image" />
           </button>
           <button type="submit" class="signup-social-btn" @click="signInKakao">
-            <img
-              src="../assets/image/kakao.png"
-              alt="카카오 로그인"
-              class="signup-social-image"
-            />
+            <img src="../assets/image/kakao.png" alt="카카오 로그인" class="signup-social-image" />
           </button>
         </div>
         <p class="signup-account">
-          아직 회원이 아니신가요?<span
-            class="signup-join"
-            @click="createAccount"
-            >회원가입</span
-          >
+          아직 회원이 아니신가요?<span class="signup-join" @click="createAccount">회원가입</span>
         </p>
       </form>
     </div>
@@ -213,6 +177,7 @@ h1 {
   margin-left: 243px;
   font-size: 12px;
   color: #1a73e8;
+  cursor: pointer;
 }
 
 .signup-login-btn {
@@ -259,6 +224,7 @@ h1 {
   margin-left: 80px;
   position: relative;
 }
+
 .signup-join {
   margin-left: 20px;
   color: #1a73e8;
