@@ -43,6 +43,7 @@
               @click="toggleActions"
               />
               <PostActions
+                class="post-actions"
                 :visible="showActions"
                 @navigate="handleNavigation"
               />
@@ -298,12 +299,25 @@
   }
   
   .bottom-table-group {
+    position: relative;
     width: 344px;
     height: 456px;
     border: 1px solid #ccc;
     border-radius: 10px;
     margin-left: 20px;
   }
+
+  .post-actions {
+  position: absolute;
+  top: 30px; /* 상단에서 20px 위치 */
+  right: -15px; /* 오른쪽에서 20px 위치 */
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  display: flex; /* 버튼이 여러 개일 경우, flexbox로 배치할 수 있습니다 */
+  flex-direction: column; /* 버튼을 수직으로 배치 */
+}
   
   .table-group-del {
     display: flex;
@@ -348,7 +362,7 @@
     height: 20px;
     margin-left: 10px;
   }
-  
+
   #heart-count,
   #comment-count {
     margin: 5px;
