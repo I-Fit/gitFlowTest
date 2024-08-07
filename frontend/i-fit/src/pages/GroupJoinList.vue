@@ -28,7 +28,7 @@
             <div class="user-info">
               <img src="@/assets/image/user_img.png" alt="사용자 이미지" class="user-image" />
               <span>김계란</span>
-              <img src="@/assets/image/상세설명 아이콘.png" alt="" class="detail-icon" />
+              <img src="@/assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title"> 수영 같이 하실 분 구함 </span>
@@ -36,7 +36,9 @@
             <p class="date">24.06.14 (금)</p>
             <p class="time">8:00 PM</p>
             <div class="group-info">
-              <img class="like-image" src="@/assets/image/heart.png" alt="하트" />
+              <div class="title-heart" @click="toggleHeart">
+                <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
+              </div>
               <span class="size">참여인원: 3/10</span>
               <span class="location">강남구</span>
               <button type="button" class="cancel" @click="showConfirmPopup = true">
@@ -64,10 +66,12 @@
             <div class="group-content">
               <span class="title">{{ group.title }}</span>
             </div>
-            <p class="date">24.06.14 (금)</p>
+            <p class="date">{{ group.selectedDate }}</p>
             <p class="time">{{ group.selectedTime }}</p>
             <div class="group-info">
-              <img class="like-img" src="@/assets/image/heart.png" alt="하트" />
+              <div class="title-heart" @click="toggleHeart">
+                <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
+              </div>
               <span class="size">참여인원: {{ group.person }}</span>
               <span class="location">{{ group.location }}</span>
               <button type="button" class="cancel" @click="showConfirmPopup = true">
@@ -97,8 +101,7 @@
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <h2>{{ formData.topboxContent }}</h2>
-        <p>{{ selectedItem ? selectedItem.content : "" }}</p>
+        <p>모임 상세설명: {{ selectedItem ? selectedItem.content : "" }}</p>
       </div>
     </div>
   </main>
@@ -116,6 +119,24 @@ export default {
   name: "GroupJoinList",
   components: {
     AppNav,
+  },
+  data() {
+    return {
+      isModalOpen: false, // 모달 창 상태
+      selectedItem: null, // 선택된 아이템
+    }
+  },
+  methods: {
+    openModal(group) {
+      this.selectedItem = {
+        content: group.topboxContent,
+      };
+      this.isModalOpen = true;
+    },
+    closeModal() {
+      this.isModalOpen = false;
+      this.selectedItem = null;
+    },
   },
 
   setup() {
@@ -140,18 +161,6 @@ export default {
       loadGroup();
     });
 
-    const isModalOpen = ref(false);
-    const selectedItem = ref(null);
-
-    const openModal = (item) => {
-      selectedItem.value = item;
-      isModalOpen.value = true;
-    };
-
-    const closeModal = () => {
-      isModalOpen.value = false;
-      selectedItem.value = null;
-    };
     // 참석 모달 열기
     const isTooltipVisible = ref(true);
 
@@ -167,13 +176,18 @@ export default {
       showConfirmPopup.value = false;
     };
 
+    const isHeartFilled = ref(false);
+    const toggleHeart = () => {
+      isHeartFilled.value = !isHeartFilled.value;
+    }
+
     return {
-      openModal,
-      closeModal,
       toggleTooltip,
       showConfirmPopup,
       confirmDeletion,
       cancelDeletion,
+      isHeartFilled,
+      toggleHeart,
     };
   },
 };
@@ -321,6 +335,7 @@ h2 {
   width: 20px;
   height: 20px;
   margin-left: 173px;
+  cursor: pointer;
 }
 
 .group-content {
@@ -369,6 +384,7 @@ h2 {
   border-radius: 10px;
   font-size: 12px;
   margin-right: 5px;
+  margin-left: 10px;
 }
 
 .location {
@@ -433,6 +449,11 @@ h2 {
   cursor: pointer;
 }
 
+.modal-content p {
+  font-size: 16px;
+  text-align: start;
+}
+
 /* 팝업 스타일링 */
 .confirm-popup {
   position: fixed;
@@ -477,7 +498,45 @@ h2 {
   /* 클릭 시 버튼 크기 살짝 축소 */
 }
 
-.null {
-  height: 300px;
+/* 하트 색상 변경 */
+.title-heart {
+  cursor: pointer;
+  display: inline-block;
+  width: 35px;
+  /* 하트의 크기를 조정합니다 */
+  height: 35px;
+  /* 하트의 크기를 조정합니다 */
+  position: relative;
+  margin-left: 15px;
+}
+
+.title-heart div {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  bottom: 9px;
+  right: 10px;
+}
+
+.empty-heart::before {
+  content: '\2764';
+  /* 빈 하트 문자 */
+  font-size: 35px;
+  /* 하트의 크기 */
+  color: transparent;
+  /* 하트의 내부는 투명하게 */
+  -webkit-text-stroke: 1px black;
+  /* 하트의 테두리 색상 */
+}
+
+.filled-heart::before {
+  content: '\2764';
+  /* 채워진 하트 문자 */
+  font-size: 35px;
+  /* 하트의 크기 */
+  color: red;
+  /* 채워진 하트의 색상 */
+  -webkit-text-stroke: none;
+  /* 채워진 하트의 테두리 제거 */
 }
 </style>

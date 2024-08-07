@@ -56,9 +56,12 @@
         </div>
         <p class="category-text">Choose Date and Time</p>
         <div class="category-date">
-          <button class="date-btn" @click.prevent="selectDate">
+          <button class="date-btn" @click="showDatePicker = !showDatePicker">
             <span class="date-calendar">&#128198;</span>날짜 선택
           </button>
+          <div v-if="showDatePicker">
+            <input type="date" @change="handleDateChange" />
+          </div>
           <select v-model="formData.selectedTime" class="date-time">
             <option value="" disabled>시간</option>
             <option v-for="time in times" :key="time" :value="time">
@@ -137,10 +140,18 @@ export default {
       }
     };
 
+    const showDatePicker = ref(false);
+
+    const handleDateChange = (event) => {
+      const selectDate = event.target.value;
+      store.dispatch('creategroup/updateSelectedDate', selectDate);
+      showDatePicker.value = false;
+    }
+
     
-    const selectDate = () => {
-      alert("이건 아마 날짜 api 구현 해야될듯");
-    };
+    // const selectDate = () => {
+    //   alert("이건 아마 날짜 api 구현 해야될듯");
+    // };
     
     const updateTopboxContent = () => {
       const content = document.querySelector(".topbox-content").innerText;
@@ -149,14 +160,15 @@ export default {
     
     const registerGroup = async () => {
       try {
-        const { title, topboxContent, sport, location, selectedTime, person } = formData.value;
-        let { communityId, user_img, username } = additionalData.value;
+        const { title, topboxContent, sport, location, selectedDate, selectedTime, person } = formData.value;
+        let { userId, communityId, user_img, username } = additionalData.value;
         if (!user_img) {
           user_img = ref(require('@/assets/image/default-profile.png'));
         }
         await store.dispatch('creategroup/createGroup', {
           title,
           topboxContent,
+          selectedDate,
           selectedTime,
           person,
           location,
@@ -164,6 +176,7 @@ export default {
           user_img,
           username,
           communityId,
+          userId,
         });
         alert("모임이 등록되었습니다.");
         router.push({ name: "Home" });
@@ -187,8 +200,8 @@ export default {
       setLocation,
       setPerson,
       registerGroup,
-      selectDate,
       updateTopboxContent,
+      handleDateChange,
     };
   },
 };

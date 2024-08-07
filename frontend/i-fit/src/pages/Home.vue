@@ -48,7 +48,7 @@
             <div class="user-info">
               <img src="../assets/image/user_img.png" alt="사용자 이미지" class="user-img" />
               <span>김계란</span>
-              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal(item)" />
+              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title"> 수영 같이 하실 분 구함 </span>
@@ -86,7 +86,7 @@
             <div class="group-content">
               <span class="title">{{ group.title }}</span>
             </div>
-            <p class="date">24.06.14 (금)</p>
+            <p class="date">{{ group.selectedDate }}</p>
             <p class="time">{{ group.selectedTime }}</p>
             <div class="group-info">
               <div class="title-heart" @click="toggleHeart">
@@ -117,8 +117,7 @@
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <h2>{{ formData.topboxContent }}</h2>
-        <p>{{ selectedItem ? selectedItem.content : "" }}</p>
+        <p>모임 상세설명 : {{ selectedItem ? selectedItem.content : "" }}</p>
       </div>
     </div>
   </main>
@@ -207,8 +206,10 @@ export default {
           break;
       }
     },
-    openModal(item) {
-      this.selectedItem = item;
+    openModal(group) {
+      this.selectedItem = {
+        content: group.topboxContent,
+      };
       this.isModalOpen = true;
     },
     closeModal() {
@@ -473,6 +474,7 @@ main {
   border-radius: 10px;
   font-size: 12px;
   margin-right: 5px;
+  margin-left: 10px;
 }
 
 .location {
@@ -537,6 +539,11 @@ main {
   cursor: pointer;
 }
 
+.modal-content p {
+  font-size: 16px;
+  text-align: start;
+}
+
 /* 팝업 스타일링 */
 .confirm-popup {
   position: fixed;
@@ -590,6 +597,7 @@ main {
   height: 35px;
   /* 하트의 크기를 조정합니다 */
   position: relative;
+  margin-left: 15px;
 }
 
 .title-heart div {

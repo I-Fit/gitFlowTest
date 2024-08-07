@@ -7,6 +7,7 @@ const state = () => ({
     sport: "종목",
     location: "",
     person: "",
+    selectedDate: "",
     selectedTime: "",
   },
   categories: [
@@ -23,6 +24,7 @@ const state = () => ({
   ],
 
   additionalData: {
+    userId: "",
     communityId: "",
     user_img: "",
     username: "",
@@ -48,6 +50,10 @@ const mutations = {
 
   SET_PERSON(state, person) {
     state.formData.person = person;
+  },
+
+  SET_SELECTED_DATE(state, selectedDate) {
+    state.formData.selectedDate = selectedDate;
   },
 
   SET_SELECTED_TIME(state, selectedTime) {
@@ -87,6 +93,10 @@ const actions = {
     commit("SET_PERSON", person);
   },
 
+  updateSelectedDate({ commit }, selectedDate) {
+    commit("SET_SELECTED_DATE", selectedDate)
+  },
+
   updateSelectedTime({ commit }, selectedTime) {
     commit("SET_SELECTED_TIME", selectedTime);
   },
@@ -102,10 +112,11 @@ const actions = {
   async createGroup({ dispatch, state }) {
     try {
       const response = await axios.post("", state.formData); // 모임 생성 요청
-      const { communityId, user_img, username } = response.data;
+      const { userId, communityId, user_img, username } = response.data;
 
       // 서버에서 받은 추가 데이터를 vuex 상태에 저장
       await dispatch("updateAdditionalData", {
+        userId,
         communityId,
         user_img,
         username,
@@ -115,6 +126,7 @@ const actions = {
       await dispatch(
         "groupList/addGroup",
         {
+          userId,
           communityId,
           ...state.formData,
           user_img,
