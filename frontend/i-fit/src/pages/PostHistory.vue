@@ -264,8 +264,16 @@
     margin-left: 20px;
   }
   
+  /* 도트 이미지 감싸주는 클래스 */
   .table-group-del {
+    /* display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    z-index: 1; */
+    position: relative;
     display: flex;
+    align-items: center;
   }
   
   #modify_icon {
@@ -274,6 +282,7 @@
     margin-left: 270px;
     margin-top: 15px;
     cursor: pointer;
+    z-index: 1;
   }
   
   .table-group-postimg {

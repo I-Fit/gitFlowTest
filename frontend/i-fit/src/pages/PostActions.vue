@@ -62,23 +62,26 @@ export default {
 
 <style scoped>
 .post-actions {
-  display: flex;
-  flex-direction: row; /* 버튼들을 가로로 나열 */
-  justify-content: flex-end; /* 오른쪽 정렬 */
-  gap: 10px; /* 버튼 사이의 간격 추가 */
-}
-
-.action-buttons {
-  display: flex;
-  flex-direction: row;
+  position: absolute;
+  top: 52px;
+  right: 27px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 2;
 }
 
 .action-btn {
-  /* background-color: #007bff;
-  color: white; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 30px;
+  text-align: center;
+  
   border: none;
   border-radius: 4px;
-  padding: 5px 10px;
+  padding: 10px 5px;
   margin: 2px 0;
   cursor: pointer;
   font-size: 14px;
