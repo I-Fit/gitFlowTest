@@ -31,7 +31,7 @@
           <div class="finder-field">
             <input type="text" id="email-number" name="email-number" placeholder="인증번호를 입력해주세요."
               class="finder-field-input" v-model="enteredCode" />
-            <button class="finder-field-btn" type="submit" @click="emailCheck">
+            <button class="finder-field-btn" type="submit" @click="updateEmailAfterCheck">
               확인
             </button>
           </div>
@@ -47,15 +47,52 @@
 <script>
 import { useRouter } from "vue-router";
 import { useEmail } from "@/services/sendEmail";
+import { useStore } from "vuex";
 import { default as axios } from "axios";
+import { watch, computed } from "vue";
 
 export default {
   name: "FindId",
 
   setup() {
-    const { email, sendEmail } = useEmail();
-
     const router = useRouter();
+    const store = useStore();
+
+    const formData = computed({
+      get: () => store.state.user.formData,
+      set: (value) => store.dispatch("user/updateFormData", value),
+    });
+
+    const {
+      email,
+      enteredCode,
+      emailKey,
+      sendEmail,
+      emailCheck,
+      timeLeft,
+      minutes,
+      seconds,
+      handleReRequest,
+      timerStarted,
+    } = useEmail();
+
+    // 이메일이 변경되면 formData를 업데이트
+    watch(email, (newEmail) => {
+      if (newEmail) {
+        formData.value.email = newEmail;
+      }
+    });
+
+    const updateEmailAfterCheck = async () => {
+      try {
+        const result = await emailCheck();
+        if (result === "확인 완료") {
+          formData.value.email = email.value; // 인증 완료 후 email을 formData에 업데이트
+        }
+      } catch (error) {
+        console.error("이메일 인증 오류: ", error);
+      }
+    };
 
     const findComplete = async () => {
       await sendEmail();
@@ -82,6 +119,18 @@ export default {
     };
 
     return {
+      email,
+      enteredCode,
+      emailKey,
+      sendEmail,
+      emailCheck,
+      timeLeft,
+      minutes,
+      seconds,
+      handleReRequest,
+      timerStarted,
+
+      updateEmailAfterCheck,
       findComplete,
     };
   },

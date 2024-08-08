@@ -31,7 +31,7 @@
           <div class="finder-field">
             <input type="text" id="email-auth" name="email-auth" placeholder="인증번호를 입력해주세요." class="finder-field-input"
               v-model="enteredCode" />
-            <button class="finder-field-btn" type="submit" @click="emailCheck">
+            <button class="finder-field-btn" type="submit" @click="updateEmailAfterCheck">
               확인
             </button>
           </div>
@@ -66,7 +66,8 @@
 <script>
 import { useRouter } from "vue-router";
 import { useEmail } from "@/services/sendEmail";
-import { ref, computed } from "vue";
+import { useStore } from "vuex";
+import { ref, computed, watch } from "vue";
 import axios from "axios";
 
 export default {
@@ -74,28 +75,53 @@ export default {
 
   setup() {
     const router = useRouter();
+    const store = useStore();
+
+    const formData = computed({
+      get: () => store.state.user.formData,
+      set: (value) => store.dispatch("user/updateFormData", value),
+    });
 
     const {
       email,
+      enteredCode,
       emailKey,
       sendEmail,
       emailCheck,
       timeLeft,
       minutes,
       seconds,
-      timerStarted,
       handleReRequest,
+      timerStarted,
     } = useEmail();
 
-    const newPassword = ref("");
-    const newPasswordCheck = ref("");
-    const enteredCode = ref("");
+    // 이메일이 변경되면 formData를 업데이트
+    watch(email, (newEmail) => {
+      if (newEmail) {
+        formData.value.email = newEmail;
+      }
+    });
+
+    const updateEmailAfterCheck = async () => {
+      try {
+        const result = await emailCheck();
+        if (result === "확인 완료") {
+          formData.value.email = email.value; // 인증 완료 후 email을 formData에 업데이트
+        }
+      } catch (error) {
+        console.error("이메일 인증 오류: ", error);
+      }
+    };
+
+    // 새로운 패스워드
+    const Password = ref("");
+    const PasswordCheck = ref("");
 
     const passwordMatch = computed(() => {
-      return newPassword.value === newPasswordCheck.value;
+      return Password.value === PasswordCheck.value;
     });
     const Bothpasswords = computed(() => {
-      return newPassword.value && newPasswordCheck.value;
+      return Password.value && PasswordCheck.value;
     });
 
     const goLogin = async () => {
@@ -108,7 +134,7 @@ export default {
         const response = await axios.post("", {
           email: email.value,
           key: emailKey.value,
-          newPassword: newPassword.value,
+          newPassword: Password.value,
         });
 
         if (response.status === 200) {
@@ -124,8 +150,8 @@ export default {
 
     return {
       email,
-      newPassword,
-      newPasswordCheck,
+      Password,
+      PasswordCheck,
       passwordMatch,
       Bothpasswords,
       goLogin,
@@ -138,6 +164,7 @@ export default {
       seconds,
       timerStarted,
       handleReRequest,
+      updateEmailAfterCheck,
     };
   },
 };
