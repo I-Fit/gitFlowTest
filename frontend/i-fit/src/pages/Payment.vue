@@ -257,7 +257,7 @@ main {
 }
 
 .payment-content {
-  width: 490px;
+  width: 580px;
   height: 100%;
   text-align: left;
   margin-top: 150px;
@@ -271,20 +271,25 @@ main {
   font-weight: bold;
 }
 
+.user-info {
+  margin-top: 10px;
+  /* margin-bottom: 10px; */
+}
+
 .username,
 .product {
   color: #8d8ba7;
   font-size: 18px;
   font-weight: bold;
-  /* padding: 10px; */
   text-align: left;
+  margin-bottom: 20px;
 }
 
 .card-pay,
 .kakao-pay,
 .naver-pay {
   width: 144px;
-  height: 47px;
+  height: 50px;
   border: none;
   border-radius: 5px;
   background-color: #1a73e8;
@@ -324,8 +329,8 @@ main {
 .point-input {
   margin-top: 10px;
   padding-left: 10px;
-  width: 450px;
-  height: 47px;
+  width: 464px;
+  height: 50px;
   border: 1px solid rgba(0, 0, 0, 0.281);
   border-radius: 5px;
   -moz-appearance: textfield;
@@ -341,7 +346,7 @@ main {
   font-size: 12px;
   font-weight: bold;
   color: red;
-  margin-left: 270px;
+  margin-left: 280px;
 }
 
 .price-container {
@@ -361,6 +366,7 @@ main {
   display: flex;
   flex-direction: column;
   margin-bottom: 30px;
+  margin-left: 100px;
 }
 
 .price-row {

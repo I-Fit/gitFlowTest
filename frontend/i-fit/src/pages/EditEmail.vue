@@ -8,7 +8,7 @@
           <div class="edit-field">
             <input type="text" id="email" name="email" placeholder="변경할 이메일을 입력하세요." class="edit-field-input"
               v-model="email" />
-            <button class="confirm-btn" type="submit" @click="sendVerification">인증</button>
+            <button class="confirm-btn" type="submit" @click="sendEmail">인증</button>
           </div>
         </div>
         <div class="auth input-block">
@@ -20,7 +20,7 @@
           <div class="edit-field">
             <input type="text" id="auth-number" name="auth-number" placeholder="메일로 전송된 인증번호를 입력해주세요."
               class="edit-field-input" v-model="authCode" />
-            <button class="confirm-btn" type="sumbit" @click="verifyCode">확인</button>
+            <button class="confirm-btn" type="sumbit" @click="updateEmailAfterCheck">확인</button>
           </div>
         </div>
         <button type="submit" class="completed-btn" @click="goToMypage">변경 완료</button>
@@ -30,52 +30,76 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { watch, computed  } from 'vue';
 import { useRouter } from 'vue-router';
 import { useEmail } from "@/services/sendEmail";
+import { useStore } from "vuex";
 
 export default {
   name: 'EditEmailComponent',
   setup() {
     const router = useRouter();
 
-    // TODO - SMTP 활용한 메일 인증 구현방식으로 수정
-    const authCode = ref('');
+    const store = useStore();
+
+    const formData = computed({
+      get: () => store.state.user.formData,
+      set: (value) => store.dispatch("user/updateFormData", value),
+    });
 
     const {
       email,
+      authCode,
       emailKey,
       sendEmail,
       emailCheck,
       timeLeft,
       minutes,
       seconds,
-      timerStarted,
       handleReRequest,
+      timerStarted,
     } = useEmail();
 
-    const sendVerification = () => {
-      // 이메일로 인증 코드 전송 로직
-      console.log('인증 코드 전송:', email.value);
+    // 이메일이 변경되면 formData를 업데이트
+    watch(email, (newEmail) => {
+      if (newEmail) {
+        formData.value.email = newEmail;
+      }
+    });
 
-      // 인증번호가 전송되었다는 알림
-      alert('인증번호가 전송되었습니다.');
+    const updateEmailAfterCheck = async () => {
+      try {
+        const result = await emailCheck();
+        if (result === "확인 완료") {
+          formData.value.email = email.value; // 인증 완료 후 email을 formData에 업데이트
+        }
+      } catch (error) {
+        console.error("이메일 인증 오류: ", error);
+      }
     };
 
-    const verifyCode = () => {
-      // 인증 코드 확인 로직
-      console.log('인증 코드 확인:', authCode.value);
+    // const sendVerification = () => {
+    //   // 이메일로 인증 코드 전송 로직
+    //   console.log('인증 코드 전송:', email.value);
 
-      alert('본인 인증 완료!');
-    };
+    //   // 인증번호가 전송되었다는 알림
+    //   alert('인증번호가 전송되었습니다.');
+    // };
 
-    const handleSubmit = () => {
-      // 폼 데이터 처리 로직 (예: 서버로 보내기)
-      console.log('폼 제출:', email.value, authCode.value);
+    // const verifyCode = () => {
+    //   // 인증 코드 확인 로직
+    //   console.log('인증 코드 확인:', authCode.value);
 
-      // // 폼 데이터가 유효하다고 가정하고 페이지 이동
-      // router.push('/mypage');
-    };
+    //   alert('본인 인증 완료!');
+    // };
+
+    // const handleSubmit = () => {
+    //   // 폼 데이터 처리 로직 (예: 서버로 보내기)
+    //   console.log('폼 제출:', email.value, authCode.value);
+
+    //   // // 폼 데이터가 유효하다고 가정하고 페이지 이동
+    //   // router.push('/mypage');
+    // };
 
     const goToMypage = () => {
       router.push('/mypage')
@@ -84,18 +108,17 @@ export default {
     return {
       router, 
       authCode, 
-      sendVerification, 
-      verifyCode, 
-      handleSubmit,
       email, 
       timeLeft,
       minutes,
       seconds,
       timerStarted,
+      formData,
       handleReRequest, 
       emailKey,
       sendEmail,
       emailCheck,
+      updateEmailAfterCheck,
       goToMypage
     };
   },

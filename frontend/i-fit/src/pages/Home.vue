@@ -7,8 +7,8 @@
           {{ item.content }}
         </div>
       </carousel-box>
-      <div class="arrow" id="left" @click="prevSlide">&lang;</div>
-      <div class="arrow" id="right" @click="nextSlide">&rang;</div>
+      <div class="arrow" id="left" @click="prevSlide">&#9001;</div>
+      <div class="arrow" id="right" @click="nextSlide">&#9002;</div>
     </carousel>
 
     <!-- 종목, 장소, 날짜, 시간 필터 -->
@@ -277,10 +277,11 @@ main {
 /* 캐러셀 */
 .carousel {
   position: relative;
-  width: 100%;
-  height: 50vh;
+  width: 90%;
+  height: 600px;
   /* 화면 절반 정도 높이 설정 */
   overflow: hidden;
+  margin: 0 auto;
 }
 
 .carousel-box {
@@ -290,13 +291,13 @@ main {
 
 .carousel-item {
   min-width: 100%;
-  height: 50vh;
+  height: 600px;
   /* carousel 높이에 맞춤 */
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  background-color: #ddd;
+  /* background-color: #ddd; */
   /* 슬라이드 아이템 배경색 */
 }
 
@@ -304,7 +305,7 @@ main {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 2rem;
+  font-size: 20px;
   cursor: pointer;
   user-select: none;
   z-index: 1;
@@ -328,6 +329,7 @@ main {
 #right {
   right: 10px;
 }
+
 
 /* 필터 */
 .main-bottom {
@@ -357,7 +359,7 @@ main {
   border-radius: 10px;
   text-align: center;
   background-color: #fff;
-  border: 1px solid whitesmoke;
+  border: 1px solid lightgrey;
   font-size: 16px;
   cursor: pointer;
 }
@@ -366,7 +368,7 @@ main {
 .search-box {
   display: flex;
   align-items: center;
-  border: 1px solid whitesmoke;
+  border: 1px solid lightgrey;
   border-radius: 10px;
   width: 250px;
   height: 48px;
@@ -398,7 +400,7 @@ main {
   text-align: center;
   border-radius: 10px;
   background-color: #fff;
-  border: 1px solid whitesmoke;
+  border: 1px solid lightgrey;
   box-sizing: border-box;
   font-size: 16px;
   cursor: pointer;

@@ -229,8 +229,8 @@ left: 0px;
 
 .benefit01-text {
 position: absolute;
-top: 16%;
-left: 35%;
+top: 28%;
+left: 34%;
 font-size: 44px;
 font-weight: bold;
 color: #1e285f;
@@ -238,7 +238,7 @@ color: #1e285f;
 
 .benefit01-title {
 position: absolute;
-top: 42%;
+top: 47%;
 left: 20%;
 font-size: 22px;
 font-weight: bold;
@@ -247,8 +247,8 @@ color: #5d5a88;
 
 .benefit01-content {
 position: absolute;
-top: 58%;
-left: 16%;
+top: 62%;
+left: 17%;
 color: #9795b5;
 }
 
@@ -262,7 +262,7 @@ left: 400px;
 
 .benefit02-text {
 position: absolute;
-top: 18%;
+top: 30%;
 left: 33%;
 font-size: 44px;
 font-weight: bold;
@@ -271,7 +271,7 @@ color: #1e285f;
 
 .benefit02-title {
 position: absolute;
-top: 44%;
+top: 48%;
 left: 4%;
 width: 500px;
 font-size: 22px;
@@ -281,8 +281,8 @@ color: #5d5a88;
 
 .benefit02-content {
 position: absolute;
-top: 60%;
-left: 25%;
+top: 65%;
+left: 26%;
 color: #9795b5;
 }
 
@@ -296,7 +296,7 @@ left: 75px;
 
 .benefit03-text {
 position: absolute;
-top: 17%;
+top: 30%;
 left: 35%;
 font-size: 44px;
 font-weight: bold;
@@ -305,7 +305,7 @@ color: #1e285f;
 
 .benefit03-title {
 position: absolute;
-top: 42%;
+top: 48%;
 left: 10%;
 font-size: 22px;  
 font-weight: bold;
@@ -314,8 +314,8 @@ color: #5d5a88;
 
 .benefit03-content {
 position: absolute;
-top: 58%;
-left: 20%;
+top: 62%;
+left: 21%;
 color: #9795b5;
 }
 
