@@ -52,19 +52,23 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* 전체 화면 높이 */
+  justify-content: flex-end; /* 하단으로 정렬 */
+}
+
 .pagination {
-  position: absolute; /* 절대 위치 설정 */
-  right: 280px; /* 페이지 오른쪽에서 20px 떨어진 위치 */
-  bottom: 20px; /* 페이지 아래쪽에서 20px 떨어진 위치 */
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  margin-left: 970px; /* 페이지네이션의 여백 설정 */
 }
 
 .pagination-btn {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
+  background-color: white;
+  border: none;
   padding: 5px 10px;
   margin: 0 5px;
   cursor: pointer;
