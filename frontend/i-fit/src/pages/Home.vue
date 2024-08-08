@@ -57,7 +57,10 @@
             <p class="time">8:00 PM</p>
             <div class="group-info">
               <div class="title-heart" @click="toggleHeart">
-                <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
+                <div :class="{
+                  'filled-heart': isHeartFilled,
+                  'empty-heart': !isHeartFilled,
+                }"></div>
               </div>
               <span class="size">참여인원: 3/10</span>
               <span class="location">강남구</span>
@@ -90,7 +93,10 @@
             <p class="time">{{ group.selectedTime }}</p>
             <div class="group-info">
               <div class="title-heart" @click="toggleHeart">
-                <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
+                <div :class="{
+                  'filled-heart': isHeartFilled,
+                  'empty-heart': !isHeartFilled,
+                }"></div>
               </div>
               <span class="size">참여인원: {{ group.person }}</span>
               <span class="location">{{ group.location }}</span>
@@ -124,9 +130,8 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import { ref, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 
 export default {
   name: "Home",
@@ -220,18 +225,30 @@ export default {
   },
 
   setup() {
-    const store = useStore();
     const router = useRouter();
-    // 모임 생성 vuex 상태 가져오기?
-    const formData = computed(() => store.getters["creategroup/formData"]);
-    // 서버로 부터 추가적으로 받은 데이터 가져오기?
-    const additionalData = computed(
-      () => store.getters["creategroup/additionalData"]
-    );
-    // 그룹 목록을 vuex 상태에서 가져오기
-    const groups = computed(() => store.getters["groupList/groups"]);
+    const route = useRoute();
 
-    // 참석 모달 열기
+    // 빈 배열로 초기화
+    const groups = ref([]);
+
+    // 단일 객체라 배열에 넣어줘야 동적으로 모임 생성 가능
+    const groupData = computed(() => ({
+      userId: route.query.userId,
+      communityId: route.query.communityId,
+      user_img: route.query.user_img,
+      username: route.query.username,
+      title: route.query.title,
+      topboxContent: route.query.topboxContent,
+      sport: route.query.sport,
+      location: route.query.location,
+      selectedDate: route.query.selectedDate,
+      selectedTime: route.query.selectedTime,
+    }));
+
+    onMounted(() => {
+      groups.value = [groupData.value];
+    });
+
     const isTooltipVisible = ref(true);
 
     const toggleTooltip = () => {
@@ -239,8 +256,8 @@ export default {
     };
     // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
     const showConfirmPopup = ref(false);
-    const confirmDeletion = (communityId) => {
-      router.push({ name: "GroupJoinList", query: { communityId } });
+    const confirmDeletion = () => {
+      router.push({ name: "GroupJoinList", query: { communityId: route.query.communityId } });
     };
     const cancelDeletion = () => {
       showConfirmPopup.value = false;
@@ -249,14 +266,11 @@ export default {
     const isHeartFilled = ref(false);
     const toggleHeart = () => {
       isHeartFilled.value = !isHeartFilled.value;
-    }
+    };
 
     return {
-      formData,
-      additionalData,
       groups,
       toggleTooltip,
-      showConfirmPopup,
       confirmDeletion,
       cancelDeletion,
       isHeartFilled,
@@ -329,7 +343,6 @@ main {
 #right {
   right: 10px;
 }
-
 
 /* 필터 */
 .main-bottom {
@@ -622,7 +635,7 @@ main {
 }
 
 .empty-heart::before {
-  content: '\2764';
+  content: "\2764";
   /* 빈 하트 문자 */
   font-size: 35px;
   /* 하트의 크기 */
@@ -633,7 +646,7 @@ main {
 }
 
 .filled-heart::before {
-  content: '\2764';
+  content: "\2764";
   /* 채워진 하트 문자 */
   font-size: 35px;
   /* 하트의 크기 */

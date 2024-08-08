@@ -6,17 +6,13 @@
           <textarea v-model="title" placeholder="제목을 입력하세요."></textarea>
         </div>
         <div class="topwrap-box" role="textbox">
-          <div
-            class="topbox-content"
-            contenteditable="true"
-            ref="topboxContent"
-            @input="updateTopboxContent"
-          ></div>
+          <div class="topbox-content" contenteditable="true" ref="topboxContent" @input="updateTopboxContent">
+          </div>
         </div>
         <div class="topwrap-tag">
           <p class="tag-item">{{ formData.sport }}</p>
           <p class="item" id="location">{{ formData.location }}</p>
-          <p class="item" id="date">날짜</p>
+          <p class="item" id="date">{{ formData.selectedDate }}</p>
           <p class="item" id="time">{{ formData.selectedTime }}</p>
           <p class="item" id="person">{{ formData.person }}</p>
         </div>
@@ -24,34 +20,18 @@
       <div class="contain-category">
         <p class="category-sidetext">Choose Category</p>
         <div class="category-list">
-          <button
-            class="category-btn"
-            type="button"
-            v-for="category in categories"
-            :key="category"
-            :class="{ selected: selectedCategory === category }"
-            @click="selectCategory(category)"
-          >
+          <button class="category-btn" type="button" v-for="category in categories" :key="category"
+            :class="{ selected: selectCategory === category }" @click="selectCategory(category)">
             {{ category }}
           </button>
         </div>
         <div class="category-input">
-          <input
-            class="input-event"
-            v-model="sportInput"
-            type="text"
-            placeholder="운동 종목을 입력하세요."
-          />
+          <input class="input-event" v-model="sportInput" type="text" placeholder="운동 종목을 입력하세요." />
           <button class="input-button" @click="setSport">확인</button>
         </div>
         <p class="category-text">Choose Location</p>
         <div class="category-input">
-          <input
-            class="input-event"
-            v-model="locationInput"
-            type="text"
-            placeholder="위치를 검색하세요."
-          />
+          <input class="input-event" v-model="locationInput" type="text" placeholder="위치를 검색하세요." />
           <button class="input-button" @click="setLocation">확인</button>
         </div>
         <p class="category-text">Choose Date and Time</p>
@@ -71,12 +51,7 @@
         </div>
         <p class="category-text">Choose Group Size</p>
         <div class="category-input">
-          <input
-            class="input-event"
-            v-model="personInput"
-            type="text"
-            placeholder="인원을 입력하세요."
-          />
+          <input class="input-event" v-model="personInput" type="text" placeholder="인원을 입력하세요." />
           <button class="input-button" @click="setPerson">확인</button>
         </div>
         <button class="category-register" @click="registerGroup">등록</button>
@@ -86,125 +61,134 @@
 </template>
 
 <script>
-import { computed, ref } from "vue";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
-// import { registerGroupOnServer } from "@/api/registerGroupOnServer";
+import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { toRaw } from 'vue';
 
 export default {
-  name: "CreateGroup",
+  name: "CreateGroup2",
 
   setup() {
-    const store = useStore();
     const router = useRouter();
+    const title = ref('');
+    const sportInput = ref('');
+    const locationInput = ref('');
+    const personInput = ref('');
+    // 날짜
+    const showDatePicker = ref(false);
 
-    const title = ref("");
-    const sportInput = ref("");
-    const locationInput = ref("");
-    const personInput = ref("");
+    const formData = reactive({
+      title: "",
+      topboxContent: "",
+      sport: "종목",
+      location: "",
+      person: "",
+      selectedDate: "",
+      selectedTime: "",
+    });
+    // formData에 데이터가 잘 들어가는지 콘솔에서 확인
+    console.log(toRaw(formData));
 
-    const formData = computed(() => store.getters["creategroup/formData"]);
-    const categories = computed(() => store.getters["creategroup/categories"]);
-    const additionalData = computed(() => store.getters["creategroup/additionalData"]);
-    const times = ["오전", "오후", "저녁"];
+    const categories = [
+      "러닝",
+      "웨이트",
+      "라이딩",
+      "요가",
+      "수영",
+      "등산",
+      "테니스",
+      "클라이밍",
+      "필라테스",
+      "GX",
+    ];
+    const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
 
-    const selectedCategory = ref(null);
+    // 메서드
+    const updateTopboxContent = () => {
+      formData.topboxContent = (document.querySelector('.topbox-content') || '').innerText;
+    };
 
     const selectCategory = (category) => {
-      selectedCategory.value = category;
-      store.dispatch("creategroup/updateSport", category);
+      formData.sport = category;
+      selectCategory.value = category;
     };
 
     const setSport = () => {
-      const sport = sportInput.value.trim();
-      if (sport) {
-        store.dispatch("creategroup/updateSport", sport);
-        store.dispatch("creategroup/addCategory", sport);
-        sportInput.value = "";
-      }
+      formData.sport = sportInput.value;
+      sportInput.value = '';
     };
 
     const setLocation = () => {
-      const location = locationInput.value.trim();
-      if (location) {
-        store.dispatch("creategroup/updateLocation", location);
-        locationInput.value = "";
-      }
+      formData.location = locationInput.value;
+      locationInput.value = '';
+    };
+
+    const handleDateChange = (event) => {
+      formData.selectedDate = event.target.value;
     };
 
     const setPerson = () => {
-      const person = personInput.value.trim();
-      if (person) {
-        store.dispatch("creategroup/updatePerson", person);
-        personInput.value = "";
-      }
+      formData.person = personInput.value;
+      personInput.value = '';
     };
 
-    const showDatePicker = ref(false);
+    const additionalData = reactive({
+      userId: "",
+      communityId: "",
+      user_img: "",
+      username: "",
+    });
 
-    const handleDateChange = (event) => {
-      const selectDate = event.target.value;
-      store.dispatch('creategroup/updateSelectedDate', selectDate);
-      showDatePicker.value = false;
-    }
-
-    
-    // const selectDate = () => {
-    //   alert("이건 아마 날짜 api 구현 해야될듯");
-    // };
-    
-    const updateTopboxContent = () => {
-      const content = document.querySelector(".topbox-content").innerText;
-      store.dispatch("creategroup/updateTopboxContent", content);
-    };
-    
     const registerGroup = async () => {
+      formData.title = title.value;
+      title.value = '';
       try {
-        const { title, topboxContent, sport, location, selectedDate, selectedTime, person } = formData.value;
-        let { userId, communityId, user_img, username } = additionalData.value;
-        if (!user_img) {
-          user_img = ref(require('@/assets/image/default-profile.png'));
-        }
-        await store.dispatch('creategroup/createGroup', {
-          title,
-          topboxContent,
-          selectedDate,
-          selectedTime,
-          person,
-          location,
-          sport,
-          user_img,
-          username,
-          communityId,
-          userId,
-        });
+        const response = await axios.post('/api/create-group', formData);
+        const { userId, communityId, user_img, username } = response.data;
+
+        additionalData.userId = userId;
+        additionalData.communityId = communityId;
+        additionalData.user_img = user_img;
+        additionalData.username = username;
+
         alert("모임이 등록되었습니다.");
-        router.push({ name: "Home" });
+        router.push({
+          name: "Home",
+          query: {
+            userId,
+            communityId,
+            user_img,
+            username,
+            ...formData
+          }
+        });
       } catch (error) {
-        console.error('Error', error);
-        alert('모임 생성에 실패했습니다');
+        console.error("Error", error);
+        alert("모임 등록에 실패했습니다.");
       }
     };
-
     return {
       title,
       sportInput,
       locationInput,
       personInput,
+      showDatePicker,
+
       formData,
       categories,
-      selectedCategory,
       times,
+      updateTopboxContent,
       selectCategory,
       setSport,
       setLocation,
-      setPerson,
-      registerGroup,
-      updateTopboxContent,
       handleDateChange,
+      setPerson,
+      additionalData,
+      registerGroup,
     };
-  },
-};
+  }
+}
 </script>
 
 <style scoped>
