@@ -3,7 +3,6 @@ import axios from "axios";
 import { useTimer } from "@/utils/timer";
 
 export function useEmail() {
-  //   const id = ref("");
   const email = ref("");
   const enteredCode = ref(""); // 사용자가 입력한 인증 코드 저장
   const sendStatus = ref(null); // 이메일 전송 상태 저장
