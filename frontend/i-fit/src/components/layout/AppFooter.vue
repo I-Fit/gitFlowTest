@@ -113,6 +113,7 @@ footer {
   font-size: 15px;
   font-weight: lighter;
   color: #9795b5;
+  cursor: pointer;
 }
 
 .side-map .group1 span:nth-child(3)::before,
