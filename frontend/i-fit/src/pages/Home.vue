@@ -130,8 +130,9 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import axios from "axios";
 
 export default {
   name: "Home",
@@ -227,26 +228,15 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
-
-    // 빈 배열로 초기화
     const groups = ref([]);
 
-    // 단일 객체라 배열에 넣어줘야 동적으로 모임 생성 가능
-    const groupData = computed(() => ({
-      userId: route.query.userId,
-      communityId: route.query.communityId,
-      user_img: route.query.user_img,
-      username: route.query.username,
-      title: route.query.title,
-      topboxContent: route.query.topboxContent,
-      sport: route.query.sport,
-      location: route.query.location,
-      selectedDate: route.query.selectedDate,
-      selectedTime: route.query.selectedTime,
-    }));
-
-    onMounted(() => {
-      groups.value = [groupData.value];
+    onMounted(async () => {
+      try {
+        const response = await axios.get('/api/group-details');
+        groups.value = response.data;   // 서버로부터 받은 데이터를 groups배열에 저장
+      } catch(error) {
+        console.error("Error", error);
+      }
     });
 
     const isTooltipVisible = ref(true);

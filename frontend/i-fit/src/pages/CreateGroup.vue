@@ -67,7 +67,7 @@ import axios from 'axios';
 import { toRaw } from 'vue';
 
 export default {
-  name: "CreateGroup2",
+  name: "CreateGroup",
 
   setup() {
     const router = useRouter();
@@ -140,28 +140,16 @@ export default {
       username: "",
     });
 
+    // 사용자 식별 Id값도 formData에 추가해서 서버에 보내줘야 한다.
+    // 모임 식별 Id값은 서버에서 만들어서 다시 응답해주는 형식?
     const registerGroup = async () => {
       formData.title = title.value;
       title.value = '';
       try {
-        const response = await axios.post('/api/create-group', formData);
-        const { userId, communityId, user_img, username } = response.data;
-
-        additionalData.userId = userId;
-        additionalData.communityId = communityId;
-        additionalData.user_img = user_img;
-        additionalData.username = username;
-
+        await axios.post('/api/create-group', formData);
         alert("모임이 등록되었습니다.");
         router.push({
           name: "Home",
-          query: {
-            userId,
-            communityId,
-            user_img,
-            username,
-            ...formData
-          }
         });
       } catch (error) {
         console.error("Error", error);

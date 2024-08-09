@@ -105,7 +105,6 @@
       </div>
     </div>
   </main>
-  <div class="null"></div>
 </template>
 
 <script>
