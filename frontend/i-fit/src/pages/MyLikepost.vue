@@ -82,6 +82,11 @@
             </div>
           </div>
         </div>
+        <PagiNation
+            :currentPage="currentPage"
+            :totalPages="totalPages"
+            @page-changed="fetchPosts"
+          />
       </div>
     </div>
   </main>
@@ -91,16 +96,21 @@
   import PostActions from "./PostActions.vue";
   import { useRouter } from "vue-router";
   import AppNav from "@/components/layout/AppNav.vue";
+  import PagiNation from "@/pages/PagiNation.vue";
   
   export default {
     name: "MyLikepost",
     components: {
+      PagiNation,
       PostActions,
       AppNav,
     },
   
     data() {
     return {
+      Likes: [],
+      currentPage: 1,
+      totalPages: 5, // 예를 들면, 총 페이지 수
       showActions: false,
       searchQuery: "",
     };

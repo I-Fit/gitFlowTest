@@ -64,6 +64,8 @@ export default {
   justify-content: center;
   align-items: center;
   margin-left: 970px; /* 페이지네이션의 여백 설정 */
+  /* height: px; */ /* 내가 원하는 높이? */
+  margin-top: 50px; /* 페이지네이션과 콘텐츠 사이의 간격 */
 }
 
 .pagination-btn {

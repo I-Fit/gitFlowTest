@@ -98,12 +98,74 @@
               </p>
             </div>
           </div>
-          <PagiNation
+          <div class="bottom-table">
+            <div class="user-info">
+              <img
+                class="user-info-img"
+                src="@/assets/image/user_img.png"
+                alt=""
+              />
+              <p class="user-info-name">김계란</p>
+              <img
+                class="modify-icon"
+                src="@/assets/image/dot.png"
+                alt="dot"
+                @click="toggleActions"
+              />
+              <PostActions
+                :visible="showActions"
+                @navigate="handleNavigation"
+              />
+            </div>
+            <div class="user-comment" @click="boardDetail">
+              ‘카페 메이플스토리’는 핑크 컬러 테마의 카페 식음 공간과 함께
+              몬스터 형태의 오브제로 세련된 분위기를 연출한 테라스, 포토 스팟이
+              마련된 굿즈존 등으로 구성됐다.
+            </div>
+            <div class="post-comment">
+              <p class="post-title">
+                게시글 : 멤버들과 현충일 번개운동
+                <span class="creation-date">6일 전</span>
+              </p>
+            </div>
+          </div>
+          <div class="bottom-table">
+            <div class="user-info">
+              <img
+                class="user-info-img"
+                src="@/assets/image/user_img.png"
+                alt=""
+              />
+              <p class="user-info-name">김계란</p>
+              <img
+                class="modify-icon"
+                src="@/assets/image/dot.png"
+                alt="dot"
+                @click="toggleActions"
+              />
+              <PostActions
+                :visible="showActions"
+                @navigate="handleNavigation"
+              />
+            </div>
+            <div class="user-comment" @click="boardDetail">
+              ‘카페 메이플스토리’는 핑크 컬러 테마의 카페 식음 공간과 함께
+              몬스터 형태의 오브제로 세련된 분위기를 연출한 테라스, 포토 스팟이
+              마련된 굿즈존 등으로 구성됐다.
+            </div>
+            <div class="post-comment">
+              <p class="post-title">
+                게시글 : 멤버들과 현충일 번개운동
+                <span class="creation-date">6일 전</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <PagiNation
             :currentPage="currentPage"
             :totalPages="totalPages"
-            @page-changed="fetchComments"
+            @page-changed="fetchPosts"
           />
-        </div>
       </div>
     </div>
   </main>
