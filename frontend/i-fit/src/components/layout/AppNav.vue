@@ -14,9 +14,9 @@
         <div class="selector">
           <p class="selector-title">게시글 관리</p>
         </div>
-        <p class="selector-text" @click="postHistory">나의 게시물 내역</p>
-        <p class="selector-text" @click="myComments">내가 쓴 댓글 내역</p>
-        <p class="selector-text" @click="myLikepost">좋아요 한 게시글</p>
+        <p class="selector-text" @click="postHistory">내가 쓴 게시물</p>
+        <p class="selector-text" @click="myComments">내가 쓴 댓글</p>
+        <p class="selector-text" @click="myLikepost">좋아요 한 게시물</p>
       </div>
     </nav>
   </template>

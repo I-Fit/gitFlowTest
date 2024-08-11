@@ -5,8 +5,8 @@
       <div class="party-top">
         <h2>모임 관리</h2>
         <p class="line text01">내가 만든 모임</p>
-        <p class="line text02">모임 참여 내역</p>
-        <p class="text03">찜한 모임 내역</p>
+        <p class="line text02" @click="groupJoinlist">모임 참여 내역</p>
+        <p class="text03" @click="likeGroup">찜한 모임 내역</p>
       </div>
       <div class="party-middle">
         <div class="middle-filter">
@@ -17,11 +17,14 @@
               id="search_input"
               placeholder="검색어를 입력하세요."
               class="search-box-input"
+              v-model="searchQuery"
+              @input="onInput"
             />
             <img
               src="@/assets/image/search.icon.png"
               alt="search"
               class="search-box-icon"
+              @click="onSearch"
             />
           </div>
           <select title="정렬" class="middle-filter-sort">
@@ -66,7 +69,13 @@
           <div class="group-container"></div>
           <div class="group-container"></div>
         </div>
-        <!-- <div class="next_page"></div> -->
+        <PagiNation
+            :currentPage="currentPage"
+            :totalPages="totalPages"
+            @page-changed="fetchGroups"
+          />
+      </div>
+      <div class="mygroup-floor">
       </div>
     </div>
   </main>
@@ -74,17 +83,39 @@
 
 <script>
 import AppNav from "@/components/layout/AppNav.vue";
-// import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
+import PagiNation from "@/pages/PagiNation.vue";
 
 export default {
   name: "MyGreateGroup",
   components: {
     AppNav,
+    PagiNation,
   },
-  setup() {
-    // const router = useRouter();
 
-    return {};
+  data() {
+    return {
+      Groups: [],
+      currentPage: 1,
+      totalPages: 5, // 예를 들면, 총 페이지 수
+    };
+  },
+
+  setup() {
+    const router = useRouter();
+
+    const groupJoinlist = () => {
+      router.push({ name: "GroupJoinList" });
+    };
+
+    const likeGroup = () => {
+      router.push({ name: "LikeGroup" });
+    };
+
+    return {
+      groupJoinlist,
+      likeGroup,
+    };
   },
 };
 </script>
@@ -171,19 +202,29 @@ h2 {
   padding: 5px 0px 5px 5px;
   width: 250px;
   margin-left: 906px;
+  position: relative;
+}
+
+.mygroup-floor {
+  height: 50px;
+  text-align: center;
+  padding: 20px;
 }
 
 .search-box-input {
   border: none;
   outline: none;
   padding: 5px 0px 5px 10px;
+  width: 100%;
 }
 
 .search-box-icon {
   width: 15px;
   height: 15px;
-  margin-left: 45px;
-  text-align: end;
+  position: absolute;
+  right: 10px;
+  /* margin-left: 45px;
+  text-align: end; */
   cursor: pointer;
 }
 

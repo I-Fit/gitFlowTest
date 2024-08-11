@@ -4,7 +4,7 @@
     <div class="party">
       <div class="party-top">
         <h2>모임 관리</h2>
-        <p class="line text01">내가 만든 모임</p>
+        <p class="line text01" @click="myCreategroup">내가 만든 모임</p>
         <p class="line text02" @click="groupjoinlist">모임 참여 내역</p>
         <p class="text03" @click="likegroup">찜한 모임 내역</p>
       </div>
@@ -44,7 +44,6 @@
               <span class="cancel">취소</span>
             </div>
           </div>
-
           <div v-for="group in groupDetails" :key="group.id" class="group-container">
             <div class="user-info">
               <img :src="group.userImage || '@/assets/image/user_img.png'" alt="사용자 이미지" class="user-image" />
@@ -67,7 +66,15 @@
           </div>
           <div class="group-container"></div>
           <div class="group-container"></div>
+          <div class="group-container"></div>
         </div>
+        <PagiNation
+            :currentPage="currentPage"
+            :totalPages="totalPages"
+            @page-changed="fetchLikegroups"
+          />
+      </div>
+      <div class="likegroups-floor">
       </div>
     </div>
     <div class="modal" v-if="isModalOpen">
@@ -83,18 +90,25 @@
 import AppNav from '@/components/layout/AppNav.vue';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
+import PagiNation from "@/pages/PagiNation.vue";
 
 export default {
   name: "LikeGroup",
   components: {
     AppNav,
+    PagiNation,
   },
+
   data() {
-    return {
-      isModalOpen: false, // 모달 창 상태
-      selectedItem: null, // 선택된 아이템
-    }
-  },
+  return {
+    Likegroups: [],
+    currentPage: 1,
+    totalPages: 5, // 예를 들면, 총 페이지 수
+    isModalOpen: false, // 모달 창 상태
+    selectedItem: null, // 선택된 아이템
+  };
+},
+  
   methods: {
     openModal(group) {
       this.selectedItem = {
@@ -111,9 +125,14 @@ export default {
   setup() {
     const router = useRouter();
 
+    const myCreategroup = () => {
+      router.push({ name: "MyCreateGroup" });
+    };
+
     const groupjoinlist = () => {
       router.push({ name: "GroupJoinList" });
     };
+
     const likegroup = () => {
       router.push({ name: "LikeGroup" });
     };
@@ -128,6 +147,7 @@ export default {
       likegroup,
       isHeartFilled,
       toggleHeart,
+      myCreategroup,
     }
   },
 };
@@ -186,6 +206,7 @@ h2 {
   margin-bottom: 20px;
   display: inline-block;
   vertical-align: middle;
+  cursor: pointer;
 }
 
 .text01,
@@ -214,18 +235,28 @@ h2 {
   padding: 5px;
   width: 250px;
   margin-left: 906px;
+  position: relative;
+}
+
+.likegroups-floor {
+  height: 50px; /* floor 영역 높이 설정 */
+  text-align: center;
+  padding: 20px;
 }
 
 .search-box-input {
   border: none;
   outline: none;
   padding: 5px 0px 5px 10px;
+  width: 100%;
 }
 
 .search-box-icon {
   width: 15px;
   height: 15px;
-  margin-left: 45px;
+  position: absolute;
+  right: 10px;
+  /* margin-left: 45px; */
   cursor: pointer;
 }
 

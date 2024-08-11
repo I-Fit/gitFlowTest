@@ -4,9 +4,9 @@
     <div class="party">
       <div class="party-top">
         <h2>모임 관리</h2>
-        <p class="line text01">내가 만든 모임</p>
+        <p class="line text01" @click="myCreategroup">내가 만든 모임</p>
         <p class="line text02">모임 참여 내역</p>
-        <p class="text03">찜한 모임 내역</p>
+        <p class="text03" @click="likeGroup">찜한 모임 내역</p>
       </div>
       <div class="party-middle">
         <div class="middle-filter">
@@ -90,12 +90,17 @@
               </div>
             </div>
           </div>
-
           <div class="group-container"></div>
           <div class="group-container"></div>
           <div class="group-container"></div>
         </div>
-        <!-- <div class="next_page"></div> -->
+        <PagiNation
+            :currentPage="currentPage"
+            :totalPages="totalPages"
+            @page-changed="fetchJoins"
+          />
+      </div>
+      <div class="joinlist-floor">
       </div>
     </div>
     <div class="modal" v-if="isModalOpen">
@@ -113,14 +118,19 @@ import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 // import { useStore } from "vuex";
 import axios from "axios";
+import PagiNation from "@/pages/PagiNation.vue";
 
 export default {
   name: "GroupJoinList",
   components: {
     AppNav,
+    PagiNation,
   },
   data() {
     return {
+      Joins: [],
+      currentPage: 1,
+      totalPages: 5, // 예를 들면, 총 페이지 수
       isModalOpen: false, // 모달 창 상태
       selectedItem: null, // 선택된 아이템
     }
@@ -140,6 +150,15 @@ export default {
 
   setup() {
     const router = useRouter();
+
+    const myCreategroup = () => {
+      router.push({ name: "MyCreateGroup" });
+    };
+
+    const likeGroup = () => {
+      router.push({ name: "LikeGroup" });
+    };
+
     // const store = useStore();
     const route = useRoute();
 
@@ -187,6 +206,8 @@ export default {
       cancelDeletion,
       isHeartFilled,
       toggleHeart,
+      myCreategroup,
+      likeGroup,
     };
   },
 };
@@ -274,19 +295,29 @@ h2 {
   padding: 5px 0px 5px 5px;
   width: 250px;
   margin-left: 906px;
+  position: relative;
+}
+
+.joinlist-floor {
+  height: 50px; /* floor 영역 높이 설정 */
+  text-align: center;
+  padding: 20px;
 }
 
 .search-box-input {
   border: none;
   outline: none;
   padding: 5px 0px 5px 10px;
+  width: 100%;
 }
 
 .search-box-icon {
   width: 15px;
   height: 15px;
-  margin-left: 45px;
-  text-align: end;
+  position: absolute;
+  right: 10px;
+  /* margin-left: 45px;
+  text-align: end; */
   cursor: pointer;
 }
 

@@ -4,7 +4,7 @@
     <div class="comment">
       <div class="comment-top">
         <h2>게시글 관리</h2>
-        <p class="line text01" @click="postHistory">나의 게시물 내역</p>
+        <p class="line text01" @click="postHistory">내가 쓴 게시물</p>
         <p class="line text02">내가 쓴 댓글</p>
         <p class="text03" @click="myLikepost">좋아요 한 게시물</p>
       </div>
@@ -164,8 +164,10 @@
         <PagiNation
             :currentPage="currentPage"
             :totalPages="totalPages"
-            @page-changed="fetchPosts"
+            @page-changed="fethComments"
           />
+      </div>
+      <div class="comment-floor">
       </div>
     </div>
   </main>
@@ -188,7 +190,7 @@ export default {
 
   data() {
     return {
-      comments: [],
+      Comments: [],
       currentPage: 1,
       totalPages: 5, // 예를 들면, 총 페이지 수
       showActions: false,
@@ -366,6 +368,12 @@ h2 {
   height: 225px;
   border: 2px solid #ccc;
   border-radius: 10px;
+}
+
+.comment-floor {
+  height: 50px; /* floor 영역 높이 설정 */
+  text-align: center;
+  padding: 20px;
 }
 
 .post-actions {

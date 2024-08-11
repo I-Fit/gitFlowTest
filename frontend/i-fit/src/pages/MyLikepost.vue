@@ -4,7 +4,7 @@
     <div class="post">
       <div class="post-top">
         <h2>게시글 관리</h2>
-        <p class="line text01" @click="postHistory">나의 게시물 내역</p>
+        <p class="line text01" @click="postHistory">내가 쓴 게시물</p>
         <p class="line text02" @click="myComments">내가 쓴 댓글</p>
         <p class="text03">좋아요 한 게시물</p>
       </div>
@@ -85,8 +85,10 @@
         <PagiNation
             :currentPage="currentPage"
             :totalPages="totalPages"
-            @page-changed="fetchPosts"
+            @page-changed="fetchLikes"
           />
+      </div>
+      <div class="like-floor">
       </div>
     </div>
   </main>
@@ -281,6 +283,12 @@
     margin-left: 906px;
   }
   
+  .like-floor {
+    height: 50px; /* floor 영역 높이 설정 */
+    text-align: center;
+    padding: 20px;
+  }
+
   .search-box-input {
     border: none;
     outline: none;
