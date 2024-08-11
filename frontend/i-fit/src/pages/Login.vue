@@ -41,18 +41,21 @@
 
 <script>
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import { ref } from "vue";
-import axios from "axios";
 
 export default {
   name: "Login",
 
   setup() {
     const router = useRouter();
+    const store = useStore();
+
     const formData = ref({
       id: "",
       password: "",
     });
+
     console.log(formData);
 
     // 로그인 성공 시 메인으로 이동
@@ -63,12 +66,12 @@ export default {
       }
 
       try {
-        const response = await axios.post("", {
+        await store.dispatch('login', {
           id: formData.value.id,
           password: formData.value.password,
         });
 
-        if (response.data.success) {
+        if (store.getters.Loggin) {
           alert("로그인 성공");
           router.push({ name: "Home" });
         } else {

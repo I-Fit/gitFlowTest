@@ -2,7 +2,7 @@
   <header>
     <div class="icon-table">
       <div id="icon-img">
-        <img src="../../public/image/icon.PNG" alt="I-FIT-icon" />
+        <img src="../../assets/image/icon.png" alt="I-FIT-icon" />
       </div>
       <div class="icon-text">I-Fit</div>
     </div>

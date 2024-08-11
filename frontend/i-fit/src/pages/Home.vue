@@ -230,11 +230,12 @@ export default {
     const route = useRoute();
     const groups = ref([]);
 
+    // 서버에게 받은 데이터에 회원ID, 모임ID, 모임 데이터 등이 들어있음
     onMounted(async () => {
       try {
         const response = await axios.get('/api/group-details');
         groups.value = response.data;   // 서버로부터 받은 데이터를 groups배열에 저장
-      } catch(error) {
+      } catch (error) {
         console.error("Error", error);
       }
     });

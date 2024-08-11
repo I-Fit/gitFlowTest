@@ -1,38 +1,29 @@
 <template>
-  <!-- <LoggedHeader v-if="isLoggedIn" /> -->
+  <LoggedHeader v-if="isLoggedIn" />
   <NonLoggedHeader />
 </template>
 
 <script>
 import NonLoggedHeader from "./NonLoggedHeader.vue";
-// import LoggedHeader from "./LoggedHeader.vue";
-// import { ref, onMounted } from "vue";
-// import axios from "axios";
+import LoggedHeader from "./LoggedHeader.vue";
+import { computed } from "vue";
+import { useStore } from "vuex";
 
 export default {
   components: {
-    // LoggedHeader,
+    LoggedHeader,
     NonLoggedHeader,
   },
 
-  // setup() {
-  //   const isLoggedIn = ref(false);
+  setup() {
+    const store = useStore();
 
-  //   const checkLoginStatus = async () => {
-  //     try {
-  //       const response = await axios.get(""); // 서버에
-  //       isLoggedIn.value = response.data.isLoggedIn;
-  //     } catch (error) {
-  //       console.error("로그인 상태 확인 실패", error);
-  //     }
-  //   };
+    const isLoggedIn = computed(() => store.getters.Loggedin);
 
-  //   onMounted(checkLoginStatus);
-
-  //   return {
-  //     isLoggedIn,
-  //   }
-  // }
+    return {
+      isLoggedIn,
+    }
+  }
 };
 </script>
 

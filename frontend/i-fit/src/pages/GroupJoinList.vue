@@ -94,11 +94,7 @@
           <div class="group-container"></div>
           <div class="group-container"></div>
         </div>
-        <PagiNation
-            :currentPage="currentPage"
-            :totalPages="totalPages"
-            @page-changed="fetchJoins"
-          />
+        <PagiNation :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchJoins" />
       </div>
       <div class="joinlist-floor">
       </div>
@@ -114,9 +110,9 @@
 
 <script>
 import AppNav from "@/components/layout/AppNav.vue";
-import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-// import { useStore } from "vuex";
+import { ref, onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import axios from "axios";
 import PagiNation from "@/pages/PagiNation.vue";
 
@@ -159,25 +155,18 @@ export default {
       router.push({ name: "LikeGroup" });
     };
 
-    // const store = useStore();
-    const route = useRoute();
+    const store = useStore();
+    const groups = ref([]);
+    const userId = computed(() => store.getters['isLogged/userId']);
 
-    const group = ref(null);
-
-    const loadGroup = async () => {
-      const { communityId } = route.query;
-      if (communityId) {
-        try {
-          const response = await axios.get(`/api/groups/${communityId}`);
-          group.value = response.data;
-        } catch (error) {
-          console.error("Error", error);
-        }
+    onMounted(async () => {
+      try {
+        const response = await axios.get('/api', userId);
+        groups.value = response.data;
+      } catch (error) {
+        console.error("Error", error);
       }
-    };
-    onMounted(() => {
-      loadGroup();
-    });
+    })
 
     // 참석 모달 열기
     const isTooltipVisible = ref(true);
@@ -299,7 +288,8 @@ h2 {
 }
 
 .joinlist-floor {
-  height: 50px; /* floor 영역 높이 설정 */
+  height: 50px;
+  /* floor 영역 높이 설정 */
   text-align: center;
   padding: 20px;
 }

@@ -11,20 +11,9 @@
       <div class="post-middle">
         <div class="middle-filter">
           <div class="middle-filter-search-box">
-            <input
-              type="text"
-              name="search"
-              class="search-box-input"
-              placeholder="검색어를 입력하세요."
-              v-model="searchQuery"
-              @input="onInput"
-            />
-            <img
-              src="@/assets/image/search.icon.png"
-              alt="search"
-              class="search-box-icon"
-              @click="onSearch"
-            />
+            <input type="text" name="search" class="search-box-input" placeholder="검색어를 입력하세요." v-model="searchQuery"
+              @input="onInput" />
+            <img src="@/assets/image/search.icon.png" alt="search" class="search-box-icon" @click="onSearch" />
           </div>
           <select title="정렬" class="middle-filter-sort">
             <option value="" selected="selected" disabled="disabled">정렬</option>
@@ -35,33 +24,16 @@
         <div class="post-bottom-table">
           <div class="bottom-table-group">
             <div class="table-group-del">
-              <img
-                id="modify_icon"
-                src="@/assets/image/dot.png"
-                alt="dot"
-                @click="toggleActions"
-              />
+              <img id="modify_icon" src="@/assets/image/dot.png" alt="dot" @click="toggleActions" />
               <PostActions :visible="showActions" @navigate="handleNavigation" />
             </div>
             <div class="table-group-postimg">
-              <img
-                class="table-group-post-img"
-                src="@/assets/image/post_img.png"
-                alt="게시글 이미지"
-              />
+              <img class="table-group-post-img" src="@/assets/image/post_img.png" alt="게시글 이미지" />
             </div>
             <div class="table-group-btn">
-              <img
-                class="btn-icon"
-                src="@/assets/image/heart.png"
-                alt="좋아요 아이콘"
-              />
+              <img class="btn-icon" src="@/assets/image/heart.png" alt="좋아요 아이콘" />
               <span id="heart-count">101</span>
-              <img
-                class="btn-icon"
-                src="@/assets/image/comment.png"
-                alt="댓글 아이콘"
-              />
+              <img class="btn-icon" src="@/assets/image/comment.png" alt="댓글 아이콘" />
               <span id="comment-count">5</span>
             </div>
             <div class="table-group-content" @click="boardDetail">
@@ -76,283 +48,415 @@
             </div>
           </div>
         </div>
-        <PagiNation
-            :currentPage="currentPage"
-            :totalPages="totalPages"
-            @page-changed="fetchPosts"
-          />
+        <PagiNation :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchPosts" />
       </div>
       <div class="post-floor">
       </div>
     </div>
   </main>
-  </template>
-  
-  <script>
-  import PostActions from "./PostActions.vue";
-  import { useRouter } from "vue-router";
-  import AppNav from "@/components/layout/AppNav.vue";
-  import PagiNation from "@/pages/PagiNation.vue";
-  
-  export default {
-    name: "AppPost",
-    components: {
-      PostActions,
-      AppNav,
-      PagiNation,
+</template>
+
+<script>
+import PostActions from "./PostActions.vue";
+// import { useRouter } from "vue-router";
+import AppNav from "@/components/layout/AppNav.vue";
+import PagiNation from "@/pages/PagiNation.vue";
+
+export default {
+  name: "AppPost",
+  components: {
+    PostActions,
+    AppNav,
+    PagiNation,
+  },
+
+  data() {
+    return {
+      Posts: [],
+      currentPage: 1,
+      totalPages: 5, // 예를 들면, 총 페이지 수
+      showActions: false,
+      searchQuery: "",
+    };
+  },
+
+  methods: {
+    toggleActions() {
+      this.showActions = !this.showActions;
     },
-  
-    data() {
-      return {
-        Posts: [],
-        currentPage: 1,
-        totalPages: 5, // 예를 들면, 총 페이지 수
-        showActions: false,
-        searchQuery: "",
-      };
+    handleNavigation(action) {
+      if (action === "PostModify") {
+        this.$router.push("/PostModify"); // 수정 페이지로 이동
+      } else if (action === "delete") {
+        this.$router.push("/MainBoard"); // 메인 게시판으로 이동
+      }
     },
-  
-    methods: {
-      toggleActions() {
-        this.showActions = !this.showActions;
-      },
-      handleNavigation(action) {
-        if (action === "PostModify") {
-          this.$router.push("/PostModify"); // 수정 페이지로 이동
-        } else if (action === "delete") {
-          this.$router.push("/MainBoard"); // 메인 게시판으로 이동
-        }
-      },
-      
-      onInput(event) {
-        this.searchQuery = event.target.value;
-      },
-      onSearch() {
-        console.log("Searching for:", this.searchQuery);
-      },
+
+    onInput(event) {
+      this.searchQuery = event.target.value;
     },
-  
-    setup() {
-      const router = useRouter();
-  
-      const myComments = () => {
-        router.push({ name: "MyComments" });
-      };
-  
-      const myLikepost = () => {
-        router.push({ name: "MyLikepost" });
-      };
-  
-      const boardDetail = () => {
-        router.push({ name: "BoardDetail" });
-      };
-  
-      return {
-        myComments,
-        myLikepost,
-        boardDetail,
-      };
+    onSearch() {
+      console.log("Searching for:", this.searchQuery);
     },
-  };
-  </script>
-  
-  <style scoped>
-  main {
-    width: 100%;
-    height: 900px;
-    display: grid;
-    grid-template-columns: 180px 1fr;
   }
-  
-  .post {
-    width: 1270px;
-    height: 100%;
-    display: grid;
-    grid-template-rows: 150px 1fr;
-  }
-  
-  .post-top {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-  
-  .post-top::after {
-    content: "";
-    display: block;
-    width: 100%;
-    height: 2px;
-    background-color: #ccc;
-  }
-  
-  h2 {
-    font-size: 50px;
-    font-weight: bold;
-    color: #5d5a88;
-    margin: 0;
-    margin-left: 1007px;
-  }
-  
-  .line::after {
-    content: "|";
-    color: #ccc;
-    margin: 0 5px 0 5px;
-    font-weight: lighter;
-  }
-  
-  .text01,
-  .text02,
-  .text03 {
-    font-size: 24px;
-    font-weight: bolder;
-    margin-top: 28px;
-    margin-bottom: 20px;
-    display: inline-block;
-    vertical-align: middle;
-    cursor: pointer;
-  }
-  
-  .text02,
-  .text03 {
-    font-weight: lighter;
-  }
-  
-  .post-middle {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-rows: 95px 1fr;
-  }
-  
-  .middle-filter {
-    display: flex;
-    align-items: center;
-    padding: 10px 5px;
-  }
-  
-  .middle-filter-search-box {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 5px;
-    width: 250px;
-    margin-left: 906px;
-    position: relative; /* Add relative positioning */
-  }
-  
-  .post-floor {
-  height: 50px; /* floor 영역 높이 설정 */
+}
+</script>
+
+<style scoped>
+main {
+  width: 100%;
+  height: 900px;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+}
+
+.post {
+  width: 1270px;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 150px 1fr;
+}
+
+.post-top {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.post-top::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #ccc;
+}
+
+h2 {
+  font-size: 50px;
+  font-weight: bold;
+  color: #5d5a88;
+  margin: 0;
+  margin-left: 1007px;
+}
+
+.line::after {
+  content: "|";
+  color: #ccc;
+  margin: 0 5px 0 5px;
+  font-weight: lighter;
+}
+
+.text01,
+.text02,
+.text03 {
+  font-size: 24px;
+  font-weight: bolder;
+  margin-top: 28px;
+  margin-bottom: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.text02,
+.text03 {
+  font-weight: lighter;
+}
+
+.post-middle {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 95px 1fr;
+}
+
+.middle-filter {
+  display: flex;
+  align-items: center;
+  padding: 10px 5px;
+}
+
+.middle-filter-search-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 5px;
+  width: 250px;
+  margin-left: 906px;
+  position: relative;
+  /* Add relative positioning */
+}
+
+.post-floor {
+  height: 50px;
+  /* floor 영역 높이 설정 */
   text-align: center;
   padding: 20px;
 }
 
-  .search-box-input {
-    border: none;
-    outline: none;
-    padding: 5px 0px 5px 10px;
-    width: 100%;
-  }
-  
-  .search-box-icon {
-    width: 15px;
-    height: 15px;
-    position: absolute; /* Add absolute positioning */
-    right: 10px; /* Adjust to place the icon inside the input box */
-    cursor: pointer;
-  }
-  
-  .middle-filter-sort {
-    width: 75px;
-    height: 37px;
-    font-size: 14px;
-    margin-left: 30px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: #fff !important;
-    text-align: center;
-    font-weight: lighter;
-  }
-  
-  .bottom-table-group {
-    width: 344px;
-    height: 456px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    margin-left: 20px;
-  }
-  
-  /* 도트 이미지 감싸주는 클래스 */
-  .table-group-del {
-    /* display: flex;
+.search-box-input {
+  border: none;
+  outline: none;
+  padding: 5px 0px 5px 10px;
+  width: 100%;
+}
+
+.search-box-icon {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  /* Add absolute positioning */
+  right: 10px;
+  /* Adjust to place the icon inside the input box */
+  cursor: pointer;
+}
+
+.middle-filter-sort {
+  width: 75px;
+  height: 37px;
+  font-size: 14px;
+  margin-left: 30px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #fff !important;
+  text-align: center;
+  font-weight: lighter;
+}
+
+.bottom-table-group {
+  width: 344px;
+  height: 456px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-left: 20px;
+}
+
+/* 도트 이미지 감싸주는 클래스 */
+.table-group-del {
+  /* display: flex;
+=======
+  },
+
+  setup() {
+    const router = useRouter();
+
+    const myComments = () => {
+      router.push({ name: "MyComments" });
+    };
+
+    const myLikepost = () => {
+      router.push({ name: "MyLikepost" });
+    };
+
+    const boardDetail = () => {
+      router.push({ name: "BoardDetail" });
+    };
+
+    return {
+      myComments,
+      myLikepost,
+      boardDetail,
+    };
+  },
+};
+</script>
+
+<style scoped>
+main {
+  width: 100%;
+  height: 900px;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+}
+
+.post {
+  width: 1270px;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 150px 1fr;
+}
+
+.post-top {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.post-top::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #ccc;
+}
+
+h2 {
+  font-size: 50px;
+  font-weight: bold;
+  color: #5d5a88;
+  margin: 0;
+  margin-left: 1007px;
+}
+
+.line::after {
+  content: "|";
+  color: #ccc;
+  margin: 0 5px 0 5px;
+  font-weight: lighter;
+}
+
+.text01,
+.text02,
+.text03 {
+  font-size: 24px;
+  font-weight: bolder;
+  margin-top: 28px;
+  margin-bottom: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.text02,
+.text03 {
+  font-weight: lighter;
+}
+
+.post-middle {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 95px 1fr;
+}
+
+.middle-filter {
+  display: flex;
+  align-items: center;
+  padding: 10px 5px;
+}
+
+.middle-filter-search-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 5px;
+  width: 250px;
+  margin-left: 906px;
+  position: relative;
+  /* Add relative positioning */
+}
+
+.search-box-input {
+  border: none;
+  outline: none;
+  padding: 5px 0px 5px 10px;
+  width: 100%;
+}
+
+.search-box-icon {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  /* Add absolute positioning */
+  right: 10px;
+  /* Adjust to place the icon inside the input box */
+  cursor: pointer;
+}
+
+.middle-filter-sort {
+  width: 75px;
+  height: 37px;
+  font-size: 14px;
+  margin-left: 30px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #fff !important;
+  text-align: center;
+  font-weight: lighter;
+}
+
+.bottom-table-group {
+  width: 344px;
+  height: 456px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-left: 20px;
+}
+
+/* 도트 이미지 감싸주는 클래스 */
+.table-group-del {
+  /* display: flex;
+>>>>>>> Stashed changes
     flex-direction: column;
     flex-wrap: wrap;
     align-items: flex-end;
     z-index: 1; */
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-  
-  #modify_icon {
-    width: 40px;
-    height: 40px;
-    margin-left: 270px;
-    margin-top: 15px;
-    cursor: pointer;
-    z-index: 1;
-  }
-  
-  .table-group-postimg {
-    display: flex;
-    justify-content: center;
-  }
-  
-  .table-group-post-img {
-    width: 263px;
-    height: 222px;
-    margin-top: 5px;
-  }
-  
-  .table-group-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-    margin-left: 150px;
-  }
-  
-  .btn-icon {
-    width: 20px;
-    height: 20px;
-    margin-left: 10px;
-  }
-  
-  #heart-count,
-  #comment-count {
-    margin: 5px;
-  }
-  
-  .table-group-content {
-    float: left;
-    margin-left: 40px;
-    margin-top: 15px;
-    cursor: pointer;
-  }
-  
-  .table-group-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #5d5a88;
-    margin-bottom: 2%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .table-group-text {
-    font-size: 17px;
-    color: #9795b5;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  </style>
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#modify_icon {
+  width: 40px;
+  height: 40px;
+  margin-left: 270px;
+  margin-top: 15px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.table-group-postimg {
+  display: flex;
+  justify-content: center;
+}
+
+.table-group-post-img {
+  width: 263px;
+  height: 222px;
+  margin-top: 5px;
+}
+
+.table-group-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  margin-left: 150px;
+}
+
+.btn-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+}
+
+#heart-count,
+#comment-count {
+  margin: 5px;
+}
+
+.table-group-content {
+  float: left;
+  margin-left: 40px;
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+.table-group-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #5d5a88;
+  margin-bottom: 2%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table-group-text {
+  font-size: 17px;
+  color: #9795b5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

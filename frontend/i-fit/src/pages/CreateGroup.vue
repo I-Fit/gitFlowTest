@@ -61,16 +61,21 @@
 </template>
 
 <script>
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { toRaw } from 'vue';
+import { useStore } from 'vuex';
 
 export default {
   name: "CreateGroup",
 
   setup() {
     const router = useRouter();
+    const store = useStore();
+
+    const userId = computed(() => store.getters.userId);
+
     const title = ref('');
     const sportInput = ref('');
     const locationInput = ref('');
@@ -86,6 +91,7 @@ export default {
       person: "",
       selectedDate: "",
       selectedTime: "",
+      userId: "",
     });
     // formData에 데이터가 잘 들어가는지 콘솔에서 확인
     console.log(toRaw(formData));
@@ -145,6 +151,7 @@ export default {
     const registerGroup = async () => {
       formData.title = title.value;
       title.value = '';
+      formData.userId = userId.value ? userId.value : '';
       try {
         await axios.post('/api/create-group', formData);
         alert("모임이 등록되었습니다.");

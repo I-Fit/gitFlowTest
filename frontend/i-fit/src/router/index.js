@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+// import { useStore } from "vuex";
 
 import Home from "@/pages/Home.vue";
 import Login from "@/pages/Login.vue";
@@ -31,6 +32,7 @@ const routes = [
     path: "/",
     name: "Home",
     component: Home,
+    // meta: {requiresAuth: false },
   },
 
   {
@@ -80,8 +82,8 @@ const routes = [
   {
     path: "/PostHistory",
     name: "PostHistory",
-    // meta: { showNav: true },
     component: PostHistory,
+    meta: { requiresAuth: true },
   },
 
   {
@@ -184,5 +186,20 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+// router.beforeEach((to, next) => {
+//   const store = useStore();
+//   const isLoggedIn = store.getters.LoggedIn;
+
+//   if(to.matched.some(record => record.meta.requiresAuth)) {
+//     if (!isLoggedIn) {
+//       next('/login');      // 로그인 하지않은 경우 로그인 페이지로 이동
+//     } else {
+//       next();              // 인증된 경우 이동
+//     }
+//   } else {
+//     next();                // 인증이 필요 없는 페이지는 이동
+//   }
+// });
 
 export default router;

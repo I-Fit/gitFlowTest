@@ -3,28 +3,16 @@
     <!-- 다른 컨텐츠가 여기 올 수 있습니다 -->
   </div>
   <div class="pagination">
-    <button 
-      :disabled="currentPage === 1" 
-      @click="changePage(currentPage - 1)"
-      class="pagination-btn"
-    >
+    <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)" class="pagination-btn">
       &laquo; <!-- << 삽입 -->
     </button>
-    
-    <span 
-      v-for="page in totalPages" 
-      :key="page"
-      @click="changePage(page)"
-      :class="['pagination-number', { active: page === currentPage }]"
-    >
+
+    <span v-for="page in totalPages" :key="page" @click="changePage(page)"
+      :class="['pagination-number', { active: page === currentPage }]">
       {{ page }}
     </span>
-    
-    <button 
-      :disabled="currentPage === totalPages" 
-      @click="changePage(currentPage + 1)"
-      class="pagination-btn"
-    >
+
+    <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)" class="pagination-btn">
       &raquo; <!-- >> 삽입 -->
     </button>
   </div>
@@ -55,17 +43,22 @@ export default {
 .container {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* 전체 화면 높이 */
-  justify-content: flex-end; /* 하단으로 정렬 */
+  height: 100vh;
+  /* 전체 화면 높이 */
+  justify-content: flex-end;
+  /* 하단으로 정렬 */
 }
 
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: 970px; /* 페이지네이션의 여백 설정 */
-  /* height: px; */ /* 내가 원하는 높이? */
-  margin-top: 50px; /* 페이지네이션과 콘텐츠 사이의 간격 */
+  margin-left: 970px;
+  /* 페이지네이션의 여백 설정 */
+  /* height: px; */
+  /* 내가 원하는 높이? */
+  margin-top: 50px;
+  /* 페이지네이션과 콘텐츠 사이의 간격 */
 }
 
 .pagination-btn {
