@@ -111,8 +111,7 @@
 <script>
 import AppNav from "@/components/layout/AppNav.vue";
 import { ref, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
-import { useStore } from "vuex";
+import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 import PagiNation from "@/pages/PagiNation.vue";
 
@@ -146,6 +145,7 @@ export default {
 
   setup() {
     const router = useRouter();
+    const route = useRoute();
 
     const myCreategroup = () => {
       router.push({ name: "MyCreateGroup" });
@@ -155,13 +155,19 @@ export default {
       router.push({ name: "LikeGroup" });
     };
 
-    const store = useStore();
     const groups = ref([]);
-    const userId = computed(() => store.getters['isLogged/userId']);
-
+    const communityId = route.query.communityId;
+    const userId = route.query.userId;
+    // 홈 페이지에서 모임 식별 키와 사용자 식별 키를 받아와
+    // 서버에 보내서 조회
     onMounted(async () => {
       try {
-        const response = await axios.get('/api', userId);
+        const response = await axios.get('/api/joined-groups', {
+          params: {
+            communityId: communityId,
+            userId: userId
+          }
+        });
         groups.value = response.data;
       } catch (error) {
         console.error("Error", error);
@@ -189,6 +195,7 @@ export default {
     }
 
     return {
+      groups,
       toggleTooltip,
       showConfirmPopup,
       confirmDeletion,

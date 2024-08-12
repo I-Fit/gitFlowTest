@@ -89,7 +89,8 @@
 <script>
 import AppNav from '@/components/layout/AppNav.vue';
 import { useRouter } from 'vue-router';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useStore } from 'vuex';
 import PagiNation from "@/pages/PagiNation.vue";
 
 export default {
@@ -124,6 +125,8 @@ export default {
 
   setup() {
     const router = useRouter();
+    const store = useStore();
+    const groups = ref([]);
 
     const myCreategroup = () => {
       router.push({ name: "MyCreateGroup" });
@@ -142,7 +145,22 @@ export default {
       isHeartFilled.value = !isHeartFilled.value;
     }
 
+    // 서버에 사용자 식별 Id를 보내 찜한 모임을 받아옴
+    onMounted(async () => {
+      try {
+        const response = await axios.get('/api/liked-groups', {
+          params: {
+            userId: store.getters['isLogged/userId']
+          }
+        });
+        groups.value = response.data;
+      } catch (error) {
+        console.error("Error", error);
+      }
+    });
+
     return {
+      groups,
       groupjoinlist,
       likegroup,
       isHeartFilled,

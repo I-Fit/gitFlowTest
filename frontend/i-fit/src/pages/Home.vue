@@ -131,8 +131,10 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import axios from "axios";
+import { useStore } from "vuex";
+import { useStore } from "vuex";
 
 export default {
   name: "Home",
@@ -227,14 +229,18 @@ export default {
 
   setup() {
     const router = useRouter();
-    const route = useRoute();
+    const store = useStore();
+    // const route = useRoute();
     const groups = ref([]);
+    const currentCommunityId = ref(null);
 
     // 서버에게 받은 데이터에 회원ID, 모임ID, 모임 데이터 등이 들어있음
     onMounted(async () => {
       try {
         const response = await axios.get('/api/group-details');
         groups.value = response.data;   // 서버로부터 받은 데이터를 groups배열에 저장
+        // 서버에서 받은 모임 식별 Id 저장
+        currentCommunityId.value = response.data.communityId;
       } catch (error) {
         console.error("Error", error);
       }
@@ -246,17 +252,30 @@ export default {
       isTooltipVisible.value = !isTooltipVisible.value;
     };
     // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
+    // 사용자 식별 키와 모임 식별 키를 query로 보내줌
     const showConfirmPopup = ref(false);
     const confirmDeletion = () => {
-      router.push({ name: "GroupJoinList", query: { communityId: route.query.communityId } });
+      router.push({ name: "GroupJoinList", query: { communityId: currentCommunityId.value,
+        userId: store.getters['isLogged/userId']
+       } });
     };
     const cancelDeletion = () => {
       showConfirmPopup.value = false;
     };
     // 모임 찜 이벤트
     const isHeartFilled = ref(false);
-    const toggleHeart = () => {
+
+    // 하트 색상 변하면 서버에 보내서 찜한 모임 저장
+    const toggleHeart = async () => {
       isHeartFilled.value = !isHeartFilled.value;
+      try {
+        await axios.post('/api/likegroup', {
+          userId: store.getters['isLogged/userId'],
+          communityId: currentCommunityId.value
+        });
+      } catch (error) {
+        console.error('Error', error);
+      }
     };
 
     return {
