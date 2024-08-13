@@ -115,7 +115,7 @@
 <script>
 import AppNav from "@/components/layout/AppNav.vue";
 import { useRouter } from "vue-router";
-import PagiNation from "@/pages/PagiNation.vue";
+import PagiNation from "@/components/common/PagiNation.vue";
 import { useStore } from "vuex";
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";

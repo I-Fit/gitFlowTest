@@ -57,10 +57,10 @@
 </template>
 
 <script>
-import PostActions from "./PostActions.vue";
+import PostActions from "@/components/common/PostActions.vue";
 // import { useRouter } from "vue-router";
 import AppNav from "@/components/layout/AppNav.vue";
-import PagiNation from "@/pages/PagiNation.vue";
+import PagiNation from "@/components/common/PagiNation.vue";
 
 export default {
   name: "AppPost",

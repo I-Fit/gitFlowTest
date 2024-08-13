@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import PostActions from "./PostActions.vue";
+import PostActions from "@/components/common/PostActions.vue";
 /* import { useRouter } from "vue-router"; */
 
 export default {

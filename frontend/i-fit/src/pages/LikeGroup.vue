@@ -44,7 +44,7 @@
               <span class="cancel">취소</span>
             </div>
           </div>
-          <div v-for="group in groupDetails" :key="group.id" class="group-container">
+          <div v-for="group in linkgroups" :key="group.communityid" class="group-container">
             <div class="user-info">
               <img :src="group.userImage || '@/assets/image/user_img.png'" alt="사용자 이미지" class="user-image" />
               <span>{{ group.username }}</span>
@@ -91,7 +91,7 @@ import AppNav from '@/components/layout/AppNav.vue';
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import PagiNation from "@/pages/PagiNation.vue";
+import PagiNation from "@/components/common/PagiNation.vue";
 import axios from 'axios';
 
 export default {
@@ -127,7 +127,7 @@ export default {
   setup() {
     const router = useRouter();
     const store = useStore();
-    const groups = ref([]);
+    const likegroups = ref([]);
 
     const myCreategroup = () => {
       router.push({ name: "MyCreateGroup" });
@@ -149,19 +149,18 @@ export default {
     // 서버에 사용자 식별 Id를 보내 찜한 모임을 받아옴
     onMounted(async () => {
       try {
+        const userId = store.getters['isLogged/userId'];
         const response = await axios.get('/api/liked-groups', {
-          params: {
-            userId: store.getters['isLogged/userId']
-          }
+          params: { userId }
         });
-        groups.value = response.data;
+        likegroups.value = response.data.groups;
       } catch (error) {
         console.error("Error", error);
       }
     });
 
     return {
-      groups,
+      likegroups,
       groupjoinlist,
       likegroup,
       isHeartFilled,
