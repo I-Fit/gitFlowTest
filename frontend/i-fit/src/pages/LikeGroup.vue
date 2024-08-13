@@ -92,6 +92,7 @@ import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import PagiNation from "@/pages/PagiNation.vue";
+import axios from 'axios';
 
 export default {
   name: "LikeGroup",

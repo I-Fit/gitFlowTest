@@ -16,10 +16,10 @@
         </div>
         <div class="signup-id input-block">
           <label class="signup-label" for="id">아이디
-            <p v-if="idAvailable === true">사용 가능한 아이디입니다.</p>
-            <p v-else-if="idAvailable === false">
+            <span class="available" v-if="idAvailable === true">사용 가능한 아이디입니다.</span>
+            <span class="notavailable" v-else-if="idAvailable === false">
               이미 사용 중인 아이디입니다.
-            </p>
+            </span>
           </label>
           <div class="signup-field">
             <input type="text" id="id" name="id" placeholder="아이디를 입력하세요." class="signup-input" v-model="formData.id" />
@@ -118,50 +118,71 @@
 <script>
 import { ref, computed, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useStore } from "vuex";
 import { useEmail } from "@/services/sendEmail";
+import axios from "axios";
+import { toRaw } from "vue";
 
 export default {
   name: "Account",
 
   setup() {
     const router = useRouter();
-    const store = useStore();
 
-    // 양방향 연결
-    const formData = computed({
-      get: () => store.state.user.formData,
-      set: (value) => store.dispatch("user/updateFormData", value),
+    const formData = ref({
+      contact: "",
+      id: "",
+      password: "",
+      passwordCheck: "",
+      name: "",
+      phone: "",
+      email: "",
     });
+    
+    // formData에 값 콘솔에서 볼려고 작성함
+    console.log(toRaw(formData));
+    // 아이디 사용 가능 여부 저장 상태
+    const idAvailable = ref(null);
 
-    // 아이디의 사용 여부를 가져옴
-    const idAvailable = computed(() => store.getters["user/isIdAvailable"]);
-
-    // 사용자가 입력한 아이디 값을 가져옴
-    const checkId = async () => {
-      await store.dispatch("user/checkId", formData.value.id);
-    };
-
-    // 회원가입 버튼 클릭 시 사용자 데이터 formData에 저장
-    const account = async () => {
-      try {
-        store.dispatch("user/updateFormdata", formData.value);
-        console.log(formData.value);
-
-        await store.dispatch("user/submitUserData");
-
-        router.push("/login");
-      } catch (error) {
-        console.log("error");
-      }
-    };
-
-    // 비밀번호 일치/불일치
-    const passwordsMatch = computed(() => store.getters["user/passwordMatch"]);
-    // 비밀번호 메시지 입력이 끝나면 표시하기
+    const passwordsMatch = computed(() => {
+      return formData.value.password === formData.value.passwordCheck;
+    })
+    // 패스워드 입력이 끝난 후 메시지 표시
     const Bothpasswords = computed(
       () => formData.value.password && formData.value.passwordCheck
     );
+
+    // 아이디 중복 확인 요청
+    const checkId = async () => {
+      try {
+        const response = await axios.get("/api/check-id", {
+          params: { id: formData.value.id },
+        });
+        idAvailable.value = response.data.available;
+      } catch (error) {
+        console.error(error);
+        idAvailable.value = false;
+      }
+    };
+
+    // 회원가입 버튼 클릭 시 사용자 데이터(formData) 서버에 보냄
+    const account = async () => {
+      if (!passwordsMatch.value) {
+        alert("비밀번호가 불일치 합니다.");
+        return;
+      }
+      if (!idAvailable.value) {
+        alert("아이디 중복 확인 해주세요.");
+        return;
+      }
+
+      try {
+        await axios.post("/api/user-account", formData.value);
+        alert("회원가입 성공!");
+        router.push({ name: "Login" });
+      } catch (error) {
+        console.log("회원가입 시 서버와 통신 에러");
+      }
+    };
 
     const goTos = () => {
       router.push({ name: "Tos" });
@@ -322,6 +343,17 @@ main {
 .signup-label {
   margin-bottom: 10px;
   font-weight: bold;
+}
+
+/* 아이디 중복 확인 메시지 위치 */
+.available {
+  font-size: 14px;
+  margin-left: 84px;
+}
+
+.notavailable {
+  margin-left: 66px;
+  font-size: 14px;
 }
 
 .signup-field {

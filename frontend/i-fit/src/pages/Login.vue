@@ -43,6 +43,7 @@
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref } from "vue";
+import { toRaw } from "vue";
 
 export default {
   name: "Login",
@@ -56,7 +57,7 @@ export default {
       password: "",
     });
 
-    console.log(formData);
+    console.log(toRaw(formData));
 
     // 로그인 성공 시 메인으로 이동
     const Complete = async () => {
@@ -66,12 +67,12 @@ export default {
       }
 
       try {
-        await store.dispatch('login', {
+        await store.dispatch('isLogged/login', {
           id: formData.value.id,
           password: formData.value.password,
         });
 
-        if (store.getters.Loggin) {
+        if (store.getters['isLogged/Loggedin']) {
           alert("로그인 성공");
           router.push({ name: "Home" });
         } else {

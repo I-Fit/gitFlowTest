@@ -12,46 +12,32 @@
         <div class="topwrap-tag">
           <p class="tag-item">{{ formData.sport }}</p>
           <p class="item" id="location">{{ formData.location }}</p>
-          <p class="item" id="date">{{ formData.selectedDate }}</p>
-          <p class="item" id="time">{{ formData.selectedTime }}</p>
-          <p class="item" id="person">{{ formData.person }}</p>
         </div>
       </div>
       <div class="contain-category">
         <p class="category-sidetext">Choose Category</p>
         <div class="category-list">
           <button class="category-btn" type="button" v-for="category in categories" :key="category"
-            :class="{ selected: selectCategory === category }" @click="selectCategory(category)">
+            :class="{ selected: selectedCategory === category }" @click="selectCategory(category)">
             {{ category }}
           </button>
         </div>
         <div class="category-input">
-          <input class="input-event" v-model="sportInput" type="text" placeholder="운동 종목을 입력하세요." />
+          <input class="input-event" v-model="sportInput" @keydown.enter="handleEnterKey" type="text" placeholder="운동 종목을 입력하세요." />
           <button class="input-button" @click="setSport">확인</button>
         </div>
         <p class="category-text">Choose Location</p>
         <div class="category-input">
-          <input class="input-event" v-model="locationInput" type="text" placeholder="위치를 검색하세요." />
+          <input class="input-event" v-model="locationInput" @keydown.enter="handleEnterKey" type="text" placeholder="위치를 검색하세요." />
           <button class="input-button" @click="setLocation">확인</button>
         </div>
         <p class="category-text">Choose Date and Time</p>
         <div class="category-date">
-          <button class="date-btn" @click="showDatePicker = !showDatePicker">
-            <span class="date-calendar">&#128198;</span>날짜 선택
-          </button>
-          <div v-if="showDatePicker">
-            <input type="date" @change="handleDateChange" />
-          </div>
-          <select v-model="formData.selectedTime" class="date-time">
-            <option value="" disabled>시간</option>
-            <option v-for="time in times" :key="time" :value="time">
-              {{ time }}
-            </option>
-          </select>
+          <VueDatePicker locale="ko" v-model="date" @change="updateFormData" class="input-datepicker"></VueDatePicker>
         </div>
         <p class="category-text">Choose Group Size</p>
         <div class="category-input">
-          <input class="input-event" v-model="personInput" type="text" placeholder="인원을 입력하세요." />
+          <input class="input-event" v-model="personInput" @keydown.enter="handleEnterKey" type="text" placeholder="인원을 입력하세요." />
           <button class="input-button" @click="setPerson">확인</button>
         </div>
         <button class="category-register" @click="registerGroup">등록</button>
@@ -61,7 +47,7 @@
 </template>
 
 <script>
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { toRaw } from 'vue';
@@ -81,7 +67,16 @@ export default {
     const locationInput = ref('');
     const personInput = ref('');
     // 날짜
-    const showDatePicker = ref(false);
+    const date = ref('');
+    // 운동 종목 카테고리 중 고르기
+    const selectedCategory = ref(null);
+
+    // enter가 먹히도록 이벤트 핸들러 추가
+    const handleEnterKey = () => {
+      setSport();
+      setLocation();
+      setPerson();
+    };
 
     const formData = reactive({
       title: "",
@@ -89,8 +84,7 @@ export default {
       sport: "종목",
       location: "",
       person: "",
-      selectedDate: "",
-      selectedTime: "",
+      date: "",
       userId: "",
     });
     // formData에 데이터가 잘 들어가는지 콘솔에서 확인
@@ -108,26 +102,32 @@ export default {
       "필라테스",
       "GX",
     ];
-    const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+
+    // datepicker
+    watch(date, (newDate) => {
+      formData.date = newDate;
+    });
 
     // 메서드
+    const updateFormData = () => {
+      formData.date = date.value;
+    };
+
     const updateTopboxContent = () => {
       formData.topboxContent = (document.querySelector('.topbox-content') || '').innerText;
     };
 
     const selectCategory = (category) => {
       formData.sport = category;
-      selectCategory.value = category;
+      selectedCategory.value = category;
     };
 
     const setSport = () => {
       formData.sport = sportInput.value;
-      sportInput.value = '';
     };
 
     const setLocation = () => {
       formData.location = locationInput.value;
-      locationInput.value = '';
     };
 
     const handleDateChange = (event) => {
@@ -136,15 +136,9 @@ export default {
 
     const setPerson = () => {
       formData.person = personInput.value;
-      personInput.value = '';
     };
 
-    const additionalData = reactive({
-      userId: "",
-      communityId: "",
-      user_img: "",
-      username: "",
-    });
+    
 
     // 사용자 식별 Id값도 formData에 추가해서 서버에 보내줘야 한다.
     // 모임 식별 Id값은 서버에서 만들어서 다시 응답해주는 형식?
@@ -155,9 +149,7 @@ export default {
       try {
         await axios.post('/api/create-group', formData);
         alert("모임이 등록되었습니다.");
-        router.push({
-          name: "Home",
-        });
+        router.push({ name: "Home" });
       } catch (error) {
         console.error("Error", error);
         alert("모임 등록에 실패했습니다.");
@@ -168,18 +160,19 @@ export default {
       sportInput,
       locationInput,
       personInput,
-      showDatePicker,
+      date,
 
       formData,
+      updateFormData,
       categories,
-      times,
       updateTopboxContent,
       selectCategory,
+      selectedCategory,
+      handleEnterKey,
       setSport,
       setLocation,
       handleDateChange,
       setPerson,
-      additionalData,
       registerGroup,
     };
   }
@@ -187,10 +180,6 @@ export default {
 </script>
 
 <style scoped>
-.category-btn.selected {
-  border: 2px solid black;
-}
-
 /* content 부분 */
 main {
   width: 100%;
@@ -335,6 +324,10 @@ main {
   padding: 0;
 }
 
+.category-btn.selected {
+  border: 2px solid black;
+}
+
 .category-input {
   width: 404px;
   height: 35px;
@@ -352,8 +345,17 @@ main {
   height: 35px;
   border: 1px solid #ccc;
   border-radius: 10px;
-  margin: 5px 5px 5px 0px;
+  margin: 5px 5px 5px 4px;
   padding: 5px 0px 5px 10px;
+}
+
+.input-datepicker {
+  margin: 0px;
+  padding: 0px;
+  width: 245px;
+  height: 35px;
+  border-radius: 10px !important;
+  border: none;
 }
 
 input::placeholder {

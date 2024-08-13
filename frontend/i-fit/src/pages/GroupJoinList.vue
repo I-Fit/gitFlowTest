@@ -110,7 +110,7 @@
 
 <script>
 import AppNav from "@/components/layout/AppNav.vue";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 import PagiNation from "@/pages/PagiNation.vue";
@@ -156,19 +156,20 @@ export default {
     };
 
     const groups = ref([]);
-    const communityId = route.query.communityId;
-    const userId = route.query.userId;
+    const userId = ref(route.query.userId);
+    const communityId = ref(route.query.communityId);
+
     // 홈 페이지에서 모임 식별 키와 사용자 식별 키를 받아와
     // 서버에 보내서 조회
     onMounted(async () => {
       try {
-        const response = await axios.get('/api/joined-groups', {
+        const response = await axios.get('/api/joined-groups/details', {
           params: {
-            communityId: communityId,
-            userId: userId
+            communityId: communityId.value,
+            userId: userId.value
           }
         });
-        groups.value = response.data;
+        groups.value = response.data.groups;
       } catch (error) {
         console.error("Error", error);
       }

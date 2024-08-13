@@ -29,10 +29,10 @@ export default {
 
                 if (response.data.success) {
                     commit('SET_LOGGEDIN', true);
-                    commit('SET_USERId', response.data.userId);
+                    commit('SET_USERID', response.data.userId);
                 } else {
                     commit('SET_LOGGEDIN', false);
-                    commit('SET_USERId', null);
+                    commit('SET_USERID', null);
                     throw new Error(response.data.message || '로그인 실패');
                 }
             } catch (error) {

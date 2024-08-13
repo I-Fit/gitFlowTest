@@ -89,10 +89,10 @@
             <div class="group-content">
               <span class="title">{{ group.title }}</span>
             </div>
-            <p class="date">{{ group.selectedDate }}</p>
-            <p class="time">{{ group.selectedTime }}</p>
+            <p class="date">{{ group.date }}</p>
+            <p class="time">{{ group.date }}</p>
             <div class="group-info">
-              <div class="title-heart" @click="toggleHeart">
+              <div class="title-heart" @click="toggleHeart(group.communityId)">
                 <div :class="{
                   'filled-heart': isHeartFilled,
                   'empty-heart': !isHeartFilled,
@@ -103,10 +103,10 @@
               <button type="button" class="attend" @click="showConfirmPopup = true">
                 참석
               </button>
-              <div v-if="showConfirmPopup" class="confirm-popup">
+              <div v-if="showConfirmPopup === group.communityId" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
-                  <button class="confirm-btn" @click="confirmDeletion">
+                  <button class="confirm-btn" @click="confirmDeletion(group.communityId)">
                     확인
                   </button>
                   <button class="cancle-btn" @click="cancelDeletion">
@@ -130,10 +130,9 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import { useStore } from "vuex";
 import { useStore } from "vuex";
 
 export default {
@@ -230,17 +229,19 @@ export default {
   setup() {
     const router = useRouter();
     const store = useStore();
-    // const route = useRoute();
+    // 여러 모임 데이터 배열에 저장
     const groups = ref([]);
-    const currentCommunityId = ref(null);
+    const userId = computed(() => store.getters['isLogged/userId']);
 
-    // 서버에게 받은 데이터에 회원ID, 모임ID, 모임 데이터 등이 들어있음
+    // creategroup에서 생성한 모임에 사용자 식별 ID값을 같이 보내줘서
+    // 서버에서 username, user_img를 받아옴
     onMounted(async () => {
       try {
         const response = await axios.get('/api/group-details');
-        groups.value = response.data;   // 서버로부터 받은 데이터를 groups배열에 저장
-        // 서버에서 받은 모임 식별 Id 저장
-        currentCommunityId.value = response.data.communityId;
+
+        // 서버로부터 받은 데이터를 groups배열에 저장
+        groups.value = response.data.groups;
+
       } catch (error) {
         console.error("Error", error);
       }
@@ -251,35 +252,47 @@ export default {
     const toggleTooltip = () => {
       isTooltipVisible.value = !isTooltipVisible.value;
     };
+
     // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
     // 사용자 식별 키와 모임 식별 키를 query로 보내줌
-    const showConfirmPopup = ref(false);
-    const confirmDeletion = () => {
-      router.push({ name: "GroupJoinList", query: { communityId: currentCommunityId.value,
-        userId: store.getters['isLogged/userId']
-       } });
+    const showConfirmPopup = ref(null);
+
+    const confirmDeletion = async (communityId) => {
+      try {
+        await axios.post('/api/join-group', {
+          communityId: communityId,
+          userId: userId.value
+        });
+        router.push({ name: "GroupJoinList", query: { communityId, userId: userId.value } });
+      } catch (error) {
+        console.error("Error", error);
+      }
     };
+
     const cancelDeletion = () => {
-      showConfirmPopup.value = false;
+      showConfirmPopup.value = null;
     };
+
     // 모임 찜 이벤트
     const isHeartFilled = ref(false);
 
     // 하트 색상 변하면 서버에 보내서 찜한 모임 저장
-    const toggleHeart = async () => {
+    const toggleHeart = async (communityId) => {
       isHeartFilled.value = !isHeartFilled.value;
       try {
         await axios.post('/api/likegroup', {
-          userId: store.getters['isLogged/userId'],
-          communityId: currentCommunityId.value
+          userId: userId.value,
+          communityId: communityId,
         });
       } catch (error) {
-        console.error('Error', error);
+        console.error("Error", error);
       }
     };
 
     return {
       groups,
+      userId,
+      showConfirmPopup,
       toggleTooltip,
       confirmDeletion,
       cancelDeletion,
