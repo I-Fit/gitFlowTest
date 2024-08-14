@@ -629,15 +629,21 @@ main {
   height: 100%;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   margin-top: 25px;
 }
 
+/* 생성된 모임의 위치를 justify-content로 하지 않고 margin값을 준 다음에
+3번째 item에만 margin값을 주지 않음 */
 .group-container {
   width: 360px;
   height: 300px;
   border: 1px solid #ccc;
   border-radius: 20px;
+  margin-right: 120px;
+}
+
+.group-container:nth-child(3n) {
+  margin-right: 0px;
 }
 
 .user-info {

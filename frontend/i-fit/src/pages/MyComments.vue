@@ -2,6 +2,7 @@
   <main>
     <AppNav />
     <div class="comment">
+      <div class="comment-null-block"></div>
       <div class="comment-top">
         <h2>게시글 관리</h2>
         <p class="line text01" @click="postHistory">내가 쓴 게시물</p>
@@ -248,7 +249,7 @@ export default {
 <style scoped>
 main {
   width: 100%;
-  height: 900px;
+  height: 1200px;
   display: grid;
   grid-template-columns: 180px 1fr;
 }
@@ -257,7 +258,12 @@ main {
   width: 1270px;
   height: 100%;
   display: grid;
-  grid-template-rows: 150px 1fr;
+  grid-template-rows: 60px 150px 1fr;
+}
+
+.comment-null-block {
+  width: 100%;
+  height: 100%;
 }
 
 .comment-top {
@@ -361,7 +367,7 @@ h2 {
   height: 100%;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  align-content: flex-start;
 }
 
 .bottom-table {
@@ -370,6 +376,12 @@ h2 {
   height: 225px;
   border: 2px solid #ccc;
   border-radius: 10px;
+  margin-right: 41px;
+  margin-bottom: 50px;
+}
+
+.bottom-table:nth-child(2n) {
+  margin-right: 0px;
 }
 
 .comment-floor {

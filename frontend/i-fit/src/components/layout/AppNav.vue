@@ -89,7 +89,8 @@
   }
   
   .nav-list {
-    margin-top: 165px;
+    /* margin-top: 165px; */
+    margin-top: 225px;
   }
   
   .selector {

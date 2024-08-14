@@ -1,7 +1,7 @@
 <template>
-  <div class="pagination-container">
+  <!-- <div class="pagination-container"> -->
     <!-- 다른 컨텐츠가 여기 올 수 있습니다 -->
-  </div>
+  <!-- </div> -->
   <div class="pagination">
     <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)" class="pagination-btn">
       &laquo; <!-- << 삽입 -->
@@ -57,7 +57,8 @@ export default {
   /* 페이지네이션의 여백 설정 */
   /* height: px; */
   /* 내가 원하는 높이? */
-  margin-top: 50px;
+  /* margin-top: 50px; */
+  margin-bottom: 170px;
   /* 페이지네이션과 콘텐츠 사이의 간격 */
 }
 

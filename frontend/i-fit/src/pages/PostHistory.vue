@@ -2,6 +2,7 @@
   <main>
     <AppNav />
     <div class="post">
+      <div class="post-null-block"></div>
       <div class="post-top">
         <h2>게시글 관리</h2>
         <p class="line text01">내가 쓴 게시물</p>
@@ -22,6 +23,56 @@
           </select>
         </div>
         <div class="post-bottom-table">
+          <div class="bottom-table-group">
+            <div class="table-group-del">
+              <img id="modify_icon" src="@/assets/image/dot.png" alt="dot" @click="toggleActions" />
+              <PostActions :visible="showActions" @navigate="handleNavigation" />
+            </div>
+            <div class="table-group-postimg">
+              <img class="table-group-post-img" src="@/assets/image/post_img.png" alt="게시글 이미지" />
+            </div>
+            <div class="table-group-btn">
+              <img class="btn-icon" src="@/assets/image/heart.png" alt="좋아요 아이콘" />
+              <span id="heart-count">101</span>
+              <img class="btn-icon" src="@/assets/image/comment.png" alt="댓글 아이콘" />
+              <span id="comment-count">5</span>
+            </div>
+            <div class="table-group-content" @click="boardDetail">
+              <div class="group-content-post">
+                <p class="table-group-title">멤버들이랑 현충일 번개운동</p>
+              </div>
+              <div class="group-content-ptext">
+                <p class="table-group-text">
+                  공휴일에 멤버들이랑 kosta짐에서<br />웨이트 했습니다 ~
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-table-group">
+            <div class="table-group-del">
+              <img id="modify_icon" src="@/assets/image/dot.png" alt="dot" @click="toggleActions" />
+              <PostActions :visible="showActions" @navigate="handleNavigation" />
+            </div>
+            <div class="table-group-postimg">
+              <img class="table-group-post-img" src="@/assets/image/post_img.png" alt="게시글 이미지" />
+            </div>
+            <div class="table-group-btn">
+              <img class="btn-icon" src="@/assets/image/heart.png" alt="좋아요 아이콘" />
+              <span id="heart-count">101</span>
+              <img class="btn-icon" src="@/assets/image/comment.png" alt="댓글 아이콘" />
+              <span id="comment-count">5</span>
+            </div>
+            <div class="table-group-content" @click="boardDetail">
+              <div class="group-content-post">
+                <p class="table-group-title">멤버들이랑 현충일 번개운동</p>
+              </div>
+              <div class="group-content-ptext">
+                <p class="table-group-text">
+                  공휴일에 멤버들이랑 kosta짐에서<br />웨이트 했습니다 ~
+                </p>
+              </div>
+            </div>
+          </div>
           <div class="bottom-table-group">
             <div class="table-group-del">
               <img id="modify_icon" src="@/assets/image/dot.png" alt="dot" @click="toggleActions" />
@@ -105,7 +156,7 @@ export default {
 <style scoped>
 main {
   width: 100%;
-  height: 900px;
+  height: 1200px;
   display: grid;
   grid-template-columns: 180px 1fr;
 }
@@ -114,7 +165,12 @@ main {
   width: 1270px;
   height: 100%;
   display: grid;
-  grid-template-rows: 150px 1fr;
+  grid-template-rows: 60px 150px 1fr;
+}
+
+.post-null-block {
+  width: 100%;
+  height: 100%;
 }
 
 .post-top {
@@ -224,157 +280,12 @@ h2 {
   font-weight: lighter;
 }
 
-.bottom-table-group {
-  width: 344px;
-  height: 456px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  margin-left: 20px;
-}
-
-/* 도트 이미지 감싸주는 클래스 */
-.table-group-del {
-  /* display: flex;
-=======
-  },
-
-  setup() {
-    const router = useRouter();
-
-    const myComments = () => {
-      router.push({ name: "MyComments" });
-    };
-
-    const myLikepost = () => {
-      router.push({ name: "MyLikepost" });
-    };
-
-    const boardDetail = () => {
-      router.push({ name: "BoardDetail" });
-    };
-
-    return {
-      myComments,
-      myLikepost,
-      boardDetail,
-    };
-  },
-};
-</script>
-
-<style scoped>
-main {
-  width: 100%;
-  height: 900px;
-  display: grid;
-  grid-template-columns: 180px 1fr;
-}
-
-.post {
-  width: 1270px;
-  height: 100%;
-  display: grid;
-  grid-template-rows: 150px 1fr;
-}
-
-.post-top {
-  position: relative;
+.post-bottom-table {
   width: 100%;
   height: 100%;
-}
-
-.post-top::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 2px;
-  background-color: #ccc;
-}
-
-h2 {
-  font-size: 50px;
-  font-weight: bold;
-  color: #5d5a88;
-  margin: 0;
-  margin-left: 1007px;
-}
-
-.line::after {
-  content: "|";
-  color: #ccc;
-  margin: 0 5px 0 5px;
-  font-weight: lighter;
-}
-
-.text01,
-.text02,
-.text03 {
-  font-size: 24px;
-  font-weight: bolder;
-  margin-top: 28px;
-  margin-bottom: 20px;
-  display: inline-block;
-  vertical-align: middle;
-  cursor: pointer;
-}
-
-.text02,
-.text03 {
-  font-weight: lighter;
-}
-
-.post-middle {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-rows: 95px 1fr;
-}
-
-.middle-filter {
   display: flex;
-  align-items: center;
-  padding: 10px 5px;
-}
-
-.middle-filter-search-box {
-  display: flex;
-  align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 5px;
-  width: 250px;
-  margin-left: 906px;
-  position: relative;
-  /* Add relative positioning */
-}
-
-.search-box-input {
-  border: none;
-  outline: none;
-  padding: 5px 0px 5px 10px;
-  width: 100%;
-}
-
-.search-box-icon {
-  width: 15px;
-  height: 15px;
-  position: absolute;
-  /* Add absolute positioning */
-  right: 10px;
-  /* Adjust to place the icon inside the input box */
-  cursor: pointer;
-}
-
-.middle-filter-sort {
-  width: 75px;
-  height: 37px;
-  font-size: 14px;
-  margin-left: 30px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #fff !important;
-  text-align: center;
-  font-weight: lighter;
+  flex-wrap: wrap;
+  align-content: flex-start;
 }
 
 .bottom-table-group {
@@ -382,17 +293,15 @@ h2 {
   height: 456px;
   border: 1px solid #ccc;
   border-radius: 10px;
-  margin-left: 20px;
+  margin-right: 119px;
+}
+
+.bottom-table-group:nth-child(3n) {
+  margin-right: 0px;
 }
 
 /* 도트 이미지 감싸주는 클래스 */
 .table-group-del {
-  /* display: flex;
->>>>>>> Stashed changes
-    flex-direction: column;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    z-index: 1; */
   position: relative;
   display: flex;
   align-items: center;

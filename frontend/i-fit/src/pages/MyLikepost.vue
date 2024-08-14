@@ -2,6 +2,7 @@
   <main>
     <AppNav />
     <div class="post">
+      <div class="post-null-block"></div>
       <div class="post-top">
         <h2>게시글 관리</h2>
         <p class="line text01" @click="postHistory">내가 쓴 게시물</p>
@@ -34,6 +35,100 @@
           </select>
         </div>
         <div class="post-bottom-table">
+          <div class="bottom-table-group">
+            <div class="table-group-del">
+              <img 
+              id="modify_icon" 
+              src="@/assets/image/dot.png" 
+              alt="dot"
+              @click="toggleActions"
+              />
+              <PostActions
+                class="post-actions"
+                :visible="showActions"
+                @navigate="handleNavigation"
+              />
+            
+            </div>
+            <div class="table-group-postimg">
+              <img
+                class="table-group-post-image"
+                src="@/assets/image/post_img.png"
+                alt="게시글 이미지"
+              />
+            </div>
+            <div class="table-group-btn">
+              <img
+                class="btn-icon"
+                src="@/assets/image/heart_icon.png"
+                alt="좋아요 아이콘"
+              />
+              <span id="heart-count">101</span>
+              <img
+                class="btn-icon"
+                src="@/assets/image/comment.png"
+                alt="댓글 아이콘"
+              />
+              <span id="comment-count">5</span>
+            </div>
+            <div class="table-group-content" @click="boardDetail">
+              <div class="group-content-post">
+                <p class="table-group-title">멤버들이랑 현충일 번개운동</p>
+              </div>
+              <div class="group-content-ptext">
+                <p class="table-group-text">
+                  공휴일에 멤버들이랑 kosta짐에서<br />웨이트 했습니다 ~
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-table-group">
+            <div class="table-group-del">
+              <img 
+              id="modify_icon" 
+              src="@/assets/image/dot.png" 
+              alt="dot"
+              @click="toggleActions"
+              />
+              <PostActions
+                class="post-actions"
+                :visible="showActions"
+                @navigate="handleNavigation"
+              />
+            
+            </div>
+            <div class="table-group-postimg">
+              <img
+                class="table-group-post-image"
+                src="@/assets/image/post_img.png"
+                alt="게시글 이미지"
+              />
+            </div>
+            <div class="table-group-btn">
+              <img
+                class="btn-icon"
+                src="@/assets/image/heart_icon.png"
+                alt="좋아요 아이콘"
+              />
+              <span id="heart-count">101</span>
+              <img
+                class="btn-icon"
+                src="@/assets/image/comment.png"
+                alt="댓글 아이콘"
+              />
+              <span id="comment-count">5</span>
+            </div>
+            <div class="table-group-content" @click="boardDetail">
+              <div class="group-content-post">
+                <p class="table-group-title">멤버들이랑 현충일 번개운동</p>
+              </div>
+              <div class="group-content-ptext">
+                <p class="table-group-text">
+                  공휴일에 멤버들이랑 kosta짐에서<br />웨이트 했습니다 ~
+                </p>
+              </div>
+            </div>
+          </div>
           <div class="bottom-table-group">
             <div class="table-group-del">
               <img 
@@ -166,52 +261,21 @@
   /* content 부분 */
   main {
     width: 100%;
-    height: 900px;
+    height: 1200px;
     display: grid;
     grid-template-columns: 180px 1fr;
-  }
-  
-  nav {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .nav-list {
-    margin-top: 165px;
-  }
-  
-  .selector {
-    width: 110px;
-    height: 30px;
-    position: relative;
-  }
-  
-  .selector::after {
-    content: "";
-    display: block;
-    width: 87%;
-    height: 2px;
-    background-color: #ccc;
-    margin: 5px 0 0 10px;
-  }
-  
-  .selector-post {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0;
-  }
-  
-  .selector-text {
-    font-size: 14px;
-    margin: 5px;
-    padding: 5px;
   }
   
   .post {
     width: 1270px;
     height: 100%;
     display: grid;
-    grid-template-rows: 150px 1fr;
+    grid-template-rows: 60px 150px 1fr;
+  }
+
+  .post-null-block {
+    width: 100%;
+    height: 100%;
   }
   
   .post-top {
@@ -315,6 +379,14 @@
     text-align: center;
     font-weight: lighter;
   }
+
+  .post-bottom-table {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+  }
   
   .bottom-table-group {
     position: relative;
@@ -322,7 +394,11 @@
     height: 456px;
     border: 1px solid #ccc;
     border-radius: 10px;
-    margin-left: 20px;
+    margin-right: 119px;
+  }
+
+  .bottom-table-group:nth-child(3n) {
+    margin-right: 0px;
   }
 
   .post-actions {

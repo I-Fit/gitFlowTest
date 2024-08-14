@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export default {
+    namespaced: true,
     state: {
         Loggedin: false,
         userId: null,   // 사용자 식별 Id

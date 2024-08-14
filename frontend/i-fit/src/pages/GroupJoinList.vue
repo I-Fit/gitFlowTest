@@ -2,6 +2,7 @@
   <main>
     <AppNav />
     <div class="party">
+      <div class="party-null-block"></div>
       <div class="party-top">
         <h2>모임 관리</h2>
         <p class="line text01" @click="myCreategroup">내가 만든 모임</p>
@@ -214,7 +215,7 @@ export default {
 /* content 부분 */
 main {
   width: 100%;
-  height: 900px;
+  height: 1200px;
   display: grid;
   grid-template-columns: 180px 1fr;
 }
@@ -223,7 +224,12 @@ main {
   width: 1270px;
   height: 100%;
   display: grid;
-  grid-template-rows: 150px 1fr;
+  grid-template-rows: 60px 150px 1fr;
+}
+
+.party-null-block {
+  width: 100%;
+  height: 100%;
 }
 
 .party-top {
@@ -337,7 +343,7 @@ h2 {
   height: 100%;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  align-content: flex-start;
 }
 
 .group-container {
@@ -345,6 +351,12 @@ h2 {
   height: 300px;
   border: 1px solid #ccc;
   border-radius: 20px;
+  margin-bottom: 50px;
+  margin-right: 95px;
+}
+
+.group-container:nth-child(3n) {
+  margin-right: 0px;
 }
 
 .user-info {
@@ -397,7 +409,6 @@ h2 {
 .group-info {
   margin-top: 30px;
   display: flex;
-  justify-content: center;
 }
 
 .like-image {
@@ -412,7 +423,6 @@ h2 {
   border-radius: 10px;
   font-size: 12px;
   margin-right: 5px;
-  margin-left: 10px;
 }
 
 .location {
@@ -534,16 +544,20 @@ h2 {
   /* 하트의 크기를 조정합니다 */
   height: 35px;
   /* 하트의 크기를 조정합니다 */
-  position: relative;
-  margin-left: 15px;
+  margin-left: 40px;
+  margin-right: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .title-heart div {
   width: 100%;
   height: 100%;
-  position: absolute;
-  bottom: 9px;
-  right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .empty-heart::before {
