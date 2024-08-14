@@ -109,7 +109,7 @@
 
 <script>
 import PostActions from "@/components/common/PostActions.vue";
-// import { useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import AppNav from "@/components/layout/AppNav.vue";
 import PagiNation from "@/components/common/PagiNation.vue";
 
@@ -149,8 +149,25 @@ export default {
     onSearch() {
       console.log("Searching for:", this.searchQuery);
     },
-  }
-}
+  },
+
+  setup() {
+    const router = useRouter();
+
+    const myComments = () => {
+      router.push({ name: "MyComments" });
+    };
+
+    const myLikepost = () => {
+      router.push({ name: "MyLikepost" });
+    };
+
+    return {
+      myComments,
+      myLikepost,
+    };
+  },
+};
 </script>
 
 <style scoped>
