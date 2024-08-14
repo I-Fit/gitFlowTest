@@ -58,7 +58,7 @@
 
 <script>
 import PostActions from "./PostActions.vue";
-// import { useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import AppNav from "@/components/layout/AppNav.vue";
 import PagiNation from "@/pages/PagiNation.vue";
 
@@ -98,8 +98,25 @@ export default {
     onSearch() {
       console.log("Searching for:", this.searchQuery);
     },
-  }
-}
+  },
+
+  setup() {
+    const router = useRouter();
+
+    const myComments = () => {
+      router.push({ name: "MyComments" });
+    };
+
+    const myLikepost = () => {
+      router.push({ name: "MyLikepost" });
+    };
+
+    return {
+      myComments,
+      myLikepost,
+    };
+  },
+};
 </script>
 
 <style scoped>
@@ -230,122 +247,6 @@ h2 {
   border: 1px solid #ccc;
   border-radius: 10px;
   margin-left: 20px;
-}
-
-/* 도트 이미지 감싸주는 클래스 */
-.table-group-del {
-  /* display: flex;
-=======
-  },
-
-  setup() {
-    const router = useRouter();
-
-    const myComments = () => {
-      router.push({ name: "MyComments" });
-    };
-
-    const myLikepost = () => {
-      router.push({ name: "MyLikepost" });
-    };
-
-    const boardDetail = () => {
-      router.push({ name: "BoardDetail" });
-    };
-
-    return {
-      myComments,
-      myLikepost,
-      boardDetail,
-    };
-  },
-};
-</script>
-
-<style scoped>
-main {
-  width: 100%;
-  height: 900px;
-  display: grid;
-  grid-template-columns: 180px 1fr;
-}
-
-.post {
-  width: 1270px;
-  height: 100%;
-  display: grid;
-  grid-template-rows: 150px 1fr;
-}
-
-.post-top {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.post-top::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 2px;
-  background-color: #ccc;
-}
-
-h2 {
-  font-size: 50px;
-  font-weight: bold;
-  color: #5d5a88;
-  margin: 0;
-  margin-left: 1007px;
-}
-
-.line::after {
-  content: "|";
-  color: #ccc;
-  margin: 0 5px 0 5px;
-  font-weight: lighter;
-}
-
-.text01,
-.text02,
-.text03 {
-  font-size: 24px;
-  font-weight: bolder;
-  margin-top: 28px;
-  margin-bottom: 20px;
-  display: inline-block;
-  vertical-align: middle;
-  cursor: pointer;
-}
-
-.text02,
-.text03 {
-  font-weight: lighter;
-}
-
-.post-middle {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-rows: 95px 1fr;
-}
-
-.middle-filter {
-  display: flex;
-  align-items: center;
-  padding: 10px 5px;
-}
-
-.middle-filter-search-box {
-  display: flex;
-  align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 5px;
-  width: 250px;
-  margin-left: 906px;
-  position: relative;
-  /* Add relative positioning */
 }
 
 .search-box-input {
