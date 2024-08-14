@@ -137,6 +137,8 @@
                 alt=""
               />
               <p class="user-info-name">김계란</p>
+              <!-- 각 댓글 별로 개별적으로 toggleActions가 호출되도록 하고 싶으면 게시글 식별 ID를
+               toggleActions(comment.commentId) 이런식으로 넣어주면 개별적으로 작동된다고 함 -->
               <img
                 class="modify-icon"
                 src="@/assets/image/dot.png"
@@ -174,9 +176,9 @@
 </template>
 
 <script>
-import PostActions from "@/pages/PostActions.vue";
+import PostActions from "@/components/common/PostActions.vue";
 import AppNav from "@/components/layout/AppNav.vue";
-import PagiNation from "@/pages/PagiNation.vue";
+import PagiNation from "@/components/common/PagiNation.vue";
 import { useRouter } from "vue-router";
 
 

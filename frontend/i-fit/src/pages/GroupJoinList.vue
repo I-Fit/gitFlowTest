@@ -113,7 +113,7 @@ import AppNav from "@/components/layout/AppNav.vue";
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
-import PagiNation from "@/pages/PagiNation.vue";
+import PagiNation from "@/components/common/PagiNation.vue";
 
 export default {
   name: "GroupJoinList",
