@@ -193,9 +193,6 @@ export default {
 
   data() {
     return {
-      Comments: [],
-      currentPage: 1,
-      totalPages: 5, // 예를 들면, 총 페이지 수
       showActions: false,
       searchQuery: "",
     };

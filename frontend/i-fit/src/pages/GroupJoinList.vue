@@ -58,7 +58,7 @@
               </div>
             </div>
           </div>
-          <div v-for="group in visibleGroups" :key="group.communityId" class="group-container">
+          <div v-for="group in visibleDatas" :key="group.communityId" class="group-container">
             <div class="user-info">
               <img :src="group.user_img || defaultProfileImage" alt="사용자 이미지" class="user-img" />
               <span>{{ group.username }}</span>
@@ -155,9 +155,8 @@ export default {
     };
 
     const groups = ref([]);
-    const groupsPerPage = 6;
 
-    const { currentPage, totalPages, visibleGroups, fetchGroups, onPageChange } = usePagination(groups, groupsPerPage);
+    const { currentPage, totalPages, visibleGroups, fetchdatas, onPageChange } = usePagination(groups, 6);
     const userId = ref(route.query.userId);
     const communityId = ref(route.query.communityId);
 
@@ -172,7 +171,7 @@ export default {
           }
         });
         groups.value = response.data.groups;
-        fetchGroups(1);
+        fetchdatas(1);
       } catch (error) {
         console.error("Error", error);
       }
@@ -202,7 +201,7 @@ export default {
       currentPage,
       totalPages,
       visibleGroups,
-      fetchGroups,
+      fetchdatas,
       onPageChange,
 
       groups,

@@ -45,7 +45,7 @@
               <span class="cancel">취소</span>
             </div>
           </div>
-          <div v-for="group in visibleGroups" :key="group.communityid" class="group-container">
+          <div v-for="group in visibleDatas" :key="group.communityid" class="group-container">
             <div class="user-info">
               <img :src="group.userImage || '@/assets/image/user_img.png'" alt="사용자 이미지" class="user-image" />
               <span>{{ group.username }}</span>
@@ -127,9 +127,8 @@ export default {
     const router = useRouter();
     const store = useStore();
     const groups = ref([]);
-    const groupsPerPage = 6;
 
-    const { currentPage, totalPages, visibleGroups, fetchGroups, onPageChange } = usePagination(groups, groupsPerPage);
+    const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
 
     const myCreategroup = () => {
       router.push({ name: "MyCreateGroup" });
@@ -156,7 +155,7 @@ export default {
           params: { userId }
         });
         groups.value = response.data.groups;
-        fetchGroups(1);
+        fetchdatas(1);
       } catch (error) {
         console.error("Error", error);
       }
@@ -165,8 +164,8 @@ export default {
     return {
       currentPage,
       totalPages,
-      visibleGroups,
-      fetchGroups,
+      visibleDatas,
+      fetchdatas,
       onPageChange,
 
       groups,

@@ -12,19 +12,8 @@
       <div class="post-middle">
         <div class="middle-filter">
           <div class="middle-filter-search-box">
-            <input
-              type="text"
-              name="search"
-              class="search-box-input"
-              placeholder="검색어를 입력하세요."
-              @input="onInput"
-            />
-            <img
-              src="@/assets/image/search.icon.png"
-              alt="search"
-              class="search-box-icon"
-              @click="onSearch"
-            />
+            <input type="text" name="search" class="search-box-input" placeholder="검색어를 입력하세요." @input="onInput" />
+            <img src="@/assets/image/search.icon.png" alt="search" class="search-box-icon" @click="onSearch" />
           </div>
           <select title="정렬" class="middle-filter-sort" v-model="sortOrder">
             <option value="" disabled>정렬</option>
@@ -34,39 +23,19 @@
         </div>
         <div class="post-bottom-table">
           <!-- 서버에서 가져온 게시물들 -->
-          <div class="bottom-table-group" v-for="post in visiblePosts" :key="post.id">
+          <div class="bottom-table-group" v-for="post in visibleDatas" :key="post.id">
             <div class="table-group-del">
-              <img
-                id="modify_icon"
-                :src="require('@/assets/image/dot.png')"
-                alt="dot"
-                @click="toggleActions(post.id)"
-              />
-              <PostActions
-                :visible="showActionsForPostId(post.id)"
-                @navigate="handleNavigation"
-              />
+              <img id="modify_icon" :src="require('@/assets/image/dot.png')" alt="dot"
+                @click="toggleActions(post.id)" />
+              <PostActions :visible="showActionsForPostId(post.id)" @navigate="handleNavigation" />
             </div>
             <div class="table-group-postimg">
-              <img
-                class="table-group-post-img"
-                :src="post.image"
-                alt="게시글 이미지"
-                @click="boardDetail2"
-              />
+              <img class="table-group-post-img" :src="post.image" alt="게시글 이미지" @click="boardDetail2" />
             </div>
             <div class="table-group-btn">
-              <img
-                class="btn-icon"
-                src="@/assets/image/heart.png"
-                alt="좋아요 아이콘"
-              />
+              <img class="btn-icon" src="@/assets/image/heart.png" alt="좋아요 아이콘" />
               <span id="heart-count">{{ post.likes }}</span>
-              <img
-                class="btn-icon"
-                src="@/assets/image/comment.png"
-                alt="댓글 아이콘"
-              />
+              <img class="btn-icon" src="@/assets/image/comment.png" alt="댓글 아이콘" />
               <span id="comment-count">{{ post.comments }}</span>
             </div>
             <div class="table-group-content" @click="boardDetail(post.id)">
@@ -79,11 +48,7 @@
             </div>
           </div>
         </div>
-        <PagiNation
-          :currentPage="currentPage"
-          :totalPages="totalPages"
-          @page-changed="onPageChange"
-        />
+        <PagiNation :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" />
       </div>
       <div class="post-floor"></div>
     </div>
@@ -91,95 +56,99 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import PostActions from "@/components/common/PostActions.vue";
 import PagiNation from "@/components/common/PagiNation.vue";
 import AppNav from "@/components/layout/AppNav.vue";
+import { usePagination } from '@/utils/pagination';
 
 const router = useRouter();
 
 const Posts = ref([
-  { id: 1, 
-      image: require('@/assets/image/riding-1.png'), 
-    likes: 23, 
-    comments: 7, 
-    title: "종주할 때 사진 모아봤습니다.jpg", 
-    content: "힘들었지만, 보람된 시간이였습니다." },
+  {
+    id: 1,
+    image: require('@/assets/image/riding-1.png'),
+    likes: 23,
+    comments: 7,
+    title: "종주할 때 사진 모아봤습니다.jpg",
+    content: "힘들었지만, 보람된 시간이였습니다."
+  },
 
-    { id: 2, 
-      image: require('@/assets/image/riding-3.png'), 
-    likes: 72, 
-    comments: 17, 
-    title: "부산 하구둑 인증합니다. :)", 
-    content: "국토종주 마지막 날이였습니다..." },
-  
-    { id: 3, 
-      image: require('@/assets/image/riding-2.jpg'), 
-    likes: 87, 
-    comments: 10, 
-    title: "아라뱃길 정서진까지 라이딩", 
-    content: "목동 한강 합수부에서 만나서..." },
-  
-    { id: 4, 
-      image: require('@/assets/image/doginvade.jpg'), 
-    likes: 123, 
-    comments: 34, 
-    title: "골든리트리버 난입한 썰", 
-    content: "공 차는데 큰 개 한마리가 들어왔어요!!" },
-  
-    { id: 5, 
-      image: require('@/assets/image/rainfootball.jpg'), 
-    likes: 33, 
-    comments: 19, 
-    title: "비오는 날, 모임한 날", 
-    content: "날씨가 좋지 않음에도 참석해주신 분들이 많았습니다." },
-  
-    { id: 6, image: require('@/assets/image/dmfootball.jpg'), 
-    likes: 54, 
-    comments: 19, 
+  {
+    id: 2,
+    image: require('@/assets/image/riding-3.png'),
+    likes: 72,
+    comments: 17,
+    title: "부산 하구둑 인증합니다. :)",
+    content: "국토종주 마지막 날이였습니다..."
+  },
+
+  {
+    id: 3,
+    image: require('@/assets/image/riding-2.jpg'),
+    likes: 87,
+    comments: 10,
+    title: "아라뱃길 정서진까지 라이딩",
+    content: "목동 한강 합수부에서 만나서..."
+  },
+
+  {
+    id: 4,
+    image: require('@/assets/image/doginvade.jpg'),
+    likes: 123,
+    comments: 34,
+    title: "골든리트리버 난입한 썰",
+    content: "공 차는데 큰 개 한마리가 들어왔어요!!"
+  },
+
+  {
+    id: 5,
+    image: require('@/assets/image/rainfootball.jpg'),
+    likes: 33,
+    comments: 19,
+    title: "비오는 날, 모임한 날",
+    content: "날씨가 좋지 않음에도 참석해주신 분들이 많았습니다."
+  },
+
+  {
+    id: 6, image: require('@/assets/image/dmfootball.jpg'),
+    likes: 54,
+    comments: 19,
     title: "광복절에 용산에서 축구",
-    content: "날씨가 무척 더워서 힘들었습니다." },
-  
-    { id: 7, 
-      image: require('@/assets/image/medal.jpg'), 
-    likes: 144, 
-    comments: 45, 
-    title: "국토종주 메달왔습니다 인증!!.jpg.", 
-    content: "메달이 왔네요ㅎㅎ" },
+    content: "날씨가 무척 더워서 힘들었습니다."
+  },
 
-    { id: 8, 
-      image: require('@/assets/image/certinfo.jpg'), 
-    likes: 144, 
-    comments: 45, 
-    title: "국토종주 인증서도 왔어요!!", 
-    content: "드디어 인증서 도착이요 ^^" },
+  {
+    id: 7,
+    image: require('@/assets/image/medal.jpg'),
+    likes: 144,
+    comments: 45,
+    title: "국토종주 메달왔습니다 인증!!.jpg.",
+    content: "메달이 왔네요ㅎㅎ"
+  },
 
-    { id: 9, 
-      image: require('@/assets/image/winterfootball.jpg'), 
-    likes: 144, 
-    comments: 45, 
-    title: "추운 날씨에...", 
-    content: "다친 분 없이 모임이 끝나서 다행입니다." },
+  {
+    id: 8,
+    image: require('@/assets/image/certinfo.jpg'),
+    likes: 144,
+    comments: 45,
+    title: "국토종주 인증서도 왔어요!!",
+    content: "드디어 인증서 도착이요 ^^"
+  },
+
+  {
+    id: 9,
+    image: require('@/assets/image/winterfootball.jpg'),
+    likes: 144,
+    comments: 45,
+    title: "추운 날씨에...",
+    content: "다친 분 없이 모임이 끝나서 다행입니다."
+  },
 ]);
 
-const currentPage = ref(1);
-const postsPerPage = 3; // 페이지당 게시물 수
-
-const totalPages = computed(() => {
-  return Math.ceil(Posts.value.length / postsPerPage);
-});
-
-const visiblePosts = computed(() => {
-  let startIndex, endIndex;
-  
-  // 페이지에 맞는 시작 및 끝 인덱스 계산
-  startIndex = (currentPage.value - 1) * postsPerPage;
-  endIndex = startIndex + postsPerPage;
-  
-  return Posts.value.slice(startIndex, endIndex);
-});
+const { currentPage, totalPages, visibleDatas, onPageChange, fetchdatas } = usePagination(Posts, 3);
 
 const searchQuery = ref('');
 const sortOrder = ref(''); // 정렬 상태 추가
@@ -201,7 +170,7 @@ const toggleActions = (postId) => {
 
 const handleNavigation = (action) => {
   if (action === "PostModify") {
-    router.push ("PostModify");
+    router.push("PostModify");
     /* (`/PostModify/${selectedPostId.value}`); */  // 응답 처리
   } else if (action === "delete") {
     deletePost(selectedPostId.value);
@@ -213,26 +182,12 @@ const deletePost = (postId) => {
     .delete(`https://api.example.com/posts/${postId}`)
     .then(() => {
       alert("게시물이 삭제되었습니다.");
-      fetchPosts(); // 게시물 목록 갱신
+      fetchdatas(); // 게시물 목록 갱신
     })
     .catch((error) => {
       console.error("삭제 실패:", error);
       alert("게시물 삭제 중 오류가 발생했습니다.");
     });
-};
-
-const fetchPosts = (page = currentPage.value) => {
-  let startIndex, endIndex;
-
-  startIndex = (page - 1) * postsPerPage;
-  endIndex = startIndex + postsPerPage;
-  visiblePosts.value = Posts.value.slice(startIndex, endIndex);
-
-  currentPage.value = page;
-};
-
-const onPageChange = (page) => {
-  fetchPosts(page);
 };
 
 const onInput = (event) => {
@@ -261,7 +216,7 @@ const boardDetail2 = () => {
 };
 
 onMounted(() => {
-  fetchPosts();
+  fetchdatas(1);
 });
 </script>
 

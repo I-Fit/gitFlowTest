@@ -58,7 +58,7 @@
               </div>
             </div>
           </div>
-          <div v-for="group in visibleGroups" :key="group.communityId" class="group-container">
+          <div v-for="group in visibleDatas" :key="group.communityId" class="group-container">
             <div class="user-info">
               <img :src="group.user_img || '/default-profile.png'" alt="사용자 이미지" class="user-img" />
               <span>{{ group.username }}</span>
@@ -154,9 +154,8 @@ export default {
     const router = useRouter();
     const store = useStore();
     const groups = ref([]);
-    const groupsPerPage = 6;
 
-    const { currentPage, totalPages, visibleGroups, fetchGroups, onPageChange } = usePagination(groups, groupsPerPage);
+    const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
 
     // 사용자 식별 ID의 상태를 가져옴
     const userId = computed(() => store.getters["isLogged/userId"]);
@@ -168,7 +167,7 @@ export default {
           params: { userId: userId.value }
         });
         groups.value = response.data;
-        fetchGroups(1);
+        fetchdatas(1);
       } catch (error) {
         console.error("Error", error);
       }
@@ -204,8 +203,8 @@ export default {
     return {
       currentPage,
       totalPages,
-      visibleGroups,
-      fetchGroups,
+      visibleDatas,
+      fetchdatas,
       onPageChange,
 
       groups,
