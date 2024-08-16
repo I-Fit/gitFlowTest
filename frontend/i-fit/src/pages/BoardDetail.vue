@@ -7,8 +7,9 @@
           <span class="user-name">김계란</span>
           <span class="creation-date">4 days ago</span>
         </div>
-        <div class="user-option" src="@/assets/image/dot/png" @click="toggleActions">
-          <PostActions :visible="showActions" @navigate="handleNavigation" />
+        <div class="user-option" @click="toggleActions">
+          <div class="dot-icon"></div>
+          <PostActions :visible="showActions" @navigate="handleNavigation" class="post-actions" />
         </div>
       </div>
       <div class="content-title">
@@ -18,7 +19,7 @@
         </div>
       </div>
       <div class="content-image">
-        <img src="@/assets/image/2.png" alt="" />
+        <img src="@/assets/image/riding-1.png" alt="" />
       </div>
       <div class="content-topic">
         <p class="topic-item">런닝</p>
@@ -28,57 +29,47 @@
       <div class="content-comment">
         <div class="comment-table">
           <div class="table-item">
-            <div class="item-user">보노보노</div>
-            <div class="item-text">오늘도 보노보노 완주행 완료</div>
+            <div class="item-user">밤편지</div>
+            <div class="item-text">대단하십니다.</div>
           </div>
           <div class="table-item">
-            <div class="item-user">방구왕김뿡빵</div>
-            <div class="item-text">오늘도 눈정화 완료</div>
+            <div class="item-user">wimper</div>
+            <div class="item-text">며칠 걸리셨나요??</div>
           </div>
           <div class="table-item">
-            <div class="item-user">오운완</div>
-            <div class="item-text">오운완 하셨군요. 대단하십니다.</div>
+            <div class="item-user">건넛</div>
+            <div class="item-text">담에 또 하실건가요? +_+</div>
           </div>
           <div class="table-item">
-            <div class="item-user">스쿼트마스터</div>
-            <div class="item-text">스쿼트는 언제하나요?</div>
+            <div class="item-user">qwer</div>
+            <div class="item-text">담 모임은 어디서하시나요?</div>
           </div>
           <div class="table-item">
-            <div class="item-user">3대400천왕</div>
-            <div class="item-text">3대400아니면 흰티 금지</div>
+            <div class="item-user">한강교차로인간</div>
+            <div class="item-text">3일 컷은 해야지~</div>
           </div>
           <div class="table-item">
-            <div class="item-user">날아아떳돌이</div>
-            <div class="item-text">댓글내용</div>
-          </div>
-          <div class="table-item">
-            <div class="item-user">삼강빠삐코</div>
-            <div class="item-text">댓글내용</div>
-          </div>
-          <div class="table-item">
-            <div class="item-user">암모니아냄새</div>
-            <div class="item-text">댓글내용</div>
+            <div class="item-user">좋으면짖는개</div>
+            <div class="item-text">왈왈 크르르릉 왈왈!!</div>
           </div>
         </div>
       </div>
+    </div>
       <div class="content-add">
         <input v-model="comment" placeholder="댓글을 입력해주세요." @keydown="checkEnter" @input="autoResize" ref="input" />
         <span class="comment-upload" @click="submit">&#10550;</span>
       </div>
-    </div>
   </main>
 </template>
 
 <script>
 import PostActions from "@/components/common/PostActions.vue";
-/* import { useRouter } from "vue-router"; */
 
 export default {
   name: "BoardDetail",
   components: {
     PostActions,
   },
-
   data() {
     return {
       comment: "",
@@ -86,11 +77,8 @@ export default {
       showActions: false,
     };
   },
-
-
   methods: {
     toggleActions() {
-      console.log("toggleActions called");
       this.showActions = !this.showActions;
     },
     handleNavigation(action) {
@@ -100,25 +88,21 @@ export default {
         this.$router.push("/MainBoard"); // 메인 게시판으로 이동
       }
     },
-
     toggleHeart() {
       this.isHeartFilled = !this.isHeartFilled; // 하트 상태 토글
     },
-
     checkEnter(event) {
       if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault(); // 기본 Enter 동작(줄 바꿈)을 막음
         this.submitComment();   // 댓글 제출
       }
     },
-
     submitComment() {
       if (this.comment.trim() === "") {
         alert("댓글을 입력해주세요.");
         return;
       }
       // 댓글을 서버로 전송하거나, 다른 로직 처리
-      console.log("댓글 내용:", this.comment);
       this.comment = ""; // 입력 필드 초기화
     },
   },
@@ -187,15 +171,30 @@ input {
 }
 
 .user-option {
+  position: relative; /* Make it a positioned element */
   width: 37px;
   height: 10px;
   margin-right: 4px;
   margin-top: 16px;
+  cursor: pointer;
+}
+
+.dot-icon {
   background-image: url("@/assets/image/dot.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
+}
+
+.post-actions {
+  position: absolute;
+  top: -5px; /* Adjust this value as needed */
+  right: -50px;
+  z-index: 10;
+  /* You may need to further style or adjust based on your layout */
 }
 
 .content-title {
@@ -324,6 +323,7 @@ input {
 
 .content-add {
   display: flex;
+  width: 580px;
   height: 45px;
   border: 1px solid #ccc;
   border-radius: 5px;
