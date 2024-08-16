@@ -3,18 +3,18 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import Home from "@/pages/Home.vue";
 import Login from "@/pages/Login.vue";
-import Account from "@/pages/Account.vue";
+import SignUp from "@/pages/SignUp.vue";
 import FindId from "@/pages/FindId.vue";
-import FindIdComplete from "@/pages/FindIdComplete.vue";
-import FindPw from "@/pages/FindPw.vue";
+import CompletedId from "@/pages/CompletedId.vue";
+import FindPassword from "@/pages/FindPassword.vue";
 import Tos from "@/pages/Tos.vue";
-import PostHistory from "@/pages/PostHistory.vue";
-import MyComments from "@/pages/MyComments.vue";
-import MyLikepost from "@/pages/MyLikepost.vue";
-import BoardDetail from "@/pages/BoardDetail.vue";
-import MainBoard from "@/pages/MainBoard.vue";
-import PostUpload from "@/pages/PostUpload.vue";
-import PostModify from "@/pages/PostModify.vue";
+import HistoryPosts from "@/pages/HistoryPosts.vue";
+import WrittenComments from "@/pages/WrittenComments.vue";
+import LikedPosts from "@/pages/LikedPosts.vue";
+import DetailPost from "@/pages/DetailPost.vue";
+import Board from "@/pages/Board.vue";
+import UploadPost from "@/pages/UploadPost.vue";
+import EditPost from "@/pages/EditPost.vue";
 
 import MembershipMain from "@/pages/MembershipMain.vue";
 import Payment from "@/pages/Payment.vue";
@@ -22,10 +22,10 @@ import Mypage from "@/pages/Mypage.vue";
 import AccountDeleted from "@/pages/AccountDeleted.vue";
 import EditEmail from "@/pages/EditEmail.vue";
 
-import MyCreateGroup from "@/pages/MyCreateGroup.vue";
-import GroupJoinList from "@/pages/GroupJoinList.vue";
-import LikeGroup from "@/pages/LikeGroup.vue";
-import CreateGroup from "@/pages/CreateGroup.vue";
+import HistoryGroups from "@/pages/HistoryGroups.vue";
+import JoinedGroups from "@/pages/JoinedGroups.vue";
+import LikedGroups from "@/pages/LikedGroups.vue";
+import AddGroup from "@/pages/AddGroup.vue";
 
 const routes = [
   {
@@ -42,28 +42,28 @@ const routes = [
   },
 
   {
-    path: "/account",
-    name: "Account",
-    component: Account,
+    path: "/sign-up",
+    name: "SignUp",
+    component: SignUp,
   },
 
   {
-    path: "/findid",
+    path: "/find-id",
     name: "FindId",
     component: FindId,
   },
 
   {
-    path: "/findidComplete",
-    name: "FindIdComplete",
-    component: FindIdComplete,
+    path: "/completed-id",
+    name: "CompletedId",
+    component: CompletedId,
     props: (route) => ({ userId: route.params.userId }),
   },
 
   {
-    path: "/findpw",
-    name: "FindPw",
-    component: FindPw,
+    path: "/find-password",
+    name: "FindPassword",
+    component: FindPassword,
   },
 
   {
@@ -73,52 +73,52 @@ const routes = [
   },
 
   {
-    path: "/mainboard",
-    name: "MainBoard",
+    path: "/board",
+    name: "Board",
     // meta: { showNav: true },
-    component: MainBoard,
+    component: Board,
   },
 
   {
-    path: "/PostHistory",
-    name: "PostHistory",
-    component: PostHistory,
+    path: "/history-posts",
+    name: "HistoryPosts",
+    component: HistoryPosts,
     meta: { requiresAuth: true },
   },
 
   {
-    path: "/MyComments",
-    name: "MyComments",
+    path: "/written-comments",
+    name: "WrittenComments",
     // meta: { showNav: true },
-    component: MyComments,
+    component: WrittenComments,
   },
 
   {
-    path: "/MyLikepost",
-    name: "MyLikepost",
+    path: "/Liked-posts",
+    name: "LikedPosts",
     // meta: { showNav: true },
-    component: MyLikepost,
+    component: LikedPosts,
   },
 
   {
-    path: "/BoardDetail",
-    name: "BoardDetail",
+    path: "/detail-post",
+    name: "DetailPost",
     // meta: { showNav: false },
-    component: BoardDetail,
+    component: DetailPost,
   },
 
   {
-    path: "/PostUpload",
-    name: "Postupload",
+    path: "/upload-post",
+    name: "UploadPost",
     // meta: { showNav: false },
-    component: PostUpload,
+    component: UploadPost,
   },
 
   {
-    path: "/PostModify",
-    name: "PostModify",
+    path: "/edit-post",
+    name: "EditPost",
     // meta: { showNav: false },
-    component: PostModify,
+    component: EditPost,
   },
 
   {
@@ -157,27 +157,30 @@ const routes = [
   },
 
   {
-    path: "/mycreate-group",
-    name: "MyCreateGroup",
-    component: MyCreateGroup,
+    // 내가 만든 모임
+    path: "/history-groups",
+    name: "HistoryGroups",
+    component: HistoryGroups,
   },
 
   {
-    path: "/groupjoinlist",
-    name: "GroupJoinList",
-    component: GroupJoinList,
+    // 참여한 모임
+    path: "/joined-groups",
+    name: "JoinedGroups",
+    component: JoinedGroups,
   },
 
   {
-    path: "/likegroup",
-    name: "LikeGroup",
-    component: LikeGroup,
+    path: "/liked-groups",
+    name: "LikedGroups",
+    component: LikedGroups,
   },
 
   {
-    path: "/creategroup",
-    name: "CreateGroup",
-    component: CreateGroup,
+    // 모임 생성
+    path: "/add-group",
+    name: "AddGroup",
+    component: AddGroup,
   },
 
 ];

@@ -5,20 +5,19 @@
       <div class="party-null-block"></div>
       <div class="party-top">
         <h2>모임 관리</h2>
-        <p class="line text01" @click="myCreategroup">내가 만든 모임</p>
-        <p class="line text02">모임 참여 내역</p>
+        <p class="line text01">내가 만든 모임</p>
+        <p class="line text02" @click="groupJoinlist">모임 참여 내역</p>
         <p class="text03" @click="likeGroup">찜한 모임 내역</p>
       </div>
       <div class="party-middle">
         <div class="middle-filter">
           <div class="middle-filter-search-box">
-            <input type="text" name="search" id="search_input" placeholder="검색어를 입력하세요." class="search-box-input" />
-            <img src="@/assets/image/search.icon.png" alt="search" class="search-box-icon" />
+            <input type="text" name="search" id="search_input" placeholder="검색어를 입력하세요." class="search-box-input"
+              v-model="searchQuery" @input="onInput" />
+            <img src="@/assets/image/search.icon.png" alt="search" class="search-box-icon" @click="onSearch" />
           </div>
           <select title="정렬" class="middle-filter-sort">
-            <option value="" selected="selected" disabled="disabled">
-              정렬
-            </option>
+            <option value="" selected disabled>정렬</option>
             <option value="popular">인기순</option>
             <option value="latest">최신순</option>
           </select>
@@ -38,16 +37,17 @@
             <p class="time">8:00 PM</p>
             <div class="group-info">
               <div class="title-heart" @click="toggleHeart">
-                <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
+                <div :class="{
+                  'filled-heart': isHeartFilled,
+                  'empty-heart': !isHeartFilled,
+                }"></div>
               </div>
               <span class="size">참여인원: 3/10</span>
               <span class="location">강남구</span>
-              <button type="button" class="cancel" @click="showConfirmPopup = true">
-                취소
-              </button>
+              <button type="button" class="cancel" @click="showConfirmPopup">삭제</button>
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
-                  <p>모임 참여를 취소하시겠습니까?</p>
+                  <p>모임을 삭제하시겠습니까?</p>
                   <button class="confirm-btn" @click="confirmDeletion">
                     확인
                   </button>
@@ -60,9 +60,9 @@
           </div>
           <div v-for="group in visibleDatas" :key="group.communityId" class="group-container">
             <div class="user-info">
-              <img :src="group.user_img || defaultProfileImage" alt="사용자 이미지" class="user-img" />
+              <img :src="group.user_img || '/default-profile.png'" alt="사용자 이미지" class="user-img" />
               <span>{{ group.username }}</span>
-              <img src="@/assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
+              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title">{{ group.title }}</span>
@@ -71,16 +71,19 @@
             <p class="time">{{ group.selectedTime }}</p>
             <div class="group-info">
               <div class="title-heart" @click="toggleHeart(group.communityId)">
-                <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
+                <div :class="{
+                  'filled-heart': isHeartFilled,
+                  'empty-heart': !isHeartFilled,
+                }"></div>
               </div>
               <span class="size">참여인원: {{ group.person }}</span>
               <span class="location">{{ group.location }}</span>
-              <button type="button" class="cancel" @click="showConfirmPopup = true">
-                취소
+              <button type="button" class="attend" @click="showConfirmPopup = true">
+                삭제
               </button>
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
-                  <p>모임 참여를 취소하시겠습니까?</p>
+                  <p>모임을 삭제하시겠습니까?</p>
                   <button class="confirm-btn" @click="confirmDeletion">
                     확인
                   </button>
@@ -94,16 +97,19 @@
           <div class="group-container"></div>
           <div class="group-container"></div>
           <div class="group-container"></div>
+          <div class="group-container"></div>
+          <div class="group-container"></div>
         </div>
-        <PagiNation :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchJoins" />
+        <PagiNation :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchGroups" />
       </div>
-      <div class="joinlist-floor">
-      </div>
+      <!-- <div class="mygroup-floor">
+      </div> -->
     </div>
+    <!-- 모달 창 -->
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <p>모임 상세설명: {{ selectedItem ? selectedItem.content : "" }}</p>
+        <p>모임 상세설명 : {{ selectedItem ? selectedItem.content : "" }}</p>
       </div>
     </div>
   </main>
@@ -111,23 +117,25 @@
 
 <script>
 import AppNav from "@/components/layout/AppNav.vue";
-import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import axios from "axios";
+import { useRouter } from "vue-router";
 import PagiNation from "@/components/common/PagiNation.vue";
 import { usePagination } from "@/utils/pagination";
+import { useStore } from "vuex";
+import { ref, computed, onMounted } from "vue";
+import axios from "axios";
 
 export default {
-  name: "GroupJoinList",
+  name: "HistoryGroups",
   components: {
     AppNav,
     PagiNation,
   },
+
   data() {
     return {
-      isModalOpen: false, // 모달 창 상태
-      selectedItem: null, // 선택된 아이템
-    }
+      isModalOpen: false,
+      selectedItem: null,
+    };
   },
   methods: {
     openModal(group) {
@@ -144,40 +152,35 @@ export default {
 
   setup() {
     const router = useRouter();
-    const route = useRoute();
-
-    const myCreategroup = () => {
-      router.push({ name: "MyCreateGroup" });
-    };
-
-    const likeGroup = () => {
-      router.push({ name: "LikeGroup" });
-    };
-
+    const store = useStore();
     const groups = ref([]);
 
-    const { currentPage, totalPages, visibleGroups, fetchdatas, onPageChange } = usePagination(groups, 6);
-    const userId = ref(route.query.userId);
-    const communityId = ref(route.query.communityId);
+    const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
 
-    // 홈 페이지에서 모임 식별 키와 사용자 식별 키를 받아와
-    // 서버에 보내서 조회
+    // 사용자 식별 ID의 상태를 가져옴
+    const userId = computed(() => store.getters["isLogged/userId"]);
+
+    //  웹 페이지가 로딩 되기 전에 userId를 서버에 보내서 해당되는 모임을 로딩해줌
     onMounted(async () => {
       try {
-        const response = await axios.get('/api/joined-groups/details', {
-          params: {
-            communityId: communityId.value,
-            userId: userId.value
-          }
+        const response = await axios.post(`/api/group-details`, {
+          params: { userId: userId.value }
         });
-        groups.value = response.data.groups;
+        groups.value = response.data;
         fetchdatas(1);
       } catch (error) {
         console.error("Error", error);
       }
-    })
+    });
 
-    // 참석 모달 열기
+    const groupJoinlist = () => {
+      router.push({ name: "JoinedGroups" });
+    };
+
+    const likeGroup = () => {
+      router.push({ name: "LikedGroups" });
+    };
+
     const isTooltipVisible = ref(true);
 
     const toggleTooltip = () => {
@@ -185,44 +188,43 @@ export default {
     };
     // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
     const showConfirmPopup = ref(false);
-    const confirmDeletion = (communityId) => {
-      router.push({ name: "GroupJoinList", query: { communityId } });
+    const confirmDeletion = () => {
+
     };
     const cancelDeletion = () => {
       showConfirmPopup.value = false;
     };
-
+    // 모임 찜 이벤트
     const isHeartFilled = ref(false);
     const toggleHeart = () => {
       isHeartFilled.value = !isHeartFilled.value;
-    }
+    };
 
     return {
       currentPage,
       totalPages,
-      visibleGroups,
+      visibleDatas,
       fetchdatas,
       onPageChange,
 
       groups,
+      groupJoinlist,
+      likeGroup,
       toggleTooltip,
-      showConfirmPopup,
       confirmDeletion,
       cancelDeletion,
       isHeartFilled,
       toggleHeart,
-      myCreategroup,
-      likeGroup,
     };
   },
 };
 </script>
 
 <style scoped>
-/* content 부분 */
 main {
   width: 100%;
   height: 1200px;
+  /* height: 100%; */
   display: grid;
   grid-template-columns: 180px 1fr;
 }
@@ -279,7 +281,7 @@ h2 {
   cursor: pointer;
 }
 
-.text01,
+.text02,
 .text03 {
   font-weight: lighter;
 }
@@ -306,13 +308,6 @@ h2 {
   width: 250px;
   margin-left: 906px;
   position: relative;
-}
-
-.joinlist-floor {
-  height: 50px;
-  /* floor 영역 높이 설정 */
-  text-align: center;
-  padding: 20px;
 }
 
 .search-box-input {
@@ -382,7 +377,6 @@ h2 {
   width: 20px;
   height: 20px;
   margin-left: 173px;
-  cursor: pointer;
 }
 
 .group-content {
@@ -450,17 +444,6 @@ h2 {
   font-weight: bold;
   width: 58px;
   height: 38px;
-  cursor: pointer;
-}
-
-.cancel:hover {
-  background-color: #87cefa;
-}
-
-.cancel:active {
-  background-color: #87cefa;
-  transform: scale(0.98);
-  /* 클릭 시 버튼 크기 살짝 축소 */
 }
 
 /* 모달 창 스타일 */
@@ -551,12 +534,12 @@ h2 {
   /* 하트의 크기를 조정합니다 */
   height: 35px;
   /* 하트의 크기를 조정합니다 */
-  margin-left: 40px;
-  margin-right: 20px;
 
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-left: 40px;
+  margin-right: 20px;
 }
 
 .title-heart div {
@@ -568,7 +551,7 @@ h2 {
 }
 
 .empty-heart::before {
-  content: '\2764';
+  content: "\2764";
   /* 빈 하트 문자 */
   font-size: 35px;
   /* 하트의 크기 */
@@ -579,7 +562,7 @@ h2 {
 }
 
 .filled-heart::before {
-  content: '\2764';
+  content: "\2764";
   /* 채워진 하트 문자 */
   font-size: 35px;
   /* 하트의 크기 */

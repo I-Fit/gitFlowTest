@@ -168,26 +168,26 @@
   import { useRouter } from "vue-router";
   
   export default {
-    name: "MainBoard",
+    name: "Board",
     components: {},
   
     setup() {
       const router = useRouter();
   
       const postUpload = () => {
-        router.push({ name: "Postupload" });
+        router.push({ name: "UploadPost" });
       };
 
       const boardDetailA = () => {
-        router.push({ name: "BoardDetail" });
+        router.push({ name: "DetailPost" });
       };
 
       const boardDetailB = () => {
-        router.push({ name: "BoardDetail" });
+        router.push({ name: "DetailPost" });
       };
 
       const boardDetailC = () => {
-        router.push({ name: "BoardDetail" });
+        router.push({ name: "DetailPost" });
       };
 
       return {

@@ -169,8 +169,8 @@ const toggleActions = (postId) => {
 };
 
 const handleNavigation = (action) => {
-  if (action === "PostModify") {
-    router.push("PostModify");
+  if (action === "EditPost") {
+    router.push("EditPost");
     /* (`/PostModify/${selectedPostId.value}`); */  // 응답 처리
   } else if (action === "delete") {
     deletePost(selectedPostId.value);
@@ -200,19 +200,19 @@ const onSearch = () => {
 };
 
 const boardDetail = (postId) => {
-  router.push(`/PostDetail/${postId}`);
+  router.push(`/DetailPost/${postId}`);
 };
 
 const myComments = () => {
-  router.push({ name: "MyComments" });
+  router.push({ name: "WrittenComments" });
 };
 
 const myLikepost = () => {
-  router.push({ name: "MyLikepost" });
+  router.push({ name: "LikedPosts" });
 };
 
 const boardDetail2 = () => {
-  router.push({ name: "BoardDetail" });
+  router.push({ name: "DetailPost" });
 };
 
 onMounted(() => {

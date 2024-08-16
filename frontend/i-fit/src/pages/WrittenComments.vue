@@ -184,7 +184,7 @@ import { useRouter } from "vue-router";
 
 
 export default {
-  name: "MyComments",
+  name: "WrittenComments",
   components: {
     PostActions,
     AppNav,
@@ -204,10 +204,10 @@ export default {
       this.showActions = !this.showActions;
     },
     handleNavigation(action) {
-      if (action === "PostModify") {
-        this.$router.push("/PostModify"); // 수정 페이지로 이동
+      if (action === "EditPost") {
+        this.$router.push("/edit-post"); // 수정 페이지로 이동
       } else if (action === "delete") {
-        this.$router.push("/MainBoard"); // 메인 게시판으로 이동
+        this.$router.push("/board"); // 메인 게시판으로 이동
       }
     },
 
@@ -223,15 +223,15 @@ export default {
     const router = useRouter();
 
     const postHistory = () => {
-      router.push({ name: "PostHistory" });
+      router.push({ name: "HistoryPosts" });
     };
 
     const myLikepost = () => {
-      router.push({ name: "MyLikepost" });
+      router.push({ name: "LikedPosts" });
     };
 
     const boardDetail = () => {
-      router.push({ name: "BoardDetail" });
+      router.push({ name: "DetailPost" });
     };
 
     return {

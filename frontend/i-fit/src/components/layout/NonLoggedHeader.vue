@@ -37,11 +37,11 @@ export default {
     };
 
     const createAccount = () => {
-      router.push({ name: "Account" });
+      router.push({ name: "SignUp" });
     };
 
     const post = () => {
-      router.push({ name: "MainBoard" });
+      router.push({ name: "Board" });
     };
 
     const membership = () => {
@@ -53,7 +53,7 @@ export default {
     };
 
     const creategroup = () => {
-      router.push({ name: "CreateGroup" });
+      router.push({ name: "AddGroup" });
     };
 
     return {

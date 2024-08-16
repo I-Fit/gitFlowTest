@@ -33,15 +33,15 @@
       const router = useRouter();
 
       const mycreategroup = () => {
-        router.push({ name: "MyCreateGroup" });
+        router.push({ name: "HistoryGroups" });
       };
 
       const groupjoinlist = () => {
-        router.push({ name: "GroupJoinList" });
+        router.push({ name: "JoinedGroups" });
       };
 
       const likegroup = () => {
-        router.push({ name: "LikeGroup" });
+        router.push({ name: "LikedGroups" });
       };
 
       const membership = () => {
@@ -49,15 +49,15 @@
       };
   
       const postHistory = () => {
-        router.push({ name: "PostHistory" });
+        router.push({ name: "HistoryPosts" });
       };
   
       const myComments = () => {
-        router.push({ name: "MyComments" });
+        router.push({ name: "WrittenComments" });
       };
   
       const myLikepost = () => {
-        router.push({ name: "MyLikepost" });
+        router.push({ name: "LikedPosts" });
       };
   
       return {

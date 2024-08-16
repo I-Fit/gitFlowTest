@@ -123,7 +123,7 @@ import axios from "axios";
 import { toRaw } from "vue";
 
 export default {
-  name: "Account",
+  name: "SignUp",
 
   setup() {
     const router = useRouter();

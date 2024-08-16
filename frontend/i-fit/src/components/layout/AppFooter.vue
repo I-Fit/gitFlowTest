@@ -6,21 +6,20 @@
     </div>
     <div class="side-map">
       <div class="group1">
-        <span class="home">홈</span>
-        <span class="home-list">회원가입</span>
-        <span class="home-list">로그인</span>
+        <span class="home" @click="home">홈</span>
+        <span class="home-list" @click="signup">회원가입</span>
+        <span class="home-list" @click="login">로그인</span>
       </div>
       <div class="group2">
         <span class="activity">활동</span>
-        <span class="activity-list">모임생성</span>
-        <span class="activity-list">원데이 클래스</span>
-        <span class="activity-list">오운완 챌린지</span>
+        <span class="activity-list" @click="creategroup">모임생성</span>
+        <span class="activity-list" @click="post">오운완 챌린지</span>
       </div>
       <div class="group3">
         <span class="mypage">마이페이지</span>
-        <span class="mypage-list">프로필</span>
-        <span class="mypage-list">멤버십</span>
-        <span class="mypage-list">참여내역</span>
+        <span class="mypage-list" @click="mypage">프로필</span>
+        <span class="mypage-list" @click="membership">멤버십</span>
+        <span class="mypage-list" @click="joingroup">참여내역</span>
         <span class="mypage-list" @click="mypost">나의 게시물</span>
       </div>
     </div>
@@ -37,11 +36,45 @@ export default {
     const router = useRouter();
 
     const mypost = () => {
-      router.push({ name: "PostHistory" });
+      router.push({ name: "HistoryPosts" });
     }
+    const home = () => {
+      router.push({ name: "Home" });
+    };
+    const signup = () => {
+      router.push({ name: "SignUp" });
+    };
+    const login = () => {
+      router.push({ name: "Login" });
+    };
+    const creategroup = () => {
+      router.push({ name: "AddGroup" });
+    };
+    const post = () => {
+      router.push({ name: "Board" });
+    };
+    const mypage = () => {
+      router.push({ name: "Mypage" });
+    };
+    const membership = () => {
+      router.push({ name: "Membership" });
+    };
+    const joingroup = () => {
+      router.push({ name: "JoinedGroups" });
+    };
+    
+
 
     return {
+      home,
       mypost,
+      signup,
+      login,
+      creategroup,
+      post,
+      mypage,
+      membership,
+      joingroup,
     }
   }
 };

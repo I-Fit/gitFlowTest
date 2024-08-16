@@ -18,7 +18,7 @@
 import { useRouter, useRoute } from "vue-router";
 
 export default {
-  name: "FindIdComplete",
+  name: "CompletedId",
 
   setup() {
     const router = useRouter();

@@ -71,7 +71,7 @@ import { ref, computed, watch } from "vue";
 import axios from "axios";
 
 export default {
-  name: "FindPw",
+  name: "FindPassword",
 
   setup() {
     const router = useRouter();

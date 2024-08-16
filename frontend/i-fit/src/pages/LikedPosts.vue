@@ -196,7 +196,7 @@
   import PagiNation from "@/components/common/PagiNation.vue";
   
   export default {
-    name: "MyLikepost",
+    name: "LikedPosts",
     components: {
       PagiNation,
       PostActions,
@@ -218,10 +218,10 @@
       this.showActions = !this.showActions;
     },
     handleNavigation(action) {
-      if (action === "PostModify") {
-        this.$router.push("/PostModify"); // 수정 페이지로 이동
+      if (action === "EditPost") {
+        this.$router.push("/edit-post"); // 수정 페이지로 이동
       } else if (action === "delete") {
-        this.$router.push("/MainBoard"); // 삭제 페이지로 이동
+        this.$router.push("/board"); // 삭제 페이지로 이동
       }
     },
 
@@ -237,15 +237,15 @@
       const router = useRouter();
   
       const postHistory = () => {
-        router.push({ name: "PostHistory" });
+        router.push({ name: "HistoryPosts" });
       };
   
       const myComments = () => {
-        router.push({ name: "MyComments" });
+        router.push({ name: "WrittenComments" });
       };
   
       const boardDetail = () => {
-        router.push({ name: "BoardDetail" });
+        router.push({ name: "DetailPost" });
       };
 
       return {

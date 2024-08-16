@@ -6,13 +6,13 @@
       <div class="party-top">
         <h2>모임 관리</h2>
         <p class="line text01" @click="myCreategroup">내가 만든 모임</p>
-        <p class="line text02" @click="groupjoinlist">모임 참여 내역</p>
-        <p class="text03" @click="likegroup">찜한 모임 내역</p>
+        <p class="line text02">모임 참여 내역</p>
+        <p class="text03" @click="likeGroup">찜한 모임 내역</p>
       </div>
       <div class="party-middle">
         <div class="middle-filter">
           <div class="middle-filter-search-box">
-            <input type="text" name="search" id="search-input" placeholder="검색어를 입력하세요." class="search-box-input" />
+            <input type="text" name="search" id="search_input" placeholder="검색어를 입력하세요." class="search-box-input" />
             <img src="@/assets/image/search.icon.png" alt="search" class="search-box-icon" />
           </div>
           <select title="정렬" class="middle-filter-sort">
@@ -23,13 +23,13 @@
             <option value="latest">최신순</option>
           </select>
         </div>
-        <!-- 찜한 모임 내역 -->
+        <!-- 참여 한 모임 내역 -->
         <div class="group">
           <div class="group-container">
             <div class="user-info">
               <img src="@/assets/image/user_img.png" alt="사용자 이미지" class="user-image" />
               <span>김계란</span>
-              <img src="@/assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal"/>
+              <img src="@/assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title"> 수영 같이 하실 분 구함 </span>
@@ -42,14 +42,27 @@
               </div>
               <span class="size">참여인원: 3/10</span>
               <span class="location">강남구</span>
-              <span class="cancel">취소</span>
+              <button type="button" class="cancel" @click="showConfirmPopup = true">
+                취소
+              </button>
+              <div v-if="showConfirmPopup" class="confirm-popup">
+                <div class="popup-content">
+                  <p>모임 참여를 취소하시겠습니까?</p>
+                  <button class="confirm-btn" @click="confirmDeletion">
+                    확인
+                  </button>
+                  <button class="cancle-btn" @click="cancelDeletion">
+                    취소
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-          <div v-for="group in visibleDatas" :key="group.communityid" class="group-container">
+          <div v-for="group in visibleDatas" :key="group.communityId" class="group-container">
             <div class="user-info">
-              <img :src="group.userImage || '@/assets/image/user_img.png'" alt="사용자 이미지" class="user-image" />
+              <img :src="group.user_img || defaultProfileImage" alt="사용자 이미지" class="user-img" />
               <span>{{ group.username }}</span>
-              <img src="@/assets/image/상세설명 아이콘.png" alt="상세설명 아이콘" class="detail-icon" @click="openModal" />
+              <img src="@/assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title">{{ group.title }}</span>
@@ -57,59 +70,65 @@
             <p class="date">{{ group.selectedDate }}</p>
             <p class="time">{{ group.selectedTime }}</p>
             <div class="group-info">
-              <div class="title-heart" @click="toggleHeart(group.communityid)">
+              <div class="title-heart" @click="toggleHeart(group.communityId)">
                 <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
               </div>
               <span class="size">참여인원: {{ group.person }}</span>
               <span class="location">{{ group.location }}</span>
-              <span class="cancel" @click="removeGroup">취소</span>
+              <button type="button" class="cancel" @click="showConfirmPopup = true">
+                취소
+              </button>
+              <div v-if="showConfirmPopup" class="confirm-popup">
+                <div class="popup-content">
+                  <p>모임 참여를 취소하시겠습니까?</p>
+                  <button class="confirm-btn" @click="confirmDeletion">
+                    확인
+                  </button>
+                  <button class="cancle-btn" @click="cancelDeletion">
+                    취소
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
           <div class="group-container"></div>
           <div class="group-container"></div>
           <div class="group-container"></div>
         </div>
-        <PagiNation
-            :currentPage="currentPage"
-            :totalPages="totalPages"
-            @page-changed="fetchLikegroups"
-          />
+        <PagiNation :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchJoins" />
       </div>
-      <div class="likegroups-floor">
+      <div class="joinlist-floor">
       </div>
     </div>
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <p>모임 상세설명 : {{ selectedItem ? selectedItem.content : "" }}</p>
+        <p>모임 상세설명: {{ selectedItem ? selectedItem.content : "" }}</p>
       </div>
     </div>
   </main>
 </template>
 
 <script>
-import AppNav from '@/components/layout/AppNav.vue';
-import { useRouter } from 'vue-router';
-import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import AppNav from "@/components/layout/AppNav.vue";
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import axios from "axios";
 import PagiNation from "@/components/common/PagiNation.vue";
-import { usePagination } from '@/utils/pagination';
-import axios from 'axios';
+import { usePagination } from "@/utils/pagination";
 
 export default {
-  name: "LikeGroup",
+  name: "JoinedGroups",
   components: {
     AppNav,
     PagiNation,
   },
-
   data() {
-  return {
-    isModalOpen: false, // 모달 창 상태
-    selectedItem: null, // 선택된 아이템
-  };
-},
-  
+    return {
+      isModalOpen: false, // 모달 창 상태
+      selectedItem: null, // 선택된 아이템
+    }
+  },
   methods: {
     openModal(group) {
       this.selectedItem = {
@@ -125,56 +144,76 @@ export default {
 
   setup() {
     const router = useRouter();
-    const store = useStore();
-    const groups = ref([]);
-
-    const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
+    const route = useRoute();
 
     const myCreategroup = () => {
-      router.push({ name: "MyCreateGroup" });
+      router.push({ name: "HistoryGroups" });
     };
 
-    const groupjoinlist = () => {
-      router.push({ name: "GroupJoinList" });
+    const likeGroup = () => {
+      router.push({ name: "LikedGroups" });
     };
 
-    const likegroup = () => {
-      router.push({ name: "LikeGroup" });
-    };
+    const groups = ref([]);
 
-    const isHeartFilled = ref(true);
-    const toggleHeart = () => {
-      isHeartFilled.value = !isHeartFilled.value;
-    }
+    const { currentPage, totalPages, visibleGroups, fetchdatas, onPageChange } = usePagination(groups, 6);
+    const userId = ref(route.query.userId);
+    const communityId = ref(route.query.communityId);
 
-    // 서버에 사용자 식별 Id를 보내 찜한 모임을 받아옴
+    // 홈 페이지에서 모임 식별 키와 사용자 식별 키를 받아와
+    // 서버에 보내서 조회
     onMounted(async () => {
       try {
-        const userId = store.getters['isLogged/userId'];
-        const response = await axios.get('/api/liked-groups', {
-          params: { userId }
+        const response = await axios.get('/api/joined-groups/details', {
+          params: {
+            communityId: communityId.value,
+            userId: userId.value
+          }
         });
         groups.value = response.data.groups;
         fetchdatas(1);
       } catch (error) {
         console.error("Error", error);
       }
-    });
+    })
+
+    // 참석 모달 열기
+    const isTooltipVisible = ref(true);
+
+    const toggleTooltip = () => {
+      isTooltipVisible.value = !isTooltipVisible.value;
+    };
+    // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
+    const showConfirmPopup = ref(false);
+    const confirmDeletion = (communityId) => {
+      router.push({ name: "JoinedGroups", query: { communityId } });
+    };
+    const cancelDeletion = () => {
+      showConfirmPopup.value = false;
+    };
+
+    const isHeartFilled = ref(false);
+    const toggleHeart = () => {
+      isHeartFilled.value = !isHeartFilled.value;
+    }
 
     return {
       currentPage,
       totalPages,
-      visibleDatas,
+      visibleGroups,
       fetchdatas,
       onPageChange,
 
       groups,
-      groupjoinlist,
-      likegroup,
+      toggleTooltip,
+      showConfirmPopup,
+      confirmDeletion,
+      cancelDeletion,
       isHeartFilled,
       toggleHeart,
       myCreategroup,
-    }
+      likeGroup,
+    };
   },
 };
 </script>
@@ -241,7 +280,7 @@ h2 {
 }
 
 .text01,
-.text02 {
+.text03 {
   font-weight: lighter;
 }
 
@@ -263,14 +302,15 @@ h2 {
   align-items: center;
   border: 1px solid #ccc;
   border-radius: 10px;
-  padding: 5px;
+  padding: 5px 0px 5px 5px;
   width: 250px;
   margin-left: 906px;
   position: relative;
 }
 
-.likegroups-floor {
-  height: 50px; /* floor 영역 높이 설정 */
+.joinlist-floor {
+  height: 50px;
+  /* floor 영역 높이 설정 */
   text-align: center;
   padding: 20px;
 }
@@ -287,20 +327,21 @@ h2 {
   height: 15px;
   position: absolute;
   right: 10px;
-  /* margin-left: 45px; */
+  /* margin-left: 45px;
+  text-align: end; */
   cursor: pointer;
 }
 
 .middle-filter-sort {
   width: 75px;
   height: 37px;
-  font-size: 14px;
+  font-size: 13.3333px;
   margin-left: 30px;
   border: 1px solid #ccc;
   border-radius: 10px;
   background-color: #fff !important;
   text-align: center;
-  font-weight: lighter;
+  font-weight: 400;
 }
 
 /* 참여 한 모임 내역 css */
@@ -317,7 +358,8 @@ h2 {
   height: 300px;
   border: 1px solid #ccc;
   border-radius: 20px;
-  margin: 0px 95px 50px 0px;
+  margin-bottom: 50px;
+  margin-right: 95px;
 }
 
 .group-container:nth-child(3n) {
@@ -340,6 +382,7 @@ h2 {
   width: 20px;
   height: 20px;
   margin-left: 173px;
+  cursor: pointer;
 }
 
 .group-content {
@@ -379,7 +422,6 @@ h2 {
   width: 35px;
   height: 35px;
   margin-right: 30px;
-  cursor: pointer;
 }
 
 .size {
@@ -408,6 +450,17 @@ h2 {
   font-weight: bold;
   width: 58px;
   height: 38px;
+  cursor: pointer;
+}
+
+.cancel:hover {
+  background-color: #87cefa;
+}
+
+.cancel:active {
+  background-color: #87cefa;
+  transform: scale(0.98);
+  /* 클릭 시 버튼 크기 살짝 축소 */
 }
 
 /* 모달 창 스타일 */
@@ -441,6 +494,55 @@ h2 {
   cursor: pointer;
 }
 
+.modal-content p {
+  font-size: 16px;
+  text-align: start;
+}
+
+/* 팝업 스타일링 */
+.confirm-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-weight: bold;
+}
+
+.popup-content button {
+  margin: 20px;
+  width: 100px;
+  height: 35px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  border: none;
+  color: white;
+  background-color: #1a73e8;
+}
+
+.popup-content button:hover {
+  background-color: #87cefa;
+}
+
+.popup-content button:active {
+  background-color: #87cefa;
+  transform: scale(0.98);
+  /* 클릭 시 버튼 크기 살짝 축소 */
+}
+
 /* 하트 색상 변경 */
 .title-heart {
   cursor: pointer;
@@ -449,7 +551,9 @@ h2 {
   /* 하트의 크기를 조정합니다 */
   height: 35px;
   /* 하트의 크기를 조정합니다 */
-  margin: 0px 20px 0px 40px;
+  margin-left: 40px;
+  margin-right: 20px;
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -458,7 +562,6 @@ h2 {
 .title-heart div {
   width: 100%;
   height: 100%;
-  
   display: flex;
   justify-content: center;
   align-items: center;

@@ -66,7 +66,7 @@
 import PostActions from "@/components/common/PostActions.vue";
 
 export default {
-  name: "BoardDetail",
+  name: "DetailPost",
   components: {
     PostActions,
   },
@@ -82,10 +82,10 @@ export default {
       this.showActions = !this.showActions;
     },
     handleNavigation(action) {
-      if (action === "PostModify") {
-        this.$router.push("/PostModify"); // 수정 페이지로 이동
+      if (action === "EditPost") {
+        this.$router.push("/edit-post"); // 수정 페이지로 이동
       } else if (action === "delete") {
-        this.$router.push("/MainBoard"); // 메인 게시판으로 이동
+        this.$router.push("/board"); // 메인 게시판으로 이동
       }
     },
     toggleHeart() {

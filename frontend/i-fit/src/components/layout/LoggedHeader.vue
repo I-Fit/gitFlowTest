@@ -7,11 +7,11 @@
       <div class="icon-text">I-Fit</div>
     </div>
     <div class="text-btn">
-      <a href="/main.html">홈</a>
-      <a href="#">모임 생성하기</a>
-      <a href="#">오운완 챌린지</a>
-      <a href="#">멤버십</a>
-      <a href="#">마이페이지</a>
+      <a href="/main.html" @click="home">홈</a>
+      <a href="#" @click="creategroup">모임 생성하기</a>
+      <a href="#" @click="post">오운완 챌린지</a>
+      <a href="#" @click="membership">멤버십</a>
+      <a href="#" @click="mypage">마이페이지</a>
       <div class="login-btn">
         <img :src="userImage" alt="사용자 이미지" />
         <p class="login-user-name">{{ userName }}</p>
@@ -22,8 +22,38 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
+
 export default {
   name: "Logged",
+
+  setup() {
+    const router = useRouter();
+
+    const home = () => {
+      router.push({ name: "Home" });
+    };
+    const creategroup = () => {
+      router.push({ name: "AddGroups" });
+    };
+    const post = () => {
+      router.push({ name: "Board" });
+    };
+    const membership = () => {
+      router.push({ name: "Membership" });
+    };
+    const mypage = () => {
+      router.push({ name: "Mypage" });
+    };
+
+    return {
+      home,
+      creategroup,
+      post,
+      membership,
+      mypage,
+    }
+  }
 };
 </script>
 

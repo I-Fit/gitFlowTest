@@ -62,7 +62,7 @@
 import axios from "axios";
 
 export default {
-  name: "PostModify",
+  name: "EditPost",
   data() {
     return {
       title: "",
@@ -136,7 +136,7 @@ export default {
         .then((response) => {
           console.log("Data submitted successfully:", response.data);
           // 리디렉션 처리
-          this.$router.push({ name: 'BoardDetail' });
+          this.$router.push({ name: 'DetailPost' });
         })
         .catch((error) => {
           console.error("Error submitting data:", error);

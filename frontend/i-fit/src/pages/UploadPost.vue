@@ -69,7 +69,7 @@ import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 export default {
-  name: 'PostUpload',
+  name: 'UploadPost',
   setup() {
     const router = useRouter();
     const store = useStore();
@@ -173,7 +173,7 @@ export default {
       axios.post('/api/posts/modify', data)
         .then((response) => {
           console.log('Data submitted successfully:', response.data);
-          router.push({ name: 'BoardDetail' });
+          router.push({ name: 'DetailPost' });
         })
         .catch((error) => {
           console.error('Error submitting data:', error);
