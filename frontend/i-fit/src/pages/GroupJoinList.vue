@@ -58,7 +58,7 @@
               </div>
             </div>
           </div>
-          <div v-for="group in groups" :key="group.communityId" class="group-container">
+          <div v-for="group in visibleGroups" :key="group.communityId" class="group-container">
             <div class="user-info">
               <img :src="group.user_img || defaultProfileImage" alt="사용자 이미지" class="user-img" />
               <span>{{ group.username }}</span>
@@ -70,7 +70,7 @@
             <p class="date">{{ group.selectedDate }}</p>
             <p class="time">{{ group.selectedTime }}</p>
             <div class="group-info">
-              <div class="title-heart" @click="toggleHeart">
+              <div class="title-heart" @click="toggleHeart(group.communityId)">
                 <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
               </div>
               <span class="size">참여인원: {{ group.person }}</span>
@@ -115,6 +115,7 @@ import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 import PagiNation from "@/components/common/PagiNation.vue";
+import { usePagination } from "@/utils/pagination";
 
 export default {
   name: "GroupJoinList",
@@ -124,9 +125,6 @@ export default {
   },
   data() {
     return {
-      Joins: [],
-      currentPage: 1,
-      totalPages: 5, // 예를 들면, 총 페이지 수
       isModalOpen: false, // 모달 창 상태
       selectedItem: null, // 선택된 아이템
     }
@@ -157,6 +155,9 @@ export default {
     };
 
     const groups = ref([]);
+    const groupsPerPage = 6;
+
+    const { currentPage, totalPages, visibleGroups, fetchGroups, onPageChange } = usePagination(groups, groupsPerPage);
     const userId = ref(route.query.userId);
     const communityId = ref(route.query.communityId);
 
@@ -171,6 +172,7 @@ export default {
           }
         });
         groups.value = response.data.groups;
+        fetchGroups(1);
       } catch (error) {
         console.error("Error", error);
       }
@@ -197,6 +199,12 @@ export default {
     }
 
     return {
+      currentPage,
+      totalPages,
+      visibleGroups,
+      fetchGroups,
+      onPageChange,
+
       groups,
       toggleTooltip,
       showConfirmPopup,

@@ -260,8 +260,8 @@
               </div>
             </div>
           </div>
-          
-          <div v-for="group in groups" :key="group.communityId" class="group-container">
+
+          <div v-for="group in visibleGroups" :key="group.communityId" class="group-container">
             <div class="user-info">
               <img :src="group.user_img || '/default-profile.png'" alt="사용자 이미지" class="user-img" />
               <span>{{ group.username }}</span>
@@ -298,6 +298,7 @@
             </div>
           </div>
         </div>
+        <PagiNation :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" />
       </div>
     </div>
     <!-- 모달 창 -->
@@ -315,9 +316,14 @@ import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useStore } from "vuex";
+import PagiNation from "@/components/common/HomePagiNation.vue";
+import { usePagination } from "@/utils/pagination";
 
 export default {
   name: "Home",
+  components: {
+    PagiNation,
+  },
 
   data() {
     return {
@@ -412,8 +418,11 @@ export default {
     const store = useStore();
     // 여러 모임 데이터 배열에 저장
     const groups = ref([]);
+    const groupsPerPage = 6;
     const userId = computed(() => store.getters['isLogged/userId']);
 
+    const { currentPage, totalPages, visibleGroups, fetchGroups, onPageChange } = usePagination(groups, groupsPerPage);
+    
     // creategroup에서 생성한 모임에 사용자 식별 ID값을 같이 보내줘서
     // 서버에서 username, user_img를 받아옴
     onMounted(async () => {
@@ -422,6 +431,7 @@ export default {
 
         // 서버로부터 받은 데이터를 groups배열에 저장
         groups.value = response.data.groups;
+        fetchGroups(1);  // 데이터 로딩 후 초기 페이지 설정
 
       } catch (error) {
         console.error("Error", error);
@@ -473,6 +483,13 @@ export default {
     return {
       groups,
       userId,
+
+      currentPage,
+      groupsPerPage,
+      totalPages,
+      visibleGroups,
+      onPageChange,
+
       showConfirmPopup,
       toggleTooltip,
       confirmDeletion,

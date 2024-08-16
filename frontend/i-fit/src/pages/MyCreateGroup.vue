@@ -58,7 +58,7 @@
               </div>
             </div>
           </div>
-          <div v-for="group in groups" :key="group.communityId" class="group-container">
+          <div v-for="group in visibleGroups" :key="group.communityId" class="group-container">
             <div class="user-info">
               <img :src="group.user_img || '/default-profile.png'" alt="사용자 이미지" class="user-img" />
               <span>{{ group.username }}</span>
@@ -70,7 +70,7 @@
             <p class="date">{{ group.selectedDate }}</p>
             <p class="time">{{ group.selectedTime }}</p>
             <div class="group-info">
-              <div class="title-heart" @click="toggleHeart">
+              <div class="title-heart" @click="toggleHeart(group.communityId)">
                 <div :class="{
                   'filled-heart': isHeartFilled,
                   'empty-heart': !isHeartFilled,
@@ -119,6 +119,7 @@
 import AppNav from "@/components/layout/AppNav.vue";
 import { useRouter } from "vue-router";
 import PagiNation from "@/components/common/PagiNation.vue";
+import { usePagination } from "@/utils/pagination";
 import { useStore } from "vuex";
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
@@ -132,9 +133,6 @@ export default {
 
   data() {
     return {
-      Groups: [],
-      currentPage: 1,
-      totalPages: 5, // 예를 들면, 총 페이지 수
       isModalOpen: false,
       selectedItem: null,
     };
@@ -156,6 +154,9 @@ export default {
     const router = useRouter();
     const store = useStore();
     const groups = ref([]);
+    const groupsPerPage = 6;
+
+    const { currentPage, totalPages, visibleGroups, fetchGroups, onPageChange } = usePagination(groups, groupsPerPage);
 
     // 사용자 식별 ID의 상태를 가져옴
     const userId = computed(() => store.getters["isLogged/userId"]);
@@ -167,6 +168,7 @@ export default {
           params: { userId: userId.value }
         });
         groups.value = response.data;
+        fetchGroups(1);
       } catch (error) {
         console.error("Error", error);
       }
@@ -200,6 +202,12 @@ export default {
     };
 
     return {
+      currentPage,
+      totalPages,
+      visibleGroups,
+      fetchGroups,
+      onPageChange,
+
       groups,
       groupJoinlist,
       likeGroup,

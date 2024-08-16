@@ -45,7 +45,7 @@
               <span class="cancel">취소</span>
             </div>
           </div>
-          <div v-for="group in linkgroups" :key="group.communityid" class="group-container">
+          <div v-for="group in visibleGroups" :key="group.communityid" class="group-container">
             <div class="user-info">
               <img :src="group.userImage || '@/assets/image/user_img.png'" alt="사용자 이미지" class="user-image" />
               <span>{{ group.username }}</span>
@@ -57,7 +57,7 @@
             <p class="date">{{ group.selectedDate }}</p>
             <p class="time">{{ group.selectedTime }}</p>
             <div class="group-info">
-              <div class="title-heart" @click="toggleHeart">
+              <div class="title-heart" @click="toggleHeart(group.communityid)">
                 <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
               </div>
               <span class="size">참여인원: {{ group.person }}</span>
@@ -93,6 +93,7 @@ import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import PagiNation from "@/components/common/PagiNation.vue";
+import { usePagination } from '@/utils/pagination';
 import axios from 'axios';
 
 export default {
@@ -104,9 +105,6 @@ export default {
 
   data() {
   return {
-    Likegroups: [],
-    currentPage: 1,
-    totalPages: 5, // 예를 들면, 총 페이지 수
     isModalOpen: false, // 모달 창 상태
     selectedItem: null, // 선택된 아이템
   };
@@ -128,7 +126,10 @@ export default {
   setup() {
     const router = useRouter();
     const store = useStore();
-    const likegroups = ref([]);
+    const groups = ref([]);
+    const groupsPerPage = 6;
+
+    const { currentPage, totalPages, visibleGroups, fetchGroups, onPageChange } = usePagination(groups, groupsPerPage);
 
     const myCreategroup = () => {
       router.push({ name: "MyCreateGroup" });
@@ -154,14 +155,21 @@ export default {
         const response = await axios.get('/api/liked-groups', {
           params: { userId }
         });
-        likegroups.value = response.data.groups;
+        groups.value = response.data.groups;
+        fetchGroups(1);
       } catch (error) {
         console.error("Error", error);
       }
     });
 
     return {
-      likegroups,
+      currentPage,
+      totalPages,
+      visibleGroups,
+      fetchGroups,
+      onPageChange,
+
+      groups,
       groupjoinlist,
       likegroup,
       isHeartFilled,
