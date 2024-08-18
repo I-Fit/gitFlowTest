@@ -12,8 +12,18 @@
       <div class="post-middle">
         <div class="middle-filter">
           <div class="middle-filter-search-box">
-            <input type="text" name="search" class="search-box-input" placeholder="검색어를 입력하세요." @input="onInput" />
-            <img src="@/assets/image/search.icon.png" alt="search" class="search-box-icon" @click="onSearch" />
+            <input 
+              type="text" 
+              name="search" 
+              class="search-box-input" 
+              placeholder="검색어를 입력하세요." 
+              v-model="searchQuery"
+              @input="onInput" />
+            <img 
+                src="@/assets/image/search.icon.png" 
+                alt="search" 
+                class="search-box-icon" 
+                @click="onSearch" />
           </div>
           <select title="정렬" class="middle-filter-sort" v-model="sortOrder">
             <option value="" disabled>정렬</option>
@@ -72,7 +82,7 @@ const Posts = ref([
     image: require('@/assets/image/riding-1.png'),
     likes: 23,
     comments: 7,
-    title: "종주할 때 사진 모아봤습니다.jpg",
+    title: "종주할 때 사진 모아봤습니다.",
     content: "힘들었지만, 보람된 시간이였습니다."
   },
 

@@ -5,9 +5,13 @@
       <div class="comment-null-block"></div>
       <div class="comment-top">
         <h2>게시글 관리</h2>
-        <p class="line text01" @click="postHistory">내가 쓴 게시물</p>
-        <p class="line text02">내가 쓴 댓글</p>
-        <p class="text03" @click="myLikepost">좋아요 한 게시물</p>
+        <p class="line text01" @click="navigateTo('HistoryPosts')">
+          내가 쓴 게시물
+        </p>
+        <p class="line text02" @click="navigateTo('CommentPosts')">
+          내가 쓴 댓글
+        </p>
+        <p class="text03" @click="navigateTo('LikedPosts')">좋아요 한 게시물</p>
       </div>
       <div class="comment-middle">
         <div class="middle-filter">
@@ -22,7 +26,6 @@
             />
             <img
               src="@/assets/image/search.icon.png"
-              s="s"
               alt="search"
               class="search-box-icon"
               @click="onSearch"
@@ -37,211 +40,194 @@
           </select>
         </div>
         <div class="comment-bottom-table">
-          <div class="bottom-table">
+          <!-- 댓글 반복 렌더링 -->
+          <div
+            class="bottom-table"
+            v-for="(comment, index) in paginatedComments"
+            :key="index"
+          >
             <div class="user-info">
               <img
                 class="user-info-img"
                 src="@/assets/image/user_img.png"
-                alt=""
+                alt="User Image"
               />
-              <p class="user-info-name">김계란</p>
+              <p class="user-info-name">{{ comment.userName }}</p>
               <img
                 class="modify-icon"
                 src="@/assets/image/dot.png"
                 alt="dot"
-                @click="toggleActions"
+                @click="toggleActions(index)"
               />
               <PostActions
-                :visible="showActions"
+                :visible="comment.showActions"
                 @navigate="handleNavigation"
               />
             </div>
-            <div class="user-comment" @click="boardDetail">
-              ‘카페 메이플스토리’는 핑크 컬러 테마의 카페 식음 공간과 함께
-              몬스터 형태의 오브제로 세련된 분위기를 연출한 테라스, 포토 스팟이
-              마련된 굿즈존 등으로 구성됐다.
+            <div class="user-comment" @click="navigateTo('DetailPost')">
+              {{ comment.content }}
             </div>
             <div class="post-comment">
               <p class="post-title">
-                게시글 : 멤버들과 현충일 번개운동
-                <span class="creation-date">6일 전</span>
-              </p>
-            </div>
-          </div>
-          <div class="bottom-table">
-            <div class="user-info">
-              <img
-                class="user-info-img"
-                src="@/assets/image/user_img.png"
-                alt=""
-              />
-              <p class="user-info-name">김계란</p>
-              <img 
-              class="modify-icon" 
-              src="@/assets/image/dot.png" 
-              alt="" 
-              @click="toggleActions"/>
-              <PostActions
-                class="post-actions"
-                :visible="showActions"
-                @navigate="handleNavigation"
-              />
-            </div>
-            <div class="user-comment" @click="boardDetail">
-              ‘카페 메이플스토리’는 핑크 컬러 테마의 카페 식음 공간과 함께
-              몬스터 형태의 오브제로 세련된 분위기를 연출한 테라스, 포토 스팟이
-              마련된 굿즈존 등으로 구성됐다.
-            </div>
-            <div class="post-comment">
-              <p class="post-title">
-                게시글 : 멤버들과 현충일 번개운동
-                <span class="creation-date">6일 전</span>
-              </p>
-            </div>
-          </div>
-          <div class="bottom-table">
-            <div class="user-info">
-              <img
-                class="user-info-img"
-                src="@/assets/image/user_img.png"
-                alt=""
-              />
-              <p class="user-info-name">김계란</p>
-              <img
-                class="modify-icon"
-                src="@/assets/image/dot.png"
-                alt="dot"
-                @click="toggleActions"
-              />
-              <PostActions
-                :visible="showActions"
-                @navigate="handleNavigation"
-              />
-            </div>
-            <div class="user-comment" @click="boardDetail">
-              ‘카페 메이플스토리’는 핑크 컬러 테마의 카페 식음 공간과 함께
-              몬스터 형태의 오브제로 세련된 분위기를 연출한 테라스, 포토 스팟이
-              마련된 굿즈존 등으로 구성됐다.
-            </div>
-            <div class="post-comment">
-              <p class="post-title">
-                게시글 : 멤버들과 현충일 번개운동
-                <span class="creation-date">6일 전</span>
-              </p>
-            </div>
-          </div>
-          <div class="bottom-table">
-            <div class="user-info">
-              <img
-                class="user-info-img"
-                src="@/assets/image/user_img.png"
-                alt=""
-              />
-              <p class="user-info-name">김계란</p>
-              <!-- 각 댓글 별로 개별적으로 toggleActions가 호출되도록 하고 싶으면 게시글 식별 ID를
-               toggleActions(comment.commentId) 이런식으로 넣어주면 개별적으로 작동된다고 함 -->
-              <img
-                class="modify-icon"
-                src="@/assets/image/dot.png"
-                alt="dot"
-                @click="toggleActions"
-              />
-              <PostActions
-                :visible="showActions"
-                @navigate="handleNavigation"
-              />
-            </div>
-            <div class="user-comment" @click="boardDetail">
-              ‘카페 메이플스토리’는 핑크 컬러 테마의 카페 식음 공간과 함께
-              몬스터 형태의 오브제로 세련된 분위기를 연출한 테라스, 포토 스팟이
-              마련된 굿즈존 등으로 구성됐다.
-            </div>
-            <div class="post-comment">
-              <p class="post-title">
-                게시글 : 멤버들과 현충일 번개운동
-                <span class="creation-date">6일 전</span>
+                게시글 : {{ comment.postTitle }}
+                <span class="creation-date">{{ comment.creationDate }}</span>
               </p>
             </div>
           </div>
         </div>
         <PagiNation
-            :currentPage="currentPage"
-            :totalPages="totalPages"
-            @page-changed="fethComments"
-          />
-      </div>
-      <div class="comment-floor">
+          :currentPage="currentPage"
+          :totalPages="totalPages"
+          @page-changed="fetchComments"
+        />
       </div>
     </div>
   </main>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import PostActions from "@/components/common/PostActions.vue";
 import AppNav from "@/components/layout/AppNav.vue";
 import PagiNation from "@/components/common/PagiNation.vue";
-import { useRouter } from "vue-router";
 
+const router = useRouter();
 
-export default {
-  name: "WrittenComments",
-  components: {
-    PostActions,
-    AppNav,
-    PagiNation,
+const searchQuery = ref("");
+const comments = ref([
+  {
+    userName: "김계란",
+    content: "감사합니다! 열심히 했어요!!",
+    postTitle: "종주할 때 사진 모아봤습니다.",
+    creationDate: "6일 전",
+    showActions: false,
   },
 
-  data() {
-    return {
-      showActions: false,
-      searchQuery: "",
-    };
+  {
+    userName: "김계란",
+    content: "5일 걸렸습니다.",
+    postTitle: "종주할 때 사진 모아봤습니다.",
+    creationDate: "6일 전",
+    showActions: false,
   },
 
-  methods: {
-    toggleActions() {
-      console.log("toggleActions called");
-      this.showActions = !this.showActions;
-    },
-    handleNavigation(action) {
-      if (action === "EditPost") {
-        this.$router.push("/edit-post"); // 수정 페이지로 이동
-      } else if (action === "delete") {
-        this.$router.push("/board"); // 메인 게시판으로 이동
-      }
-    },
-
-    onInput(event) {
-      this.searchQuery = event.target.value;
-    },
-    onSearch() {
-      console.log("Searching for:", this.searchQuery);
-    },
+  {
+    userName: "김계란",
+    content: "시원할 때, 다시 해보고 싶네요.",
+    postTitle: "종주할 때 사진 모아봤습니다.",
+    creationDate: "6일 전",
+    showActions: false,
   },
 
-  setup() {
-    const router = useRouter();
-
-    const postHistory = () => {
-      router.push({ name: "HistoryPosts" });
-    };
-
-    const myLikepost = () => {
-      router.push({ name: "LikedPosts" });
-    };
-
-    const boardDetail = () => {
-      router.push({ name: "DetailPost" });
-    };
-
-    return {
-      postHistory,
-      myLikepost,
-      boardDetail,
-    };
+  {
+    userName: "김계란",
+    content: "일정 넉넉하게 잡으시면 누구든 가능합니다! 도전 ㄱㄱ",
+    postTitle: "종주할 때 사진 모아봤습니다.",
+    creationDate: "6일 전",
+    showActions: false,
   },
+
+  {
+    userName: "김계란",
+    content: "댓글 남겨주셔서 감사합니다. 이따가 댓글 달아볼게요.",
+    postTitle: "종주할 때 사진 모아봤습니다.",
+    creationDate: "6일 전",
+    showActions: false,
+  },
+
+  {
+    userName: "김계란",
+    content: "제 능력으로 3일 컷은 무리입니다 ㅋㅋ",
+    postTitle: "종주할 때 사진 모아봤습니다.",
+    creationDate: "6일 전",
+    showActions: false,
+  },
+
+  {
+    userName: "김계란",
+    content: "마지막날 200km 달렸고요.. 다른 날들은 100km 정도로..",
+    postTitle: "종주할 때 사진 모아봤습니다.",
+    creationDate: "6일 전",
+    showActions: false,
+  },
+
+  {
+    userName: "김계란",
+    content: "예전에 신청해서 받았어요!",
+    postTitle: "종주할 때 사진 모아봤습니다.",
+    creationDate: "6일 전",
+    showActions: false,
+  },
+
+  {
+    userName: "김계란",
+    content: "조만간 같이 공 찹시다 ㅋㅋ",
+    postTitle: "종주할 때 사진 모아봤습니다.",
+    creationDate: "6일 전",
+    showActions: false,
+  },
+
+  {
+    userName: "김계란",
+    content: "기분이 좋으시군요 ㅋㅋㅋ",
+    postTitle: "종주할 때 사진 모아봤습니다.",
+    creationDate: "6일 전",
+    showActions: false,
+  },
+
+  // 나머지 댓글 객체들도 동일하게 showActions 속성 추가
+]);
+
+const commentsPerPage = 4;
+const currentPage = ref(1);
+
+const totalPages = computed(() =>
+  Math.ceil(comments.value.length / commentsPerPage)
+);
+
+const paginatedComments = computed(() => {
+  const startIndex = (currentPage.value - 1) * commentsPerPage;
+  return comments.value.slice(startIndex, startIndex + commentsPerPage);
+});
+
+// Methods
+const toggleActions = (index) => {
+  comments.value.forEach((comment, idx) => {
+    comment.showActions = idx === index ? !comment.showActions : false;
+  });
+};
+
+const handleNavigation = (action) => {
+  if (action === "EditPost") {
+    router.push("/edit-post");
+  } else if (action === "delete") {
+    router.push("/board");
+  }
+};
+
+const onInput = (event) => {
+  searchQuery.value = event.target.value;
+};
+
+const onSearch = () => {
+  console.log("Searching for:", searchQuery.value);
+};
+
+const navigateTo = (routeName) => {
+  router.push({ name: routeName });
+};
+
+const fetchComments = (page) => {
+  currentPage.value = page;
+  console.log("Fetching comments for page:", page);
 };
 </script>
+
+<style scoped>
+/* 기존 스타일 유지 */
+</style>
+
 
 <style scoped>
 main {
