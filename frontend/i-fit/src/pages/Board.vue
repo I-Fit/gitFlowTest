@@ -8,128 +8,46 @@
             <span>운동을 인증해보세요!</span>
           </div>
           <button type="button" class="feature-sort">
-            <select class="sort" title="정렬">
-              <option value="" selected disabled>정렬</option>
-              <option value="1">인기순</option>
-              <option value="4">최신순</option>
-              <option value="2">예전순</option>
+            <select class="sort" v-model="selectedSort" @change="sortPosts" title="정렬">
+              <option value="" disabled>정렬</option>
+              <option value="popularity">인기순</option>
+              <option value="latest">최신순</option>
+              <option value="oldest">오래된순</option>
             </select>
           </button>
         </div>
         <div class="list">
-          <div class="post-box">
+          <div v-for="post in sortedPosts" :key="post.id" class="post-box">
             <div class="post-items">
               <div class="post-info">
                 <div class="writer-profile-image"></div>
-                <span class="writer-name">라이언카카오123</span>
-                <span class="created-at">6 days ago</span>
+                <span class="writer-name">{{ post.writerName }}</span>
+                <span class="created-at">{{ post.createdAt }}</span>
               </div>
               <div class="title-and-content">
-                <h2 class="title" @click="boardDetailA">첫 마라톤 완주</h2>
-                <span class="text"
-                  >회사 동기들이랑 마라톤 참여! 첫 마라톤 첫 완주 ㅎㅎ 뿌듯</span
-                >
+                <h2 class="title" @click="viewPostDetail(post.id)">{{ post.title }}</h2>
+                <span class="text">{{ post.content }}</span>
               </div>
               <div class="post-tags">
                 <div class="tag-items">
-                  <div class="topic"><span>런닝</span></div>
-                  <div class="location"><span>용산구</span></div>
-                  <div class="scale"><span>소규모</span></div>
+                  <div class="topic"><span>{{ post.topic }}</span></div>
+                  <div class="location"><span>{{ post.location }}</span></div>
+                  <div class="scale"><span>{{ post.scale }}</span></div>
                 </div>
                 <div class="likes-and-comments">
                   <div class="likes">
                     <div class="like-icon"></div>
-                    <span>74</span>
+                    <span>{{ post.likes }}</span>
                   </div>
                   <div class="comment">
                     <div class="comment-icon"></div>
-                    <span>22</span>
+                    <span>{{ post.comments }}</span>
                   </div>
                   <div class="option-icon"></div>
                 </div>
               </div>
             </div>
-            <img
-              class="post-image"
-              src="@/assets/image/post_img.png"
-              alt="게시글 이미지"
-            />
-          </div>
-          <div class="post-box">
-            <div class="post-items">
-              <div class="post-info">
-                <div class="writer-profile-image"></div>
-                <span class="writer-name">라이언카카오123</span>
-                <span class="created-at">6 days ago</span>
-              </div>
-              <div class="title-and-content">
-                <h2 class="title" @click="boardDetailB">첫 마라톤 완주</h2>
-                <span class="text"
-                  >회사 동기들이랑 마라톤 참여! 첫 마라톤 첫 완주 ㅎㅎ 뿌듯</span
-                >
-              </div>
-              <div class="post-tags">
-                <div class="tag-items">
-                  <div class="topic"><span>런닝</span></div>
-                  <div class="location"><span>용산구</span></div>
-                  <div class="scale"><span>소규모</span></div>
-                </div>
-                <div class="likes-and-comments">
-                  <div class="likes">
-                    <div class="like-icon"></div>
-                    <span>74</span>
-                  </div>
-                  <div class="comment">
-                    <div class="comment-icon"></div>
-                    <span>22</span>
-                  </div>
-                  <div class="option-icon"></div>
-                </div>
-              </div>
-            </div>
-            <img
-              class="post-image"
-              src="@/assets/image/post_img.png"
-              alt="게시글 이미지"
-            />
-          </div>
-          <div class="post-box">
-            <div class="post-items">
-              <div class="post-info">
-                <div class="writer-profile-image"></div>
-                <span class="writer-name">라이언카카오123</span>
-                <span class="created-at">6 days ago</span>
-              </div>
-              <div class="title-and-content">
-                <h2 class="title" @click="boardDetailC">첫 마라톤 완주</h2>
-                <span class="text"
-                  >회사 동기들이랑 마라톤 참여! 첫 마라톤 첫 완주 ㅎㅎ 뿌듯</span
-                >
-              </div>
-              <div class="post-tags">
-                <div class="tag-items">
-                  <div class="topic"><span>런닝</span></div>
-                  <div class="location"><span>용산구</span></div>
-                  <div class="scale"><span>소규모</span></div>
-                </div>
-                <div class="likes-and-comments">
-                  <div class="likes">
-                    <div class="like-icon"></div>
-                    <span>74</span>
-                  </div>
-                  <div class="comment">
-                    <div class="comment-icon"></div>
-                    <span>22</span>
-                  </div>
-                  <div class="option-icon"></div>
-                </div>
-              </div>
-            </div>
-            <img
-              class="post-image"
-              src="@/assets/image/post_img.png"
-              alt="게시글 이미지"
-            />
+            <img class="post-image" :src="post.imageUrl" alt="게시글 이미지" />
           </div>
         </div>
       </div>
@@ -142,64 +60,120 @@
               type="text"
               class="search-input"
               placeholder="검색어를 입력하세요."
+              v-model="searchQuery"
             />
             <div class="search-icon"></div>
           </div>
         </div>
         <div class="search-list">
           <p class="list-title">Recommend category</p>
-          <button class="list-item" type="submit">러닝</button>
-          <button class="list-item" type="submit">웨이트</button>
-          <button class="list-item" type="submit">라이딩</button>
-          <button class="list-item" type="submit">요가</button>
-          <button class="list-item" type="submit">수영</button>
-          <button class="list-item" type="submit">등산</button>
-          <button class="list-item" type="submit">테니스</button>
-          <button class="list-item" type="submit">클라이밍</button>
-          <button class="list-item" type="submit">필라테스</button>
-          <button class="list-item" type="submit">GX</button>
+          <button v-for="category in categories" :key="category" class="list-item" type="submit">
+            {{ category }}
+          </button>
         </div>
       </div>
     </div>
   </main>
-  </template>
-  
-  <script>
-  import { useRouter } from "vue-router";
-  
-  export default {
-    name: "Board",
-    components: {},
-  
-    setup() {
-      const router = useRouter();
-  
-      const postUpload = () => {
-        router.push({ name: "UploadPost" });
-      };
+</template>
 
-      const boardDetailA = () => {
-        router.push({ name: "DetailPost" });
-      };
+<script>
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
-      const boardDetailB = () => {
-        router.push({ name: "DetailPost" });
-      };
+export default {
+  name: 'Board',
+  setup() {
+    const router = useRouter();
 
-      const boardDetailC = () => {
-        router.push({ name: "DetailPost" });
-      };
+    const posts = ref([
+      { 
+        id: 1, 
+        writerName: '김계란', 
+        createdAt: '6 days ago', 
+        title: '종주할 때 사진 모아봤습니다.', 
+        content: '힘들었지만, 보람된 시간이였습니다.', 
+        topic: '라이딩', location: '부산', scale: '소규모', 
+        likes: 54, comments: 20, 
+        imageUrl: require('@/assets/image/riding-1.png')
+      },
 
-      return {
-        postUpload,
-        boardDetailA,
-        boardDetailB,
-        boardDetailC,
-      };
-    },
-  };
-  </script>
-  
+      { 
+        id: 2, 
+        writerName: '김계란', 
+        createdAt: '6 days ago', 
+        title: '부산 하구둑 인증합니다.^^', 
+        content: '국토종주 마지막 날이였습니다...', 
+        topic: '라이딩', location: '부산', scale: '소규모', 
+        likes: 72, comments: 17, 
+        imageUrl: require('@/assets/image/riding-3.png')
+      },
+
+      { id: 3, 
+        writerName: '김계란', 
+        createdAt: '6 days ago', 
+        title: '아라뱃길 정서진까지 라이딩', 
+        content: '목동 한강 합수부에서 만나서...', 
+        topic: '라이딩', location: '목동', scale: '소규모', 
+        likes: 87, comments: 10, 
+        imageUrl: require('@/assets/image/riding-2.jpg')
+      },
+    ]);
+
+    const categories = ref(['러닝', '웨이트', '라이딩', '요가', '수영', '등산', '테니스', '클라이밍', '필라테스', 'GX']);
+
+    const selectedSort = ref('');
+    const searchQuery = ref('');
+
+    const sortedPosts = computed(() => {
+      let sorted = [...posts.value];
+
+      if (selectedSort.value === 'popularity') {
+        sorted.sort((a, b) => b.likes - a.likes);
+      } else if (selectedSort.value === 'latest') {
+        sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      } else if (selectedSort.value === 'oldest') {
+        sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      }
+
+      if (searchQuery.value) {
+        sorted = sorted.filter(post => 
+          post.title.includes(searchQuery.value) || 
+          post.content.includes(searchQuery.value)
+        );
+      }
+
+      return sorted;
+    });
+
+    const postUpload = () => {
+      router.push({ name: 'UploadPost' });
+    };
+
+    const viewPostDetail = (postId) => {
+      router.push({ name: 'DetailPost', params: { id: postId } });
+    };
+
+    const sortPosts = () => {
+      // Trigger sorting by reassigning sortedPosts
+      sortedPosts.value;
+    };
+
+    return {
+      posts,
+      categories,
+      selectedSort,
+      searchQuery,
+      sortedPosts,
+      postUpload,
+      viewPostDetail,
+      sortPosts
+    };
+  },
+};
+</script>
+
+
+
   <style scoped>
   main {
     display: grid;
@@ -536,5 +510,5 @@
     margin: 5px;
     padding: 0;
   }
+
   </style>
-  
