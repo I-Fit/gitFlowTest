@@ -196,8 +196,15 @@ export default {
     };
     // 모임 찜 이벤트
     const isHeartFilled = ref(false);
-    const toggleHeart = () => {
+    const toggleHeart = async () => {
       isHeartFilled.value = !isHeartFilled.value;
+      try {
+        await axios.get("", {
+          communityId: visibleDatas.communityId
+        });
+      } catch (error) {
+        console.error("Error", error);
+      }
     };
 
     return {
@@ -408,7 +415,7 @@ h2 {
 }
 
 .group-info {
-  margin-top: 30px;
+  margin-top: 20px;
   display: flex;
 }
 

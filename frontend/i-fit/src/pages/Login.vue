@@ -86,7 +86,7 @@ export default {
 
     // 회원가입 페이지로 이동
     const createAccount = () => {
-      router.push({ name: "Account" });
+      router.push({ name: "SignUp" });
     };
 
     // 아이디 찾기로 이동
@@ -96,7 +96,7 @@ export default {
 
     // 비밀번호로 이동
     const FindPw = () => {
-      router.push({ name: "FindPw" });
+      router.push({ name: "FindPassword" });
     };
 
     return {

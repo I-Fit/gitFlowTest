@@ -81,7 +81,7 @@
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임 참여를 취소하시겠습니까?</p>
-                  <button class="confirm-btn" @click="confirmDeletion">
+                  <button class="confirm-btn" @click="confirmDeletion(group.communityId)">
                     확인
                   </button>
                   <button class="cancle-btn" @click="cancelDeletion">
@@ -162,7 +162,7 @@ export default {
 
     // 홈 페이지에서 모임 식별 키와 사용자 식별 키를 받아와
     // 서버에 보내서 조회
-    onMounted(async () => {
+    const fetchGroups = async () => {
       try {
         const response = await axios.get('/api/joined-groups/details', {
           params: {
@@ -175,7 +175,11 @@ export default {
       } catch (error) {
         console.error("Error", error);
       }
-    })
+    };
+
+    onMounted(async () => {
+      await fetchGroups();
+    });
 
     // 참석 모달 열기
     const isTooltipVisible = ref(true);
@@ -185,16 +189,29 @@ export default {
     };
     // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
     const showConfirmPopup = ref(false);
-    const confirmDeletion = (communityId) => {
-      router.push({ name: "JoinedGroups", query: { communityId } });
+    const confirmDeletion = async (communityId) => {
+      try {
+        await axios.delete('/api/', { data: { communityId } });
+        showConfirmPopup.value = false;
+        await fetchGroups();  // 삭제 후 데이터 다시 로드
+
+      } catch(error) {
+        console.error("Error", error);
+      }
     };
     const cancelDeletion = () => {
       showConfirmPopup.value = false;
     };
 
+    // 하트 클릭
     const isHeartFilled = ref(false);
-    const toggleHeart = () => {
+    const toggleHeart = async () => {
       isHeartFilled.value = !isHeartFilled.value;
+      try {
+        await axios.get("", {data: communityId });
+      } catch (error) {
+        console.error("Error", error);
+      }
     }
 
     return {
@@ -414,7 +431,7 @@ h2 {
 }
 
 .group-info {
-  margin-top: 30px;
+  margin-top: 20px;
   display: flex;
 }
 

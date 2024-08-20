@@ -58,7 +58,7 @@
             <p class="time">{{ group.selectedTime }}</p>
             <div class="group-info">
               <div class="title-heart" @click="toggleHeart(group.communityid)">
-                <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
+                <div :class="{ 'filled-heart': isHeartFilled[group.communityid], 'empty-heart': !isHeartFilled }"></div>
               </div>
               <span class="size">참여인원: {{ group.person }}</span>
               <span class="location">{{ group.location }}</span>
@@ -142,26 +142,55 @@ export default {
       router.push({ name: "LikedGroups" });
     };
 
-    const isHeartFilled = ref(true);
-    const toggleHeart = () => {
-      isHeartFilled.value = !isHeartFilled.value;
-    }
-
     // 서버에 사용자 식별 Id를 보내 찜한 모임을 받아옴
-    onMounted(async () => {
+    const loadGroups = async () => {
       try {
         const userId = store.getters['isLogged/userId'];
         const response = await axios.get('/api/liked-groups', {
           params: { userId }
         });
         groups.value = response.data.groups;
+
+        isHeartFilled.value = {};
+        groups.value.forEach(group => {
+          isHeartFilled.value[group.communityid] = true;
+        })
+
         fetchdatas(1);
       } catch (error) {
-        console.error("Error", error);
+        console.error("Error loading likedgroups", error);
       }
+    };
+
+    onMounted( async () => {
+      await loadGroups();
     });
 
+    // 하트 상태를 토글하고 서버에 업데이트 요청을 보내는 함수
+    const isHeartFilled = ref({});
+    const toggleHeart = async (group) => {
+      // isHeartFilled.value = !isHeartFilled.value;
+      const groupId = group.communityid;
+      try {
+        if (isHeartFilled.value[groupId]) {
+          // 하트를 빈 상태가 된 경우
+          await axios.post("/api/", { communityid: groupId});
+          groups.value = groups.value.filter(g => g.communityid !== groupId);
+          isHeartFilled.value[groupId] = false;
+        } else {
+          await axios.post("/api/", { communityid: groupId });
+          isHeartFilled.value[groupId] = true;
+        }
+      } catch (error) {
+        console.error("Error", error);
+      } finally {
+        // 변경 사항 업데이트 위해 그룹 데이터 새로 로드
+        await loadGroups();
+      }
+    }
+
     return {
+      loadGroups,
       currentPage,
       totalPages,
       visibleDatas,
@@ -371,7 +400,7 @@ h2 {
 }
 
 .group-info {
-  margin-top: 30px;
+  margin-top: 20px;
   display: flex;
 }
 

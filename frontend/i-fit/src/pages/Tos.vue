@@ -641,13 +641,13 @@ export default {
       };
       // 저장이 잘 되었는지 콘솔로 확인
       console.log("selected", selectedTerms);
-      router.push({ name: "Account", query: selectedTerms });
+      router.push({ name: "SignUp", query: selectedTerms });
     };
 
     const router = useRouter();
 
     const cancel = () => {
-      router.push({ name: "Account" });
+      router.push({ name: "SignUp" });
     };
 
     return { agree01, agree02, agree03, agreeAll, selectAll, check, cancel };
