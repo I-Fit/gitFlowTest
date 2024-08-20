@@ -94,7 +94,7 @@ const routes = [
   },
 
   {
-    path: "/Liked-posts",
+    path: "/liked-posts",
     name: "LikedPosts",
     // meta: { showNav: true },
     component: LikedPosts,

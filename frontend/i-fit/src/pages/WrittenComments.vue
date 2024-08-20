@@ -85,149 +85,147 @@
   </main>
 </template>
 
-<script setup>
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+<script>
+import { defineComponent } from "vue";
 import PostActions from "@/components/common/PostActions.vue";
 import AppNav from "@/components/layout/AppNav.vue";
 import PagiNation from "@/components/common/PagiNation.vue";
 
-const router = useRouter();
-
-const searchQuery = ref("");
-const comments = ref([
-  {
-    userName: "김계란",
-    content: "감사합니다! 열심히 했어요!!",
-    postTitle: "종주할 때 사진 모아봤습니다.",
-    creationDate: "6일 전",
-    showActions: false,
+export default defineComponent({
+  components: {
+    PostActions,
+    AppNav,
+    PagiNation,
   },
 
-  {
-    userName: "김계란",
-    content: "5일 걸렸습니다.",
-    postTitle: "종주할 때 사진 모아봤습니다.",
-    creationDate: "6일 전",
-    showActions: false,
+  data() {
+    return {
+      searchQuery: "",
+      comments: [
+        {
+          userName: "김계란",
+          content: "감사합니다! 열심히 했어요!!",
+          postTitle: "종주할 때 사진 모아봤습니다.",
+          creationDate: "6일 전",
+          showActions: false,
+        },
+
+        {
+          userName: "김계란",
+          content: "5일 걸렸습니다.",
+          postTitle: "종주할 때 사진 모아봤습니다.",
+          creationDate: "6일 전",
+          showActions: false,
+        },
+
+        {
+          userName: "김계란",
+          content: "시원할 때, 다시 해보고 싶네요.",
+          postTitle: "종주할 때 사진 모아봤습니다.",
+          creationDate: "6일 전",
+          showActions: false,
+        },
+
+        {
+          userName: "김계란",
+          content: "일정 넉넉하게 잡으시면 누구든 가능합니다! 도전 ㄱㄱ",
+          postTitle: "종주할 때 사진 모아봤습니다.",
+          creationDate: "6일 전",
+          showActions: false,
+        },
+
+        {
+          userName: "김계란",
+          content: "댓글 남겨주셔서 감사합니다. 이따가 댓글 달아볼게요.",
+          postTitle: "종주할 때 사진 모아봤습니다.",
+          creationDate: "6일 전",
+          showActions: false,
+        },
+
+        {
+          userName: "김계란",
+          content: "제 능력으로 3일 컷은 무리입니다 ㅋㅋ",
+          postTitle: "종주할 때 사진 모아봤습니다.",
+          creationDate: "6일 전",
+          showActions: false,
+        },
+
+        {
+          userName: "김계란",
+          content: "마지막날 200km 달렸고요.. 다른 날들은 100km 정도로..",
+          postTitle: "종주할 때 사진 모아봤습니다.",
+          creationDate: "6일 전",
+          showActions: false,
+        },
+
+        {
+          userName: "김계란",
+          content: "예전에 신청해서 받았어요!",
+          postTitle: "종주할 때 사진 모아봤습니다.",
+          creationDate: "6일 전",
+          showActions: false,
+        },
+
+        {
+          userName: "김계란",
+          content: "조만간 같이 공 찹시다 ㅋㅋ",
+          postTitle: "종주할 때 사진 모아봤습니다.",
+          creationDate: "6일 전",
+          showActions: false,
+        },
+
+        {
+          userName: "김계란",
+          content: "기분이 좋으시군요 ㅋㅋㅋ",
+          postTitle: "종주할 때 사진 모아봤습니다.",
+          creationDate: "6일 전",
+          showActions: false,
+        },
+      ],
+      currentPage: 1,
+      commentsPerPage: 4,
+    };
   },
 
-  {
-    userName: "김계란",
-    content: "시원할 때, 다시 해보고 싶네요.",
-    postTitle: "종주할 때 사진 모아봤습니다.",
-    creationDate: "6일 전",
-    showActions: false,
+  computed: {
+    totalPages() {
+      return Math.ceil(this.comments.length / this.commentsPerPage);
+    },
+    paginatedComments() {
+      const startIndex = (this.currentPage - 1) * this.commentsPerPage;
+      return this.comments.slice(startIndex, startIndex + this.commentsPerPage);
+    },
   },
 
-  {
-    userName: "김계란",
-    content: "일정 넉넉하게 잡으시면 누구든 가능합니다! 도전 ㄱㄱ",
-    postTitle: "종주할 때 사진 모아봤습니다.",
-    creationDate: "6일 전",
-    showActions: false,
+  methods: {
+    toggleActions(index) {
+      this.comments.forEach((comment, idx) => {
+        comment.showActions = idx === index ? !comment.showActions : false;
+      });
+    },
+    handleNavigation(action) {
+      if (action === "EditPost") {
+        this.$router.push("/edit-post");
+      } else if (action === "delete") {
+        this.$router.push("/written-comments");
+      }
+    },
+    onInput(event) {
+      this.searchQuery = event.target.value;
+    },
+    onSearch() {
+      console.log("Searching for:", this.searchQuery);
+    },
+    navigateTo(routeName) {
+      this.$router.push({ name: routeName });
+    },
+    fetchComments(page) {
+      this.currentPage = page;
+      console.log("Fetching comments for page:", page);
+    },
   },
-
-  {
-    userName: "김계란",
-    content: "댓글 남겨주셔서 감사합니다. 이따가 댓글 달아볼게요.",
-    postTitle: "종주할 때 사진 모아봤습니다.",
-    creationDate: "6일 전",
-    showActions: false,
-  },
-
-  {
-    userName: "김계란",
-    content: "제 능력으로 3일 컷은 무리입니다 ㅋㅋ",
-    postTitle: "종주할 때 사진 모아봤습니다.",
-    creationDate: "6일 전",
-    showActions: false,
-  },
-
-  {
-    userName: "김계란",
-    content: "마지막날 200km 달렸고요.. 다른 날들은 100km 정도로..",
-    postTitle: "종주할 때 사진 모아봤습니다.",
-    creationDate: "6일 전",
-    showActions: false,
-  },
-
-  {
-    userName: "김계란",
-    content: "예전에 신청해서 받았어요!",
-    postTitle: "종주할 때 사진 모아봤습니다.",
-    creationDate: "6일 전",
-    showActions: false,
-  },
-
-  {
-    userName: "김계란",
-    content: "조만간 같이 공 찹시다 ㅋㅋ",
-    postTitle: "종주할 때 사진 모아봤습니다.",
-    creationDate: "6일 전",
-    showActions: false,
-  },
-
-  {
-    userName: "김계란",
-    content: "기분이 좋으시군요 ㅋㅋㅋ",
-    postTitle: "종주할 때 사진 모아봤습니다.",
-    creationDate: "6일 전",
-    showActions: false,
-  },
-
-  // 나머지 댓글 객체들도 동일하게 showActions 속성 추가
-]);
-
-const commentsPerPage = 4;
-const currentPage = ref(1);
-
-const totalPages = computed(() =>
-  Math.ceil(comments.value.length / commentsPerPage)
-);
-
-const paginatedComments = computed(() => {
-  const startIndex = (currentPage.value - 1) * commentsPerPage;
-  return comments.value.slice(startIndex, startIndex + commentsPerPage);
 });
-
-// Methods
-const toggleActions = (index) => {
-  comments.value.forEach((comment, idx) => {
-    comment.showActions = idx === index ? !comment.showActions : false;
-  });
-};
-
-const handleNavigation = (action) => {
-  if (action === "EditPost") {
-    router.push("/edit-post");
-  } else if (action === "delete") {
-    router.push("/board");
-  }
-};
-
-const onInput = (event) => {
-  searchQuery.value = event.target.value;
-};
-
-const onSearch = () => {
-  console.log("Searching for:", searchQuery.value);
-};
-
-const navigateTo = (routeName) => {
-  router.push({ name: routeName });
-};
-
-const fetchComments = (page) => {
-  currentPage.value = page;
-  console.log("Fetching comments for page:", page);
-};
 </script>
-
-<style scoped>
-/* 기존 스타일 유지 */
-</style>
-
 
 <style scoped>
 main {

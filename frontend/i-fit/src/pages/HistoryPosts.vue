@@ -6,24 +6,25 @@
       <div class="post-top">
         <h2>게시글 관리</h2>
         <p class="line text01">내가 쓴 게시물</p>
-        <p class="line text02" @click="myComments">내가 쓴 댓글</p>
-        <p class="text03" @click="myLikepost">좋아요 한 게시물</p>
+        <p class="line text02" @click="writtenComments">내가 쓴 댓글</p>
+        <p class="text03" @click="likedPosts">좋아요 한 게시물</p>
       </div>
       <div class="post-middle">
         <div class="middle-filter">
           <div class="middle-filter-search-box">
-            <input 
-              type="text" 
-              name="search" 
-              class="search-box-input" 
-              placeholder="검색어를 입력하세요." 
+            <input
+              type="text"
+              name="search"
+              class="search-box-input"
+              placeholder="검색어를 입력하세요."
               v-model="searchQuery"
-              @input="onInput" />
-            <img 
-                src="@/assets/image/search.icon.png" 
-                alt="search" 
-                class="search-box-icon" 
-                @click="onSearch" />
+            />
+            <img
+              src="@/assets/image/search.icon.png"
+              alt="search"
+              class="search-box-icon"
+              @click="onSearch"
+            />
           </div>
           <select title="정렬" class="middle-filter-sort" v-model="sortOrder">
             <option value="" disabled>정렬</option>
@@ -32,23 +33,46 @@
           </select>
         </div>
         <div class="post-bottom-table">
-          <!-- 서버에서 가져온 게시물들 -->
-          <div class="bottom-table-group" v-for="post in visibleDatas" :key="post.id">
+          <div
+            class="bottom-table-group"
+            v-for="post in visibleDatas"
+            :key="post.id"
+          >
             <div class="table-group-del">
-              <img id="modify_icon" :src="require('@/assets/image/dot.png')" alt="dot"
-                @click="toggleActions(post.id)" />
-              <PostActions :visible="showActionsForPostId(post.id)" @navigate="handleNavigation" />
+              <img
+                id="modify_icon"
+                :src="require('@/assets/image/dot.png')"
+                alt="dot"
+                @click="toggleActions(post.id)"
+              />
+              <PostActions
+                :visible="showActionsForPostId(post.id)"
+                @navigate="handleNavigation"
+              />
             </div>
             <div class="table-group-postimg">
-              <img class="table-group-post-img" :src="post.image" alt="게시글 이미지" @click="boardDetail2" />
+              <img
+                class="table-group-post-img"
+                :src="post.image"
+                alt="게시글 이미지"
+                @click="detailPost2"
+              />
             </div>
             <div class="table-group-btn">
-              <img class="btn-icon" src="@/assets/image/heart.png" alt="좋아요 아이콘" />
+              <img
+                class="btn-icon"
+                src="@/assets/image/heart.png"
+                alt="좋아요 아이콘"
+              />
               <span id="heart-count">{{ post.likes }}</span>
-              <img class="btn-icon" src="@/assets/image/comment.png" alt="댓글 아이콘" />
+              <img
+                class="btn-icon"
+                src="@/assets/image/comment.png"
+                alt="댓글 아이콘"
+              />
               <span id="comment-count">{{ post.comments }}</span>
             </div>
-            <div class="table-group-content" @click="boardDetail(post.id)">
+            <div class="table-group-content" @click="detailPost(post.id)">
               <div class="group-content-post">
                 <p class="table-group-title">{{ post.title || "제목없음" }}</p>
               </div>
@@ -58,7 +82,11 @@
             </div>
           </div>
         </div>
-        <PagiNation :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" />
+        <PagiNation
+          :currentPage="currentPage"
+          :totalPages="totalPages"
+          @page-changed="onPageChange"
+        />
       </div>
       <div class="post-floor"></div>
     </div>
@@ -66,104 +94,119 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
 import PostActions from "@/components/common/PostActions.vue";
 import PagiNation from "@/components/common/PagiNation.vue";
 import AppNav from "@/components/layout/AppNav.vue";
-import { usePagination } from '@/utils/pagination';
+import { usePagination } from "@/utils/pagination";
 
+// Vue Router와 Composition API 사용
 const router = useRouter();
 
 const Posts = ref([
   {
     id: 1,
-    image: require('@/assets/image/riding-1.png'),
+    image: require("@/assets/image/riding-1.png"),
     likes: 23,
     comments: 7,
     title: "종주할 때 사진 모아봤습니다.",
-    content: "힘들었지만, 보람된 시간이였습니다."
+    content: "힘들었지만, 보람된 시간이였습니다.",
   },
 
   {
     id: 2,
-    image: require('@/assets/image/riding-3.png'),
+    image: require("@/assets/image/riding-3.png"),
     likes: 72,
     comments: 17,
     title: "부산 하구둑 인증합니다. :)",
-    content: "국토종주 마지막 날이였습니다..."
+    content: "국토종주 마지막 날이였습니다...",
   },
 
   {
     id: 3,
-    image: require('@/assets/image/riding-2.jpg'),
+    image: require("@/assets/image/riding-2.jpg"),
     likes: 87,
     comments: 10,
     title: "아라뱃길 정서진까지 라이딩",
-    content: "목동 한강 합수부에서 만나서..."
+    content: "목동 한강 합수부에서 만나서...",
   },
 
   {
     id: 4,
-    image: require('@/assets/image/doginvade.jpg'),
+    image: require("@/assets/image/doginvade.jpg"),
     likes: 123,
     comments: 34,
     title: "골든리트리버 난입한 썰",
-    content: "공 차는데 큰 개 한마리가 들어왔어요!!"
+    content: "공 차는데 큰 개 한마리가 들어왔어요!!",
   },
 
   {
     id: 5,
-    image: require('@/assets/image/rainfootball.jpg'),
+    image: require("@/assets/image/rainfootball.jpg"),
     likes: 33,
     comments: 19,
     title: "비오는 날, 모임한 날",
-    content: "날씨가 좋지 않음에도 참석해주신 분들이 많았습니다."
+    content: "날씨가 좋지 않음에도 참석해주신 분들이 많았습니다.",
   },
 
   {
-    id: 6, image: require('@/assets/image/dmfootball.jpg'),
+    id: 6,
+    image: require("@/assets/image/dmfootball.jpg"),
     likes: 54,
     comments: 19,
     title: "광복절에 용산에서 축구",
-    content: "날씨가 무척 더워서 힘들었습니다."
+    content: "날씨가 무척 더워서 힘들었습니다.",
   },
 
   {
     id: 7,
-    image: require('@/assets/image/medal.jpg'),
+    image: require("@/assets/image/medal.jpg"),
     likes: 144,
     comments: 45,
     title: "국토종주 메달왔습니다 인증!!.jpg.",
-    content: "메달이 왔네요ㅎㅎ"
+    content: "메달이 왔네요ㅎㅎ",
   },
 
   {
     id: 8,
-    image: require('@/assets/image/certinfo.jpg'),
+    image: require("@/assets/image/certinfo.jpg"),
     likes: 144,
     comments: 45,
     title: "국토종주 인증서도 왔어요!!",
-    content: "드디어 인증서 도착이요 ^^"
+    content: "드디어 인증서 도착이요 ^^",
   },
 
   {
     id: 9,
-    image: require('@/assets/image/winterfootball.jpg'),
+    image: require("@/assets/image/winterfootball.jpg"),
     likes: 144,
     comments: 45,
     title: "추운 날씨에...",
-    content: "다친 분 없이 모임이 끝나서 다행입니다."
+    content: "다친 분 없이 모임이 끝나서 다행입니다.",
   },
-]);
+]); // 초기 게시물 데이터는 빈 배열로 설정했었음.(더미 데이터 넣음)
 
-const { currentPage, totalPages, visibleDatas, onPageChange, fetchdatas } = usePagination(Posts, 3);
-
-const searchQuery = ref('');
-const sortOrder = ref(''); // 정렬 상태 추가
+const searchQuery = ref("");
+const sortOrder = ref("");
 const showActions = ref(false);
 const selectedPostId = ref(null);
+
+// usePagination 훅 호출
+const { currentPage, totalPages, visibleDatas, onPageChange, fetchdatas } =
+  usePagination(Posts, 3);
+
+// 게시물 데이터 로드
+const fetchPosts = async () => {
+  try {
+    const response = await axios.get("https://api.example.com/posts");
+    Posts.value = response.data;
+    fetchdatas(); // 초기 페이지 로딩
+  } catch (error) {
+    console.error("데이터 로드 실패:", error);
+  }
+};
 
 const showActionsForPostId = (postId) => {
   return showActions.value && selectedPostId.value === postId;
@@ -180,28 +223,21 @@ const toggleActions = (postId) => {
 
 const handleNavigation = (action) => {
   if (action === "EditPost") {
-    router.push("EditPost");
-    /* (`/PostModify/${selectedPostId.value}`); */  // 응답 처리
+    router.push("edit-post");
   } else if (action === "delete") {
     deletePost(selectedPostId.value);
   }
 };
 
-const deletePost = (postId) => {
-  axios
-    .delete(`https://api.example.com/posts/${postId}`)
-    .then(() => {
-      alert("게시물이 삭제되었습니다.");
-      fetchdatas(); // 게시물 목록 갱신
-    })
-    .catch((error) => {
-      console.error("삭제 실패:", error);
-      alert("게시물 삭제 중 오류가 발생했습니다.");
-    });
-};
-
-const onInput = (event) => {
-  searchQuery.value = event.target.value;
+const deletePost = async (postId) => {
+  try {
+    await axios.delete(`https://api.example.com/posts/${postId}`);
+    alert("게시물이 삭제되었습니다.");
+    fetchPosts(); // 데이터 재로드
+  } catch (error) {
+    console.error("삭제 실패:", error);
+    alert("게시물 삭제 중 오류가 발생했습니다.");
+  }
 };
 
 const onSearch = () => {
@@ -209,27 +245,27 @@ const onSearch = () => {
   // 검색 로직 추가 필요
 };
 
-const boardDetail = (postId) => {
+const detailPost = (postId) => {
   router.push(`/DetailPost/${postId}`);
 };
 
-const myComments = () => {
+const writtenComments = () => {
   router.push({ name: "WrittenComments" });
 };
 
-const myLikepost = () => {
+const likedPosts = () => {
   router.push({ name: "LikedPosts" });
 };
 
-const boardDetail2 = () => {
+const detailPost2 = () => {
   router.push({ name: "DetailPost" });
 };
 
+// 컴포넌트가 마운트될 때 데이터 로딩
 onMounted(() => {
-  fetchdatas(1);
+  fetchPosts();
 });
 </script>
-
 
 <style scoped>
 main {
@@ -319,12 +355,10 @@ h2 {
   width: 250px;
   margin-left: 906px;
   position: relative;
-  /* Add relative positioning */
 }
 
 .post-floor {
   height: 50px;
-  /* floor 영역 높이 설정 */
   text-align: center;
   padding: 20px;
 }
@@ -340,9 +374,7 @@ h2 {
   width: 15px;
   height: 15px;
   position: absolute;
-  /* Add absolute positioning */
   right: 10px;
-  /* Adjust to place the icon inside the input box */
   cursor: pointer;
 }
 
@@ -378,7 +410,6 @@ h2 {
   margin-right: 0px;
 }
 
-/* 도트 이미지 감싸주는 클래스 */
 .table-group-del {
   position: relative;
   display: flex;

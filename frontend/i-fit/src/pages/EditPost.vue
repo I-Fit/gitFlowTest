@@ -13,8 +13,8 @@
         </div>
         <div class="content-box" contenteditable="true" @input="onContentInput" ref="contentBox">
           <div class="contentbox-image"></div>
-          <img src="@/assets/image/image.png" alt="" />
-          <p>공휴일에 멤버들이랑 kosta 짐에서 웨이트 했습니다~</p>
+          <img src="@/assets/image/riding-1.png" alt="" />
+          <p>힘들었지만, 보람된 시간이였습니다.</p>
         </div>
         <div class="content-topic">
           <p class="item topic-item">종목</p>

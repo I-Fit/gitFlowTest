@@ -2,7 +2,7 @@
   <div v-if="visible" class="post-actions">
     <button 
       class="action-btn" 
-      @click="navigate('PostModify')" 
+      @click="navigate('EditPost')" 
       style="background-color: white; color: black;"
     >
       수정

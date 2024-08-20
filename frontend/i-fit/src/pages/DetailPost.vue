@@ -35,6 +35,7 @@
       <div class="content-image">
         <img src="@/assets/image/riding-1.png" alt="" />
       </div>
+      <p class="">힘들었지만, 보람된 시간이였습니다.</p>
 
       <!-- 주제 -->
       <div class="content-topic">
@@ -101,6 +102,7 @@
 
 <script>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import PostActions from "@/components/common/PostActions.vue";
 
 export default {
@@ -108,7 +110,9 @@ export default {
   components: {
     PostActions,
   },
+
   setup() {
+    const router = useRouter();
     const postAuthor = "김계란";
     const comment = ref("");
     const isHeartFilled = ref(false);
@@ -222,9 +226,9 @@ export default {
 
     const handleNavigation = (action) => {
       if (action === "EditPost") {
-        this.$router.push("/edit-post");
+        router.push("EditPost");
       } else if (action === "delete") {
-        this.$router.push("/board");
+        router.push("Board");
       }
     };
 
@@ -300,6 +304,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 main {
