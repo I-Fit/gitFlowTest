@@ -122,8 +122,7 @@ export default {
       "필라테스",
       "GX",
     ];
-
-    // datepicker
+    
     watch(date, (newDate) => {
       formData.date = newDate;
     });

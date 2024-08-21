@@ -44,7 +44,7 @@
                     </div>
                     <span>{{ post.likes }}</span>
                   </div>
-                  <div class="comment">
+                  <div class="comment" @click="commentpost">
                     <div class="comment-icon"></div>
                     <span>{{ post.comments }}</span>
                   </div>
@@ -155,6 +155,10 @@ export default {
       router.push({ name: 'Post', params: { id: postId } });
     };
 
+    const commentpost = () => {
+      router.push({ name: 'Post'});
+    };
+
     const sortPosts = () => {
       // Trigger sorting by reassigning sortedPosts
       sortedPosts.value;
@@ -177,6 +181,7 @@ export default {
       postUpload,
       viewPost,
       sortPosts,
+      commentpost,
 
       isHeartFilled,
       toggleHeart,
@@ -359,6 +364,7 @@ export default {
   .post-tags {
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
   
   /* 게시글에 올라간 사진 이미지 */
@@ -412,6 +418,7 @@ export default {
   
   .likes-and-comments {
     display: flex;
+    margin-right: 20px;
   }
   
   .likes {
@@ -424,16 +431,7 @@ export default {
   .likes-and-comments span {
     font-size: 15px;
     color: #757575;
-  }
-  
-  .like-icon {
-    width: 20px;
-    height: 20px;
-    background-image: url("@/assets/images/heart.png");
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
-    margin-right: 5px;
+    cursor: pointer;
   }
   
   .comment {
@@ -444,31 +442,15 @@ export default {
   }
   
   .comment-icon {
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     background-image: url("@/assets/images/comment.png");
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
-    margin-right: 5px;
-  }
-  
-  .option-icon {
-    width: 24px;
-    height: 24px;
-    margin: 0 10px;
-    background-image: url("@/assets/images/dot.png");
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
+    margin-right: 7px;
     cursor: pointer;
   }
-  
-  /* features */
-  /* .side-bar {
-    width: 40%;
-    border: 1px solid #222;
-  } */
   
   .side-bar-items {
     display: flex;
@@ -536,7 +518,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: 40px;
+  /* margin-left: 40px; */
+  margin-bottom: 5px;
   margin-right: 7px;
 }
 

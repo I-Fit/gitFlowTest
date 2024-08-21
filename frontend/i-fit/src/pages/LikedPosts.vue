@@ -57,18 +57,19 @@
               />
             </div>
             <div class="table-group-btn">
-              <img
-                class="btn-icon"
-                src="@/assets/images/heart.png"
-                alt="좋아요 아이콘"
-              />
-              <span id="heart-count">{{ post.likes }}</span>
-              <img
-                class="btn-icon"
-                src="@/assets/images/comment.png"
-                alt="댓글 아이콘"
-              />
-              <span id="comment-count">{{ post.comments }}</span>
+              <div class="likes">
+                <div class="title-heart" @click="toggleHeart(post.id)">
+                  <div :class="{
+                    'filled-heart': !post.isHeartFilled,
+                    'empty-heart': post.isHeartFilled,
+                  }"></div>
+                </div>
+                <span id="heart-count">{{ post.likes }}</span>
+              </div>
+              <div class="comment">
+                <img class="btn-icon" src="@/assets/images/comment.png" alt="댓글 아이콘" />
+                <span id="comment-count">{{ post.comments }}</span>
+              </div>
             </div>
             <div class="table-group-content" @click="boardDetail(post.id)">
               <div class="group-content-post">
@@ -226,6 +227,14 @@ export default {
         });
     };
 
+    const isHeartFilled = ref(true);
+    const toggleHeart = (postId) => {
+      const post = posts.value.find(post => post.id === postId);
+      if (post) {
+        post.isHeartFilled = !post.isHeartFilled;
+      }
+    };
+
     const onInput = (event) => {
       searchQuery.value = event.target.value;
     };
@@ -252,6 +261,8 @@ export default {
     });
 
     return {
+      isHeartFilled,
+      toggleHeart,
       posts,
       currentPage,
       totalPages,
@@ -463,16 +474,39 @@ h2 {
 
 .table-group-btn {
   display: flex;
+  margin-top: 10px;
+  margin-left: 185px;
+}
+
+.table-group-btn span {
+  font-size: 15px;
+  color: #757575;
+  cursor: pointer;
+}
+
+.likes {
+  display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
-  margin-left: 150px;
+  margin: 0 10px;
 }
 
 .btn-icon {
   width: 20px;
   height: 20px;
-  margin-left: 10px;
+  background-image: url("@/assets/images/comment.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  /* margin-right: 7px; */
+  cursor: pointer;
+}
+
+.comment {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* margin: 0 10px; */
 }
 
 #heart-count,
@@ -501,5 +535,49 @@ h2 {
   color: #9795b5;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 하트 색상 변경 */
+.title-heart {
+  cursor: pointer;
+  display: inline-block;
+  width: 25px;
+  /* 하트의 크기를 조정합니다 */
+  height: 35px;
+  /* 하트의 크기를 조정합니다 */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title-heart div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-heart::before {
+  content: "\2764";
+  /* 빈 하트 문자 */
+  font-size: 20px;
+  /* 하트의 크기 */
+  color: transparent;
+  /* 하트의 내부는 투명하게 */
+  -webkit-text-stroke: 1px black;
+  /* 하트의 테두리 색상 */
+}
+
+.filled-heart::before {
+  content: "\2764";
+  /* 채워진 하트 문자 */
+  font-size: 20px;
+  /* 하트의 크기 */
+  color: red;
+  /* 채워진 하트의 색상 */
+  -webkit-text-stroke: none;
+  /* 채워진 하트의 테두리 제거 */
 }
 </style>

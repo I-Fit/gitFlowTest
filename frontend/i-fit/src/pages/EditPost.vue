@@ -26,16 +26,10 @@
         <div class="feature-topic">
           <p class="topic-text">Choose Category</p>
           <div class="topic-category">
-            <button class="category-tag" type="button" @click="selectCategory('러닝')">러닝</button>
-            <button class="category-tag" type="button" @click="selectCategory('웨이트')">웨이트</button>
-            <button class="category-tag" type="button" @click="selectCategory('라이딩')">라이딩</button>
-            <button class="category-tag" type="button" @click="selectCategory('요가')">요가</button>
-            <button class="category-tag" type="button" @click="selectCategory('수영')">수영</button>
-            <button class="category-tag" type="button" @click="selectCategory('등산')">등산</button>
-            <button class="category-tag" type="button" @click="selectCategory('테니스')">테니스</button>
-            <button class="category-tag" type="button" @click="selectCategory('클라이밍')">클라이밍</button>
-            <button class="category-tag" type="button" @click="selectCategory('필라테스')">필라테스</button>
-            <button class="category-tag" type="button" @click="selectCategory('GX')">GX</button>
+            <button class="category-tag" type="button" v-for="category in categories" :key="category"
+              :class="{ selected: formData.sport === category }" @click="selectCategory(category)">
+              {{ category }}
+            </button>
           </div>
         </div>
         <div class="feature-input">
@@ -60,90 +54,141 @@
 
 <script>
 import axios from "axios";
+import { toRaw, ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 export default {
-  name: "EditPost",
-  data() {
-    return {
-      title: "",
-      content: "",
-      imagess: [],
-      category: "",
-      activity: "",
-      location: "",
-      groupSize: "",
+  name: 'UploadPost',
+  setup() {
+    const router = useRouter();
+    const store = useStore();
+
+    // State
+    const title = ref('');
+    const sportInput = ref('');
+    const locationInput = ref('');
+    const personInput = ref('');
+    const selectedCategory = ref(null);
+
+    const formData = reactive({
+      title: '',
+      sport: '종목',
+      location: '',
+      person: '',
+      date: '',
+      userId: store.getters.userId || '', // Vuex에서 userId 가져오기
+    });
+
+    console.log(toRaw(formData));
+
+    const categories = [
+      '러닝', '웨이트',
+      '라이딩', '요가',
+      '수영', '등산',
+      '테니스', '클라이밍',
+      '필라테스', 'GX'
+    ];
+
+    // Methods
+    const triggerFileInput = () => {
+      document.querySelector('input[type="file"]').click();
     };
-  },
-  methods: {
-    triggerFileInput() {
-      this.$refs.fileInput.click();
-    },
-    onFileChange(event) {
+
+    const onFileChange = (event) => {
       const files = event.target.files;
+      const contentBox = document.querySelector('.content-box');
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const reader = new FileReader();
         reader.onload = (e) => {
-          const img = document.createElement("img");
+          const img = document.createElement('img');
           img.src = e.target.result;
-          img.style.maxWidth = "100%";
-          img.style.display = "block";
-          img.style.margin = "10px 0";
-          const br = document.createElement("div");
-          br.innerHTML = "<br>";
-          this.$refs.contentBox.appendChild(img);
-          this.$refs.contentBox.appendChild(br);
-          this.imagess.push(e.target.result);
+          img.style.maxWidth = '100%';
+          img.style.display = 'block';
+          img.style.margin = '10px 0';
+          contentBox.appendChild(img);
+          contentBox.appendChild(document.createElement('br'));
         };
         reader.readAsDataURL(file);
       }
-    },
-    
-    onContentInput(event) {
-      this.content = event.target.innerHTML;
-    },
-    
-    selectCategory(category) {
-      this.category = category;
-    },
-    confirmActivity() {
-      console.log("Activity confirmed:", this.activity);
-    },
-    confirmLocation() {
-      console.log("Location confirmed:", this.location);
-    },
-    confirmGroupSize() {
-      console.log("Group size confirmed:", this.groupSize);
-    },
-    confirmSubmit() {
-      if (confirm("글 수정을 완료하시겠습니까?")) {
-        this.submitData();
+    };
+
+    const onContentInput = (event) => {
+      formData.content = event.target.innerHTML;
+    };
+
+    const selectCategory = (category) => {
+      formData.sport = category;
+      selectedCategory.value = category;
+    };
+
+    const handleEnterKey = () => {
+      setSport();
+      setLocation();
+      setPerson();
+    };
+
+    const setSport = () => {
+      formData.sport = sportInput.value;
+    };
+
+    const setLocation = () => {
+      formData.location = locationInput.value;
+    };
+
+    const setPerson = () => {
+      formData.person = personInput.value;
+    };
+
+    const confirmSubmit = () => {
+      if (confirm('글 작성을 완료하시겠습니까?')) {
+        submitData();
       }
-    },
-    submitData() {
+    };
+
+    const submitData = () => {
+      const userId = store.getters['isLogged/userId'];
+
       const data = {
-        title: this.title,
-        content: this.content,
-        imagess: this.imagess,
-        category: this.category,
-        activity: this.activity,
-        location: this.location,
-        groupSize: this.groupSize,
+        userId: userId,
+        title: formData.title,
+        content: formData.content,
+        imagess: [], // 이미지를 다룰 로직 추가해야함
+        category: formData.sport,
+        location: formData.location,
+        groupSize: formData.person,
       };
 
-      axios
-        .post("/api/posts/modify", data)
+      axios.post('/api/posts/modify', data)
         .then((response) => {
-          console.log("Data submitted successfully:", response.data);
-          // 리디렉션 처리
-          this.$router.push({ name: 'Post' });
+          console.log('Data submitted successfully:', response.data);
+          router.push({ name: 'Post', query: { content: encodeURIComponent(formData.content) } });
         })
         .catch((error) => {
-          console.error("Error submitting data:", error);
-          // Handle error
+          console.error('Error submitting data:', error);
         });
-    },
-  },
+    };
+
+    return {
+      title,
+      sportInput,
+      locationInput,
+      personInput,
+      selectedCategory,
+      formData,
+      categories,
+      triggerFileInput,
+      onFileChange,
+      onContentInput,
+      selectCategory,
+      handleEnterKey,
+      setSport,
+      setLocation,
+      setPerson,
+      confirmSubmit,
+    };
+  }
 };
 </script>
 
@@ -272,112 +317,118 @@ textarea {
   font-weight: lighter;
   font-size: 13px;
 
-display: flex;
-justify-content: center;
-align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* feature */
 .main-feature {
-display: flex;
-flex-direction: column;
-position: relative;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .main-feature::before {
-content: "";
-position: absolute;
-width: 2px;
-height: 90%;
-top: 0px;
-left: -30px;
-background-color: whitesmoke;
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 90%;
+  top: 0px;
+  left: -30px;
+  background-color: whitesmoke;
 }
 
 .feature-topic {
-display: flex;
-flex-direction: column;
-justify-content: space-around;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 .topic-text {
-text-align: start;
-margin-top: 30px;
-margin-bottom: 10px;
+  text-align: start;
+  margin-top: 30px;
+  margin-bottom: 10px;
 }
 
 .topic-category {
-width: 340px;
-height: 130px;
+  width: 340px;
+  height: 130px;
 }
 
 .category-text {
-    margin-bottom: 10px;
-    margin-top : 30px;
-    text-align: start;
+  margin-bottom: 10px;
+  margin-top: 30px;
+  text-align: start;
 }
 
 .category-tag {
-width: 70px;
-height: 30px;
-border: none;
-border-radius: 10px;
-margin: 4px;
-padding: 0;
+  width: 70px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  margin: 4px;
+  padding: 0;
+}
+
+.category-tag.selected {
+  border: 2px solid black;
 }
 
 .feature-topic p {
-justify-content: left;
-margin: 10px 15px;
+  justify-content: left;
+  margin: 10px 15px;
 }
 
 .feature-input {
-width: 404px;
-height: 35px;
-display: flex;
-margin: 5px 0 15px 0;
-align-items: center;
+  width: 404px;
+  height: 35px;
+  display: flex;
+  margin: 5px 0 15px 0;
+  align-items: center;
 }
 
 .input-framebox {
-width: 245px;
-height: 35px;
-border: 1px solid #ccc;
-border-radius: 10px;
-margin: 5px;
-padding: 5px 0px 5px 10px;
-opacity: 0.5;
+  width: 245px;
+  height: 35px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 5px 0px 5px 10px;
+  opacity: 0.5;
 }
 
 .frame-btn {
-width: 60px;
-height: 35px;
-margin-left: 5px;
-padding: 8px 16px;
-border: none;
-background-color: #1a73e8;
-color: white;
-border-radius: 10px;
-font-size: 13.3333px;
-font-weight: bold;
-cursor: pointer;
+  width: 60px;
+  height: 35px;
+  margin-left: 5px;
+  padding: 8px 16px;
+  border: none;
+  background-color: #1a73e8;
+  color: white;
+  border-radius: 10px;
+  font-size: 13.3333px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .feature-modify {
-    width: 100%;
-    height: 40px;
-    background-color: #1a73e8;
-    border-radius: 10px;
-    border: none;
-    margin-top: 20%;
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease; /* 배경색 변화에 대한 트랜지션 추가 */
+  width: 100%;
+  height: 40px;
+  background-color: #1a73e8;
+  border-radius: 10px;
+  border: none;
+  margin-top: 20%;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  /* 배경색 변화에 대한 트랜지션 추가 */
 }
 
 .feature-modify:hover {
-  background-color: #005ea1; /* 호버 시 배경색 변경 */
+  background-color: #005ea1;
+  /* 호버 시 배경색 변경 */
 }
-</style> 
+</style>
