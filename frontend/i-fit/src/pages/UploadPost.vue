@@ -237,7 +237,7 @@ input {
   width: 35px;
   height: 34px;
   background-color: #f2f2f2;
-  background-images: url("@/assets/images/camera.png");
+  background-image: url("@/assets/images/camera.png");
   background-repeat: no-repeat;
   background-size: 80% 80%;
   background-position: center;

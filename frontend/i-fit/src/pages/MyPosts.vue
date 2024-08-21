@@ -20,7 +20,7 @@
               v-model="searchQuery"
             />
             <img
-              src="@/assets/image/search.icon.png"
+              src="@/assets/images/search.icon.png"
               alt="search"
               class="search-box-icon"
               @click="onSearch"
@@ -37,7 +37,7 @@
             <div class="table-group-del">
               <img
                 id="modify_icon"
-                :src="require('@/assets/image/dot.png')"
+                :src="require('@/assets/images/dot.png')"
                 alt="dot"
                 @click="toggleActions(post.id)"
               />
@@ -57,13 +57,13 @@
             <div class="table-group-btn">
               <img
                 class="btn-icon"
-                src="@/assets/image/heart.png"
+                src="@/assets/images/heart.png"
                 alt="좋아요 아이콘"
               />
               <span id="heart-count">{{ post.likes }}</span>
               <img
                 class="btn-icon"
-                src="@/assets/image/comment.png"
+                src="@/assets/images/comment.png"
                 alt="댓글 아이콘"
               />
               <span id="comment-count">{{ post.comments }}</span>
@@ -105,10 +105,10 @@ export default {
 
     const router = useRouter();
 
-const Posts = ref([
+const posts = ref([
   {
     id: 1,
-    image: require("@/assets/image/riding-1.png"),
+    image: require("@/assets/images/riding-1.png"),
     likes: 23,
     comments: 7,
     title: "종주할 때 사진 모아봤습니다.",
@@ -117,7 +117,7 @@ const Posts = ref([
 
   {
     id: 2,
-    image: require("@/assets/image/riding-3.png"),
+    image: require("@/assets/images/riding-3.png"),
     likes: 72,
     comments: 17,
     title: "부산 하구둑 인증합니다. :)",
@@ -126,7 +126,7 @@ const Posts = ref([
 
   {
     id: 3,
-    image: require("@/assets/image/riding-2.jpg"),
+    image: require("@/assets/images/riding-2.jpg"),
     likes: 87,
     comments: 10,
     title: "아라뱃길 정서진까지 라이딩",
@@ -135,7 +135,7 @@ const Posts = ref([
 
   {
     id: 4,
-    image: require("@/assets/image/doginvade.jpg"),
+    image: require("@/assets/images/doginvade.jpg"),
     likes: 123,
     comments: 34,
     title: "골든리트리버 난입한 썰",
@@ -144,7 +144,7 @@ const Posts = ref([
 
   {
     id: 5,
-    image: require("@/assets/image/rainfootball.jpg"),
+    image: require("@/assets/images/rainfootball.jpg"),
     likes: 33,
     comments: 19,
     title: "비오는 날, 모임한 날",
@@ -153,7 +153,7 @@ const Posts = ref([
 
   {
     id: 6,
-    image: require("@/assets/image/dmfootball.jpg"),
+    image: require("@/assets/images/dmfootball.jpg"),
     likes: 54,
     comments: 19,
     title: "광복절에 용산에서 축구",
@@ -162,7 +162,7 @@ const Posts = ref([
 
   {
     id: 7,
-    image: require("@/assets/image/medal.jpg"),
+    image: require("@/assets/images/medal.jpg"),
     likes: 144,
     comments: 45,
     title: "국토종주 메달왔습니다 인증!!.jpg.",
@@ -171,7 +171,7 @@ const Posts = ref([
 
   {
     id: 8,
-    image: require("@/assets/image/certinfo.jpg"),
+    image: require("@/assets/images/certinfo.jpg"),
     likes: 144,
     comments: 45,
     title: "국토종주 인증서도 왔어요!!",
@@ -180,7 +180,7 @@ const Posts = ref([
 
   {
     id: 9,
-    image: require("@/assets/image/winterfootball.jpg"),
+    image: require("@/assets/images/winterfootball.jpg"),
     likes: 144,
     comments: 45,
     title: "추운 날씨에...",

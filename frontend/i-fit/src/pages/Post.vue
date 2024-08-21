@@ -226,9 +226,9 @@ export default {
 
     const handleNavigation = (action) => {
       if (action === "EditPost") {
-        router.push("EditPost");
+        router.push("/edit-post");
       } else if (action === "delete") {
-        router.push("Board");
+        router.push("/board");
       }
     };
 
@@ -361,7 +361,7 @@ input {
 .post-profile {
   width: 50px;
   height: 40px;
-  background-images: url("@/assets/images/user_img.png");
+  background-image: url("@/assets/images/user_img.png");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -377,7 +377,7 @@ input {
 }
 
 .dot-icon {
-  background-images: url("@/assets/images/dot.png");
+  background-image: url("@/assets/images/dot.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
