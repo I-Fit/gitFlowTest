@@ -615,7 +615,7 @@ import { useRouter } from "vue-router";
 import { ref } from "vue";
 
 export default {
-  name: "Tos",
+  name: "TermsOfService",
 
   setup() {
     // 전체 checkbox 동의 구현

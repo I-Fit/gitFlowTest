@@ -55,7 +55,7 @@
             <!-- <button class="finder-field-btn" type="submit">확인</button> -->
           </div>
         </div>
-        <button type="submit" class="finder-pw-btn" @click="goLogin">
+        <button type="submit" class="finder-pw-btn" @click="goSignIn">
           비밀번호 변경완료
         </button>
       </form>
@@ -124,7 +124,7 @@ export default {
       return Password.value && PasswordCheck.value;
     });
 
-    const goLogin = async () => {
+    const goSignIn = async () => {
       if (!passwordMatch.value) {
         alert("비밀번호 확인이 되지 않았습니다.");
         return;
@@ -139,7 +139,7 @@ export default {
 
         if (response.status === 200) {
           alert("비밀번호가 성공적으로 변경되었습니다.");
-          router.push({ name: "Login" });
+          router.push({ name: "SignIn" });
         } else {
           alert("비밀번호 변경에 실패했습니다.");
         }
@@ -154,7 +154,7 @@ export default {
       PasswordCheck,
       passwordMatch,
       Bothpasswords,
-      goLogin,
+      goSignIn,
       enteredCode,
       sendEmail,
       emailCheck,

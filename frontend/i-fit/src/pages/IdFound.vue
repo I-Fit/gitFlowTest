@@ -7,7 +7,7 @@
         <p class="find-userid">{{ userId }}</p>
         입니다.</span
       >
-      <button type="submit" class="login-go-btn" @click="goLogin">
+      <button type="submit" class="sign-in-go-btn" @click="goSignIn">
         로그인하기
       </button>
     </div>
@@ -18,19 +18,19 @@
 import { useRouter, useRoute } from "vue-router";
 
 export default {
-  name: "CompletedId",
+  name: "IdFound",
 
   setup() {
     const router = useRouter();
     const route = useRoute();
     const userId = route.params.userId;
 
-    const goLogin = () => {
-      router.push({ name: "Login" });
+    const goSignIn = () => {
+      router.push({ name: "SignIn" });
     };
 
     return {
-      goLogin,
+      goSignIn,
       userId,
     };
   },
@@ -68,7 +68,7 @@ span {
   font-weight: bold;
 }
 
-.login-go-btn {
+.sign-in-go-btn {
   text-align: center;
   height: 40px;
   width: 200px;

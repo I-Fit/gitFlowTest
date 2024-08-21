@@ -4,7 +4,7 @@ import { ref } from 'vue';
 
 
 export default {
-    name: 'googleLogin',
+    name: 'googleSignIn',
     setup() {
         const cliendId = '';    // google cliendId
 

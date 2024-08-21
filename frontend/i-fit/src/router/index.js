@@ -2,30 +2,30 @@ import { createRouter, createWebHistory } from "vue-router";
 // import { useStore } from "vuex";
 
 import Home from "@/pages/Home.vue";
-import Login from "@/pages/Login.vue";
+import SignIn from "@/pages/SignIn.vue";
 import SignUp from "@/pages/SignUp.vue";
 import FindId from "@/pages/FindId.vue";
-import CompletedId from "@/pages/CompletedId.vue";
+import IdFound from "@/pages/IdFound.vue";
 import FindPassword from "@/pages/FindPassword.vue";
-import Tos from "@/pages/Tos.vue";
-import HistoryPosts from "@/pages/HistoryPosts.vue";
-import WrittenComments from "@/pages/WrittenComments.vue";
+import TermsOfService from "@/pages/TermsOfService.vue";
+import MyPosts from "@/pages/MyPosts.vue";
+import MyComments from "@/pages/MyComments.vue";
 import LikedPosts from "@/pages/LikedPosts.vue";
-import DetailPost from "@/pages/DetailPost.vue";
+import Post from "@/pages/Post.vue";
 import Board from "@/pages/Board.vue";
 import UploadPost from "@/pages/UploadPost.vue";
 import EditPost from "@/pages/EditPost.vue";
 
-import MembershipMain from "@/pages/MembershipMain.vue";
+import Membership from "@/pages/Membership.vue";
 import Payment from "@/pages/Payment.vue";
 import Mypage from "@/pages/Mypage.vue";
 import AccountDeleted from "@/pages/AccountDeleted.vue";
 import EditEmail from "@/pages/EditEmail.vue";
 
-import HistoryGroups from "@/pages/HistoryGroups.vue";
+import CreatedGroups from "@/pages/CreatedGroups.vue";
 import JoinedGroups from "@/pages/JoinedGroups.vue";
 import LikedGroups from "@/pages/LikedGroups.vue";
-import AddGroup from "@/pages/AddGroup.vue";
+import AddNewGroup from "@/pages/AddNewGroup.vue";
 
 const routes = [
   {
@@ -36,9 +36,9 @@ const routes = [
   },
 
   {
-    path: "/login",
-    name: "Login",
-    component: Login,
+    path: "/sign-in",
+    name: "SignIn",
+    component: SignIn,
   },
 
   {
@@ -54,9 +54,9 @@ const routes = [
   },
 
   {
-    path: "/completed-id",
-    name: "CompletedId",
-    component: CompletedId,
+    path: "/id-found",
+    name: "IdFound",
+    component: IdFound,
     props: (route) => ({ userId: route.params.userId }),
   },
 
@@ -67,9 +67,9 @@ const routes = [
   },
 
   {
-    path: "/tos",
-    name: "Tos",
-    component: Tos,
+    path: "/terms-of-service",
+    name: "TermsOfService",
+    component: TermsOfService,
   },
 
   {
@@ -80,17 +80,17 @@ const routes = [
   },
 
   {
-    path: "/history-posts",
-    name: "HistoryPosts",
-    component: HistoryPosts,
+    path: "/my-posts",
+    name: "MyPosts",
+    component: MyPosts,
     meta: { requiresAuth: true },
   },
 
   {
-    path: "/written-comments",
-    name: "WrittenComments",
+    path: "/my-comments",
+    name: "MyComments",
     // meta: { showNav: true },
-    component: WrittenComments,
+    component: MyComments,
   },
 
   {
@@ -101,10 +101,10 @@ const routes = [
   },
 
   {
-    path: "/detail-post",
-    name: "DetailPost",
+    path: "/post",
+    name: "Post",
     // meta: { showNav: false },
-    component: DetailPost,
+    component: Post,
   },
 
   {
@@ -124,7 +124,7 @@ const routes = [
   {
     path: "/membership",
     name: "Membership",
-    component: MembershipMain,
+    component: Membership,
   },
 
   {
@@ -158,9 +158,9 @@ const routes = [
 
   {
     // 내가 만든 모임
-    path: "/history-groups",
-    name: "HistoryGroups",
-    component: HistoryGroups,
+    path: "/created-groups",
+    name: "CreatedGroups",
+    component: CreatedGroups,
   },
 
   {
@@ -170,6 +170,7 @@ const routes = [
     component: JoinedGroups,
   },
 
+  // 찜한 모임
   {
     path: "/liked-groups",
     name: "LikedGroups",
@@ -178,9 +179,9 @@ const routes = [
 
   {
     // 모임 생성
-    path: "/add-group",
-    name: "AddGroup",
-    component: AddGroup,
+    path: "/add-new-group",
+    name: "AddNewGroup",
+    component: AddNewGroup,
   },
 
 ];
@@ -196,7 +197,7 @@ const router = createRouter({
 
 //   if(to.matched.some(record => record.meta.requiresAuth)) {
 //     if (!isLoggedIn) {
-//       next('/login');      // 로그인 하지않은 경우 로그인 페이지로 이동
+//       next('/sign-in');      // 로그인 하지않은 경우 로그인 페이지로 이동
 //     } else {
 //       next();              // 인증된 경우 이동
 //     }

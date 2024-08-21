@@ -12,9 +12,9 @@
       <a href="#" @click="post">오운완 챌린지</a>
       <a href="#" @click="membership">멤버십</a>
       <a href="#" @click="mypage">마이페이지</a>
-      <div class="login-btn">
+      <div class="sign-in-btn">
         <div class="join" @click="createAccount">회원가입</div>
-        <div class="login" @click="goLogin">로그인</div>
+        <div class="sign-in" @click="goSignIn">로그인</div>
       </div>
     </div>
   </header>
@@ -32,8 +32,8 @@ export default {
       router.push({ name: "Home" });
     };
 
-    const goLogin = () => {
-      router.push({ name: "Login" });
+    const goSignIn = () => {
+      router.push({ name: "SignIn" });
     };
 
     const createAccount = () => {
@@ -53,12 +53,12 @@ export default {
     };
 
     const creategroup = () => {
-      router.push({ name: "AddGroup" });
+      router.push({ name: "AddNewGroup" });
     };
 
     return {
       home,
-      goLogin,
+      goSignIn,
       createAccount,
       post,
       membership,
@@ -105,7 +105,7 @@ a:nth-child(1) {
   margin-left: 150px;
 }
 
-.login-btn {
+.sign-in-btn {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -120,7 +120,7 @@ a:nth-child(1) {
   cursor: pointer;
 }
 
-.login {
+.sign-in {
   margin: 10px;
   padding: 12px;
   border: 0.5px solid rgba(0, 0, 0, 0.103);

@@ -246,11 +246,11 @@ const onSearch = () => {
 };
 
 const detailPost = (postId) => {
-  router.push(`/DetailPost/${postId}`);
+  router.push(`/Post/${postId}`);
 };
 
 const writtenComments = () => {
-  router.push({ name: "WrittenComments" });
+  router.push({ name: "MyComments" });
 };
 
 const likedPosts = () => {
@@ -258,7 +258,7 @@ const likedPosts = () => {
 };
 
 const detailPost2 = () => {
-  router.push({ name: "DetailPost" });
+  router.push({ name: "Post" });
 };
 
 // 컴포넌트가 마운트될 때 데이터 로딩

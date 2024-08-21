@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div class="login-container">
+    <div class="sign-in-container">
       <form action="#" class="signup-form">
         <h1>로그인</h1>
         <div class="signup-id input-block">
@@ -17,7 +17,7 @@
               v-model="formData.password" />
           </div>
         </div>
-        <button type="submit" class="signup-login-btn" @click="Complete">
+        <button type="submit" class="signup-sign-in-btn" @click="Complete">
           로그인
         </button>
         <div class="signup-social">
@@ -46,7 +46,7 @@ import { ref } from "vue";
 import { toRaw } from "vue";
 
 export default {
-  name: "Login",
+  name: "SignIn",
 
   setup() {
     const router = useRouter();
@@ -67,7 +67,7 @@ export default {
       }
 
       try {
-        await store.dispatch('isLogged/login', {
+        await store.dispatch('isLogged/sign-in', {
           id: formData.value.id,
           password: formData.value.password,
         });
@@ -119,7 +119,7 @@ main {
   align-items: center;
 }
 
-.login-container {
+.sign-in-container {
   width: 500px;
   height: 500px;
   display: flex;
@@ -184,7 +184,7 @@ h1 {
   cursor: pointer;
 }
 
-.signup-login-btn {
+.signup-sign-in-btn {
   width: 394px;
   height: 35px;
   margin-top: 20px;

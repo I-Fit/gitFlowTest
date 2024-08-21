@@ -147,7 +147,7 @@ export default {
     const route = useRoute();
 
     const myCreategroup = () => {
-      router.push({ name: "HistoryGroups" });
+      router.push({ name: "CreatedGroups" });
     };
 
     const likeGroup = () => {

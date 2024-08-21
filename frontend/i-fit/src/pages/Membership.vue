@@ -84,7 +84,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 export default {
-name: 'MembershipMain',
+name: 'Membership',
 setup() {
   const router = useRouter()
   

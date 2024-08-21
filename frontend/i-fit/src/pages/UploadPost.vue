@@ -173,7 +173,7 @@ export default {
       axios.post('/api/posts/modify', data)
         .then((response) => {
           console.log('Data submitted successfully:', response.data);
-          router.push({ name: 'DetailPost', query: { content: encodeURIComponent(formData.content)} });
+          router.push({ name: 'Post', query: { content: encodeURIComponent(formData.content)} });
         })
         .catch((error) => {
           console.error('Error submitting data:', error);

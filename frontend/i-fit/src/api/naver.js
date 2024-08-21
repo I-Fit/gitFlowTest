@@ -5,5 +5,5 @@
 // Callback URL을 설정합니다. (예: http://localhost:8080/naver/callback)
 
 {
-  /* <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.1.js" type="text/javascript"></script> */
+  /* <script src="https://static.nid.naver.com/js/naveridsign-in_js_sdk_2.0.1.js" type="text/javascript"></script> */
 }

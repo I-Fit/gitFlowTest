@@ -74,7 +74,7 @@ import { toRaw } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
-  name: "AddGroup",
+  name: "AddNewGroup",
 
   setup() {
     const router = useRouter();

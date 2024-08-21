@@ -236,15 +236,15 @@ export default {
     };
 
     const postHistory = () => {
-      router.push({ name: "HistoryPosts" });
+      router.push({ name: "MyPosts" });
     };
 
     const myComments = () => {
-      router.push({ name: "WrittenComments" });
+      router.push({ name: "MyComments" });
     };
 
     const boardDetail = (postId) => {
-      router.push(`/DetailPost/${postId}`);
+      router.push(`/Post/${postId}`);
     };
 
     onMounted(() => {

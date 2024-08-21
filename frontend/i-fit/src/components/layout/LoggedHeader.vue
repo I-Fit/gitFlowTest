@@ -12,9 +12,9 @@
       <a href="#" @click="post">오운완 챌린지</a>
       <a href="#" @click="membership">멤버십</a>
       <a href="#" @click="mypage">마이페이지</a>
-      <div class="login-btn">
+      <div class="sign-in-btn">
         <img :src="userImage" alt="사용자 이미지" />
-        <p class="login-user-name">{{ userName }}</p>
+        <p class="sign-in-user-name">{{ userName }}</p>
         <span>님, 환영합니다!</span>
       </div>
     </div>
@@ -34,7 +34,7 @@ export default {
       router.push({ name: "Home" });
     };
     const creategroup = () => {
-      router.push({ name: "AddGroups" });
+      router.push({ name: "AddNewGroups" });
     };
     const post = () => {
       router.push({ name: "Board" });
@@ -92,19 +92,19 @@ a:nth-child(1) {
   margin-left: 150px;
 }
 
-.login-btn {
+.sign-in-btn {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-right: 20px;
 }
 
-.login-btn img {
+.sign-in-btn img {
   width: 50px;
   height: 40px;
 }
 
-.login-user-name {
+.sign-in-user-name {
   font-weight: bold;
 }
 </style>

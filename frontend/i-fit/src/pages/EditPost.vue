@@ -136,7 +136,7 @@ export default {
         .then((response) => {
           console.log("Data submitted successfully:", response.data);
           // 리디렉션 처리
-          this.$router.push({ name: 'DetailPost' });
+          this.$router.push({ name: 'Post' });
         })
         .catch((error) => {
           console.error("Error submitting data:", error);

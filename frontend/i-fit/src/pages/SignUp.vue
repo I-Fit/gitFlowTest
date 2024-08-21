@@ -108,7 +108,7 @@
           회원가입
         </button>
         <p class="signup-account-check">
-          이미 계정이 있으신가요?<span class="signup-account-check-text" @click="goLogin">로그인 하기</span>
+          이미 계정이 있으신가요?<span class="signup-account-check-text" @click="goSignIn">로그인 하기</span>
         </p>
       </div>
     </form>
@@ -178,18 +178,18 @@ export default {
       try {
         await axios.post("/api/user-account", formData.value);
         alert("회원가입 성공!");
-        router.push({ name: "Login" });
+        router.push({ name: "SignIn" });
       } catch (error) {
         console.log("회원가입 시 서버와 통신 에러");
       }
     };
 
     const goTos = () => {
-      router.push({ name: "Tos" });
+      router.push({ name: "TermsOfService" });
     };
 
-    const goLogin = () => {
-      router.push({ name: "Login" });
+    const goSignIn = () => {
+      router.push({ name: "SignIn" });
     };
 
     const selectAll = () => {
@@ -241,7 +241,7 @@ export default {
 
     return {
       goTos,
-      goLogin,
+      goSignIn,
       account,
 
       agreeAll,

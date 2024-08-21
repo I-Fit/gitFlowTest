@@ -33,7 +33,7 @@
       const router = useRouter();
 
       const mycreategroup = () => {
-        router.push({ name: "HistoryGroups" });
+        router.push({ name: "CreatedGroups" });
       };
 
       const groupjoinlist = () => {
@@ -49,11 +49,11 @@
       };
   
       const postHistory = () => {
-        router.push({ name: "HistoryPosts" });
+        router.push({ name: "MyPosts" });
       };
   
       const myComments = () => {
-        router.push({ name: "WrittenComments" });
+        router.push({ name: "MyComments" });
       };
   
       const myLikepost = () => {

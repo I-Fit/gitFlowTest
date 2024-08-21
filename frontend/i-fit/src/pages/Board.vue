@@ -25,7 +25,7 @@
                 <span class="created-at">{{ post.createdAt }}</span>
               </div>
               <div class="title-and-content">
-                <h2 class="title" @click="viewPostDetail(post.id)">{{ post.title }}</h2>
+                <h2 class="title" @click="viewPost(post.id)">{{ post.title }}</h2>
                 <span class="text">{{ post.content }}</span>
               </div>
               <div class="post-tags">
@@ -149,8 +149,8 @@ export default {
       router.push({ name: 'UploadPost' });
     };
 
-    const viewPostDetail = (postId) => {
-      router.push({ name: 'DetailPost', params: { id: postId } });
+    const viewPost = (postId) => {
+      router.push({ name: 'Post', params: { id: postId } });
     };
 
     const sortPosts = () => {
@@ -165,7 +165,7 @@ export default {
       searchQuery,
       sortedPosts,
       postUpload,
-      viewPostDetail,
+      viewPost,
       sortPosts
     };
   },

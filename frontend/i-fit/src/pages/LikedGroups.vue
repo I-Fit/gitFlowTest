@@ -131,7 +131,7 @@ export default {
     const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
 
     const myCreategroup = () => {
-      router.push({ name: "HistoryGroups" });
+      router.push({ name: "CreatedGroups" });
     };
 
     const groupjoinlist = () => {

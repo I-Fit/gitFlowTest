@@ -8,7 +8,7 @@
       <div class="group1">
         <span class="home" @click="home">홈</span>
         <span class="home-list" @click="signup">회원가입</span>
-        <span class="home-list" @click="login">로그인</span>
+        <span class="home-list" @click="signin">로그인</span>
       </div>
       <div class="group2">
         <span class="activity">활동</span>
@@ -36,7 +36,7 @@ export default {
     const router = useRouter();
 
     const mypost = () => {
-      router.push({ name: "HistoryPosts" });
+      router.push({ name: "MyPosts" });
     }
     const home = () => {
       router.push({ name: "Home" });
@@ -44,11 +44,11 @@ export default {
     const signup = () => {
       router.push({ name: "SignUp" });
     };
-    const login = () => {
-      router.push({ name: "Login" });
+    const signin = () => {
+      router.push({ name: "SignIn" });
     };
     const creategroup = () => {
-      router.push({ name: "AddGroup" });
+      router.push({ name: "AddNewGroup" });
     };
     const post = () => {
       router.push({ name: "Board" });
@@ -69,7 +69,7 @@ export default {
       home,
       mypost,
       signup,
-      login,
+      signin,
       creategroup,
       post,
       mypage,

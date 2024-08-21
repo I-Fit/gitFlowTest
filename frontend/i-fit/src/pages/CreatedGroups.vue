@@ -125,7 +125,7 @@ import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 
 export default {
-  name: "HistoryGroups",
+  name: "CreatedGroups",
   components: {
     AppNav,
     PagiNation,

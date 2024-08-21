@@ -106,7 +106,7 @@ import { useRouter } from "vue-router";
 import PostActions from "@/components/common/PostActions.vue";
 
 export default {
-  name: "DetailPost",
+  name: "Post",
   components: {
     PostActions,
   },

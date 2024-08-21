@@ -5,7 +5,7 @@
       <div class="comment-null-block"></div>
       <div class="comment-top">
         <h2>게시글 관리</h2>
-        <p class="line text01" @click="navigateTo('HistoryPosts')">
+        <p class="line text01" @click="navigateTo('MyPosts')">
           내가 쓴 게시물
         </p>
         <p class="line text02" @click="navigateTo('CommentPosts')">
@@ -64,7 +64,7 @@
                 @navigate="handleNavigation"
               />
             </div>
-            <div class="user-comment" @click="navigateTo('DetailPost')">
+            <div class="user-comment" @click="navigateTo('Post')">
               {{ comment.content }}
             </div>
             <div class="post-comment">
@@ -207,7 +207,7 @@ export default defineComponent({
       if (action === "EditPost") {
         this.$router.push("/edit-post");
       } else if (action === "delete") {
-        this.$router.push("/written-comments");
+        this.$router.push("/my-comments");
       }
     },
     onInput(event) {

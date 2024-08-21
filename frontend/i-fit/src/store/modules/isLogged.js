@@ -21,11 +21,11 @@ export default {
     },
 
     actions: {
-        async login({ commit }, userLoginData) {
+        async signin({ commit }, userSignInData) {
             try {
-                const response = await axios.post('/api/login', {
-                    id: userLoginData.id,
-                    password: userLoginData.password,
+                const response = await axios.post('/api/signin', {      /* sign-in */
+                    id: userSignInData.id,
+                    password: userSignInData.password,
                 });
 
                 if (response.data.success) {
