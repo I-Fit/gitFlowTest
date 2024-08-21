@@ -22,13 +22,13 @@
         </button>
         <div class="signup-social">
           <button type="submit" class="signup-social-btn" @click="signInGoogle">
-            <img src="../assets/image/google.png" alt="구글 로그인" class="signup-social-image" />
+            <img src="../assets/images/google.png" alt="구글 로그인" class="signup-social-images" />
           </button>
           <button type="submit" class="signup-social-btn" @click="signInNaver">
-            <img src="../assets/image/naver.png" alt="네이버 로그인" class="signup-social-image" />
+            <img src="../assets/images/naver.png" alt="네이버 로그인" class="signup-social-images" />
           </button>
           <button type="submit" class="signup-social-btn" @click="signInKakao">
-            <img src="../assets/image/kakao.png" alt="카카오 로그인" class="signup-social-image" />
+            <img src="../assets/images/kakao.png" alt="카카오 로그인" class="signup-social-images" />
           </button>
         </div>
         <p class="signup-account">
@@ -216,7 +216,7 @@ h1 {
   font-weight: bold;
 }
 
-.signup-social-image {
+.signup-social-images {
   width: 60px;
   height: 48px;
   border-radius: 10px;

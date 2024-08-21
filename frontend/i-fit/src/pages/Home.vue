@@ -4,7 +4,10 @@
     <carousel class="carousel">
       <carousel-box class="carousel-box" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
         <div class="carousel-item" v-for="item in items" :key="item.id">
-          {{ item.content }}
+          <img :src="item.images" :alt="item.content" class="slide-images" />
+          <div class="slide-content">
+            {{ item.content }}
+          </div>
         </div>
       </carousel-box>
       <div class="arrow" id="left" @click="prevSlide">&#9001;</div>
@@ -18,27 +21,32 @@
           <select class="list-select" title="운동 종목">
             <option value="" selected disabled>운동 종목</option>
           </select>
-          <select class="list-select" title="장소">
+          <select class="list-select" title="장소" @click="fetchLocationData">
             <option value="" selected disabled>장소</option>
+            <option v-for="location in locations" :key="location.id" :value="location.id">
+              {{ location.name }}
+            </option>
           </select>
-          <select class="list-select" title="날짜">
-            <option value="" selected disabled>날짜</option>
-          </select>
+
+          <!-- <select class="list-select" title="날짜"> -->
+          <VueDatePicker class="date-picker" locale="ko" v-model="date" :enable-time-picker="false" />
+          <!-- <option value="" selected disabled>날짜</option> -->
+          <!-- </select> -->
+
           <select class="list-select" title="시간">
             <option value="" selected disabled>시간</option>
           </select>
           <form class="search-box">
             <input type="text" name="search" class="search-input" placeholder="검색어를 입력하세요." />
-            <img src="../assets/image/search.icon.png" alt="search" class="search-icon" />
+            <img src="../assets/images/search.icon.png" alt="search" class="search-icon" />
           </form>
         </div>
         <div class="sort">
           <select class="sort-title" title="정렬">
             <option value="" selected disabled>정렬</option>
             <option value="1">인기순</option>
-            <option value="2">오름차순</option>
-            <option value="3">내림차순</option>
-            <option value="4">최신순</option>
+            <option value="2">최신순</option>
+            <option value="3">오래된순</option>
           </select>
         </div>
 
@@ -46,9 +54,9 @@
         <div class="group">
           <div class="group-container">
             <div class="user-info">
-              <img src="../assets/image/user_img.png" alt="사용자 이미지" class="user-img" />
+              <img src="../assets/images/user_img.png" alt="사용자 이미지" class="user-img" />
               <span>김계란</span>
-              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
+              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title"> 수영 같이 하실 분 구함 </span>
@@ -82,9 +90,9 @@
           </div>
           <div class="group-container">
             <div class="user-info">
-              <img src="../assets/image/user_img.png" alt="사용자 이미지" class="user-img" />
+              <img src="../assets/images/user_img.png" alt="사용자 이미지" class="user-img" />
               <span>김계란</span>
-              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
+              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title"> 수영 같이 하실 분 구함 </span>
@@ -118,9 +126,9 @@
           </div>
           <div class="group-container">
             <div class="user-info">
-              <img src="../assets/image/user_img.png" alt="사용자 이미지" class="user-img" />
+              <img src="../assets/images/user_img.png" alt="사용자 이미지" class="user-img" />
               <span>김계란</span>
-              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
+              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title"> 수영 같이 하실 분 구함 </span>
@@ -154,9 +162,9 @@
           </div>
           <div class="group-container">
             <div class="user-info">
-              <img src="../assets/image/user_img.png" alt="사용자 이미지" class="user-img" />
+              <img src="../assets/images/user_img.png" alt="사용자 이미지" class="user-img" />
               <span>김계란</span>
-              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
+              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title"> 수영 같이 하실 분 구함 </span>
@@ -190,9 +198,9 @@
           </div>
           <div class="group-container">
             <div class="user-info">
-              <img src="../assets/image/user_img.png" alt="사용자 이미지" class="user-img" />
+              <img src="../assets/images/user_img.png" alt="사용자 이미지" class="user-img" />
               <span>김계란</span>
-              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
+              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title"> 수영 같이 하실 분 구함 </span>
@@ -226,9 +234,9 @@
           </div>
           <div class="group-container">
             <div class="user-info">
-              <img src="../assets/image/user_img.png" alt="사용자 이미지" class="user-img" />
+              <img src="../assets/images/user_img.png" alt="사용자 이미지" class="user-img" />
               <span>김계란</span>
-              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
+              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title"> 수영 같이 하실 분 구함 </span>
@@ -265,7 +273,7 @@
             <div class="user-info">
               <img :src="group.user_img || '/default-profile.png'" alt="사용자 이미지" class="user-img" />
               <span>{{ group.username }}</span>
-              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
+              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title">{{ group.title }}</span>
@@ -331,32 +339,45 @@ export default {
       items: [
         {
           id: 1,
-          content: "슬라이드 1",
+          // content: "slide1",
           popularity: 2,
           createdAt: "2024-08-03",
           liked: false,
+          images: require('@/assets/images/slide1.png')
         },
         {
           id: 2,
-          content: "슬라이드 2",
+          // content: "slide2",
           popularity: 5,
           createdAt: "2024-07-20",
           liked: false,
+          images: require('@/assets/images/slide2.png')
         },
         {
           id: 3,
-          content: "슬라이드 3",
+          // content: "slide3",
           popularity: 1,
           createdAt: "2024-08-01",
           liked: false,
+          images: require('@/assets/images/slide3.png')
         },
         // 더 많은 슬라이드를 추가할 수 있습니다.
         // TODO - 캐러셀 아이템 생성
       ],
+      slideInterval: null,
       sortOption: "",
       isModalOpen: false, // 모달 창 상태
       selectedItem: null, // 선택된 아이템
+      locations: [],  // 장소 데이터 저장 배열
     };
+  },
+  mounted() {
+    // 컴포넌트가 마운트된 후 자동 슬라이드 전환 시작
+    this.startAutoSlide();
+  },
+  beforeUnmount() {
+    // 컴포넌트가 언마운트되기 전에 타이머 클리어
+    this.stopAutoSlide();
   },
   watch: {
     sortOption(newValue) {
@@ -364,6 +385,19 @@ export default {
     },
   },
   methods: {
+    startAutoSlide() {
+      // 3초마다 슬라이드 전환
+      this.slideInterval = setInterval(() => {
+        this.nextSlide();
+      }, 4000);
+    },
+    stopAutoSlide() {
+      // 타이머 클리어 -> 자동 슬라이드 전환 중지
+      if (this.slideInterval) {
+        clearInterval(this.slideInterval);
+        this.slideInterval = null;
+      }
+    },
     prevSlide() {
       this.currentIndex =
         this.currentIndex > 0 ? this.currentIndex - 1 : this.items.length - 1;
@@ -371,6 +405,19 @@ export default {
     nextSlide() {
       this.currentIndex =
         this.currentIndex < this.items.length - 1 ? this.currentIndex + 1 : 0;
+    },
+    fetchLocationData() {
+      fetch("https://api.example.com/locations", {    // todo - 실제 api 주소의 엔드포인트로 수정 필요
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",   // todo - api 응답 데이터 구조 확인 후 수정 필요
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        this.locations = data;
+      })
+      .catch(error => console.error("Error fetching location data:", error));
     },
     sortItems(option) {
       switch (option) {
@@ -385,15 +432,9 @@ export default {
           );
           break;
         case "3":
-          // 오름차순 (날짜)
+          // 오래된순 (날짜)
           this.items.sort(
             (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-          );
-          break;
-        case "4":
-          // 내림차순 (날짜)
-          this.items.sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
           );
           break;
         default:
@@ -513,8 +554,9 @@ main {
 .carousel {
   position: relative;
   width: 90%;
-  height: 600px;
-  /* 화면 절반 정도 높이 설정 */
+  max-width: 1248px;
+  /* height: auto; */
+  /* max-height: 700px; */
   overflow: hidden;
   margin: 0 auto;
 }
@@ -526,14 +568,21 @@ main {
 
 .carousel-item {
   min-width: 100%;
-  height: 600px;
+  /* height: auto; */
   /* carousel 높이에 맞춤 */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  /* font-size: 24px; */
   /* background-color: #ddd; */
   /* 슬라이드 아이템 배경색 */
+}
+
+.slide-images {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  /* 이미지 비율을 유지하면서 부모 요소에 맞춤 */
 }
 
 .arrow {
@@ -571,7 +620,6 @@ main {
   height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
 .filter {
@@ -588,6 +636,28 @@ main {
 }
 
 .list-select {
+  width: 200px;
+  height: 48px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #fff;
+  border: 1px solid lightgrey;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.date-picker {
+  width: 200px;
+  height: 48px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #fff;
+  border: 1px solid lightgrey;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+::v-deep .dp__input {
   width: 200px;
   height: 48px;
   border-radius: 10px;
@@ -638,6 +708,14 @@ main {
   box-sizing: border-box;
   font-size: 16px;
   cursor: pointer;
+  padding-right: 10px; /* 텍스트와 화살표 사이의 간격 확보 */
+  -webkit-appearance: none; /* 기본 화살표 제거 */
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('@/assets/images/custom-arrow.png'); /* 커스텀 화살표 이미지 경로 */
+  background-repeat: no-repeat;
+  background-position: right 15px center; /* 아이콘 위치 조정 */
+  background-size: 12px; /* 아이콘 크기 조정 */
 }
 
 /* 생성 모임 영역 */

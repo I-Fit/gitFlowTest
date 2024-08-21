@@ -2,10 +2,10 @@
   <main>
     <div class="main-container">
       <div class="main-content">
-        <div class="content-changeimage">
-          <div class="changeimage-icon" @click="triggerFileInput"></div>
+        <div class="content-changeimages">
+          <div class="changeimages-icon" @click="triggerFileInput"></div>
           <span>이미지 변경</span>
-          <input type="file" ref="fileInput" @change="onFileChange" accept="image/*" multiple style="display: none;" />
+          <input type="file" ref="fileInput" @change="onFileChange" accept="images/*" multiple style="display: none;" />
         </div>
         <div class="content-title">
           <textarea v-model="title" placeholder="제목을 입력하세요."></textarea>
@@ -164,7 +164,7 @@ export default {
         userId: userId,
         title: formData.title,
         content: formData.content,
-        images: [], // 이미지를 다룰 로직 추가해야함
+        imagess: [], // 이미지를 다룰 로직 추가해야함
         category: formData.sport,
         location: formData.location,
         groupSize: formData.person,
@@ -227,17 +227,17 @@ input {
   align-items: center;
 }
 
-.content-changeimage {
+.content-changeimages {
   display: flex;
   width: 83%;
   align-items: center;
 }
 
-.changeimage-icon {
+.changeimages-icon {
   width: 35px;
   height: 34px;
   background-color: #f2f2f2;
-  background-image: url("@/assets/image/camera.png");
+  background-images: url("@/assets/images/camera.png");
   background-repeat: no-repeat;
   background-size: 80% 80%;
   background-position: center;
@@ -246,7 +246,7 @@ input {
   cursor: pointer;
 }
 
-.content-changeimage span {
+.content-changeimages span {
   color: #00000099;
 }
 

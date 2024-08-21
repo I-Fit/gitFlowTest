@@ -20,7 +20,7 @@
           <div v-for="post in sortedPosts" :key="post.id" class="post-box">
             <div class="post-items">
               <div class="post-info">
-                <div class="writer-profile-image"></div>
+                <div class="writer-profile-images"></div>
                 <span class="writer-name">{{ post.writerName }}</span>
                 <span class="created-at">{{ post.createdAt }}</span>
               </div>
@@ -47,7 +47,7 @@
                 </div>
               </div>
             </div>
-            <img class="post-image" :src="post.imageUrl" alt="게시글 이미지" />
+            <img class="post-images" :src="post.imagesUrl" alt="게시글 이미지" />
           </div>
         </div>
       </div>
@@ -94,7 +94,7 @@ export default {
         content: '힘들었지만, 보람된 시간이였습니다.', 
         topic: '라이딩', location: '부산', scale: '소규모', 
         likes: 54, comments: 20, 
-        imageUrl: require('@/assets/image/riding-1.png')
+        imagesUrl: require('@/assets/images/riding-1.png')
       },
 
       { 
@@ -105,7 +105,7 @@ export default {
         content: '국토종주 마지막 날이였습니다...', 
         topic: '라이딩', location: '부산', scale: '소규모', 
         likes: 72, comments: 17, 
-        imageUrl: require('@/assets/image/riding-3.png')
+        imagesUrl: require('@/assets/images/riding-3.png')
       },
 
       { id: 3, 
@@ -115,7 +115,7 @@ export default {
         content: '목동 한강 합수부에서 만나서...', 
         topic: '라이딩', location: '목동', scale: '소규모', 
         likes: 87, comments: 10, 
-        imageUrl: require('@/assets/image/riding-2.jpg')
+        imagesUrl: require('@/assets/images/riding-2.jpg')
       },
     ]);
 
@@ -315,10 +315,10 @@ export default {
     display: flex;
   }
   
-  .writer-profile-image {
+  .writer-profile-images {
     width: 50px;
     height: 40px;
-    background-image: url("@/assets/image/user_img.png");
+    background-images: url("@/assets/images/user_img.png");
     background-size: 80% 80%;
     background-repeat: no-repeat;
     background-position: center;
@@ -349,7 +349,7 @@ export default {
   }
   
   /* 게시글에 올라간 사진 이미지 */
-  .post-image {
+  .post-images {
     width: 180px;
     height: 150px;
     border-radius: 10px;
@@ -416,7 +416,7 @@ export default {
   .like-icon {
     width: 20px;
     height: 20px;
-    background-image: url("@/assets/image/heart.png");
+    background-images: url("@/assets/images/heart.png");
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
@@ -433,7 +433,7 @@ export default {
   .comment-icon {
     width: 20px;
     height: 20px;
-    background-image: url("@/assets/image/comment.png");
+    background-images: url("@/assets/images/comment.png");
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
@@ -444,7 +444,7 @@ export default {
     width: 24px;
     height: 24px;
     margin: 0 10px;
-    background-image: url("@/assets/image/dot.png");
+    background-images: url("@/assets/images/dot.png");
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
@@ -487,7 +487,7 @@ export default {
   .search-icon {
     width: 15px;
     height: 15px;
-    background-image: url("@/assets/image/search.icon.png");
+    background-images: url("@/assets/images/search.icon.png");
     background-size: contain;
     cursor: pointer;
     margin: 0 10px;

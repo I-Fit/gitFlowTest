@@ -21,7 +21,7 @@
               @input="onInput"
             />
             <img
-              src="@/assets/image/search.icon.png"
+              src="@/assets/images/search.icon.png"
               alt="search"
               class="search-box-icon"
               @click="onSearch"
@@ -39,7 +39,7 @@
             <div class="table-group-del">
               <img
                 id="modify_icon"
-                src="@/assets/image/dot.png"
+                src="@/assets/images/dot.png"
                 alt="dot"
                 @click="toggleActions(post.id)"
               />
@@ -51,21 +51,21 @@
             </div>
             <div class="table-group-postimg">
               <img
-                class="table-group-post-image"
-                :src="post.image"
+                class="table-group-post-images"
+                :src="post.images"
                 alt="게시글 이미지"
               />
             </div>
             <div class="table-group-btn">
               <img
                 class="btn-icon"
-                src="@/assets/image/heart.png"
+                src="@/assets/images/heart.png"
                 alt="좋아요 아이콘"
               />
               <span id="heart-count">{{ post.likes }}</span>
               <img
                 class="btn-icon"
-                src="@/assets/image/comment.png"
+                src="@/assets/images/comment.png"
                 alt="댓글 아이콘"
               />
               <span id="comment-count">{{ post.comments }}</span>
@@ -113,7 +113,7 @@ export default {
     const posts = ref([
       {
         id: 1,
-        image: require('@/assets/image/riding-1.png'),
+        images: require('@/assets/images/riding-1.png'),
         likes: 23,
         comments: 20,
         title: "종주할 때 사진 모아봤습니다.",
@@ -121,7 +121,7 @@ export default {
       },
       {
         id: 2,
-        image: require('@/assets/image/riding-3.png'),
+        images: require('@/assets/images/riding-3.png'),
         likes: 72,
         comments: 17,
         title: "부산 하구둑 인증합니다. :)",
@@ -129,7 +129,7 @@ export default {
       },
       {
         id: 3,
-        image: require('@/assets/image/riding-2.jpg'),
+        images: require('@/assets/images/riding-2.jpg'),
         likes: 87,
         comments: 10,
         title: "아라뱃길 정서진까지 라이딩",
@@ -137,7 +137,7 @@ export default {
       },
       {
         id: 4,
-        image: require('@/assets/image/doginvade.jpg'),
+        images: require('@/assets/images/doginvade.jpg'),
         likes: 123,
         comments: 34,
         title: "골든리트리버 난입한 썰",
@@ -145,7 +145,7 @@ export default {
       },
       {
         id: 5,
-        image: require('@/assets/image/rainfootball.jpg'),
+        images: require('@/assets/images/rainfootball.jpg'),
         likes: 33,
         comments: 19,
         title: "비오는 날, 모임한 날",
@@ -153,7 +153,7 @@ export default {
       },
       {
         id: 6,
-        image: require('@/assets/image/dmfootball.jpg'),
+        images: require('@/assets/images/dmfootball.jpg'),
         likes: 54,
         comments: 19,
         title: "광복절에 용산에서 축구",
@@ -161,7 +161,7 @@ export default {
       },
       {
         id: 7,
-        image: require('@/assets/image/medal.jpg'),
+        images: require('@/assets/images/medal.jpg'),
         likes: 144,
         comments: 45,
         title: "국토종주 메달왔습니다 인증!!.jpg.",
@@ -169,7 +169,7 @@ export default {
       },
       {
         id: 8,
-        image: require('@/assets/image/certinfo.jpg'),
+        images: require('@/assets/images/certinfo.jpg'),
         likes: 144,
         comments: 45,
         title: "국토종주 인증서도 왔어요!!",
@@ -177,7 +177,7 @@ export default {
       },
       {
         id: 9,
-        image: require('@/assets/image/winterfootball.jpg'),
+        images: require('@/assets/images/winterfootball.jpg'),
         likes: 144,
         comments: 45,
         title: "추운 날씨에...",
@@ -455,7 +455,7 @@ h2 {
   justify-content: center;
 }
 
-.table-group-post-image {
+.table-group-post-images {
   width: 263px;
   height: 222px;
   margin-top: 5px;

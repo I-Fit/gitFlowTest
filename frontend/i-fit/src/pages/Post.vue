@@ -32,8 +32,8 @@
       </div>
 
       <!-- 이미지 -->
-      <div class="content-image">
-        <img src="@/assets/image/riding-1.png" alt="" />
+      <div class="content-images">
+        <img src="@/assets/images/riding-1.png" alt="" />
       </div>
       <p class="">힘들었지만, 보람된 시간이였습니다.</p>
 
@@ -361,7 +361,7 @@ input {
 .post-profile {
   width: 50px;
   height: 40px;
-  background-image: url("@/assets/image/user_img.png");
+  background-images: url("@/assets/images/user_img.png");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -377,7 +377,7 @@ input {
 }
 
 .dot-icon {
-  background-image: url("@/assets/image/dot.png");
+  background-images: url("@/assets/images/dot.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -444,7 +444,7 @@ input {
   /* 채워진 하트의 테두리 제거 */
 }
 
-.content-image {
+.content-images {
   width: 570px;
   height: 425px;
   border: 1px solid whitesmoke;
@@ -453,7 +453,7 @@ input {
   position: relative;
 }
 
-.content-image img {
+.content-images img {
   width: 100%;
   height: 100%;
   object-fit: contain;

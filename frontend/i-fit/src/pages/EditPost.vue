@@ -2,18 +2,18 @@
   <main>
     <div class="main-container">
       <div class="main-content">
-        <div class="content-changeimage">
-          <div class="changeimage-icon" @click="triggerFileInput"></div>
+        <div class="content-changeimages">
+          <div class="changeimages-icon" @click="triggerFileInput"></div>
           <span>이미지 변경</span>
           <!-- 파일 업로드 input 추가 -->
-          <input type="file" ref="fileInput" @change="onFileChange" accept="image/*" multiple style="display: none;" />
+          <input type="file" ref="fileInput" @change="onFileChange" accept="images/*" multiple style="display: none;" />
         </div>
         <div class="content-title">
           <textarea v-model="title" type="text" placeholder="제목을 입력하세요."></textarea>
         </div>
         <div class="content-box" contenteditable="true" @input="onContentInput" ref="contentBox">
-          <div class="contentbox-image"></div>
-          <img src="@/assets/image/riding-1.png" alt="" />
+          <div class="contentbox-images"></div>
+          <img src="@/assets/images/riding-1.png" alt="" />
           <p>힘들었지만, 보람된 시간이였습니다.</p>
         </div>
         <div class="content-topic">
@@ -67,7 +67,7 @@ export default {
     return {
       title: "",
       content: "",
-      images: [],
+      imagess: [],
       category: "",
       activity: "",
       location: "",
@@ -93,7 +93,7 @@ export default {
           br.innerHTML = "<br>";
           this.$refs.contentBox.appendChild(img);
           this.$refs.contentBox.appendChild(br);
-          this.images.push(e.target.result);
+          this.imagess.push(e.target.result);
         };
         reader.readAsDataURL(file);
       }
@@ -124,7 +124,7 @@ export default {
       const data = {
         title: this.title,
         content: this.content,
-        images: this.images,
+        imagess: this.imagess,
         category: this.category,
         activity: this.activity,
         location: this.location,
@@ -173,17 +173,17 @@ textarea {
   align-items: center;
 }
 
-.content-changeimage {
+.content-changeimages {
   display: flex;
   align-items: center;
   width: 83%;
 }
 
-.changeimage-icon {
+.changeimages-icon {
   width: 35px;
   height: 34px;
   background-color: #f2f2f2;
-  background-image: url("@/assets/image/camera.png");
+  background-images: url("@/assets/images/camera.png");
   background-repeat: no-repeat;
   background-size: 80% 80%;
   background-position: center;
@@ -192,7 +192,7 @@ textarea {
   cursor: pointer;
 }
 
-.content-changeimage span {
+.content-changeimages span {
   color: #00000099;
 }
 
@@ -241,7 +241,7 @@ textarea {
   padding: 10px;
 }
 
-.contentbox-image img {
+.contentbox-images img {
   width: 100%;
   height: auto;
 }

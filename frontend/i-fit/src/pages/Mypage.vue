@@ -5,7 +5,7 @@
       <div class="item-top">
         <h2>마이페이지</h2>
         <div class="top-profile">
-          <div class="top-image-box">
+          <div class="top-images-box">
             <div class="top-box-img">
               <img
                 :src="profileImage"
@@ -20,7 +20,7 @@
             type="file"
             ref="fileInput"
             @change="handleFileChange"
-            accept="image/*"
+            accept="images/*"
             style="display: none"
           />
 
@@ -102,7 +102,7 @@
               <button
                 type="submit"
                 class="changem-btn"
-                @click="goToMembershipMain"
+                @click="goToMembership"
               >
                 변경
               </button>
@@ -157,7 +157,7 @@ export default {
   setup() {
     const router = useRouter();
 
-    const profileImage = ref(require("@/assets/image/default-profile.png"));
+    const profileImage = ref(require("@/assets/images/default-profile.png"));
     const fileInput = ref(null)
 
     //파일 선택 창 트리거 함수
@@ -206,12 +206,12 @@ export default {
       isModalOpen.value = false;
     };
 
-    const goToMembershipMain = () => {
-      router.push('/membership');
+    const goToMembership = () => {
+      router.push( { path: '/membership', hash: '#target' });
     };
 
     const goToChangePassword = () => {
-      router.push('/change-pwd');
+      router.push('/find-password');
     }
 
     const goToAccountDeleted = () => {
@@ -270,7 +270,7 @@ export default {
       showConfirmPopup,
       confirmDeletion,
       cancelDeletion,
-      goToMembershipMain,
+      goToMembership,
       goToChangePassword,
       goToAccountDeleted,
       goToEditEmail,
@@ -317,13 +317,13 @@ main {
   align-items: center;
 }
 
-.top-image-box {
+.top-images-box {
   display: flex;
   margin: 50px 20px 14px 70px;
 }
 
 .top-box-img {
-  /* background: url("../assets/images/user_img.png") no-repeat center; */
+  /* background: url("../assets/imagess/user_img.png") no-repeat center; */
   background-size: cover;
   z-index: 44;
   width: 102px;

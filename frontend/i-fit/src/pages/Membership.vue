@@ -11,7 +11,7 @@
       </div>
       <div class="benefit-table">
         <div class="benefit01-bubble">
-          <img class="circle" src="../assets/image/멤버십 혜택 동글.png" alt="혜택이미지 칸" />
+          <img class="circle" src="../assets/images/멤버십 혜택 동글.png" alt="혜택이미지 칸" />
           <p class="benefit01-text">혜택 01</p>
           <p class="benefit01-title">개인 맞춤형 운동플랜 제공</p>
           <p class="benefit01-content">
@@ -20,7 +20,7 @@
           </p>
         </div>
         <div class="benefit02-bubble">
-          <img class="circle" src="../assets/image/멤버십 혜택 동글.png" alt="혜택이미지 칸" />
+          <img class="circle" src="../assets/images/멤버십 혜택 동글.png" alt="혜택이미지 칸" />
           <p class="benefit02-text">혜택 02</p>
           <p class="benefit02-title">
             원데이 클래스 수강권 & 할인쿠폰 제공
@@ -31,7 +31,7 @@
           </p>
         </div>
         <div class="benefit03-bubble">
-          <img class="circle" src="../assets/image/멤버십 혜택 동글.png" alt="혜택이미지 칸" />
+          <img class="circle" src="../assets/images/멤버십 혜택 동글.png" alt="혜택이미지 칸" />
           <p class="benefit03-text">혜택 03</p>
           <p class="benefit03-title">PT 세션 & 1:1 컨설팅 서비스 제공</p>
           <p class="benefit03-content">
@@ -41,12 +41,12 @@
         </div>
       </div>
     </div>
-    <div class="content-bottom">
+    <div class="content-bottom" id="target">
       <h2 class="bottom-title">한눈에 보는 멤버십
         <!-- <p class="bottom-subtitle">membership benefits</p> -->
       </h2>
       <div class="benefit01-box">
-        <img class="emoji" src="../assets/image/baby.png" alt="근린이 아이콘" />
+        <img class="emoji" src="../assets/images/baby.png" alt="근린이 아이콘" />
         <p class="benefit-price">5,000원/월</p>
         <p class="benefit-rank">LV. 근린이</p>
         <p class="benefit-full-text">
@@ -56,7 +56,7 @@
         <button @click="goToPayment(memberships[0].title, memberships[0].price)" class="btn">혜택받기</button>
       </div>
       <div class="benefit02-box">
-        <img class="emoji" src="../assets/image/run.png" alt="근린이 아이콘" />
+        <img class="emoji" src="../assets/images/run.png" alt="근린이 아이콘" />
         <p class="benefit-price">10,000원/월</p>
         <p class="benefit-rank">LV. 근성장</p>
         <p class="benefit-full-text">
@@ -66,7 +66,7 @@
         <button @click="goToPayment(memberships[1].title, memberships[1].price)" class="btn">혜택받기</button>
       </div>
       <div class="benefit03-box">
-        <img class="emoji" src="../assets/image/arm.png" alt="근린이 아이콘" />
+        <img class="emoji" src="../assets/images/arm.png" alt="근린이 아이콘" />
         <p class="benefit-price">20,000원/월</p>
         <p class="benefit-rank">LV. 득근+</p>
         <p class="benefit-full-text">
@@ -85,6 +85,15 @@ import { useRouter } from 'vue-router'
 
 export default {
 name: 'Membership',
+mounted() {
+  // 해시가 있는 경우 해당 요소로 스크롤
+  if (this.$route.hash) {
+    const element = document.querySelector(this.$route.hash);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+},
 setup() {
   const router = useRouter()
   
@@ -115,11 +124,14 @@ setup() {
     })
   }
 
+  
   return {
     memberships,
     username,
     goToPayment,
   }
+
+  
 }
 // data() {
 //   return {

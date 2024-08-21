@@ -14,7 +14,7 @@
           <div class="middle-filter-search-box">
             <input type="text" name="search" id="search_input" placeholder="검색어를 입력하세요." class="search-box-input"
               v-model="searchQuery" @input="onInput" />
-            <img src="@/assets/image/search.icon.png" alt="search" class="search-box-icon" @click="onSearch" />
+            <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" @click="onSearch" />
           </div>
           <select title="정렬" class="middle-filter-sort">
             <option value="" selected disabled>정렬</option>
@@ -26,9 +26,9 @@
         <div class="group">
           <div class="group-container">
             <div class="user-info">
-              <img src="@/assets/image/user_img.png" alt="사용자 이미지" class="user-image" />
+              <img src="@/assets/images/user_img.png" alt="사용자 이미지" class="user-images" />
               <span>김계란</span>
-              <img src="@/assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
+              <img src="@/assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title"> 수영 같이 하실 분 구함 </span>
@@ -62,7 +62,7 @@
             <div class="user-info">
               <img :src="group.user_img || '/default-profile.png'" alt="사용자 이미지" class="user-img" />
               <span>{{ group.username }}</span>
-              <img src="../assets/image/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
+              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
             </div>
             <div class="group-content">
               <span class="title">{{ group.title }}</span>
@@ -374,7 +374,7 @@ h2 {
   margin: 29px 0 0 20px;
 }
 
-.user-image {
+.user-images {
   width: 50px;
   height: 40px;
   margin-left: 10px;
@@ -419,7 +419,7 @@ h2 {
   display: flex;
 }
 
-.like-image {
+.like-images {
   width: 35px;
   height: 35px;
   margin-right: 30px;

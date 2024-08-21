@@ -25,7 +25,7 @@
               @input="onInput"
             />
             <img
-              src="@/assets/image/search.icon.png"
+              src="@/assets/images/search.icon.png"
               alt="search"
               class="search-box-icon"
               @click="onSearch"
@@ -49,13 +49,13 @@
             <div class="user-info">
               <img
                 class="user-info-img"
-                src="@/assets/image/user_img.png"
+                src="@/assets/images/user_img.png"
                 alt="User Image"
               />
               <p class="user-info-name">{{ comment.userName }}</p>
               <img
                 class="modify-icon"
-                src="@/assets/image/dot.png"
+                src="@/assets/images/dot.png"
                 alt="dot"
                 @click="toggleActions(index)"
               />
