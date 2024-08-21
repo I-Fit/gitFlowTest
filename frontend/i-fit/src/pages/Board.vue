@@ -17,7 +17,7 @@
           </button>
         </div>
         <div class="list">
-          <div v-for="post in sortedPosts" :key="post.id" class="post-box">
+          <div v-for="post in visibleDatas" :key="post.id" class="post-box">
             <div class="post-items">
               <div class="post-info">
                 <div class="writer-profile-image"></div>
@@ -44,7 +44,7 @@
                     </div>
                     <span>{{ post.likes }}</span>
                   </div>
-                  <div class="comment" @click="commentpost">
+                  <div class="comment" @click="commentPost(post.id)">
                     <div class="comment-icon"></div>
                     <span>{{ post.comments }}</span>
                   </div>
@@ -67,26 +67,42 @@
         </div>
         <div class="search-list">
           <p class="list-title">Recommend category</p>
-          <button v-for="category in categories" :key="category" class="list-item" type="submit">
+          <button 
+            v-for="category in categories" 
+            :key="category" 
+            class="list-item" 
+            type="button"
+            :class="{ selected: selectedCategory === category }"
+            @click="selectCategory(category)"
+          >
             {{ category }}
           </button>
         </div>
       </div>
     </div>
+    <PagiNation
+      :currentPage="currentPage"
+      :totalPages="totalPages"
+      @page-changed="onPageChange"
+    />
   </main>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import PagiNation from "@/components/common/PagiNation.vue";
+import { usePagination } from "@/utils/pagination";
 
 export default {
   name: 'Board',
+  components: {
+    PagiNation,
+  },
+
   setup() {
     const router = useRouter();
 
-    // 이건 더미데이터로 서버에게 이런 형태로 데이터를 받아와야됨
-    // isHeartFilled도 받아와야 됨
     const posts = ref([
       { 
         id: 1, 
@@ -96,38 +112,100 @@ export default {
         content: '힘들었지만, 보람된 시간이였습니다.', 
         topic: '라이딩', location: '부산', scale: '소규모', 
         likes: 54, comments: 20, 
-        imageUrl: require('@/assets/images/riding-1.png')
+        imageUrl: require('@/assets/images/riding-1.png'),
+        isHeartFilled: false
       },
-
       { 
         id: 2, 
         writerName: '김계란', 
         createdAt: '6 days ago', 
         title: '부산 하구둑 인증합니다.^^', 
         content: '국토종주 마지막 날이였습니다...', 
-        topic: '라이딩', location: '부산', scale: '소규모', 
+        topic: '러닝', location: '부산', scale: '소규모', 
         likes: 72, comments: 17, 
-        imageUrl: require('@/assets/images/riding-3.png')
+        imageUrl: require('@/assets/images/riding-3.png'),
+        isHeartFilled: false
       },
-
-      { id: 3, 
+      { 
+        id: 3, 
         writerName: '김계란', 
         createdAt: '6 days ago', 
         title: '아라뱃길 정서진까지 라이딩', 
         content: '목동 한강 합수부에서 만나서...', 
         topic: '라이딩', location: '목동', scale: '소규모', 
         likes: 87, comments: 10, 
-        imageUrl: require('@/assets/images/riding-2.jpg')
+        imageUrl: require('@/assets/images/riding-2.jpg'),
+        isHeartFilled: false
+      },
+      { 
+        id: 4, 
+        writerName: '김계란', 
+        createdAt: '6 days ago', 
+        title: '골든리트리버 난입한 썰', 
+        content: '공 차는데 큰 개 한마리가 들어왔어요!!', 
+        topic: '축구', location: '신사중', scale: '22', 
+        likes: 123, comments: 34, 
+        imageUrl: require('@/assets/images/doginvade.jpg'),
+        isHeartFilled: false
+      },
+      { 
+        id: 5, 
+        writerName: '김계란', 
+        createdAt: '6 days ago', 
+        title: '비오는 날, 모임한 날', 
+        content: '날씨가 좋지 않음에도 참석해주신 분들이 많았습니다.', 
+        topic: '풋살', location: '가디단', scale: '15', 
+        likes: 33, comments: 19, 
+        imageUrl: require('@/assets/images/rainfootball.jpg'),
+        isHeartFilled: false
+      },
+      { 
+        id: 6, 
+        writerName: '김계란', 
+        createdAt: '6 days ago', 
+        title: '광복절에 용산에서 축구', 
+        content: '날씨가 무척 더워서 힘들었습니다.', 
+        topic: '축구', location: '용산', scale: '22', 
+        likes: 54, comments: 19, 
+        imageUrl: require('@/assets/images/dmfootball.jpg'),
+        isHeartFilled: false
+      },
+      { 
+        id: 7, 
+        writerName: '김계란', 
+        createdAt: '6 days ago', 
+        title: '추운 날씨에...', 
+        content: '다친 분 없이 모임이 끝나서 다행입니다.', 
+        topic: '축구', location: '한강공원', scale: '22', 
+        likes: 144, comments: 45, 
+        imageUrl: require('@/assets/images/winterfootball.jpg'),
+        isHeartFilled: false
       },
     ]);
 
-    const categories = ref(['러닝', '웨이트', '라이딩', '요가', '수영', '등산', '테니스', '클라이밍', '필라테스', 'GX']);
+    const { currentPage, totalPages, visibleDatas, onPageChange } = usePagination(posts, 3);
 
+    const categories = ref(['러닝', '웨이트', '라이딩', '요가', '수영', '등산', '테니스', '클라이밍', '필라테스', 'GX']);
     const selectedSort = ref('');
     const searchQuery = ref('');
+    const selectedCategory = ref('');
 
     const sortedPosts = computed(() => {
       let sorted = [...posts.value];
+
+      if (searchQuery.value) {
+        sorted = sorted.filter(post =>
+          post.title.includes(searchQuery.value) ||
+          post.content.includes(searchQuery.value) ||
+          post.topic.includes(searchQuery.value)
+        );
+      }
+
+      if (selectedCategory.value) {
+        sorted = sorted.filter(post =>
+          post.topic === selectedCategory.value
+        );
+      }
 
       if (selectedSort.value === 'popularity') {
         sorted.sort((a, b) => b.likes - a.likes);
@@ -137,14 +215,14 @@ export default {
         sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
       }
 
-      if (searchQuery.value) {
-        sorted = sorted.filter(post =>
-          post.title.includes(searchQuery.value) ||
-          post.content.includes(searchQuery.value)
-        );
-      }
-
+      console.log('Sorted Posts:', sorted)
       return sorted;
+    });
+
+    watch(sortedPosts, (newSortedPosts) => {
+      console.log('Updated Sorted Posts', newSortedPosts);
+      visibleDatas.value = newSortedPosts;
+      totalPages.value = Math.ceil(newSortedPosts.length / 3);
     });
 
     const postUpload = () => {
@@ -155,16 +233,15 @@ export default {
       router.push({ name: 'Post', params: { id: postId } });
     };
 
-    const commentpost = () => {
-      router.push({ name: 'Post'});
+    const commentPost = (postId) => {
+      router.push({ name: 'Post', params: { id: postId } });
     };
 
-    const sortPosts = () => {
-      // Trigger sorting by reassigning sortedPosts
-      sortedPosts.value;
+    const selectCategory = (category) => {
+      selectedCategory.value = category;
+      searchQuery.value = ''; // 검색어를 초기화하거나 유지할 수 있습니다
     };
 
-    const isHeartFilled = ref(false);
     const toggleHeart = (postId) => {
       const post = posts.value.find(post => post.id === postId);
       if (post) {
@@ -177,18 +254,22 @@ export default {
       categories,
       selectedSort,
       searchQuery,
+      selectedCategory,
       sortedPosts,
       postUpload,
       viewPost,
-      sortPosts,
-      commentpost,
-
-      isHeartFilled,
+      commentPost,
+      selectCategory,
       toggleHeart,
+      currentPage,
+      totalPages,
+      visibleDatas,
+      onPageChange,
     };
   },
 };
 </script>
+
 
 
 
@@ -500,11 +581,16 @@ export default {
   .list-item {
     width: 70px;
     height: 30px;
-    border: none;
+    border: 1px solid whitesmoke;
     border-radius: 10px;
     margin: 5px;
     padding: 0;
+    cursor: pointer;
   }
+
+  .list-item.selected {
+  border: 2px solid black;
+}
 
 /* 하트 색상 변경 */
 .title-heart {
