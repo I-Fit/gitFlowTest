@@ -36,7 +36,12 @@
                 </div>
                 <div class="likes-and-comments">
                   <div class="likes">
-                    <div class="like-icon"></div>
+                    <div class="title-heart" @click="toggleHeart(post.id)">
+                      <div :class="{
+                        'filled-heart': post.isHeartFilled,
+                        'empty-heart': !post.isHeartFilled,
+                      }"></div>
+                    </div>
                     <span>{{ post.likes }}</span>
                   </div>
                   <div class="comment">
@@ -56,12 +61,7 @@
       <div class="side-bar-items">
         <div class="search-container">
           <div class="search-box">
-            <input
-              type="text"
-              class="search-input"
-              placeholder="검색어를 입력하세요."
-              v-model="searchQuery"
-            />
+            <input type="text" class="search-input" placeholder="검색어를 입력하세요." v-model="searchQuery" />
             <div class="search-icon"></div>
           </div>
         </div>
@@ -85,37 +85,43 @@ export default {
   setup() {
     const router = useRouter();
 
+    // 이건 더미데이터로 서버에게 이런 형태로 데이터를 받아와야됨
+    // isHeartFilled도 받아와야 됨
     const posts = ref([
-      { 
-        id: 1, 
-        writerName: '김계란', 
-        createdAt: '6 days ago', 
-        title: '종주할 때 사진 모아봤습니다.', 
-        content: '힘들었지만, 보람된 시간이였습니다.', 
-        topic: '라이딩', location: '부산', scale: '소규모', 
-        likes: 54, comments: 20, 
-        imageUrl: require('@/assets/image/riding-1.png')
+      {
+        id: 1,
+        writerName: '김계란',
+        createdAt: '6 days ago',
+        title: '종주할 때 사진 모아봤습니다.',
+        content: '힘들었지만, 보람된 시간이였습니다.',
+        topic: '라이딩', location: '부산', scale: '소규모',
+        likes: 54, comments: 20,
+        imageUrl: require('@/assets/image/riding-1.png'),
+        isHeartFilled: false,
       },
 
-      { 
-        id: 2, 
-        writerName: '김계란', 
-        createdAt: '6 days ago', 
-        title: '부산 하구둑 인증합니다.^^', 
-        content: '국토종주 마지막 날이였습니다...', 
-        topic: '라이딩', location: '부산', scale: '소규모', 
-        likes: 72, comments: 17, 
-        imageUrl: require('@/assets/image/riding-3.png')
+      {
+        id: 2,
+        writerName: '김계란',
+        createdAt: '6 days ago',
+        title: '부산 하구둑 인증합니다.^^',
+        content: '국토종주 마지막 날이였습니다...',
+        topic: '라이딩', location: '부산', scale: '소규모',
+        likes: 72, comments: 17,
+        imageUrl: require('@/assets/image/riding-3.png'),
+        isHeartFilled: false,
       },
 
-      { id: 3, 
-        writerName: '김계란', 
-        createdAt: '6 days ago', 
-        title: '아라뱃길 정서진까지 라이딩', 
-        content: '목동 한강 합수부에서 만나서...', 
-        topic: '라이딩', location: '목동', scale: '소규모', 
-        likes: 87, comments: 10, 
-        imageUrl: require('@/assets/image/riding-2.jpg')
+      {
+        id: 3,
+        writerName: '김계란',
+        createdAt: '6 days ago',
+        title: '아라뱃길 정서진까지 라이딩',
+        content: '목동 한강 합수부에서 만나서...',
+        topic: '라이딩', location: '목동', scale: '소규모',
+        likes: 87, comments: 10,
+        imageUrl: require('@/assets/image/riding-2.jpg'),
+        isHeartFilled: false,
       },
     ]);
 
@@ -136,8 +142,8 @@ export default {
       }
 
       if (searchQuery.value) {
-        sorted = sorted.filter(post => 
-          post.title.includes(searchQuery.value) || 
+        sorted = sorted.filter(post =>
+          post.title.includes(searchQuery.value) ||
           post.content.includes(searchQuery.value)
         );
       }
@@ -158,6 +164,14 @@ export default {
       sortedPosts.value;
     };
 
+    const isHeartFilled = ref(false);
+    const toggleHeart = (postId) => {
+      const post = posts.value.find(post => post.id === postId);
+      if (post) {
+        post.isHeartFilled = !post.isHeartFilled;
+      }
+    };
+
     return {
       posts,
       categories,
@@ -166,7 +180,10 @@ export default {
       sortedPosts,
       postUpload,
       viewPost,
-      sortPosts
+      sortPosts,
+
+      isHeartFilled,
+      toggleHeart,
     };
   },
 };
@@ -174,341 +191,388 @@ export default {
 
 
 
-  <style scoped>
-  main {
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    width: 100%;
-    margin-top: 50px;
-  }
-  
-  input {
-    outline: none;
-  }
-  
-  .post-container {
-    width: 100%;
-    height: 800px;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .search-and-list {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    margin-left: 70px;
-  }
-  
-  .conversion {
-    width: 46px;
-    height: 54px;
-    background-color: #fff;
-    position: absolute;
-    top: 300px;
-    left: 950px;
-  }
-  
-  .conversion span {
-    font-size: 15px;
-    line-height: 22.5px;
-    color: #6b7280;
-  }
-  
-  .feature {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-  }
-  
-  .feature::after {
-    content: "";
-    display: block;
-    width: 100%;
-    height: 1px;
-    background-color: #ccc;
-    margin: 5px 0 0 10px;
-    position: absolute;
-    bottom: -10px; /* Adjust to position the line properly */
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .feature-add {
-    display: flex;
-    align-items: center;
-    margin-left: 25px;
-  }
-  
-  .add-btn {
-    width: 35px;
-    height: 35px;
-    background-color: #00000014;
-    border-radius: 100%;
-    font-size: 40px;
-    text-align: center;
-    line-height: 35px;
-    cursor: pointer;
-  }
-  
-  .feature-add span {
-    margin-left: 10px;
-    font-size: 20px;
-  }
-  
-  .feature-sort {
-    border: 1px solid whitesmoke !important;
-    border-radius: 10px;
-  }
-  
-  .sort {
-    width: 75px;
-    height: 35px;
-    text-align: center;
-    border: 1px solid #fff !important;
-    background-color: white !important;
-    box-sizing: border-box;
-  }
-  
-  .list {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    margin-top: 20px;
-  }
-  
-  .post-box {
-    display: flex;
-    width: 100%;
-    height: 170px;
-    margin: 10px 0;
-    justify-content: center;
-    position: relative;
-    margin-top: 20px;
-    /* border: 1px solid whitesmoke; */
-    border-radius: 10px;
-  }
-  
-  .post-box::after {
-    content: "";
-    display: block;
-    width: 100%;
-    height: 1px;
-    background-color: #ccc;
-    margin: 5px 0 0 10px;
-    position: absolute;
-    bottom: -10px; /* Adjust to position the line properly */
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .post-items {
-    display: flex;
-    flex-direction: column;
-    width: 80%;
-    margin-left: 10px;
-    justify-content: space-around;
-  }
-  
-  .post-info {
-    display: flex;
-  }
-  
-  .writer-profile-image {
-    width: 50px;
-    height: 40px;
-    background-image: url("@/assets/image/user_img.png");
-    background-size: 80% 80%;
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-  
-  .writer-name,
-  .created-at {
-    margin: auto 10px;
-  }
-  
-  .created-at {
-    font-size: 14px;
-    color: #ccc;
-  }
-  
-  .title {
-    margin: 0px 0px 10px 10px;
-    cursor: pointer;
-  }
-  
-  .text {
-    margin-left: 10px;
-  }
-  
-  .post-tags {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  /* 게시글에 올라간 사진 이미지 */
-  .post-image {
-    width: 180px;
-    height: 150px;
-    border-radius: 10px;
-    margin-top: 10px;
-    margin-right: 5px;
-  }
-  
-  .tag-items {
-    display: flex;
-    margin-left: 9px;
-  }
-  
-  .tag-items div {
-    width: 52px;
-    height: 24px;
-    text-align: center;
-    font-size: 12px;
-  }
-  
-  .topic {
-    width: 65px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    cursor: pointer;
-    background: #f2f2f2;
-    border: none;
-    border-radius: 10px;
-    color: #757575;
-  }
-  
-  .location {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #757575;
-  }
-  
-  .scale {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #757575;
-  }
-  
-  .likes-and-comments {
-    display: flex;
-  }
-  
-  .likes {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 10px;
-  }
-  
-  .likes-and-comments span {
-    font-size: 15px;
-    color: #757575;
-  }
-  
-  .like-icon {
-    width: 20px;
-    height: 20px;
-    background-image: url("@/assets/image/heart.png");
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
-    margin-right: 5px;
-  }
-  
-  .comment {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 10px;
-  }
-  
-  .comment-icon {
-    width: 20px;
-    height: 20px;
-    background-image: url("@/assets/image/comment.png");
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
-    margin-right: 5px;
-  }
-  
-  .option-icon {
-    width: 24px;
-    height: 24px;
-    margin: 0 10px;
-    background-image: url("@/assets/image/dot.png");
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
-    cursor: pointer;
-  }
-  
-  /* features */
-  /* .side-bar {
+<style scoped>
+main {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  width: 100%;
+  margin-top: 50px;
+}
+
+input {
+  outline: none;
+}
+
+.post-container {
+  width: 100%;
+  height: 800px;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-and-list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin-left: 70px;
+}
+
+.conversion {
+  width: 46px;
+  height: 54px;
+  background-color: #fff;
+  position: absolute;
+  top: 300px;
+  left: 950px;
+}
+
+.conversion span {
+  font-size: 15px;
+  line-height: 22.5px;
+  color: #6b7280;
+}
+
+.feature {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.feature::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: #ccc;
+  margin: 5px 0 0 10px;
+  position: absolute;
+  bottom: -10px;
+  /* Adjust to position the line properly */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.feature-add {
+  display: flex;
+  align-items: center;
+  margin-left: 25px;
+}
+
+.add-btn {
+  width: 35px;
+  height: 35px;
+  background-color: #00000014;
+  border-radius: 100%;
+  font-size: 40px;
+  text-align: center;
+  line-height: 35px;
+  cursor: pointer;
+}
+
+.feature-add span {
+  margin-left: 10px;
+  font-size: 20px;
+}
+
+.feature-sort {
+  border: 1px solid whitesmoke !important;
+  border-radius: 10px;
+}
+
+.sort {
+  width: 75px;
+  height: 35px;
+  text-align: center;
+  border: 1px solid #fff !important;
+  background-color: white !important;
+  box-sizing: border-box;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin-top: 20px;
+}
+
+.post-box {
+  display: flex;
+  width: 100%;
+  height: 170px;
+  margin: 10px 0;
+  justify-content: center;
+  position: relative;
+  margin-top: 20px;
+  /* border: 1px solid whitesmoke; */
+  border-radius: 10px;
+}
+
+.post-box::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: #ccc;
+  margin: 5px 0 0 10px;
+  position: absolute;
+  bottom: -10px;
+  /* Adjust to position the line properly */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.post-items {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin-left: 10px;
+  justify-content: space-around;
+}
+
+.post-info {
+  display: flex;
+}
+
+.writer-profile-image {
+  width: 50px;
+  height: 40px;
+  background-image: url("@/assets/image/user_img.png");
+  background-size: 80% 80%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.writer-name,
+.created-at {
+  margin: auto 10px;
+}
+
+.created-at {
+  font-size: 14px;
+  color: #ccc;
+}
+
+.title {
+  margin: 0px 0px 10px 10px;
+  cursor: pointer;
+}
+
+.text {
+  margin-left: 10px;
+}
+
+.post-tags {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* 게시글에 올라간 사진 이미지 */
+.post-image {
+  width: 180px;
+  height: 150px;
+  border-radius: 10px;
+  margin-top: 10px;
+  margin-right: 5px;
+}
+
+.tag-items {
+  display: flex;
+  margin-left: 9px;
+}
+
+.tag-items div {
+  width: 52px;
+  height: 24px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.topic {
+  width: 65px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  background: #f2f2f2;
+  border: none;
+  border-radius: 10px;
+  color: #757575;
+}
+
+.location {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #757575;
+}
+
+.scale {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #757575;
+}
+
+.likes-and-comments {
+  display: flex;
+}
+
+.likes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.likes-and-comments span {
+  font-size: 15px;
+  color: #757575;
+}
+
+.like-icon {
+  width: 20px;
+  height: 20px;
+  background-image: url("@/assets/image/heart.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  margin-right: 5px;
+}
+
+.comment {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.comment-icon {
+  width: 20px;
+  height: 20px;
+  background-image: url("@/assets/image/comment.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  margin-right: 5px;
+}
+
+.option-icon {
+  width: 24px;
+  height: 24px;
+  margin: 0 10px;
+  background-image: url("@/assets/image/dot.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  cursor: pointer;
+}
+
+/* features */
+/* .side-bar {
     width: 40%;
     border: 1px solid #222;
   } */
-  
-  .side-bar-items {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .search-box {
-    width: 331px;
-    height: 31px;
-    border: 1px solid #53525280;
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 20px;
-    margin-top: 40px;
-  }
-  
-  .search-input {
-    border: none;
-    width: 80%;
-    height: 100%;
-    border-radius: 10px;
-    margin-left: 10px;
-  }
-  
-  .search-icon {
-    width: 15px;
-    height: 15px;
-    background-image: url("@/assets/image/search.icon.png");
-    background-size: contain;
-    cursor: pointer;
-    margin: 0 10px;
-  }
-  
-  .search-list {
-    width: 340px;
-    height: 180px;
-  }
-  
-  .list-title {
-    margin-bottom: 20px;
-  }
-  
-  .list-item {
-    width: 70px;
-    height: 30px;
-    border: none;
-    border-radius: 10px;
-    margin: 5px;
-    padding: 0;
-  }
 
-  </style>
+.side-bar-items {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-box {
+  width: 331px;
+  height: 31px;
+  border: 1px solid #53525280;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px;
+  margin-top: 40px;
+}
+
+.search-input {
+  border: none;
+  width: 80%;
+  height: 100%;
+  border-radius: 10px;
+  margin-left: 10px;
+}
+
+.search-icon {
+  width: 15px;
+  height: 15px;
+  background-image: url("@/assets/image/search.icon.png");
+  background-size: contain;
+  cursor: pointer;
+  margin: 0 10px;
+}
+
+.search-list {
+  width: 340px;
+  height: 180px;
+}
+
+.list-title {
+  margin-bottom: 20px;
+}
+
+.list-item {
+  width: 70px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 0;
+}
+
+/* 하트 색상 변경 */
+.title-heart {
+  cursor: pointer;
+  display: inline-block;
+  width: 25px;
+  /* 하트의 크기를 조정합니다 */
+  height: 35px;
+  /* 하트의 크기를 조정합니다 */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 40px;
+  margin-right: 7px;
+}
+
+.title-heart div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-heart::before {
+  content: "\2764";
+  /* 빈 하트 문자 */
+  font-size: 25px;
+  /* 하트의 크기 */
+  color: transparent;
+  /* 하트의 내부는 투명하게 */
+  -webkit-text-stroke: 1px black;
+  /* 하트의 테두리 색상 */
+}
+
+.filled-heart::before {
+  content: "\2764";
+  /* 채워진 하트 문자 */
+  font-size: 25px;
+  /* 하트의 크기 */
+  color: red;
+  /* 채워진 하트의 색상 */
+  -webkit-text-stroke: none;
+  /* 채워진 하트의 테두리 제거 */
+}
+</style>

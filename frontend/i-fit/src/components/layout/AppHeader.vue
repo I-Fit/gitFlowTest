@@ -19,7 +19,7 @@ export default {
     const store = useStore();
 
     const isLoggedIn = computed(() => store.getters.Loggedin);
-
+    
     return {
       isLoggedIn,
     }
