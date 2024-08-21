@@ -44,7 +44,7 @@
               </div>
               <span class="size">참여인원: 3/10</span>
               <span class="location">강남구</span>
-              <button type="button" class="cancel" @click="showConfirmPopup">삭제</button>
+              <button type="button" class="cancel" @click="showConfirmPopup = true">삭제</button>
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임을 삭제하시겠습니까?</p>
@@ -72,8 +72,8 @@
             <div class="group-info">
               <div class="title-heart" @click="toggleHeart(group.communityId)">
                 <div :class="{
-                  'filled-heart': isHeartFilled,
-                  'empty-heart': !isHeartFilled,
+                  'filled-heart': group.isHeartFilled,
+                  'empty-heart': !group.isHeartFilled,
                 }"></div>
               </div>
               <span class="size">참여인원: {{ group.person }}</span>
@@ -84,7 +84,7 @@
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임을 삭제하시겠습니까?</p>
-                  <button class="confirm-btn" @click="confirmDeletion">
+                  <button class="confirm-btn" @click="confirmDeletion(group.communityId)">
                     확인
                   </button>
                   <button class="cancle-btn" @click="cancelDeletion">
@@ -155,24 +155,6 @@ export default {
     const store = useStore();
     const groups = ref([]);
 
-    const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
-
-    // 사용자 식별 ID의 상태를 가져옴
-    const userId = computed(() => store.getters["isLogged/userId"]);
-
-    //  웹 페이지가 로딩 되기 전에 userId를 서버에 보내서 해당되는 모임을 로딩해줌
-    onMounted(async () => {
-      try {
-        const response = await axios.post(`/api/group-details`, {
-          params: { userId: userId.value }
-        });
-        groups.value = response.data;
-        fetchdatas(1);
-      } catch (error) {
-        console.error("Error", error);
-      }
-    });
-
     const groupJoinlist = () => {
       router.push({ name: "JoinedGroups" });
     };
@@ -181,38 +163,79 @@ export default {
       router.push({ name: "LikedGroups" });
     };
 
-    const isTooltipVisible = ref(true);
+    // 페이지네이션
+    const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
 
-    const toggleTooltip = () => {
-      isTooltipVisible.value = !isTooltipVisible.value;
-    };
-    // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
-    const showConfirmPopup = ref(false);
-    const confirmDeletion = () => {
+    // 사용자 식별 ID의 상태를 가져옴
+    const userId = computed(() => store.getters["isLogged/userId"]);
 
-    };
-    const cancelDeletion = () => {
-      showConfirmPopup.value = false;
-    };
-    // 모임 찜 이벤트
-    const isHeartFilled = ref(false);
-    const toggleHeart = async () => {
-      isHeartFilled.value = !isHeartFilled.value;
+    //  웹 페이지가 로딩 되기 전에 userId를 서버에 보내서 해당되는 모임을 로딩해줌
+    const loadgroups = async () => {
       try {
-        await axios.get("", {
-          communityId: visibleDatas.communityId
+        const response = await axios.post(`/api/group-details`, {
+          data: { userId: userId.value }
         });
+        groups.value = response.data;
+        fetchdatas(1);
       } catch (error) {
         console.error("Error", error);
       }
     };
 
+    onMounted(async () => {
+      await loadgroups();
+    });
+
+    const isTooltipVisible = ref(true);
+
+    const toggleTooltip = () => {
+      isTooltipVisible.value = !isTooltipVisible.value;
+    };
+    // 모임 삭제 버튼 클릭 후 확인 버튼 클릭하면 삭제되고 다시 로드
+    const showConfirmPopup = ref(null);
+    const confirmDeletion = async (communityId) => {
+      try {
+        await axios.delete(`/api/delete-groups/${communityId}`);
+      } catch (error) {
+        console.error("Error", error);
+      } finally {
+        await loadgroups();
+      }
+    };
+    const cancelDeletion = () => {
+      showConfirmPopup.value = null;
+    };
+    // 모임 찜 이벤트
+    // 각각의 모임의 좋아요가 되도록 구현
+    // 좋아요가 되면 서버에 모임 Id, 좋아요의 상태가 true인 것을 서버에 보내준다
+    const isHeartFilled = ref(false);
+    const toggleHeart = async (communityId) => {
+      const group = groups.value.find(group => group.communityid === communityId);
+      if (group) {
+        group.isHeartFilled = !group.isHeartFilled;
+
+        try {
+          await axios.post("/api/", {
+            communityId: group.communityId,
+            isHeartFilled: group.isHeartFilled,
+          });
+        } catch (error) {
+          console.error("Error", error);
+  
+          // 서버 요청 실패 시 상태 롤백
+          group.isHeartFilled = !group.isHeartFilled;
+        }
+      }
+    };
+
     return {
+      loadgroups,
       currentPage,
       totalPages,
       visibleDatas,
       fetchdatas,
       onPageChange,
+      showConfirmPopup,
 
       groups,
       groupJoinlist,
@@ -451,6 +474,17 @@ h2 {
   font-weight: bold;
   width: 58px;
   height: 38px;
+  cursor: pointer;
+}
+
+.cancel:hover {
+  background-color: #87cefa;
+}
+
+.cancel:active {
+  background-color: #87cefa;
+  transform: scale(0.98);
+  /* 클릭 시 버튼 크기 살짝 축소 */
 }
 
 /* 모달 창 스타일 */

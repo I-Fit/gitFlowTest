@@ -36,7 +36,12 @@
                 </div>
                 <div class="likes-and-comments">
                   <div class="likes">
-                    <div class="like-icon"></div>
+                    <div class="title-heart" @click="toggleHeart(post.id)">
+                      <div :class="{
+                        'filled-heart': post.isHeartFilled,
+                        'empty-heart': !post.isHeartFilled,
+                      }"></div>
+                    </div>
                     <span>{{ post.likes }}</span>
                   </div>
                   <div class="comment">
@@ -56,12 +61,7 @@
       <div class="side-bar-items">
         <div class="search-container">
           <div class="search-box">
-            <input
-              type="text"
-              class="search-input"
-              placeholder="검색어를 입력하세요."
-              v-model="searchQuery"
-            />
+            <input type="text" class="search-input" placeholder="검색어를 입력하세요." v-model="searchQuery" />
             <div class="search-icon"></div>
           </div>
         </div>
@@ -85,6 +85,8 @@ export default {
   setup() {
     const router = useRouter();
 
+    // 이건 더미데이터로 서버에게 이런 형태로 데이터를 받아와야됨
+    // isHeartFilled도 받아와야 됨
     const posts = ref([
       { 
         id: 1, 
@@ -94,7 +96,7 @@ export default {
         content: '힘들었지만, 보람된 시간이였습니다.', 
         topic: '라이딩', location: '부산', scale: '소규모', 
         likes: 54, comments: 20, 
-        imagesUrl: require('@/assets/images/riding-1.png')
+        imageUrl: require('@/assets/image/riding-1.png')
       },
 
       { 
@@ -105,7 +107,7 @@ export default {
         content: '국토종주 마지막 날이였습니다...', 
         topic: '라이딩', location: '부산', scale: '소규모', 
         likes: 72, comments: 17, 
-        imagesUrl: require('@/assets/images/riding-3.png')
+        imageUrl: require('@/assets/image/riding-3.png')
       },
 
       { id: 3, 
@@ -115,7 +117,7 @@ export default {
         content: '목동 한강 합수부에서 만나서...', 
         topic: '라이딩', location: '목동', scale: '소규모', 
         likes: 87, comments: 10, 
-        imagesUrl: require('@/assets/images/riding-2.jpg')
+        imageUrl: require('@/assets/image/riding-2.jpg')
       },
     ]);
 
@@ -136,8 +138,8 @@ export default {
       }
 
       if (searchQuery.value) {
-        sorted = sorted.filter(post => 
-          post.title.includes(searchQuery.value) || 
+        sorted = sorted.filter(post =>
+          post.title.includes(searchQuery.value) ||
           post.content.includes(searchQuery.value)
         );
       }
@@ -158,6 +160,14 @@ export default {
       sortedPosts.value;
     };
 
+    const isHeartFilled = ref(false);
+    const toggleHeart = (postId) => {
+      const post = posts.value.find(post => post.id === postId);
+      if (post) {
+        post.isHeartFilled = !post.isHeartFilled;
+      }
+    };
+
     return {
       posts,
       categories,
@@ -166,7 +176,10 @@ export default {
       sortedPosts,
       postUpload,
       viewPost,
-      sortPosts
+      sortPosts,
+
+      isHeartFilled,
+      toggleHeart,
     };
   },
 };
@@ -315,10 +328,10 @@ export default {
     display: flex;
   }
   
-  .writer-profile-images {
+  .writer-profile-image {
     width: 50px;
     height: 40px;
-    background-images: url("@/assets/images/user_img.png");
+    background-image: url("@/assets/image/user_img.png");
     background-size: 80% 80%;
     background-repeat: no-repeat;
     background-position: center;
@@ -349,7 +362,7 @@ export default {
   }
   
   /* 게시글에 올라간 사진 이미지 */
-  .post-images {
+  .post-image {
     width: 180px;
     height: 150px;
     border-radius: 10px;
@@ -416,7 +429,7 @@ export default {
   .like-icon {
     width: 20px;
     height: 20px;
-    background-images: url("@/assets/images/heart.png");
+    background-image: url("@/assets/image/heart.png");
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
@@ -433,7 +446,7 @@ export default {
   .comment-icon {
     width: 20px;
     height: 20px;
-    background-images: url("@/assets/images/comment.png");
+    background-image: url("@/assets/image/comment.png");
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
@@ -444,7 +457,7 @@ export default {
     width: 24px;
     height: 24px;
     margin: 0 10px;
-    background-images: url("@/assets/images/dot.png");
+    background-image: url("@/assets/image/dot.png");
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
@@ -487,7 +500,7 @@ export default {
   .search-icon {
     width: 15px;
     height: 15px;
-    background-images: url("@/assets/images/search.icon.png");
+    background-image: url("@/assets/image/search.icon.png");
     background-size: contain;
     cursor: pointer;
     margin: 0 10px;
@@ -511,4 +524,49 @@ export default {
     padding: 0;
   }
 
-  </style>
+/* 하트 색상 변경 */
+.title-heart {
+  cursor: pointer;
+  display: inline-block;
+  width: 25px;
+  /* 하트의 크기를 조정합니다 */
+  height: 35px;
+  /* 하트의 크기를 조정합니다 */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 40px;
+  margin-right: 7px;
+}
+
+.title-heart div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-heart::before {
+  content: "\2764";
+  /* 빈 하트 문자 */
+  font-size: 25px;
+  /* 하트의 크기 */
+  color: transparent;
+  /* 하트의 내부는 투명하게 */
+  -webkit-text-stroke: 1px black;
+  /* 하트의 테두리 색상 */
+}
+
+.filled-heart::before {
+  content: "\2764";
+  /* 채워진 하트 문자 */
+  font-size: 25px;
+  /* 하트의 크기 */
+  color: red;
+  /* 채워진 하트의 색상 */
+  -webkit-text-stroke: none;
+  /* 채워진 하트의 테두리 제거 */
+}
+</style>

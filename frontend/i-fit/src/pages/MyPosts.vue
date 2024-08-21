@@ -20,7 +20,7 @@
               v-model="searchQuery"
             />
             <img
-              src="@/assets/images/search.icon.png"
+              src="@/assets/image/search.icon.png"
               alt="search"
               class="search-box-icon"
               @click="onSearch"
@@ -33,15 +33,11 @@
           </select>
         </div>
         <div class="post-bottom-table">
-          <div
-            class="bottom-table-group"
-            v-for="post in visibleDatas"
-            :key="post.id"
-          >
+          <div class="bottom-table-group" v-for="post in visibleDatas" :key="post.id">
             <div class="table-group-del">
               <img
                 id="modify_icon"
-                :src="require('@/assets/images/dot.png')"
+                :src="require('@/assets/image/dot.png')"
                 alt="dot"
                 @click="toggleActions(post.id)"
               />
@@ -53,7 +49,7 @@
             <div class="table-group-postimg">
               <img
                 class="table-group-post-img"
-                :src="post.images"
+                :src="post.image"
                 alt="게시글 이미지"
                 @click="detailPost2"
               />
@@ -61,13 +57,13 @@
             <div class="table-group-btn">
               <img
                 class="btn-icon"
-                src="@/assets/images/heart.png"
+                src="@/assets/image/heart.png"
                 alt="좋아요 아이콘"
               />
               <span id="heart-count">{{ post.likes }}</span>
               <img
                 class="btn-icon"
-                src="@/assets/images/comment.png"
+                src="@/assets/image/comment.png"
                 alt="댓글 아이콘"
               />
               <span id="comment-count">{{ post.comments }}</span>
@@ -82,18 +78,14 @@
             </div>
           </div>
         </div>
-        <PagiNation
-          :currentPage="currentPage"
-          :totalPages="totalPages"
-          @page-changed="onPageChange"
-        />
+        <PagiNation :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" />
       </div>
       <div class="post-floor"></div>
     </div>
   </main>
 </template>
 
-<script setup>
+<script>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
@@ -102,13 +94,21 @@ import PagiNation from "@/components/common/PagiNation.vue";
 import AppNav from "@/components/layout/AppNav.vue";
 import { usePagination } from "@/utils/pagination";
 
-// Vue Router와 Composition API 사용
-const router = useRouter();
+export default {
+  components: {
+    PostActions,
+    PagiNation,
+    AppNav,
+  },
+
+  setup() {
+
+    const router = useRouter();
 
 const Posts = ref([
   {
     id: 1,
-    images: require("@/assets/images/riding-1.png"),
+    image: require("@/assets/image/riding-1.png"),
     likes: 23,
     comments: 7,
     title: "종주할 때 사진 모아봤습니다.",
@@ -117,7 +117,7 @@ const Posts = ref([
 
   {
     id: 2,
-    images: require("@/assets/images/riding-3.png"),
+    image: require("@/assets/image/riding-3.png"),
     likes: 72,
     comments: 17,
     title: "부산 하구둑 인증합니다. :)",
@@ -126,7 +126,7 @@ const Posts = ref([
 
   {
     id: 3,
-    images: require("@/assets/images/riding-2.jpg"),
+    image: require("@/assets/image/riding-2.jpg"),
     likes: 87,
     comments: 10,
     title: "아라뱃길 정서진까지 라이딩",
@@ -135,7 +135,7 @@ const Posts = ref([
 
   {
     id: 4,
-    images: require("@/assets/images/doginvade.jpg"),
+    image: require("@/assets/image/doginvade.jpg"),
     likes: 123,
     comments: 34,
     title: "골든리트리버 난입한 썰",
@@ -144,7 +144,7 @@ const Posts = ref([
 
   {
     id: 5,
-    images: require("@/assets/images/rainfootball.jpg"),
+    image: require("@/assets/image/rainfootball.jpg"),
     likes: 33,
     comments: 19,
     title: "비오는 날, 모임한 날",
@@ -153,7 +153,7 @@ const Posts = ref([
 
   {
     id: 6,
-    images: require("@/assets/images/dmfootball.jpg"),
+    image: require("@/assets/image/dmfootball.jpg"),
     likes: 54,
     comments: 19,
     title: "광복절에 용산에서 축구",
@@ -162,7 +162,7 @@ const Posts = ref([
 
   {
     id: 7,
-    images: require("@/assets/images/medal.jpg"),
+    image: require("@/assets/image/medal.jpg"),
     likes: 144,
     comments: 45,
     title: "국토종주 메달왔습니다 인증!!.jpg.",
@@ -171,7 +171,7 @@ const Posts = ref([
 
   {
     id: 8,
-    images: require("@/assets/images/certinfo.jpg"),
+    image: require("@/assets/image/certinfo.jpg"),
     likes: 144,
     comments: 45,
     title: "국토종주 인증서도 왔어요!!",
@@ -180,7 +180,7 @@ const Posts = ref([
 
   {
     id: 9,
-    images: require("@/assets/images/winterfootball.jpg"),
+    image: require("@/assets/image/winterfootball.jpg"),
     likes: 144,
     comments: 45,
     title: "추운 날씨에...",
@@ -188,83 +188,119 @@ const Posts = ref([
   },
 ]); // 초기 게시물 데이터는 빈 배열로 설정했었음.(더미 데이터 넣음)
 
-const searchQuery = ref("");
-const sortOrder = ref("");
-const showActions = ref(false);
-const selectedPostId = ref(null);
+    const searchQuery = ref("");
+    const sortOrder = ref("");
+    const showActions = ref(false);
+    const selectedPostId = ref(null);
 
-// usePagination 훅 호출
-const { currentPage, totalPages, visibleDatas, onPageChange, fetchdatas } =
-  usePagination(Posts, 3);
+    // usePagination 훅 호출
+    const { currentPage, totalPages, visibleDatas, onPageChange, fetchdatas } =
+      usePagination(posts, 3);
 
-// 게시물 데이터 로드
-const fetchPosts = async () => {
-  try {
-    const response = await axios.get("https://api.example.com/posts");
-    Posts.value = response.data;
-    fetchdatas(); // 초기 페이지 로딩
-  } catch (error) {
-    console.error("데이터 로드 실패:", error);
-  }
-};
+    // 게시물 데이터 로드
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("https://api.example.com/posts");
+        posts.value = response.data;
+        fetchdatas(); // 초기 페이지 로딩
+      } catch (error) {
+        console.error("데이터 로드 실패:", error);
+      }
+    };
 
-const showActionsForPostId = (postId) => {
-  return showActions.value && selectedPostId.value === postId;
-};
+    const showActionsForPostId = (postId) => {
+      return showActions.value && selectedPostId.value === postId;
+    };
 
-const toggleActions = (postId) => {
-  if (selectedPostId.value === postId) {
-    showActions.value = !showActions.value;
-  } else {
-    selectedPostId.value = postId;
-    showActions.value = true;
-  }
-};
+    const toggleActions = (postId) => {
+      if (selectedPostId.value === postId) {
+        showActions.value = !showActions.value;
+      } else {
+        selectedPostId.value = postId;
+        showActions.value = true;
+      }
+    };
 
-const handleNavigation = (action) => {
-  if (action === "EditPost") {
-    router.push("edit-post");
-  } else if (action === "delete") {
-    deletePost(selectedPostId.value);
-  }
-};
+    const handleNavigation = (action) => {
+      if (action === "EditPost") {
+        router.push("edit-post");
+      } else if (action === "delete") {
+        deletePost(selectedPostId.value);
+      }
+    };
 
-const deletePost = async (postId) => {
-  try {
-    await axios.delete(`https://api.example.com/posts/${postId}`);
-    alert("게시물이 삭제되었습니다.");
-    fetchPosts(); // 데이터 재로드
-  } catch (error) {
-    console.error("삭제 실패:", error);
-    alert("게시물 삭제 중 오류가 발생했습니다.");
-  }
-};
+    const deletePost = async (postId) => {
+      try {
+        await axios.delete(`https://api.example.com/posts/${postId}`);
+        alert("게시물이 삭제되었습니다.");
+        fetchPosts(); // 데이터 재로드
+      } catch (error) {
+        console.error("삭제 실패:", error);
+        alert("게시물 삭제 중 오류가 발생했습니다.");
+      }
+    };
 
-const onSearch = () => {
-  console.log("Searching for:", searchQuery.value);
-  // 검색 로직 추가 필요
-};
+    const isHeartFilled = ref(false);
+    const toggleHeart = (postId) => {
+      const post = posts.value.find(post => post.id === postId);
+      if (post) {
+        post.isHeartFilled = !post.isHeartFilled;
+      }
+    };
 
-const detailPost = (postId) => {
-  router.push(`/Post/${postId}`);
-};
+    const onSearch = () => {
+      console.log("Searching for:", searchQuery.value);
+      // 검색 로직 추가 필요
+    };
 
-const writtenComments = () => {
-  router.push({ name: "MyComments" });
-};
+    const detailPost = (postId) => {
+      router.push(`/Post/${postId}`);
+    };
 
-const likedPosts = () => {
-  router.push({ name: "LikedPosts" });
-};
+    const writtenComments = () => {
+      router.push({ name: "MyComments" });
+    };
 
-const detailPost2 = () => {
-  router.push({ name: "Post" });
-};
+    const likedPosts = () => {
+      router.push({ name: "LikedPosts" });
+    };
 
-// 컴포넌트가 마운트될 때 데이터 로딩
-onMounted(() => {
-  fetchPosts();
-});
+    const detailPost2 = () => {
+      router.push({ name: "Post" });
+    };
+
+    // 컴포넌트가 마운트될 때 데이터 로딩
+    onMounted(() => {
+      fetchPosts();
+    });
+
+    return {
+      posts,
+      searchQuery,
+      sortOrder,
+      showActions,
+      selectedPostId,
+      currentPage,
+      totalPages,
+      visibleDatas,
+      onPageChange,
+      showActionsForPostId,
+      toggleActions,
+      handleNavigation,
+      deletePost,
+      isHeartFilled,
+      toggleHeart,
+      onSearch,
+      detailPost,
+      writtenComments,
+      likedPosts,
+      detailPost2,
+    }
+  },
+}
+
+// Vue Router와 Composition API 사용
+
 </script>
 
 <style scoped>
@@ -477,5 +513,51 @@ h2 {
   color: #9795b5;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 하트 색상 변경 */
+.title-heart {
+  cursor: pointer;
+  display: inline-block;
+  width: 25px;
+  /* 하트의 크기를 조정합니다 */
+  height: 35px;
+  /* 하트의 크기를 조정합니다 */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 40px;
+  margin-right: 7px;
+}
+
+.title-heart div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-heart::before {
+  content: "\2764";
+  /* 빈 하트 문자 */
+  font-size: 25px;
+  /* 하트의 크기 */
+  color: transparent;
+  /* 하트의 내부는 투명하게 */
+  -webkit-text-stroke: 1px black;
+  /* 하트의 테두리 색상 */
+}
+
+.filled-heart::before {
+  content: "\2764";
+  /* 채워진 하트 문자 */
+  font-size: 25px;
+  /* 하트의 크기 */
+  color: red;
+  /* 채워진 하트의 색상 */
+  -webkit-text-stroke: none;
+  /* 채워진 하트의 테두리 제거 */
 }
 </style>

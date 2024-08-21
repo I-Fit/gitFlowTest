@@ -71,7 +71,7 @@
             <p class="time">{{ group.selectedTime }}</p>
             <div class="group-info">
               <div class="title-heart" @click="toggleHeart(group.communityId)">
-                <div :class="{ 'filled-heart': isHeartFilled, 'empty-heart': !isHeartFilled }"></div>
+                <div :class="{ 'filled-heart': group.isHeartFilled, 'empty-heart': !group.isHeartFilled }"></div>
               </div>
               <span class="size">참여인원: {{ group.person }}</span>
               <span class="location">{{ group.location }}</span>
@@ -181,13 +181,13 @@ export default {
       await fetchGroups();
     });
 
-    // 참석 모달 열기
+    // 취소 모달 열기
     const isTooltipVisible = ref(true);
 
     const toggleTooltip = () => {
       isTooltipVisible.value = !isTooltipVisible.value;
     };
-    // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
+    // 모임 취소 버튼 클릭 후 확인 버튼 누르면 삭제되고 다시 로드
     const showConfirmPopup = ref(false);
     const confirmDeletion = async (communityId) => {
       try {
@@ -205,14 +205,24 @@ export default {
 
     // 하트 클릭
     const isHeartFilled = ref(false);
-    const toggleHeart = async () => {
-      isHeartFilled.value = !isHeartFilled.value;
-      try {
-        await axios.get("", {data: communityId });
-      } catch (error) {
-        console.error("Error", error);
+    const toggleHeart = async (communityId) => {
+      const group = groups.value.find(group => group.communityid === communityId);
+      if (group) {
+        group.isHeartFilled = !group.isHeartFilled;
+
+        try {
+          await axios.post("/api/", {
+            communityId: group.communityId,
+            isHeartFilled: group.isHeartFilled,
+          });
+        } catch (error) {
+          console.error("Error", error);
+  
+          // 서버 요청 실패 시 상태 롤백
+          group.isHeartFilled = !group.isHeartFilled;
+        }
       }
-    }
+    };
 
     return {
       currentPage,
