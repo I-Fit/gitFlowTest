@@ -367,6 +367,7 @@ input {
   border-radius: 10px;
   margin: 4px;
   padding: 0;
+  cursor: pointer;
 }
 
 .category-tag.selected {
