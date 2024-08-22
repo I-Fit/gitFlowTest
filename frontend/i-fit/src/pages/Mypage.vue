@@ -5,14 +5,14 @@
       <div class="item-top">
         <h2>마이페이지</h2>
         <div class="top-profile">
-          <div class="top-images-box">
-            <div class="top-box-img">
+          <div class="top-image-box">
+            <!-- <div class="top-box-img"> -->
               <img
                 :src="profileImage"
                 alt="Profile Image"
                 class="profile-img"
               />
-            </div>
+            <!-- </div> -->
             <div class="top-box-icon" @click="triggerFileInput">&#43;</div>
           </div>
           <!-- 숨겨진 파일 입력 요소 -->
@@ -317,7 +317,7 @@ main {
   align-items: center;
 }
 
-.top-images-box {
+.top-image-box {
   display: flex;
   margin: 50px 20px 14px 70px;
 }
@@ -506,8 +506,8 @@ main {
 }
 
 .profile-img {
-  width: 100%;
-  height: 100%;
+  width: 102px;
+  height: 102px;
   object-fit: cover;
 }
 

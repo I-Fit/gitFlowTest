@@ -27,15 +27,19 @@
               {{ location.name }}
             </option>
           </select>
+          
+          <div>
+            <VueDatePicker class="date-picker" placeholder="날짜 선택" locale="ko" v-model="date" :enable-time-picker="false" year-first="true" select-text="확인" cancel-text="취소" />
+          </div>
+          
+          <div>
+            <VueDatePicker class="time-picker" placeholder="시간 선택" locale="ko" v-model="time" time-picker select-text="확인" cancel-text="취소">
+              <template #input-icon>
+                <img class="input-slot-image" src="@/assets/images/clock-icon.png"/>
+              </template>
+            </VueDatePicker>
+          </div>
 
-          <!-- <select class="list-select" title="날짜"> -->
-          <VueDatePicker class="date-picker" locale="ko" v-model="date" :enable-time-picker="false" />
-          <!-- <option value="" selected disabled>날짜</option> -->
-          <!-- </select> -->
-
-          <select class="list-select" title="시간">
-            <option value="" selected disabled>시간</option>
-          </select>
           <form class="search-box">
             <input type="text" name="search" class="search-input" placeholder="검색어를 입력하세요." />
             <img src="../assets/images/search.icon.png" alt="search" class="search-icon" />
@@ -72,7 +76,7 @@
               </div>
               <span class="size">참여인원: 3/10</span>
               <span class="location">강남구</span>
-              <button type="button" class="attend" @click="showConfirmPopup = true">
+              <button type="submit" class="attend" @click="showConfirmPopup = true">
                 참석
               </button>
               <div v-if="showConfirmPopup" class="confirm-popup">
@@ -455,6 +459,8 @@ export default {
   },
 
   setup() {
+    const time = ref(null);
+  
     const router = useRouter();
     const store = useStore();
     // 여러 모임 데이터 배열에 저장
@@ -487,7 +493,7 @@ export default {
 
     // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
     // 사용자 식별 키와 모임 식별 키를 query로 보내줌
-    const showConfirmPopup = ref(null);
+    const showConfirmPopup = ref(false);
 
     const confirmDeletion = async (communityId) => {
       try {
@@ -495,14 +501,16 @@ export default {
           communityId: communityId,
           userId: userId.value
         });
-        router.push({ name: "GroupJoinList", query: { communityId, userId: userId.value } });
+        router.push({ name: "JoinedGroups", query: { communityId, userId: userId.value } });
       } catch (error) {
         console.error("Error", error);
       }
+
+      showConfirmPopup.value = false;
     };
 
     const cancelDeletion = () => {
-      showConfirmPopup.value = null;
+      showConfirmPopup.value = false;
     };
 
     // 모임 찜 이벤트
@@ -522,6 +530,7 @@ export default {
     };
 
     return {
+      time,
       groups,
       userId,
 
@@ -640,10 +649,20 @@ main {
   height: 48px;
   border-radius: 10px;
   text-align: center;
+  color: grey;
   background-color: #fff;
   border: 1px solid lightgrey;
   font-size: 16px;
   cursor: pointer;
+  /* box-sizing: border-box; */
+  padding-right: 10px; /* 텍스트와 화살표 사이의 간격 확보 */
+  -webkit-appearance: none; /* 기본 화살표 제거 */
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('@/assets/images/custom-arrow.png'); /* 커스텀 화살표 이미지 경로 */
+  background-repeat: no-repeat;
+  background-position: right 15px center; /* 아이콘 위치 조정 */
+  background-size: 12px; /* 아이콘 크기 조정 */
 }
 
 .date-picker {
@@ -666,6 +685,36 @@ main {
   border: 1px solid lightgrey;
   font-size: 16px;
   cursor: pointer;
+}
+
+.time-picker {
+  width: 200px;
+  height: 48px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #fff;
+  border: 1px solid lightgrey;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+::v-deep .vue__time-picker input.vue__time-picker-input {
+  width: 200px;
+  height: 48px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #fff;
+  border: 1px solid lightgrey;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.input-slot-image {
+  height: 17px;
+  width: auto;
+  margin-left: 11px;
+  margin-top: 5px;
+  color: #228b22;
 }
 
 /* 검색창 */
@@ -704,6 +753,7 @@ main {
   text-align: center;
   border-radius: 10px;
   background-color: #fff;
+  color: grey;
   border: 1px solid lightgrey;
   box-sizing: border-box;
   font-size: 16px;
