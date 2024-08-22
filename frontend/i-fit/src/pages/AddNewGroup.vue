@@ -44,7 +44,8 @@ tap<template>
         <p class="category-text">Choose Date and Time</p>
         <div class="category-date">
           <VueDatePicker 
-            locale="ko" 
+            locale="ko"
+            time-picker-inline
             v-model="date" 
             @change="updateFormData" 
             class="input-datepicker">

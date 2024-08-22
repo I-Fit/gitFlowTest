@@ -4,16 +4,6 @@
       <div class="signup-container">
         <h1>회원가입</h1>
         <p>회원이 되어 다양한 헤택을 경험해 보세요!</p>
-        <div class="choose-member">
-          <label class="general-user">
-            <input type="radio" name="contact" value="user" v-model="formData.contact" />
-            <span>일반 회원</span>
-          </label>
-          <label>
-            <input type="radio" name="contact" value="teacher" v-model="formData.contact" />
-            <span>강사</span>
-          </label>
-        </div>
         <div class="signup-id input-block">
           <label class="signup-label" for="id">아이디
             <span class="available" v-if="idAvailable === true">사용 가능한 아이디입니다.</span>
@@ -129,7 +119,6 @@ export default {
     const router = useRouter();
 
     const formData = ref({
-      contact: "",
       id: "",
       password: "",
       passwordCheck: "",
@@ -325,12 +314,6 @@ main {
 
 .signup-container p {
   margin: 20px 0px;
-}
-
-.general-user::after {
-  content: "|";
-  color: rgba(0, 0, 0, 0.356);
-  margin: 5px;
 }
 
 .input-block {
