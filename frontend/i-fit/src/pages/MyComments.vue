@@ -2,12 +2,9 @@
   <main>
     <AppNav />
     <div class="comment">
-      <div class="comment-null-block"></div>
       <div class="comment-top">
         <h2>게시글 관리</h2>
-        <p class="line text01" @click="navigateTo('MyPosts')">
-          내가 쓴 게시물
-        </p>
+        <p class="line text01" @click="navigateTo('MyPosts')">내가 쓴 게시물</p>
         <p class="line text02" @click="navigateTo('CommentPosts')">
           내가 쓴 댓글
         </p>
@@ -53,26 +50,22 @@
                 alt="User Image"
               />
               <p class="user-info-name">{{ comment.userName }}</p>
-              <img
-                class="modify-icon"
-                src="@/assets/images/dot.png"
-                alt="dot"
-                @click="toggleActions(index)"
-              />
-              <PostActions
-                :visible="comment.showActions"
-                @navigate="handleNavigation"
-              />
             </div>
-            <div class="user-comment" @click="navigateTo('Post')">
-              {{ comment.content }}
+            <div class="user-comment">
+              <p class="post-title">게시글 : {{ comment.postTitle }}</p>
+              <p class="comment-content">{{ comment.content }}</p>
+              <p class="creation-date">{{ comment.creationDate }}</p>
             </div>
-            <div class="post-comment">
-              <p class="post-title">
-                게시글 : {{ comment.postTitle }}
-                <span class="creation-date">{{ comment.creationDate }}</span>
-              </p>
-            </div>
+            <img
+              class="modify-icon"
+              src="@/assets/images/dot.png"
+              alt="dot"
+              @click="toggleActions(index)"
+            />
+            <PostActions
+              :visible="comment.showActions"
+              @navigate="handleNavigation"
+            />
           </div>
         </div>
         <PagiNation
@@ -240,6 +233,7 @@ main {
   height: 100%;
   display: grid;
   grid-template-rows: 60px 150px 1fr;
+  margin-top: 60px;
 }
 
 .comment-null-block {
@@ -344,90 +338,76 @@ h2 {
 }
 
 .comment-bottom-table {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
 .bottom-table {
-  position: relative;
-  width: 615px;
-  height: 225px;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  margin-right: 41px;
-  margin-bottom: 50px;
-}
-
-.bottom-table:nth-child(2n) {
-  margin-right: 0px;
-}
-
-.comment-floor {
-  height: 50px; /* floor 영역 높이 설정 */
-  text-align: center;
-  padding: 20px;
-}
-
-.post-actions {
-  position: absolute;
-  top: 40px; /* 상단에서 20px 위치 */
-  right: -30px; /* 오른쪽에서 20px 위치 */
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 2;
-  display: flex; /* 버튼이 여러 개일 경우, flexbox로 배치할 수 있습니다 */
-  flex-direction: column; /* 버튼을 수직으로 배치 */
+  display: grid;
+  grid-template-columns: 60px 1fr 40px;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
 }
 
 .user-info {
   display: flex;
-  align-items: center;
-  margin-top: 25px;
-  margin-left: 10px;
+  flex-direction: column; /* 세로 방향으로 정렬 */
+  align-items: center; /* 가운데 정렬 */
 }
 
 .user-info-img {
   width: 50px;
-  height: 40px;
-  margin-left: 10px;
+  height: 50px;
+  border-radius: 50%;
+  margin-bottom: 5px; /* 이미지와 이름 사이에 간격 추가 */
 }
 
 .user-info-name {
-  font-size: 20px;
-  margin-left: 10px;
+  font-size: 16px;
   font-weight: bold;
 }
 
-.modify-icon {
-  width: 40px;
-  height: 40px;
-  margin-left: 415px;
-  cursor: pointer;
-}
-
 .user-comment {
-  font-size: 16px;
-  margin-left: 25px;
-  margin-right: 25px;
-  margin-top: 20px;
-  cursor: pointer;
-}
-
-.post-comment {
-  margin: 20px 0 10px 25px;
+  display: flex;
+  justify-content: space-between; /* 요소들 사이에 공간을 균등하게 배치 */
+  align-items: center;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  gap: 10px; /* 요소들 간의 간격을 좁히기 위해 추가 */
 }
 
 .post-title {
-  font-weight: lighter;
-  color: gray;
-  font-size: 14px;
+  font-weight: bold;
+  color: #555;
+  margin-right: 100px; /* 제목과 콘텐츠 사이 간격을 좁게 설정 */
+  margin-left: 50px;
+  white-space: nowrap; /* 제목이 길어지면 줄바꿈 없이 표시 */
+}
+
+.comment-content {
+  flex: 1; /* comment content가 가로 공간을 차지하도록 설정 */
+  /* margin-right: px; content와 date 사이 간격을 좁게 설정 */
+  /* text-align: center; content를 중앙 정렬 */
+  color: #333;
 }
 
 .creation-date {
-  margin-left: 305px;
+  font-size: 12px;
+  color: #999;
+  white-space: nowrap; /* 날짜가 줄바꿈 없이 표시 */
+  margin-right: 50px; /* date와 content 사이 간격을 좁게 설정 */
+}
+
+
+
+.modify-icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }
 </style>

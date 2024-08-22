@@ -80,7 +80,7 @@
         </div>
       </div>
     </div>
-    <PagiNation
+    <PagiNation class="pagination"
       :currentPage="currentPage"
       :totalPages="totalPages"
       @page-changed="onPageChange"
@@ -121,7 +121,7 @@ export default {
         createdAt: '6 days ago', 
         title: '부산 하구둑 인증합니다.^^', 
         content: '국토종주 마지막 날이였습니다...', 
-        topic: '러닝', location: '부산', scale: '소규모', 
+        topic: '라이딩', location: '부산', scale: '소규모', 
         likes: 72, comments: 17, 
         imageUrl: require('@/assets/images/riding-3.png'),
         isHeartFilled: false
@@ -296,7 +296,7 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100%;
-    margin-left: 70px;
+    margin-right: 0px;
   }
   
   .conversion {
@@ -549,7 +549,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     margin: 20px;
-    margin-top: 40px;
+    margin-top: 5px;
   }
   
   .search-input {
@@ -637,5 +637,12 @@ export default {
   /* 채워진 하트의 색상 */
   -webkit-text-stroke: none;
   /* 채워진 하트의 테두리 제거 */
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 650px;
 }
 </style>
