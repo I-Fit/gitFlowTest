@@ -328,7 +328,7 @@ import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useStore } from "vuex";
-import Pagination from "@/components/common/HomePagination.vue";
+import Pagination from "@/components/common/HomePagination";
 import { usePagination } from "@/utils/pagination";
 
 export default {
