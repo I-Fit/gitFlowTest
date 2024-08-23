@@ -69,7 +69,7 @@
           <div class="group-container"></div>
           <div class="group-container"></div>
         </div>
-        <PagiNation
+        <Pagination
             :currentPage="currentPage"
             :totalPages="totalPages"
             @page-changed="fetchLikegroups"
@@ -92,7 +92,7 @@ import AppNav from '@/components/layout/AppNav.vue';
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
-import PagiNation from "@/components/common/PagiNation.vue";
+import Pagination from "@/components/common/Pagination.vue";
 import { usePagination } from '@/utils/pagination';
 import axios from 'axios';
 
@@ -100,7 +100,7 @@ export default {
   name: "LikedGroups",
   components: {
     AppNav,
-    PagiNation,
+    Pagination,
   },
 
   data() {

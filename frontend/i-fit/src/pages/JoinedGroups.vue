@@ -95,7 +95,7 @@
           <div class="group-container"></div>
           <div class="group-container"></div>
         </div>
-        <PagiNation :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchJoins" />
+        <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchJoins" />
       </div>
       <div class="joinlist-floor">
       </div>
@@ -114,14 +114,14 @@ import AppNav from "@/components/layout/AppNav.vue";
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
-import PagiNation from "@/components/common/PagiNation.vue";
+import Pagination from "@/components/common/Pagination.vue";
 import { usePagination } from "@/utils/pagination";
 
 export default {
   name: "JoinedGroups",
   components: {
     AppNav,
-    PagiNation,
+    Pagination,
   },
   data() {
     return {

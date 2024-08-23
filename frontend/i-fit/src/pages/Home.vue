@@ -19,7 +19,7 @@
       <div class="filter">
         <div class="filter-list">
           <select class="list-select" title="운동 종목">
-            <option value="" selected disabled>운동 종목</option>
+            <option value="" selected disabled>운동</option>
           </select>
           <select class="list-select" title="장소" @click="fetchLocationData">
             <option value="" selected disabled>장소</option>
@@ -29,11 +29,11 @@
           </select>
           
           <div>
-            <VueDatePicker class="date-picker" placeholder="날짜 선택" locale="ko" v-model="date" :enable-time-picker="false" year-first="true" select-text="확인" cancel-text="취소" />
+            <VueDatePicker class="date-picker" placeholder="날짜" locale="ko" v-model="date" :enable-time-picker="false" year-first="true" select-text="확인" cancel-text="취소" />
           </div>
           
           <div>
-            <VueDatePicker class="time-picker" placeholder="시간 선택" locale="ko" v-model="time" time-picker select-text="확인" cancel-text="취소">
+            <VueDatePicker class="time-picker" placeholder="시간" locale="ko" v-model="time" time-picker select-text="확인" cancel-text="취소">
               <template #input-icon>
                 <img class="input-slot-image" src="@/assets/images/clock-icon.png"/>
               </template>
@@ -46,11 +46,11 @@
           </form>
         </div>
         <div class="sort">
-          <select class="sort-title" title="정렬">
+          <select class="sort-title" title="정렬" v-model="selectedOption">
             <option value="" selected disabled>정렬</option>
-            <option value="1">인기순</option>
-            <option value="2">최신순</option>
-            <option value="3">오래된순</option>
+            <option v-for="option in options" :key="option.value" :value="option.value">
+              {{ option.text }}
+            </option>
           </select>
         </div>
 
@@ -310,7 +310,7 @@
             </div>
           </div>
         </div>
-        <PagiNation :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" />
+        <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" />
       </div>
     </div>
     <!-- 모달 창 -->
@@ -328,13 +328,13 @@ import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useStore } from "vuex";
-import PagiNation from "@/components/common/HomePagiNation.vue";
+import Pagination from "@/components/common/HomePagination.vue";
 import { usePagination } from "@/utils/pagination";
 
 export default {
   name: "Home",
   components: {
-    PagiNation,
+    Pagination,
   },
 
   data() {
@@ -461,6 +461,14 @@ export default {
   setup() {
     const time = ref(null);
   
+    const selectedOption = ref('');
+    const options = ref([
+      // { value: '', text: '정렬' },
+      { value: '1', text: '인기순' },
+      { value: '2', text: '최신순' },
+      { value: '3', text: '오래된순' },
+    ])
+  
     const router = useRouter();
     const store = useStore();
     // 여러 모임 데이터 배열에 저장
@@ -530,6 +538,8 @@ export default {
     };
 
     return {
+      selectedOption,
+      options,
       time,
       groups,
       userId,
@@ -652,7 +662,7 @@ main {
   color: grey;
   background-color: #fff;
   border: 1px solid lightgrey;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
   /* box-sizing: border-box; */
   padding-right: 10px; /* 텍스트와 화살표 사이의 간격 확보 */
@@ -674,6 +684,10 @@ main {
   border: 1px solid lightgrey;
   font-size: 16px;
   cursor: pointer;
+}
+
+::v-deep .dp__input::placeholder {
+  font-size: 18px;
 }
 
 ::v-deep .dp__input {
@@ -707,6 +721,10 @@ main {
   border: 1px solid lightgrey;
   font-size: 16px;
   cursor: pointer;
+}
+
+::v-deep .vue__time-picker input.vue__time-picker-input::placeholder {
+  font-size: 18px;
 }
 
 .input-slot-image {
@@ -752,9 +770,9 @@ main {
   height: 40px;
   text-align: center;
   border-radius: 10px;
-  background-color: #fff;
+  background-color: #f5f5f5;
   color: grey;
-  border: 1px solid lightgrey;
+  border: 1px solid #ddd;
   box-sizing: border-box;
   font-size: 16px;
   cursor: pointer;
@@ -766,6 +784,12 @@ main {
   background-repeat: no-repeat;
   background-position: right 15px center; /* 아이콘 위치 조정 */
   background-size: 12px; /* 아이콘 크기 조정 */
+}
+
+.sort-title option {
+  background-color: #ffffff; /* 옵션 배경색 */
+  color: #333; /* 옵션 글자 색 */
+  padding: 10px; /* 옵션 내부 여백 */
 }
 
 /* 생성 모임 영역 */
@@ -932,7 +956,7 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
   align-items: center;

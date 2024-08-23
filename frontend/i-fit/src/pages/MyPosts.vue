@@ -56,7 +56,7 @@
             </div>
           </div>
         </div>
-        <PagiNation :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" />
+        <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" />
       </div>
       <div class="post-floor"></div>
     </div>
@@ -68,14 +68,14 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import PostActions from "@/components/common/PostActions.vue";
-import PagiNation from "@/components/common/PagiNation.vue";
+import Pagination from "@/components/common/Pagination.vue";
 import AppNav from "@/components/layout/AppNav.vue";
 import { usePagination } from "@/utils/pagination";
 
 export default {
   components: {
     PostActions,
-    PagiNation,
+    Pagination,
     AppNav,
   },
 

@@ -68,7 +68,7 @@
             />
           </div>
         </div>
-        <PagiNation
+        <Pagination
           :currentPage="currentPage"
           :totalPages="totalPages"
           @page-changed="fetchComments"
@@ -82,13 +82,13 @@
 import { defineComponent } from "vue";
 import PostActions from "@/components/common/PostActions.vue";
 import AppNav from "@/components/layout/AppNav.vue";
-import PagiNation from "@/components/common/PagiNation.vue";
+import Pagination from "@/components/common/Pagination.vue";
 
 export default defineComponent({
   components: {
     PostActions,
     AppNav,
-    PagiNation,
+    Pagination,
   },
 
   data() {

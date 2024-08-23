@@ -315,6 +315,7 @@ main {
   /* width: 100%; */
   height: 159px;
   align-items: center;
+  margin-left: 60px;
 }
 
 .top-image-box {
@@ -379,6 +380,7 @@ main {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  margin-left: 65px;
 }
 
 .left-section {
@@ -478,7 +480,7 @@ main {
   color: #fff;
   font-size: 15px;
   font-weight: bold;
-  margin-left: 840px;
+  margin-left: 850px;
   margin-top: -100px;
   cursor: pointer;
 }

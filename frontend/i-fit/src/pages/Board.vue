@@ -80,7 +80,7 @@
         </div>
       </div>
     </div>
-    <PagiNation class="pagination"
+    <Pagination class="pagination"
       :currentPage="currentPage"
       :totalPages="totalPages"
       @page-changed="onPageChange"
@@ -91,13 +91,13 @@
 <script>
 import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import PagiNation from "@/components/common/PagiNation.vue";
+import Pagination from "@/components/common/Pagination.vue";
 import { usePagination } from "@/utils/pagination";
 
 export default {
   name: 'Board',
   components: {
-    PagiNation,
+    Pagination,
   },
 
   setup() {
