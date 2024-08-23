@@ -93,7 +93,7 @@ footer {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  margin-right: 239px;
+  margin-right: 230px;
 }
 
 .name {
@@ -114,7 +114,7 @@ footer {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  margin-left: 197px;
+  margin-left: 270px;
   margin-top: 10px;
 }
 
