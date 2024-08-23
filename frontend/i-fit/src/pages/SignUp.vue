@@ -342,18 +342,22 @@ main {
 .signup-field {
   display: flex;
   width: 404px;
-  height: 35px;
+  height: 40x;
 }
 
 .signup-input {
   flex: 1;
   padding: 5px 0px 5px 10px;
   border: 1px solid rgba(0, 0, 0, 0.253);
-  border-radius: 10px;
+  border-radius: 0.1875rem;
   box-sizing: border-box;
   width: 100px;
-  height: 35px;
+  height: 40px;
   outline: none;
+}
+
+.signup-input:hover {
+  border: 1px solid black;
 }
 
 .signup-btn {
@@ -363,7 +367,7 @@ main {
   border: none;
   background-color: #007bff;
   color: white;
-  border-radius: 10px;
+  border-radius: 0.1875rem;
   cursor: pointer;
 }
 
@@ -426,7 +430,7 @@ input::placeholder {
   width: 200px;
   height: 40px;
   border: none;
-  border-radius: 10px;
+  border-radius: 0.1875rem;
   background-color: #007bff;
   color: white;
   cursor: pointer;

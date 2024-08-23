@@ -226,7 +226,7 @@ h1 {
 
 .finder-text {
   margin-top: 20px;
-  margin-bottom: 30px;
+  /* margin-bottom: 30px; */
   font-size: 15px;
   color: grey;
 }
@@ -249,19 +249,22 @@ h1 {
   display: flex;
   align-items: center;
   width: 404px;
-  height: 35px;
+  height: 40px;
 }
 
 .finder-field-input {
   flex: 1;
   padding: 5px 0 5px 10px;
   border: 1px solid rgba(0, 0, 0, 0.253);
-  border-radius: 10px;
+  border-radius: 0.1875rem;
   box-sizing: border-box;
-  margin-right: 10px;
   width: 100px;
-  height: 35px;
+  height: 40px;
   outline: none;
+}
+
+.finder-field-input:hover {
+  border: 1px solid black;
 }
 
 .finder-field-btn {
@@ -269,10 +272,12 @@ h1 {
   border: none;
   background-color: #007bff;
   color: white;
-  border-radius: 10px;
+  border-radius: 0.1875rem;
+  margin-left: 10px;
   font-size: 14px;
   cursor: pointer;
   font-weight: bold;
+  height: 39px;
 }
 
 input::placeholder {
@@ -293,7 +298,7 @@ input::placeholder {
   width: 100%;
   height: 46px;
   border: none;
-  border-radius: 10px;
+  border-radius: 0.1875rem;
   background-color: #1a73e8;
   color: white;
   margin-top: 20px;

@@ -25,10 +25,10 @@
             <img src="../assets/images/google.png" alt="구글 로그인" class="signup-social-images" />
           </button>
           <button type="submit" class="signup-social-btn" @click="signInNaver">
-            <img src="../assets/images/naver.png" alt="네이버 로그인" class="signup-social-images" />
+            <img src="../assets/images/naver-icon.png" alt="네이버 로그인" class="signup-social-images" />
           </button>
           <button type="submit" class="signup-social-btn" @click="signInKakao">
-            <img src="../assets/images/kakao.png" alt="카카오 로그인" class="signup-social-images" />
+            <img src="../assets/images/kakao-icon.png" alt="카카오 로그인" class="signup-social-images" />
           </button>
         </div>
         <p class="signup-account">
@@ -125,7 +125,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid rgba(0, 0, 0, 0.164);
+  border: 1px solid rgba(0, 0, 0, 0.247);
 }
 
 h1 {
@@ -162,12 +162,16 @@ h1 {
   flex: 1;
   padding: 5px 0px 5px 10px;
   border: 1px solid rgba(0, 0, 0, 0.253);
-  border-radius: 10px;
+  border-radius: 0.1875rem;
   box-sizing: border-box;
   margin-right: 10px;
   width: 100px;
-  height: 35px;
+  height: 40px;
   outline: none;
+}
+
+.signup-field-input:hover {
+  border: 1px solid black;
 }
 
 .signup-id-find {
@@ -186,9 +190,9 @@ h1 {
 
 .signup-sign-in-btn {
   width: 394px;
-  height: 35px;
-  margin-top: 20px;
-  border-radius: 10px;
+  height: 40px;
+  margin-top: 40px;
+  border-radius: 0.1875rem;
   border: 1px solid;
   text-align: center;
   background-color: #1a73e8;
@@ -201,25 +205,27 @@ h1 {
   margin-top: 30px;
   display: flex;
   justify-content: space-between;
+  width: 394px;
 }
 
 .signup-social-btn {
-  width: 55px;
-  height: 50px;
+  width: 56px;
+  height: 52px;
   display: flex;
   align-items: center;
   border: none;
   cursor: pointer;
   background-color: white;
-  border-radius: 10px;
-  margin: 0 7px;
+  border-radius: 100%;
   font-weight: bold;
 }
 
 .signup-social-images {
-  width: 60px;
-  height: 48px;
-  border-radius: 10px;
+  /* width: 60px; */
+  width: 100%;
+  /* height: 48px; */
+  height: 100%;
+  border-radius: 100%;
 }
 
 .signup-account {

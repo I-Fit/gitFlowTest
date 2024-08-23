@@ -8,7 +8,6 @@
           <label class="finder-label" for="id">이름</label>
           <div class="finder-field">
             <input type="text" id="id" name="id" placeholder="이름을 입력하세요." class="finder-field-input" v-model="name" />
-            <button class="finder-field-btn" type="submit">확인</button>
           </div>
         </div>
         <div class="finder-email input-block">
@@ -189,19 +188,22 @@ main {
   display: flex;
   text-align: center;
   width: 404px;
-  height: 35px;
+  height: 40px;
 }
 
 .finder-field-input {
   flex: 1;
   padding: 5px 0px 5px 10px;
   border: 1px solid rgba(0, 0, 0, 0.253);
-  border-radius: 10px;
+  border-radius: 0.1875rem;
   box-sizing: border-box;
-  margin-right: 10px;
   width: 100px;
-  height: 35px;
+  height: 40px;
   outline: none;
+}
+
+.finder-field-input:hover {
+  border: 1px solid black;
 }
 
 .finder-field-btn {
@@ -209,13 +211,10 @@ main {
   border: none;
   background-color: #007bff;
   color: white;
-  border-radius: 10px;
+  border-radius: 0.1875rem;
+  margin-left: 10px;
   cursor: pointer;
   font-weight: bold;
-}
-
-.at {
-  margin-top: 6px;
 }
 
 .finder-domain {
@@ -240,7 +239,7 @@ h1 {
   width: 404px;
   height: 40px;
   margin-top: 40px;
-  border-radius: 10px;
+  border-radius: 0.1875rem;
   border: 1px solid;
   background-color: #1a73e8;
   color: white;

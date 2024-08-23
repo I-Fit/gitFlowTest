@@ -31,30 +31,33 @@
           <input
             class="input-framebox" 
             v-model="sportInput" 
-            @keydown.enter="handleEnterKey" 
+            @keydown.enter="handleEnterKey"
+            @click="setSport" 
             type="text" 
             placeholder="운동 종목을 입력하세요." />
-          <button class="frame-btn" @click="setSport">확인</button>
+          <!-- <button class="frame-btn" @click="setSport">확인</button> -->
         </div>
         <p class="category-text">Choose location</p>
         <div class="feature-input">
           <input 
             class="input-framebox" 
             v-model="locationInput" 
-            @keydown.enter="handleEnterKey" 
+            @keydown.enter="handleEnterKey"
+            @click="setLocation"
             type="text" 
             placeholder="위치를 검색하세요." />
-          <button class="frame-btn" @click="setLocation">확인</button>
+          <!-- <button class="frame-btn" @click="setLocation">확인</button> -->
         </div>
         <p class="category-text">Choose group size</p>
         <div class="feature-input">
           <input 
             class="input-framebox" 
-            v-model="personInput" 
+            v-model="personInput"
+            @click="setPerson" 
             @keydown.enter="handleEnterKey" 
             type="text" 
             placeholder="인원을 입력하세요." />
-          <button class="frame-btn" @click="setPerson">확인</button>
+          <!-- <button class="frame-btn" @click="setPerson">확인</button> -->
         </div>
         <button class="feature-modify" @click="confirmSubmit">작성 완료</button>
       </div>
@@ -381,33 +384,19 @@ input {
 
 .feature-input {
   width: 404px;
-  height: 35px;
+  height: 40px;
   display: flex;
   margin: 5px 0px 15px 0;
   align-items: center;
 }
 
 .input-framebox {
-  width: 245px;
-  height: 35px;
+  width: 303px;
+  height: 40px;
   border: 1px solid #ccc;
-  border-radius: 10px;
-  margin: 5px 5px 5px 0px;
+  border-radius: 0.1875rem;
+  margin: 5px 5px 5px 4px;
   padding: 5px 0px 5px 10px;
-}
-
-.frame-btn {
-  width: 60px;
-  height: 35px;
-  background-color: #1a73e8;
-  border-radius: 10px;
-  border: none;
-  color: white;
-  font-size: 13.3333px;
-  font-weight: bold;
-  padding: 8px 16px;
-  margin-left: 5px;
-  cursor: pointer;
 }
 
 .category-text {
@@ -420,7 +409,7 @@ input {
   width: 323px;
   height: 40px;
   border: none;
-  border-radius: 10px;
+  border-radius: 0.1875rem;
   background-color: #1a73e8;
   color: white;
   font-size: 20px;

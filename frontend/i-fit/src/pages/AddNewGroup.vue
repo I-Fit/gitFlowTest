@@ -6,7 +6,9 @@ tap<template>
           <textarea v-model="title" placeholder="제목을 입력하세요."></textarea>
         </div>
         <div class="topwrap-box" role="textbox">
-          <div class="topbox-content" contenteditable="true" ref="topboxContent" @input="updateTopboxContent">
+          <div class="topbox-content" contenteditable="true" 
+            data-placeholder="생성할 모임의 상세설명을 작성해주세요." ref="topboxContent"
+            @input="updateTopboxContent">
           </div>
         </div>
         <div class="topwrap-tag">
@@ -23,43 +25,24 @@ tap<template>
           </button>
         </div>
         <div class="category-input">
-          <input 
-            class="input-event" 
-            v-model="sportInput" 
-            @keydown.enter="handleEnterKey" 
-            type="text" 
+          <input class="input-event" v-model="sportInput" @keydown.enter="handleEnterKey" @click="setSport" type="text"
             placeholder="운동 종목을 입력하세요." />
-          <button class="input-button" @click="setSport">확인</button>
         </div>
         <p class="category-text">Choose Location</p>
         <div class="category-input">
-          <input 
-            class="input-event" 
-            v-model="locationInput" 
-            @keydown.enter="handleEnterKey" 
-            type="text" 
-            placeholder="위치를 검색하세요." />
-          <button class="input-button" @click="setLocation">확인</button>
+          <input class="input-event" v-model="locationInput" @keydown.enter="handleEnterKey" @click="setLocation"
+            type="text" placeholder="위치를 검색하세요." />
         </div>
         <p class="category-text">Choose Date and Time</p>
         <div class="category-date">
-          <VueDatePicker 
-            locale="ko"
-            time-picker-inline
-            v-model="date" 
-            @change="updateFormData" 
+          <VueDatePicker locale="ko" time-picker-inline v-model="date" @change="updateFormData"
             class="input-datepicker">
           </VueDatePicker>
         </div>
         <p class="category-text">Choose Group Size</p>
         <div class="category-input">
-          <input 
-            class="input-event" 
-            v-model="personInput" 
-            @keydown.enter="handleEnterKey" 
-            type="text" 
-            placeholder="인원을 입력하세요." />
-          <button class="input-button" @click="setPerson">확인</button>
+          <input class="input-event" v-model="personInput" @keydown.enter="handleEnterKey" @click="setPerson"
+            type="text" placeholder="인원을 입력하세요." />
         </div>
         <button class="category-register" @click="registerGroup">등록</button>
       </div>
@@ -123,7 +106,7 @@ export default {
       "필라테스",
       "GX",
     ];
-    
+
     watch(date, (newDate) => {
       formData.date = newDate;
     });
@@ -158,7 +141,7 @@ export default {
       formData.person = personInput.value;
     };
 
-    
+
 
     // 사용자 식별 Id값도 formData에 추가해서 서버에 보내줘야 한다.
     // 모임 식별 Id값은 서버에서 만들어서 다시 응답해주는 형식?
@@ -274,6 +257,23 @@ main {
   cursor: text;
   border: none;
   overflow-y: scroll;
+  position: relative;
+}
+
+.topbox-content::before {
+  content: attr(data-placeholder);
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  color: gray;
+  padding: 0 5px;
+  font-size: 18px; /* Placeholder 텍스트의 폰트 크기를 조정합니다 */
+  transition: opacity 0.2s ease;
+}
+
+.topbox-content:not(:empty)::before {
+  opacity: 0;
 }
 
 .topbox-content::-webkit-scrollbar {
@@ -362,10 +362,10 @@ main {
 }
 
 .input-event {
-  width: 245px;
-  height: 35px;
+  width: 303px;
+  height: 40px;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 0.1875rem;
   margin: 5px 5px 5px 4px;
   padding: 5px 0px 5px 10px;
 }
@@ -373,7 +373,7 @@ main {
 .input-datepicker {
   margin: 0px;
   padding: 0px;
-  width: 245px;
+  width: 303px;
   height: 35px;
   border-radius: 10px !important;
   border: none;
@@ -428,10 +428,10 @@ input::placeholder {
 
 .category-register {
   margin-top: 115px;
-  width: 323px;
+  width: 307px;
   height: 40px;
   border: none;
-  border-radius: 10px;
+  border-radius: 0.1875rem;
   background-color: #1a73e8;
   color: white;
   font-size: 20px;
