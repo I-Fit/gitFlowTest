@@ -42,6 +42,7 @@
             class="bottom-table"
             v-for="(comment, index) in paginatedComments"
             :key="index"
+            @click="navigateToPost(comment.postId, comment.id)"
           >
             <div class="user-info">
               <img
@@ -56,27 +57,33 @@
               <p class="comment-content">{{ comment.content }}</p>
               <p class="creation-date">{{ comment.creationDate }}</p>
             </div>
-            <img
-              class="modify-icon"
-              src="@/assets/images/dot.png"
-              alt="dot"
-              @click="toggleActions(index)"
-            />
-            <PostActions
-              :visible="comment.showActions"
-              @navigate="handleNavigation"
-            />
+            <div class="relative-container">
+              <img
+                class="modify-icon"
+                src="@/assets/images/dot.png"
+                alt="dot"
+                @click.stop="toggleActions(index)"
+              />
+              <PostActions
+                :visible="comment.showActions"
+                @navigate="handleNavigation"
+                class="post-actions"
+              />
+            </div>
           </div>
         </div>
-        <Pagination
-          :currentPage="currentPage"
-          :totalPages="totalPages"
-          @page-changed="fetchComments"
-        />
+        <div class="pagination-container">
+          <Pagination
+            :currentPage="currentPage"
+            :totalPages="totalPages"
+            @page-changed="fetchComments"
+          />
+        </div>
       </div>
     </div>
   </main>
 </template>
+
 
 <script>
 import { defineComponent } from "vue";
@@ -96,6 +103,7 @@ export default defineComponent({
       searchQuery: "",
       comments: [
         {
+          id: 1,
           userName: "김계란",
           content: "감사합니다! 열심히 했어요!!",
           postTitle: "종주할 때 사진 모아봤습니다.",
@@ -104,6 +112,7 @@ export default defineComponent({
         },
 
         {
+          id: 2,
           userName: "김계란",
           content: "5일 걸렸습니다.",
           postTitle: "종주할 때 사진 모아봤습니다.",
@@ -112,6 +121,7 @@ export default defineComponent({
         },
 
         {
+          id: 3,
           userName: "김계란",
           content: "시원할 때, 다시 해보고 싶네요.",
           postTitle: "종주할 때 사진 모아봤습니다.",
@@ -120,6 +130,7 @@ export default defineComponent({
         },
 
         {
+          id: 4,
           userName: "김계란",
           content: "일정 넉넉하게 잡으시면 누구든 가능합니다! 도전 ㄱㄱ",
           postTitle: "종주할 때 사진 모아봤습니다.",
@@ -128,6 +139,7 @@ export default defineComponent({
         },
 
         {
+          id: 5,
           userName: "김계란",
           content: "댓글 남겨주셔서 감사합니다. 이따가 댓글 달아볼게요.",
           postTitle: "종주할 때 사진 모아봤습니다.",
@@ -136,6 +148,7 @@ export default defineComponent({
         },
 
         {
+          id: 6,
           userName: "김계란",
           content: "제 능력으로 3일 컷은 무리입니다 ㅋㅋ",
           postTitle: "종주할 때 사진 모아봤습니다.",
@@ -144,6 +157,16 @@ export default defineComponent({
         },
 
         {
+          id: 7,
+          userName: "김계란",
+          content: "기분이 좋으시군요 ㅋㅋㅋ",
+          postTitle: "종주할 때 사진 모아봤습니다.",
+          creationDate: "6일 전",
+          showActions: false,
+        },
+
+        {
+          id: 8,
           userName: "김계란",
           content: "마지막날 200km 달렸고요.. 다른 날들은 100km 정도로..",
           postTitle: "종주할 때 사진 모아봤습니다.",
@@ -152,6 +175,7 @@ export default defineComponent({
         },
 
         {
+          id: 9,
           userName: "김계란",
           content: "예전에 신청해서 받았어요!",
           postTitle: "종주할 때 사진 모아봤습니다.",
@@ -160,16 +184,9 @@ export default defineComponent({
         },
 
         {
+          id: 10,
           userName: "김계란",
           content: "조만간 같이 공 찹시다 ㅋㅋ",
-          postTitle: "종주할 때 사진 모아봤습니다.",
-          creationDate: "6일 전",
-          showActions: false,
-        },
-
-        {
-          userName: "김계란",
-          content: "기분이 좋으시군요 ㅋㅋㅋ",
           postTitle: "종주할 때 사진 모아봤습니다.",
           creationDate: "6일 전",
           showActions: false,
@@ -212,6 +229,11 @@ export default defineComponent({
     navigateTo(routeName) {
       this.$router.push({ name: routeName });
     },
+
+    navigateToPost(postId, commentId) {
+      this.$router.push({ name: 'Post', query: { commentId }});
+    },
+
     fetchComments(page) {
       this.currentPage = page;
       console.log("Fetching comments for page:", page);
@@ -308,6 +330,7 @@ h2 {
   padding: 5px;
   width: 250px;
   margin-left: 906px;
+  margin-top: 180px;
 }
 
 .search-box-input {
@@ -335,12 +358,14 @@ h2 {
   background-color: #fff !important;
   text-align: center;
   font-weight: lighter;
+  margin-top: 180px;
 }
 
 .comment-bottom-table {
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
+  margin-top: 90px;
 }
 
 .bottom-table {
@@ -403,11 +428,26 @@ h2 {
   margin-right: 50px; /* date와 content 사이 간격을 좁게 설정 */
 }
 
-
+.relative-container {
+  position: relative;
+  display: inline-block;
+}
 
 .modify-icon {
   width: 20px;
   height: 20px;
   cursor: pointer;
+}
+
+.post-actions {
+  position: absolute;
+  top: 5px;
+  left: 20px;
+  z-index: 10;
+  /* 클릭 우선순위 조정 */
+}
+
+.pagination-container {
+  margin-top: 153px;
 }
 </style>

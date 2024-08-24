@@ -24,9 +24,13 @@
         <div class="post-bottom-table">
           <div class="bottom-table-group" v-for="post in visibleDatas" :key="post.id">
             <div class="table-group-del">
-              <img id="modify_icon" :src="require('@/assets/images/dot.png')" alt="dot"
-                @click="toggleActions(post.id)" />
-              <PostActions :visible="showActionsForPostId(post.id)" @navigate="handleNavigation" />
+              <img id="modify_icon" 
+                    :src="require('@/assets/images/dot.png')" 
+                      alt="dot"
+                      @click="toggleActions(post.id)" />
+              <PostActions 
+                :visible="showActionsForPostId(post.id)" 
+                @navigate="handleNavigation" />
             </div>
             <div class="table-group-postimg">
               <img class="table-group-post-img" :src="post.image" alt="게시글 이미지" @click="detailPost2" />

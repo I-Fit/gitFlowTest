@@ -35,7 +35,9 @@
       <div class="content-images">
         <img src="@/assets/images/riding-1.png" alt="" />
       </div>
-      <p class="">힘들었지만, 보람된 시간이였습니다.</p>
+
+      <!-- 줄 바꿈이나 다른 html 태그가 그대로 렌더링된다 -->
+      <div class="content-box" v-html="formattedContent"></div>
 
       <!-- 주제 -->
       <div class="content-topic">
@@ -51,12 +53,16 @@
             class="table-item comment-container"
             v-for="(comment, index) in comments"
             :key="index"
+            :id="'comment-' + index"
+            :class="{ 'highlighted': index === highlightedCommentIndex }"
           >
-            <div :class="{ 'author-comment': comment.user === postAuthor }">
-              <div class="comment-header">
-                <div class="item-user">{{ comment.user }}</div>
-                <div class="reply-button" @click="toggleReplyInput(index)">
-                  댓글 달기
+            <div @click="navigateToPost(postId, index)">
+              <div :class="{ 'author-comment': comment.user === postAuthor }">
+                <div class="comment-header">
+                  <div class="item-user">{{ comment.user }}</div>
+                  <div class="reply-button" @click="toggleReplyInput(index)">
+                    댓글 달기
+                  </div>
                 </div>
               </div>
               <div class="item-text">{{ comment.text }}</div>
@@ -101,8 +107,8 @@
 </template>
 
 <script>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import PostActions from "@/components/common/PostActions.vue";
 
 export default {
@@ -113,108 +119,107 @@ export default {
 
   setup() {
     const router = useRouter();
+    const route = useRoute();
+    const highlightedCommentIndex = ref(null);
     const postAuthor = "김계란";
     const comment = ref("");
     const isHeartFilled = ref(false);
     const showActions = ref(false);
     const replyInputs = ref({});
+    const rawContent = ref("힘들었지만, 보람된 시간이였습니다.");
+
+    const formattedContent = computed(() => {
+      return rawContent.value;
+    });
+
     const comments = ref([
       {
         user: "밤편지",
         text: "대단하십니다.",
         replies: [
-          { user: "김계란", text: "감사합니다! 열심히 했어요!!"}
+          { user: "김계란", text: "감사합니다! 열심히 했어요!!" }
         ],
         replyText: "",
       },
-      
       {
         user: "wimper",
         text: "며칠 걸리셨나요??",
         replies: [
-        { user: "김계란", text: "5일 걸렸습니다."}
+          { user: "김계란", text: "5일 걸렸습니다." }
         ],
         replyText: "",
       },
-      
       {
         user: "건넛",
         text: "담에 또 하실건가요? +_+",
         replies: [
-        { user: "김계란", text: "시원할 때, 다시 해보고 싶네요."}
+          { user: "김계란", text: "시원할 때, 다시 해보고 싶네요." }
         ],
         replyText: "",
       },
-
       {
         user: "qwer",
         text: "저도! 한번 도전해보고 싶어요!! +_+",
         replies: [
-        { user: "김계란", text: "일정 넉넉하게 잡으시면 누구든 가능합니다! 도전 ㄱㄱ"}
+          { user: "김계란", text: "일정 넉넉하게 잡으시면 누구든 가능합니다! 도전 ㄱㄱ" }
         ],
         replyText: "",
       },
-
       {
         user: "김계란",
         text: "댓글 남겨주셔서 감사합니다. 이따가 댓글 달아볼게요.",
         replies: [],
         replyText: "",
       },
-
       {
         user: "한강교차로인간",
         text: "3일 컷은 했었야지~",
         replies: [
-        { user: "김계란", text: "제 능력으로 3일 컷은 무리입니다 ㅋㅋ"}
+          { user: "김계란", text: "제 능력으로 3일 컷은 무리입니다 ㅋㅋ" }
         ],
         replyText: "",
       },
-
       {
         user: "좋으면짖는개",
         text: "왈왈 크르르릉 왈왈!!",
-        replies: [],
+        replies: [
+          { user: "김계란", text: "기분이 좋으시군요 ㅋㅋㅋ" }
+        ],
         replyText: "",
       },
-
       {
         user: "박일두",
         text: "거리 어떻게 배분하셨나요??",
         replies: [
-        { user: "김계란", text: "마지막날 200km 달렸고요.. 다른 날들은 100km 정도로.."}
+          { user: "김계란", text: "마지막날 200km 달렸고요.. 다른 날들은 100km 정도로.." }
         ],
         replyText: "",
       },
-
       {
         user: "냉카",
         text: "종주 인증 메달이랑 인증서 신청하셨나요?",
         replies: [
-        { user: "김계란", text: "예전에 신청해서 받았어요!"}
+          { user: "김계란", text: "예전에 신청해서 받았어요!" }
         ],
         replyText: "",
       },
-
       {
         user: "vivamondo",
         text: "나도 하고 싶다.",
         replies: [],
         replyText: "",
       },
-
       {
         user: "ilcapitano",
         text: "준비했던 물품들 알려주세요~ ^^",
         replies: [],
         replyText: "",
       },
-
       {
         user: "외데가르드",
         text: "공 차러 나와~",
         replies: [
-        { user: "김계란", text: "조만간 같이 공 찹시다 ㅋㅋ"}
+          { user: "김계란", text: "조만간 같이 공 찹시다 ㅋㅋ" }
         ],
         replyText: "",
       },
@@ -258,7 +263,6 @@ export default {
     };
 
     const toggleReplyInput = (index) => {
-      // 기존 입력폼 숨기기
       Object.keys(replyInputs.value).forEach((key) => {
         if (parseInt(key) !== index) {
           replyInputs.value[key] = false;
@@ -285,7 +289,28 @@ export default {
       toggleReplyInput(index);
     };
 
+    const scrollToComment = (commentId) => {
+      const element = document.getElementById(commentId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+        highlightedCommentIndex.value = parseInt(commentId.split('-')[1]);
+        setTimeout(() => {
+          highlightedCommentIndex.value = null;
+        }, 2000); // 강조 효과 2초간 유지
+      } else {
+        console.warn(`Element with id ${commentId} not found`);
+      }
+    };
+
+    onMounted(() => {
+      const commentId = route.query.commentId;
+      if (commentId) {
+        scrollToComment('comment-' + commentId);
+      }
+    });
+
     return {
+      formattedContent,
       postAuthor,
       comment,
       isHeartFilled,
@@ -300,10 +325,13 @@ export default {
       toggleReplyInput,
       checkReplyEnter,
       submitReply,
+      highlightedCommentIndex,
+      scrollToComment,
     };
   },
 };
 </script>
+
 
 
 <style scoped>
@@ -402,6 +430,10 @@ input {
 
 .h1 {
   flex: 1;
+}
+
+.content-box {
+  white-space: pre-wrap; /*줄 바꿈과 공백 유지*/
 }
 
 .title-heart {
@@ -616,5 +648,10 @@ input {
   border-left: 3px solid #00796b;
   padding-left: 10px;
   margin-top: 5px;
+}
+
+.highlighted {
+  border: 2px solid red; /* 강조 스타일 추가 */
+  background-color: #fdd; /* 강조 스타일 추가 */
 }
 </style>

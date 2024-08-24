@@ -87,6 +87,7 @@ export default {
   font-size: 14px;
 }
 
+
 .modal {
   position: fixed;
   top: 0;

@@ -5,10 +5,10 @@
         <div class="content-changeimages">
           <div class="changeimages-icon" @click="triggerFileInput"></div>
           <span>이미지 변경</span>
-          <input type="file" ref="fileInput" @change="onFileChange" accept="images/*" multiple style="display: none;" />
+          <input type="file" ref="fileInput" @change="onFileChange" accept="image/*" multiple style="display: none;" />
         </div>
         <div class="content-title">
-          <textarea v-model="title" placeholder="제목을 입력하세요."></textarea>
+          <textarea v-model="formData.title" placeholder="제목을 입력하세요."></textarea>
         </div>
         <div class="content-box" ref="contentBox" contenteditable="true" @input="onContentInput">
         </div>
@@ -24,7 +24,7 @@
             <button class="category-tag" type="button" v-for="category in categories" :key="category"
             :class="{ selected: formData.sport === category }" @click="selectCategory(category)">
             {{ category }}
-          </button>
+            </button>
           </div>
         </div>
         <div class="feature-input">
@@ -35,7 +35,6 @@
             @click="setSport" 
             type="text" 
             placeholder="운동 종목을 입력하세요." />
-          <!-- <button class="frame-btn" @click="setSport">확인</button> -->
         </div>
         <p class="category-text">Choose location</p>
         <div class="feature-input">
@@ -46,7 +45,6 @@
             @click="setLocation"
             type="text" 
             placeholder="위치를 검색하세요." />
-          <!-- <button class="frame-btn" @click="setLocation">확인</button> -->
         </div>
         <p class="category-text">Choose group size</p>
         <div class="feature-input">
@@ -57,7 +55,6 @@
             @keydown.enter="handleEnterKey" 
             type="text" 
             placeholder="인원을 입력하세요." />
-          <!-- <button class="frame-btn" @click="setPerson">확인</button> -->
         </div>
         <button class="feature-modify" @click="confirmSubmit">작성 완료</button>
       </div>
@@ -67,7 +64,7 @@
 
 <script>
 import axios from 'axios';
-import { toRaw, ref, reactive } from 'vue';
+import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -83,17 +80,18 @@ export default {
     const locationInput = ref('');
     const personInput = ref('');
     const selectedCategory = ref(null);
+    const files = ref([]);
 
     const formData = reactive({
       title: '',
       sport: '종목',
       location: '',
       person: '',
-      date: '',
+      content: '',
       userId: store.getters.userId || '', // Vuex에서 userId 가져오기
     });
 
-    console.log(toRaw(formData));
+    console.log(formData);
 
     const categories = [
       '러닝', '웨이트', 
@@ -109,10 +107,12 @@ export default {
     };
 
     const onFileChange = (event) => {
-      const files = event.target.files;
+      files.value = event.target.files;
       const contentBox = document.querySelector('.content-box');
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+      contentBox.innerHTML = ''; // 기존 이미지 제거
+
+      for (let i = 0; i < files.value.length; i++) {
+        const file = files.value[i];
         const reader = new FileReader();
         reader.onload = (e) => {
           const img = document.createElement('img');
@@ -160,27 +160,35 @@ export default {
       }
     };
 
-    const submitData = () => {
+    const submitData = async () => {
       const userId = store.getters['isLogged/userId'];
 
-      const data = {
-        userId: userId,
-        title: formData.title,
-        content: formData.content,
-        imagess: [], // 이미지를 다룰 로직 추가해야함
-        category: formData.sport,
-        location: formData.location,
-        groupSize: formData.person,
-      };
+      // FormData 객체 생성
+      const data = new FormData();
+      data.append('userId', userId);
+      data.append('title', formData.title);
+      data.append('content', formData.content);
+      data.append('category', formData.sport);
+      data.append('location', formData.location);
+      data.append('groupSize', formData.person);
 
-      axios.post('/api/posts/modify', data)
-        .then((response) => {
-          console.log('Data submitted successfully:', response.data);
-          router.push({ name: 'Post', query: { content: encodeURIComponent(formData.content)} });
-        })
-        .catch((error) => {
-          console.error('Error submitting data:', error);
+      // 이미지 파일들을 FormData에 추가
+      for (let i = 0; i < files.value.length; i++) {
+        data.append('files', files.value[i]);
+      }
+
+      try {
+        // 서버로 FormData 전송
+        const response = await axios.post('/api/posts/modify', data, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         });
+        console.log('Data submitted successfully:', response.data);
+        router.push({ name: 'Post', query: { content: encodeURIComponent(formData.content)} });
+      } catch (error) {
+        console.error('Error submitting data:', error);
+      }
     };
 
     return {
@@ -189,6 +197,7 @@ export default {
       locationInput,
       personInput,
       selectedCategory,
+      files,
       formData,
       categories,
       triggerFileInput,
@@ -200,10 +209,12 @@ export default {
       setLocation,
       setPerson,
       confirmSubmit,
+      submitData,
     };
   }
 };
 </script>
+
 
 <style scoped>
 main {
@@ -296,6 +307,9 @@ input {
   border: 1px solid #eee;
   border-radius: 10px;
   padding: 10px;
+  /* white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word; */
 }
 
 .content-topic {
