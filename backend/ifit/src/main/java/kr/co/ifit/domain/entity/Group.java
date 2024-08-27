@@ -8,8 +8,9 @@ import java.time.LocalDateTime;
 
 @Setter
 @Getter
+@Entity
 @Table(name = "Community")
-public class AddGroup {
+public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,12 +39,12 @@ public class AddGroup {
     private User user;
 
     //    기본 생성자
-    public AddGroup() {
+    public Group() {
 
     }
 
     //    파라미터가 있는 생성자
-    public AddGroup(String title, String topboxContent, String sport, String location, Integer person, LocalDateTime date, User user) {
+    public Group(String title, String topboxContent, String sport, String location, Integer person, LocalDateTime date, User user) {
         this.title = title;
         this.topboxContent = topboxContent;
         this.sport = sport;

@@ -1,6 +1,6 @@
 package kr.co.ifit.respository;
 
-import kr.co.ifit.domain.entity.AddGroup;
+import kr.co.ifit.domain.entity.Group;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MemoryGroupResositoryTest {
 
-    MemoryGroupRespository respository = new MemoryGroupRespository();
+    MemoryGroupRepository respository = new MemoryGroupRepository();
 
     @AfterEach
     public void afterEach() {
@@ -18,54 +18,54 @@ public class MemoryGroupResositoryTest {
 
     @Test
     public void test() {
-        AddGroup addGroup = new AddGroup();
-        addGroup.setTitle("같이 운동하실?");
-        addGroup.setSport("수영");
-        addGroup.setLocation("강남");
-        addGroup.setPerson(12);
-        addGroup.setTopboxContent("내일 운동하실 분 구함");
-        addGroup.setUserId(2);
+        Group group = new Group();
+        group.setTitle("같이 운동하실?");
+        group.setSport("수영");
+        group.setLocation("강남");
+        group.setPerson(12);
+        group.setTopboxContent("내일 운동하실 분 구함");
+        group.setUserId(2);
 
-        respository.save(addGroup);
+        respository.save(group);
 
-        AddGroup addGroup1 = respository.findById(addGroup.getCommunityId()).get();
-        Assertions.assertEquals(addGroup, addGroup1);
+        Group group1 = respository.findById(group.getCommunityId()).get();
+        Assertions.assertEquals(group, group1);
     }
 
     @Test
     public void findByName() {
-        AddGroup addGroup1 = new AddGroup();
-        addGroup1.setTitle("같이 운동하실?");
-        addGroup1.setSport("수영");
-        addGroup1.setLocation("강남");
-        addGroup1.setPerson(12);
-        addGroup1.setTopboxContent("내일 운동하실 분 구함");
-        addGroup1.setUserId(2);
-        respository.save(addGroup1);
+        Group group1 = new Group();
+        group1.setTitle("같이 운동하실?");
+        group1.setSport("수영");
+        group1.setLocation("강남");
+        group1.setPerson(12);
+        group1.setTopboxContent("내일 운동하실 분 구함");
+        group1.setUserId(2);
+        respository.save(group1);
 
-        AddGroup addGroup2 = new AddGroup();
-        addGroup2.setTitle("같이 운동하실?");
-        addGroup2.setSport("수영");
-        addGroup2.setLocation("강남");
-        addGroup2.setPerson(12);
-        addGroup2.setTopboxContent("내일 운동하실 분 구함");
-        addGroup2.setUserId(2);
-        respository.save(addGroup2);
+        Group group2 = new Group();
+        group2.setTitle("같이 운동하실?");
+        group2.setSport("수영");
+        group2.setLocation("강남");
+        group2.setPerson(12);
+        group2.setTopboxContent("내일 운동하실 분 구함");
+        group2.setUserId(2);
+        respository.save(group2);
 
-        AddGroup result = respository.findById(2).get();
-        Assertions.assertEquals(addGroup2, result);
+        Group result = respository.findById(2).get();
+        Assertions.assertEquals(group2, result);
     }
 
     @Test
     public void findAll() {
-        AddGroup addGroup1 = new AddGroup();
-        addGroup1.setTitle("1231");
-        respository.save(addGroup1);
-        AddGroup addGroup2 = new AddGroup();
-        addGroup2.setTitle("1232");
-        respository.save(addGroup2);
+        Group group1 = new Group();
+        group1.setTitle("1231");
+        respository.save(group1);
+        Group group2 = new Group();
+        group2.setTitle("1232");
+        respository.save(group2);
 
-        List<AddGroup> result = respository.findAll();
+        List<Group> result = respository.findAll();
         Assertions.assertEquals(2, result.size());
     }
 }

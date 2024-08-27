@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Setter
 @Getter
-public class AddGroupDTO {
+public class GroupDTO {
     private String title;
     private String topboxContext;
     private String sport;
