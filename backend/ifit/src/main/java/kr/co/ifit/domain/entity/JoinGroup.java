@@ -22,11 +22,11 @@ public class JoinGroup {
     // 다대일 관계를 정의 : 하나의 join은 하나의 user와 하나의 group에 속한다?
     // 외래키 정의
     @ManyToOne
-    @Column(name = "userId", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
     @ManyToOne
-    @Column(name = "communityId", nullable = false)
+    @JoinColumn(name = "communityId", nullable = false)
     private Group group;
 
     public JoinGroup() {

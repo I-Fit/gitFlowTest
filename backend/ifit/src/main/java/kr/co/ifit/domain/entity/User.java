@@ -52,12 +52,11 @@ public class User {
         this.modifiedAt = LocalDateTime.now();
     }
 
-    @PrePersist
+    //    @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
-    @PrePersist
     protected void onUpdate() {
         this.modifiedAt = LocalDateTime.now();
     }
