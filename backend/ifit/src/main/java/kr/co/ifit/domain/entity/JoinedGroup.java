@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Entity
-@Table(name = "Join")   // 데이터베이스 테이블과 매핑된다
+@Table(name = "`Join`")   // 데이터베이스 테이블과 매핑된다
 public class JoinedGroup {
     @Id                     // 기본 키를 나타낸다
     @GeneratedValue(strategy = GenerationType.IDENTITY)

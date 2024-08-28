@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+
 @Setter
 @Getter
 @Entity
@@ -34,8 +35,6 @@ public class Group {
     @Column(name = "communityDatetime", columnDefinition = "TIMESTAMP")
     private LocalDateTime date;
 
-    @Setter
-    @Getter
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
 
