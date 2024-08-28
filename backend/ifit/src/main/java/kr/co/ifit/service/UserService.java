@@ -6,6 +6,8 @@ import kr.co.ifit.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -17,7 +19,7 @@ public class UserService {
     }
 
     public void registerUser(UserDTO userDTO) {
-        if(userRepository.existsByLoginId(userDTO.getLoginId())) {
+        if (userRepository.existsByLoginId(userDTO.getLoginId())) {
             throw new IllegalArgumentException("이미 존재하는 ID입니다.");
         }
 
@@ -34,5 +36,15 @@ public class UserService {
 
     public boolean checkIdAvailability(String loginId) {
         return !userRepository.existsByLoginId(loginId);
+    }
+
+
+    // 로그인 메서드 추가
+    public boolean loginUser(String loginId, String password) {
+        // 사용자 ID로 사용자 정보 조회
+        Optional<User> user = userRepository.findByLoginId(loginId);
+
+        // 사용자 정보가 존재하고, 비밀번호가 일치하는지 확인
+        return user.isPresent() && user.get().getPassword().equals(password);
     }
 }

@@ -28,7 +28,7 @@ public class User {
     @Column(name = "phoneNumber")
     private String phoneNumber;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true) //이메일은 유일해야하므로 unique속성 추가.
     private String email;
 
     @Column(name = "createdAt")
@@ -36,6 +36,15 @@ public class User {
 
     @Column(name = "modifiedAt")
     private LocalDateTime modifiedAt;
+
+    @Column(name = "emailVerified")     // 이메일 인증 여부 필드
+    private boolean isEmailVerified = false;
+
+    @Column(name = "emailverificationCode")  // 인증 코드
+    private String emailVerificationCode;
+
+    @Column(name = "emailverificationcodeExpiry") // 인증 코드 만료일
+    private LocalDateTime emailVerificationCodeExpiry;
 
     public User() {
 
