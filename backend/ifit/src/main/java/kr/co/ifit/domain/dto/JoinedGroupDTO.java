@@ -8,14 +8,14 @@ import lombok.Setter;
 // getter, setter 를 자동으로 생성
 @Setter
 @Getter
-public class JoinGroupDTO {
+public class JoinedGroupDTO {
     private Integer communityId;
     private Integer userId;
 
-    public JoinGroupDTO() {
+    public JoinedGroupDTO() {
     }
 
-    public JoinGroupDTO(Integer communityId, Integer userId) {
+    public JoinedGroupDTO(Integer communityId, Integer userId) {
         this.communityId = communityId;
         this.userId = userId;
     }

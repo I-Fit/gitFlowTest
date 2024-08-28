@@ -1,10 +1,10 @@
 package kr.co.ifit.service;
 
-import kr.co.ifit.domain.entity.JoinGroup;
+import kr.co.ifit.domain.entity.JoinedGroup;
 import kr.co.ifit.domain.entity.Group;
 import kr.co.ifit.domain.entity.User;
 import kr.co.ifit.respository.GroupRepository;
-import kr.co.ifit.respository.JoinGroupRepository;
+import kr.co.ifit.respository.JoinedGroupRepository;
 import kr.co.ifit.respository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,16 +13,16 @@ import java.time.LocalDateTime;
 
 // 사용자가 모임에 참가하는 기능을 구현
 @Service
-public class JoinGroupService {
+public class JoinedGroupService {
 
-    private final JoinGroupRepository joinGroupRepository;
+    private final JoinedGroupRepository joinedGroupRepository;
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
 
     // 의존성 주입(생성자 주입)
     @Autowired
-    public JoinGroupService(JoinGroupRepository joinGroupRepository, UserRepository userRepository, GroupRepository groupRepository) {
-        this.joinGroupRepository = joinGroupRepository;
+    public JoinedGroupService(JoinedGroupRepository joinedGroupRepository, UserRepository userRepository, GroupRepository groupRepository) {
+        this.joinedGroupRepository = joinedGroupRepository;
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
     }
@@ -32,12 +32,12 @@ public class JoinGroupService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Group group = groupRepository.findById(communityId).orElseThrow(() -> new RuntimeException("Group not found"));
 
-        JoinGroup joinGroup = new JoinGroup();
-        joinGroup.setUser(user);
-        joinGroup.setGroup(group);
-        joinGroup.setJoinedAt(LocalDateTime.now());  // 현재 시간을 설정
+        JoinedGroup joinedGroup = new JoinedGroup();
+        joinedGroup.setUser(user);
+        joinedGroup.setGroup(group);
+        joinedGroup.setJoinedAt(LocalDateTime.now());  // 현재 시간을 설정
 
         // 호출해서 데이터베이스에 저장
-        joinGroupRepository.save(joinGroup);
+        joinedGroupRepository.save(joinedGroup);
     }
 }

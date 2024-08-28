@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(name = "Join")   // 데이터베이스 테이블과 매핑된다
-public class JoinGroup {
+public class JoinedGroup {
     @Id                     // 기본 키를 나타낸다
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer communityJoinId;
@@ -29,14 +29,14 @@ public class JoinGroup {
     @JoinColumn(name = "communityId", nullable = false)
     private Group group;
 
-    public JoinGroup() {
+    public JoinedGroup() {
     }
 
-    public JoinGroup(LocalDateTime joinedAt, User user, Group group) {
-        this.joinedAt = joinedAt;
-        this.user = user;
-        this.group = group;
-    }
+//    public JoinedGroup(LocalDateTime joinedAt, User user, Group group) {
+//        this.joinedAt = joinedAt;
+//        this.user = user;
+//        this.group = group;
+//    }
 
     @Override
     public String toString() {

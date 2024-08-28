@@ -34,9 +34,19 @@ public class Group {
     @Column(name = "communityDatetime", columnDefinition = "TIMESTAMP")
     private LocalDateTime date;
 
+    @Setter
+    @Getter
+    @Column(name = "createdAt", nullable = false)
+    private LocalDateTime createdAt;
+
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     //    기본 생성자
     public Group() {
@@ -64,6 +74,7 @@ public class Group {
                 ", location='" + location + '\'' +
                 ", person=" + person +
                 ", date='" + date +
+                ", createAt='" + createdAt +
                 ", userId='" + user +
                 '}';
     }
