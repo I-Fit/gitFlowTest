@@ -482,7 +482,7 @@ export default {
     // 서버에서 username, user_img를 받아옴
     onMounted(async () => {
       try {
-        const response = await axios.get('/api/group-details');
+        const response = await axios.get('/api/group-list');
 
         // 서버로부터 받은 데이터를 groups배열에 저장
         groups.value = response.data.groups;
@@ -528,7 +528,7 @@ export default {
     const toggleHeart = async (communityId) => {
       isHeartFilled.value = !isHeartFilled.value;
       try {
-        await axios.post('/api/likegroup', {
+        await axios.post('/api/like-group', {
           userId: userId.value,
           communityId: communityId,
         });

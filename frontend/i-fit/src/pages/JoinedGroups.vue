@@ -188,10 +188,17 @@ export default {
       isTooltipVisible.value = !isTooltipVisible.value;
     };
     // 모임 취소 버튼 클릭 후 확인 버튼 누르면 삭제되고 다시 로드
+
+    // 어떤 사용자가 어떤 모임을 삭제 했는지 모르기 때문에
+    // userId도 보내줘야한다.
     const showConfirmPopup = ref(false);
     const confirmDeletion = async (communityId) => {
       try {
-        await axios.delete('/api/', { data: { communityId } });
+        await axios.delete('/api/', { data: { 
+          communityId : communityId,
+          userId: userId.value
+        } 
+      });
         showConfirmPopup.value = false;
         await fetchGroups();  // 삭제 후 데이터 다시 로드
 
@@ -212,6 +219,7 @@ export default {
 
         try {
           await axios.post("/api/", {
+            userId : userId.value,
             communityId: group.communityId,
             isHeartFilled: group.isHeartFilled,
           });

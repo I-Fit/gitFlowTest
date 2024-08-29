@@ -172,7 +172,7 @@ export default {
     //  웹 페이지가 로딩 되기 전에 userId를 서버에 보내서 해당되는 모임을 로딩해줌
     const loadgroups = async () => {
       try {
-        const response = await axios.post(`/api/group-details`, {
+        const response = await axios.post(`/api/created-groups`, {
           data: { userId: userId.value }
         });
         groups.value = response.data;
@@ -216,6 +216,7 @@ export default {
 
         try {
           await axios.post("/api/", {
+            userId : userId,
             communityId: group.communityId,
             isHeartFilled: group.isHeartFilled,
           });

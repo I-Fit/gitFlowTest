@@ -165,7 +165,7 @@ export default {
       }
 
       try {
-        await axios.post("/api/user-account", formData.value);
+        await axios.post("/api/user-signup", formData.value);
         alert("회원가입 성공!");
         router.push({ name: "SignIn" });
       } catch (error) {
