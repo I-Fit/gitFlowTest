@@ -1,6 +1,6 @@
-package kr.co.ifit.respository;
+package kr.co.ifit.db.repository;
 
-import kr.co.ifit.domain.entity.Group;
+import kr.co.ifit.db.entity.Group;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

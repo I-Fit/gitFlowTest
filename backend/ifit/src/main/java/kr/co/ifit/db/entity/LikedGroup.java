@@ -1,4 +1,4 @@
-package kr.co.ifit.domain.entity;
+package kr.co.ifit.db.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

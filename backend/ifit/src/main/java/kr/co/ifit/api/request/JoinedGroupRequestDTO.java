@@ -1,4 +1,4 @@
-package kr.co.ifit.domain.dto;
+package kr.co.ifit.api.request;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,14 +8,14 @@ import lombok.Setter;
 // getter, setter 를 자동으로 생성
 @Setter
 @Getter
-public class JoinedGroupDTO {
+public class JoinedGroupRequestDTO {
     private Integer communityId;
     private Integer userId;
 
-    public JoinedGroupDTO() {
+    public JoinedGroupRequestDTO() {
     }
 
-    public JoinedGroupDTO(Integer communityId, Integer userId) {
+    public JoinedGroupRequestDTO(Integer communityId, Integer userId) {
         this.communityId = communityId;
         this.userId = userId;
     }
