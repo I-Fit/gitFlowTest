@@ -3,12 +3,14 @@ package kr.co.ifit.db.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Setter
 @Getter
 @Entity
+@ToString
 @Table(name = "Users")
 public class User {
     @Id
@@ -61,17 +63,4 @@ public class User {
         this.modifiedAt = LocalDateTime.now();
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", id=" + id +
-                ", password=" + password +
-                ", name='" + name + '\'' +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                ", createdAt=" + createdAt +
-                ", modifiedAt=" + modifiedAt +
-                '}';
-    }
 }

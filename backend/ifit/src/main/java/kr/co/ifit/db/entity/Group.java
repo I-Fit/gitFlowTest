@@ -1,8 +1,7 @@
 package kr.co.ifit.db.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +9,9 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Entity
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "Community")
 public class Group {
 
@@ -42,17 +44,6 @@ public class Group {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    //    기본 생성자
-    public Group() {
-
-    }
-
-    //    파라미터가 있는 생성자
     public Group(String title, String topboxContent, String sport, String location, Integer person, LocalDateTime date, User user) {
         this.title = title;
         this.topboxContent = topboxContent;
@@ -63,18 +54,8 @@ public class Group {
         this.user = user;
     }
 
-    @Override
-    public String toString() {
-        return "AddGroup{" +
-                "communityId=" + communityId +
-                ", title='" + title + '\'' +
-                ", topboxContent='" + topboxContent + '\'' +
-                ", sport='" + sport + '\'' +
-                ", location='" + location + '\'' +
-                ", person=" + person +
-                ", date='" + date +
-                ", createAt='" + createdAt +
-                ", userId='" + user +
-                '}';
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
     }
 }

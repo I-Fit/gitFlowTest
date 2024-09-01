@@ -2,13 +2,17 @@ package kr.co.ifit.db.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Setter
 @Getter
 @Entity
+@ToString
+@NoArgsConstructor
 @Table(name = "Dibs")
 public class LikedGroup {
 
@@ -30,22 +34,4 @@ public class LikedGroup {
     @JoinColumn(name = "communityId", nullable = false)
     private Group group;
 
-    public LikedGroup() {
-    }
-
-//    public LikedGroup(User user, Group group) {
-//        this.user = user;
-//        this.group = group;
-//    }
-
-    @Override
-    public String toString() {
-        return "LikedGroup{" +
-                "dibsId=" + dibsId +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", user=" + user +
-                ", group=" + group +
-                '}';
-    }
 }

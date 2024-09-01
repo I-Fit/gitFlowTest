@@ -2,7 +2,9 @@ package kr.co.ifit.db.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Entity
+@ToString
+@NoArgsConstructor          // 기본 생성자를 자동으로 만들어주는 어노테이션
 @Table(name = "`Join`")   // 데이터베이스 테이블과 매핑된다
 public class JoinedGroup {
     @Id                     // 기본 키를 나타낸다
@@ -29,22 +33,4 @@ public class JoinedGroup {
     @JoinColumn(name = "communityId", nullable = false)
     private Group group;
 
-    public JoinedGroup() {
-    }
-
-//    public JoinedGroup(LocalDateTime joinedAt, User user, Group group) {
-//        this.joinedAt = joinedAt;
-//        this.user = user;
-//        this.group = group;
-//    }
-
-    @Override
-    public String toString() {
-        return "Join{" +
-                "communityJoinId=" + communityJoinId +
-                ", joinedAt=" + joinedAt +
-                ", user=" + user +
-                ", group=" + group +
-                '}';
-    }
 }
