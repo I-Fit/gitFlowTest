@@ -1,9 +1,9 @@
-package kr.co.ifit.controller;
+package kr.co.ifit.api.controller;
 
-import kr.co.ifit.domain.dto.LoginDTO;
-import kr.co.ifit.domain.dto.UserDTO;
-import kr.co.ifit.service.EmailVerificationService;
-import kr.co.ifit.service.UserService;
+import kr.co.ifit.api.request.LoginDTO;
+import kr.co.ifit.api.request.UserDTO;
+import kr.co.ifit.api.service.UserService;
+import kr.co.ifit.api.service.EmailService;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,25 +15,27 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final EmailVerificationService emailVerificationService;
+    private final EmailService emailService;
 
     @Autowired
-    public UserController(UserService userService, EmailVerificationService emailVerificationService) {
+    public UserController(UserService userService, EmailService emailService) {
         this.userService = userService;
-        this.emailVerificationService = emailVerificationService;
+        this.emailService = emailService;
     }
-    // 회원가입 하는 부분
+
+    // 회원가입
     @PostMapping("/user-account")
     public ResponseEntity<String> registerUser(@RequestBody UserDTO userDTO) {
         try {
             userService.registerUser(userDTO);
-            return ResponseEntity.ok("회원가입 성공");
+            return ResponseEntity.ok("회원가입 성공. 이메일을 확인하여 인증해주세요.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(500).body("회원가입 실패: " + e.getMessage());
         }
     }
+
     // 아이디 중복 확인
     @GetMapping("/check-id")
     public ResponseEntity<IdCheckResponse> checkId(@RequestParam("id") String id) {
@@ -44,21 +46,15 @@ public class UserController {
     // 이메일 인증
     @PostMapping("/verify-email")
     public ResponseEntity<String> verifyEmail(@RequestParam("email") String email, @RequestParam("code") String code) {
-        String result = emailVerificationService.verifyEmail(email, code);
-        return ResponseEntity.ok(result);
-    }
-
-    @Setter
-    @Getter
-    public static class IdCheckResponse {
-        private boolean available;
-
-        public IdCheckResponse(boolean available) {
-            this.available = available;
+        try {
+            String result = emailService.verifyEmail(email, code);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("이메일 인증 실패: " + e.getMessage());
         }
     }
 
-    //로그인하는 부분
+    // 로그인
     @PostMapping("/user-login")
     public ResponseEntity<String> loginUser(@RequestBody LoginDTO loginDTO) {
         try {
@@ -69,7 +65,17 @@ public class UserController {
                 return ResponseEntity.status(401).body("로그인 실패: 아이디 또는 비밀번호가 틀렸습니다.");
             }
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(500).body("로그인 실패: " + e.getMessage());
+        }
+    }
+
+    @Setter
+    @Getter
+    public static class IdCheckResponse {
+        private boolean available;
+
+        public IdCheckResponse(boolean available) {
+            this.available = available;
         }
     }
 }

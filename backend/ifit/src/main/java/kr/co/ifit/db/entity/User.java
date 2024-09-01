@@ -1,4 +1,4 @@
-package kr.co.ifit.domain.entity;
+package kr.co.ifit.db.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -38,13 +38,13 @@ public class User {
     private LocalDateTime modifiedAt;
 
     @Column(name = "emailVerified")     // 이메일 인증 여부 필드
-    private boolean isEmailVerified = false;
+    private boolean emailVerified = false;
 
-    @Column(name = "emailverificationCode")  // 인증 코드
-    private String emailVerificationCode;
+    @Column(name = "emailCode")  // 인증 코드
+    private String emailCode;
 
-    @Column(name = "emailverificationcodeExpiry") // 인증 코드 만료일
-    private LocalDateTime emailVerificationCodeExpiry;
+    @Column(name = "emailcodeExpiry") // 인증 코드 만료일
+    private LocalDateTime emailcodeExpiry;
 
     public User() {
 

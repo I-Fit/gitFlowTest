@@ -1,8 +1,8 @@
-package kr.co.ifit.service;
+package kr.co.ifit.api.service;
 
-import kr.co.ifit.domain.dto.UserDTO;
-import kr.co.ifit.domain.entity.User;
-import kr.co.ifit.repository.UserRepository;
+import kr.co.ifit.api.request.UserDTO;
+import kr.co.ifit.db.entity.User;
+import kr.co.ifit.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
