@@ -1,21 +1,27 @@
 package kr.co.ifit.api.service;
 
+import kr.co.ifit.api.request.LoginDTO;
 import kr.co.ifit.api.request.UserDTO;
 import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void registerUser(UserDTO userDTO) {
@@ -25,7 +31,7 @@ public class UserService {
 
         User user = new User(
                 userDTO.getLoginId(),
-                userDTO.getPassword(),
+                passwordEncoder.encode(userDTO.getPassword()), // 비밀번호 암호화
                 userDTO.getUserName(),
                 userDTO.getPhoneNumber(),
                 userDTO.getEmail()
@@ -38,13 +44,8 @@ public class UserService {
         return !userRepository.existsByLoginId(loginId);
     }
 
-
-    // 로그인 메서드 추가
     public boolean loginUser(String loginId, String password) {
-        // 사용자 ID로 사용자 정보 조회
-        Optional<User> user = userRepository.findByLoginId(loginId);
-
-        // 사용자 정보가 존재하고, 비밀번호가 일치하는지 확인
-        return user.isPresent() && user.get().getPassword().equals(password);
+        Optional<User> userOpt = userRepository.findByLoginId(loginId);
+        return userOpt.isPresent() && userOpt.get().getPassword().equals(password);
     }
 }

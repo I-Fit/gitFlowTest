@@ -1,5 +1,6 @@
 package kr.co.ifit.api.controller;
 
+import kr.co.ifit.db.entity.User;
 import kr.co.ifit.api.request.LoginDTO;
 import kr.co.ifit.api.request.UserDTO;
 import kr.co.ifit.api.service.UserService;
@@ -9,6 +10,9 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -56,16 +60,30 @@ public class UserController {
 
     // 로그인
     @PostMapping("/user-login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<String> loginUser(@RequestBody LoginDTO loginDTO, HttpSession session) {
         try {
             boolean authenticated = userService.loginUser(loginDTO.getLoginId(), loginDTO.getPassword());
             if (authenticated) {
+                // 로그인 성공, 세션에 사용자 정보 저장
+                // 필요한 경우, 사용자 정보 저장 로직 추가
                 return ResponseEntity.ok("로그인 성공");
             } else {
                 return ResponseEntity.status(401).body("로그인 실패: 아이디 또는 비밀번호가 틀렸습니다.");
             }
         } catch (Exception e) {
             return ResponseEntity.status(500).body("로그인 실패: " + e.getMessage());
+        }
+    }
+
+    // 로그아웃
+    @PostMapping("/user-logout")
+    public ResponseEntity<String> logoutUser(HttpSession session) {
+        try {
+            // 세션 무효화
+            session.invalidate();
+            return ResponseEntity.ok("로그아웃 성공");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("로그아웃 실패: " + e.getMessage());
         }
     }
 
