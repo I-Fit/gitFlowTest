@@ -1,6 +1,7 @@
 package kr.co.ifit.api.controller;
 
 import kr.co.ifit.api.request.AddGroupRequestDTO;
+import kr.co.ifit.api.request.CreatedGroupRequestDTO;
 import kr.co.ifit.api.request.JoinedGroupRequestDTO;
 import kr.co.ifit.api.response.AddGroupResponseDTO;
 import kr.co.ifit.api.response.GroupResponseDTO;
@@ -72,38 +73,32 @@ public class GroupController {
         }
     }
 
-    //  좋아요 추가 및 삭제
-//    @PostMapping("/like-group")
-//    public void toggleLike(@RequestParam Integer communityId, @RequestParam Integer userId, @RequestParam boolean isHeartFilled) {
-//        homeGroupService.toggleLike(communityId, userId, isHeartFilled);
-//    }
-
+    // createdGroup - 내가 만든 모임 내역
     // 사용자가 만든 모임 내역 부분
     @PostMapping("/created-groups")
-    //  userId로 만든 모임 리스트를 조회한 후 Group 엔티티 리스트를 반환하는데 GroupResponseDTO로 변환한다.
-    public ResponseEntity<List<GroupResponseDTO>> getGroupDetails(@RequestBody AddGroupRequestDTO addGroupRequestDTO) {
-        List<Group> groups = addGroupService.getGroupsByUserId(addGroupRequestDTO.getUserId());
-
-        List<GroupResponseDTO> responseDTOs = groups.stream().map(group -> new GroupResponseDTO(
-                group.getCommunityId(),
-                group.getTitle(),
-                group.getTopboxContent(),
-                group.getSport(),
-                group.getLocation(),
-                group.getPerson(),
-                group.getDate())).toList();
-        return ResponseEntity.ok(responseDTOs);
+    //  userId로 만든 모임을 Group 엔티티에서 조회 후 응답
+    public ResponseEntity<List<GroupResponseDTO>> getCreatedGroups(@RequestBody CreatedGroupRequestDTO createdGroupRequestDTO) {
+        Long userId = createdGroupRequestDTO.getUserId();
+        List<GroupResponseDTO> groups = createdGroupService.getCreatedGroupsByUserId(userId);
+        return ResponseEntity.ok(groups);
     }
 
-//    @PostMapping("/")
-//    public void toggleLike(@RequestParam Integer communityId, @RequestParam Integer userId, @RequestParam boolean isHeartFilled) {
-//        createdGroupService.toggleLike(communityId, userId, isHeartFilled);
-//    }
+    //  내가 만든 모임에서 모임 삭제 요청
+    @DeleteMapping("/delete-groups")
+    public ResponseEntity<String> deleteCreatedGroup(@RequestBody CreatedGroupRequestDTO createdGroupRequestDTO) {
+        boolean deleted = createdGroupService.deleteGroup(createdGroupRequestDTO.getUserId(), createdGroupRequestDTO.getCommunityId());
+        if (deleted) {
+            return ResponseEntity.ok("삭제 완료");
+        } else {
+            return ResponseEntity.status(400).body("모임을 찾을 수 없습니다.");
+        }
+    }
 
+    // JoinedGroup - 참여한 모임 내역
     //  참여한 모임 내역에서 사용자가 참여한 모임 목록을 반환하고 참여한 모임 내역에 보여줌
     @GetMapping("/details")
     //  userId를 쿼리 파라미터로 받아서 요청을 처리
-    public ResponseEntity<?> getJoinedGroupsDetails(@RequestParam Integer userId) {
+    public ResponseEntity<?> getJoinedGroupsDetails(@RequestParam Long userId) {
         //  사용자가 참여한 모임 목록을 조회
         List<Group> groups = joinedGroupService.getGroupsByUserId(userId);
         //  조회된 group 반환
@@ -112,26 +107,27 @@ public class GroupController {
 
     // 참여한 모임 내역에서 사용자가 참석 취소를 누른 모임에 대한 코드
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteJoinedGroups(@RequestBody Map<String, Integer> payload) {
-        Integer userId = payload.get("userId");
-        Integer communityId = payload.get("communityId");
-
-        //  사용자ID와 모임ID를 기반으로 삭제 처리
-        joinedGroupService.deleteGroupForUser(userId, communityId);
-
-        //  삭제가 성공적으로 되었음을 나타낸다.
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteJoinedGroups(@RequestBody JoinedGroupRequestDTO joinedGroupRequestDTO) {
+        boolean deleted = joinedGroupService.deleteGroup(joinedGroupRequestDTO.getUserId(), joinedGroupRequestDTO.getCommunityId());
+        if (deleted) {
+            return ResponseEntity.ok("삭제 완료");
+        } else {
+            return ResponseEntity.status(400).body("모임을 찾을 수 없습니다.");
+        }
     }
-
-//    @PostMapping("/")
-//    public void toggleLike(@RequestParam Integer communityId, @RequestParam Integer userId, @RequestParam boolean isHeartFilled) {
-//        joinedGroupService.toggleLike(communityId, userId, isHeartFilled);
-//    }
 
     //  사용자가 좋아요한 모든 모임 데이터를 반환
     @GetMapping("/liked-groups")
-    public ResponseEntity<List<LikedGroup>> getLikedGroups(@RequestParam Integer userId) {
+    public ResponseEntity<List<LikedGroup>> getLikedGroups(@RequestParam Long userId) {
         List<LikedGroup> likedGroups = likedGroupService.getLikedGroupsByUserId(userId);
         return ResponseEntity.ok(likedGroups);
+    }
+
+    //  좋아요 추가 및 삭제
+    @PostMapping("/like-group")
+    public void toggleLike(@RequestParam Long communityId, @RequestParam Long userId, @RequestParam boolean isHeartFilled) {
+        homeGroupService.toggleLike(communityId, userId, isHeartFilled);
+        createdGroupService.toggleLike(communityId, userId, isHeartFilled);
+        joinedGroupService.toggleLike(communityId, userId, isHeartFilled);
     }
 }

@@ -34,7 +34,7 @@ public class HomeGroupService {
     }
     
     //  LikedGroupService에 좋아요 기능 로직을 가져다 씀
-    public void toggleLike(Integer userId, Integer communityId, boolean isHeartFilled) {
+    public void toggleLike(Long userId, Long communityId, boolean isHeartFilled) {
         likedGroupService.toggleLike(new LikedGroupRequestDTO(communityId, userId, isHeartFilled));
     }
 }

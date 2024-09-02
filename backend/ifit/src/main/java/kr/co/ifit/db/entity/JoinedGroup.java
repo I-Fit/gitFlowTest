@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class JoinedGroup {
     @Id                     // 기본 키를 나타낸다
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer communityJoinId;
+    private Long communityJoinId;
 
     @Column(name = "joinedAt", nullable = false)
     private LocalDateTime joinedAt;

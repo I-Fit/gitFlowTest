@@ -30,9 +30,9 @@ public class LikedGroupService {
 
     //  받아온 userId를 조회한다
     @Transactional
-    public List<LikedGroup> getLikedGroupsByUserId(Integer userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자 없습니다"));
-        return likedGroupRepository.findByUser(user);
+    public List<LikedGroup> getLikedGroupsByUserId(Long userId) {
+//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자 없습니다"));
+        return likedGroupRepository.findByUser(userId);
     }
     
     //  좋아요 기능 추가 및 삭제

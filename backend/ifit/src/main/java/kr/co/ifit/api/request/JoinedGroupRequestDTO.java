@@ -9,15 +9,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class JoinedGroupRequestDTO {
-    private Integer communityId;
-    private Integer userId;
-
-    public JoinedGroupRequestDTO() {
-    }
-
-    public JoinedGroupRequestDTO(Integer communityId, Integer userId) {
-        this.communityId = communityId;
-        this.userId = userId;
-    }
-
+    private Long communityId;
+    private Long userId;
 }

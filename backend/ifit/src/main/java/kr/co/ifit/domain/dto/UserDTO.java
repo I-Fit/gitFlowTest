@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class UserDTO {
-    private int userId;
+    private Long userId;
     private String id;
     private String password;
     private String name;
@@ -20,7 +20,7 @@ public class UserDTO {
     public UserDTO() {
     }
 
-    public UserDTO(int userId, String id, String password, String name, String phoneNumber, String email, LocalDateTime createAt, LocalDateTime modifiedAt) {
+    public UserDTO(Long userId, String id, String password, String name, String phoneNumber, String email, LocalDateTime createAt, LocalDateTime modifiedAt) {
         this.userId = userId;
         this.id = id;
         this.password = password;

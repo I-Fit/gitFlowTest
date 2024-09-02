@@ -11,13 +11,12 @@ import java.time.LocalDateTime;
 @Entity
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "Community")
 public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer communityId;
+    private Long communityId;
 
     @Column(name = "communityName", nullable = false)
     private String title;

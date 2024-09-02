@@ -18,7 +18,7 @@ public class LikedGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int dibsId;
+    private Long dibsId;
 
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class GroupResponseDTO {
-    private Integer communityId;
+    private Long communityId;
     private String title;
     private String topboxContent;
     private String sport;
@@ -16,7 +16,7 @@ public class GroupResponseDTO {
     private Integer person;
     private LocalDateTime date;
 
-    public GroupResponseDTO(Integer communityId, String title, String topboxContent, String sport, String location, Integer person, LocalDateTime date) {
+    public GroupResponseDTO(Long communityId, String title, String topboxContent, String sport, String location, Integer person, LocalDateTime date) {
         this.communityId = communityId;
         this.title = title;
         this.topboxContent = topboxContent;

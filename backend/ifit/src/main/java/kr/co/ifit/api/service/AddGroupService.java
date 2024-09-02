@@ -45,7 +45,7 @@ public class AddGroupService {
 
     // 메서드가 읽기 전용 트랜잭션으로 실행됨을 명시
     @Transactional(readOnly = true)
-    public List<Group> getGroupsByUserId(Integer userId) {
+    public List<Group> getGroupsByUserId(Long userId) {
         // groupRepository를 사용하여 userId로 모임 리스트를 조회하고 반환
         return groupRepository.findByUserId(userId);
     }

@@ -14,5 +14,5 @@ public class AddGroupRequestDTO {
     private String location;
     private Integer person;
     private LocalDateTime date;
-    private Integer userId;
+    private Long userId;
 }

@@ -34,11 +34,11 @@ public class JoinedGroupService {
     }
 
     // userId, communityId를 받아서 해당 User, group에 조회한 후 새로운 Join 엔티티를 생성하고 저장
-    public void joinGroup(Integer userId, Integer communityId) {
+    public void joinGroup(Long userId, Long communityId) {
         // userId로 사용자 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
         // communityId로 모임 조회
-        Group group = groupRepository.findById(communityId).orElseThrow(() -> new RuntimeException("Group not found"));
+        Group group = groupRepository.findById(communityId).orElseThrow(() -> new RuntimeException("모임을 찾을 수 없습니다."));
 
         JoinedGroup joinedGroup = new JoinedGroup();
         joinedGroup.setUser(user);
@@ -51,26 +51,27 @@ public class JoinedGroupService {
 
     @Transactional(readOnly = true)
     //  특정 사용자가 참여한 모든 모임을 반환
-    public List<Group> getGroupsByUserId(Integer userId) {
+    public List<Group> getGroupsByUserId(Long userId) {
         //   userId로 사용자 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
         //   사용자가 참여한 joinedGroup 엔티티를 조회하고, 엔티티에서 Group 객체를 추출하여 리스트로 반환
-        return joinedGroupRepository.findByUser(user).stream()
+        return joinedGroupRepository.findByUser(userId).stream()
                                     .map(JoinedGroup::getGroup)
                                     .collect(Collectors.toList());
     }
 
-    @Transactional
     //  참석한 모임 중 삭제를 했을 때
-    public void deleteGroupForUser(Integer userId, Integer communityId) {
+    public boolean deleteGroup(Long userId, Long communityId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
         Group group = groupRepository.findById(communityId).orElseThrow(() -> new RuntimeException("모임을 찾을 수 없습니다."));
 
         JoinedGroup joinedGroup = joinedGroupRepository.findByUserAndGroup(user, group).orElseThrow(() -> new RuntimeException("참여 모임 내역에서 찾을 수 없습니다"));
         joinedGroupRepository.delete(joinedGroup);
+        return true;
     }
+
     //  LikedGroupService에 있는 좋아요 추가, 삭제 기능 사용
-    public void toggleLike(Integer userId, Integer communityId, boolean isHeartFilled) {
+    public void toggleLike(Long userId, Long communityId, boolean isHeartFilled) {
         likedGroupService.toggleLike(new LikedGroupRequestDTO(communityId, userId, isHeartFilled));
     }
 
