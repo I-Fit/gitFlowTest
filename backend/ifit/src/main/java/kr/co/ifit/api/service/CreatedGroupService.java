@@ -52,7 +52,7 @@ public class CreatedGroupService {
         return false;
     }
 
-    public void toggleLike(Long userId, Long communityId, boolean isHeartFilled) {
-        likedGroupService.toggleLike(new LikedGroupRequestDTO(userId, communityId, isHeartFilled));
+    public void toggleLike(LikedGroupRequestDTO likedGroupRequestDTO) {
+        likedGroupService.toggleLike(likedGroupRequestDTO);
     }
 }

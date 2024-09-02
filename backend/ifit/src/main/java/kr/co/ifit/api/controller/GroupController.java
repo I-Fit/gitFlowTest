@@ -3,6 +3,7 @@ package kr.co.ifit.api.controller;
 import kr.co.ifit.api.request.AddGroupRequestDTO;
 import kr.co.ifit.api.request.CreatedGroupRequestDTO;
 import kr.co.ifit.api.request.JoinedGroupRequestDTO;
+import kr.co.ifit.api.request.LikedGroupRequestDTO;
 import kr.co.ifit.api.response.AddGroupResponseDTO;
 import kr.co.ifit.api.response.GroupResponseDTO;
 import kr.co.ifit.api.service.*;
@@ -116,18 +117,25 @@ public class GroupController {
         }
     }
 
+    //  찜한 모임 내역
     //  사용자가 좋아요한 모든 모임 데이터를 반환
     @GetMapping("/liked-groups")
-    public ResponseEntity<List<LikedGroup>> getLikedGroups(@RequestParam Long userId) {
-        List<LikedGroup> likedGroups = likedGroupService.getLikedGroupsByUserId(userId);
+    public ResponseEntity<List<GroupResponseDTO>> getLikedGroups(@RequestParam Long userId) {
+        List<GroupResponseDTO> likedGroups = likedGroupService.getLikedGroupsByUserId(userId);
         return ResponseEntity.ok(likedGroups);
     }
 
     //  좋아요 추가 및 삭제
     @PostMapping("/like-group")
-    public void toggleLike(@RequestParam Long communityId, @RequestParam Long userId, @RequestParam boolean isHeartFilled) {
-        homeGroupService.toggleLike(communityId, userId, isHeartFilled);
-        createdGroupService.toggleLike(communityId, userId, isHeartFilled);
-        joinedGroupService.toggleLike(communityId, userId, isHeartFilled);
+    public ResponseEntity<String> toggleLike(@RequestBody LikedGroupRequestDTO likedGroupRequestDTO) {
+        try {
+            homeGroupService.toggleLike(likedGroupRequestDTO);
+            createdGroupService.toggleLike(likedGroupRequestDTO);
+            joinedGroupService.toggleLike(likedGroupRequestDTO);
+
+            return ResponseEntity.ok("Successfully liked group.");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 }

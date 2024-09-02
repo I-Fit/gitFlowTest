@@ -1,6 +1,7 @@
 package kr.co.ifit.api.service;
 
 import kr.co.ifit.api.request.LikedGroupRequestDTO;
+import kr.co.ifit.api.response.GroupResponseDTO;
 import kr.co.ifit.db.entity.Group;
 import kr.co.ifit.db.entity.LikedGroup;
 import kr.co.ifit.db.entity.User;
@@ -30,9 +31,22 @@ public class LikedGroupService {
 
     //  받아온 userId를 조회한다
     @Transactional
-    public List<LikedGroup> getLikedGroupsByUserId(Long userId) {
+    public List<GroupResponseDTO> getLikedGroupsByUserId(Long userId) {
 //        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자 없습니다"));
-        return likedGroupRepository.findByUser(userId);
+        List<LikedGroup> likedGroups = likedGroupRepository.findByUser(userId);
+        return likedGroups.stream()
+                .map(likedGroup -> {
+                    Group group = likedGroup.getGroup();
+                    return new GroupResponseDTO(
+                        group.getCommunityId(),
+                        group.getTitle(),
+                        group.getTopboxContent(),
+                        group.getSport(),
+                        group.getLocation(),
+                        group.getPerson(),
+                        group.getDate()
+                    );
+                }).toList();
     }
     
     //  좋아요 기능 추가 및 삭제

@@ -71,8 +71,8 @@ public class JoinedGroupService {
     }
 
     //  LikedGroupService에 있는 좋아요 추가, 삭제 기능 사용
-    public void toggleLike(Long userId, Long communityId, boolean isHeartFilled) {
-        likedGroupService.toggleLike(new LikedGroupRequestDTO(communityId, userId, isHeartFilled));
+    public void toggleLike(LikedGroupRequestDTO likedGroupRequestDTO) {
+        likedGroupService.toggleLike(likedGroupRequestDTO);
     }
 
 }
