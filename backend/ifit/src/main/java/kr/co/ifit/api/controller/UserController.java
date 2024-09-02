@@ -1,5 +1,6 @@
 package kr.co.ifit.api.controller;
 
+import jakarta.servlet.http.HttpSession;
 import kr.co.ifit.db.entity.User;
 import kr.co.ifit.api.request.LoginDTO;
 import kr.co.ifit.api.request.UserDTO;
@@ -10,9 +11,6 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -32,6 +30,7 @@ public class UserController {
     public ResponseEntity<String> registerUser(@RequestBody UserDTO userDTO) {
         try {
             userService.registerUser(userDTO);
+            // 이메일 인증 코드 전송 등 추가 로직이 필요한 경우 여기에 구현
             return ResponseEntity.ok("회원가입 성공. 이메일을 확인하여 인증해주세요.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -62,11 +61,15 @@ public class UserController {
     @PostMapping("/user-login")
     public ResponseEntity<String> loginUser(@RequestBody LoginDTO loginDTO, HttpSession session) {
         try {
-            boolean authenticated = userService.loginUser(loginDTO.getLoginId(), loginDTO.getPassword());
+            boolean authenticated = userService.loginUser(loginDTO.getLoginId(), loginDTO.getPassword(), session);
             if (authenticated) {
                 // 로그인 성공, 세션에 사용자 정보 저장
-                // 필요한 경우, 사용자 정보 저장 로직 추가
-                return ResponseEntity.ok("로그인 성공");
+                User user = (User) session.getAttribute("user");
+                if (user != null) {
+                    return ResponseEntity.ok("로그인 성공. 사용자: " + user.getUserName());
+                } else {
+                    return ResponseEntity.status(500).body("로그인 성공 후 사용자 정보를 세션에서 찾을 수 없습니다.");
+                }
             } else {
                 return ResponseEntity.status(401).body("로그인 실패: 아이디 또는 비밀번호가 틀렸습니다.");
             }
