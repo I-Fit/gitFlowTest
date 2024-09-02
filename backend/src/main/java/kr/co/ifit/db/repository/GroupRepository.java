@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {
     //  userId로 Group 리스트를 조회하는 메서드 정의
-    List<Group> findByUserId(Long userId);
+    List<Group> findByUser(User user);
 }

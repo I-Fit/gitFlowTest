@@ -26,7 +26,9 @@ public class CreatedGroupService {
     }
     //  GroupRepository에서 userId로 조회 후 GroupresponseDTO로 변환 후 groups 리스트 응답
     public List<GroupResponseDTO> getCreatedGroupsByUserId(Long userId) {
-        List<Group> groups = groupRepository.findByUserId(userId);
+
+        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("사용자를 찾을 수 없습니다."));
+        List<Group> groups = groupRepository.findByUser(user);
 
         return groups.stream()
                 .map(group -> new GroupResponseDTO(
@@ -42,7 +44,8 @@ public class CreatedGroupService {
 
     //  내가 만든 모임에서 모임 삭제를 눌렀을 때 찾아서 없앤다
     public boolean deleteGroup(Long userId, Long communityId) {
-        List<Group> groups = groupRepository.findByUserId(userId);
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        List<Group> groups = groupRepository.findByUser(user);
 
         Group groupDelete = groups.stream().filter(group -> group.getCommunityId().equals(communityId)).findFirst().orElse(null);
         if (groupDelete != null) {

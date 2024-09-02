@@ -53,9 +53,9 @@ public class JoinedGroupService {
     //  특정 사용자가 참여한 모든 모임을 반환
     public List<Group> getGroupsByUserId(Long userId) {
         //   userId로 사용자 조회
-//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
         //   사용자가 참여한 joinedGroup 엔티티를 조회하고, 엔티티에서 Group 객체를 추출하여 리스트로 반환
-        return joinedGroupRepository.findByUser(userId).stream()
+        return joinedGroupRepository.findByUser(user).stream()
                                     .map(JoinedGroup::getGroup)
                                     .collect(Collectors.toList());
     }

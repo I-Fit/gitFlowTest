@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface JoinedGroupRepository extends JpaRepository<JoinedGroup, Long> {
     //   특정 사용자에 의해 참여한 모든 엔티티 반환
-    List<JoinedGroup> findByUser(Long userId);
+    List<JoinedGroup> findByUser(User user);
 
     Optional<JoinedGroup> findByUserAndGroup(User user, Group group);
 }

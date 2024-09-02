@@ -32,8 +32,8 @@ public class LikedGroupService {
     //  받아온 userId를 조회한다
     @Transactional
     public List<GroupResponseDTO> getLikedGroupsByUserId(Long userId) {
-//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자 없습니다"));
-        List<LikedGroup> likedGroups = likedGroupRepository.findByUser(userId);
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자 없습니다"));
+        List<LikedGroup> likedGroups = likedGroupRepository.findByUser(user);
         return likedGroups.stream()
                 .map(likedGroup -> {
                     Group group = likedGroup.getGroup();
