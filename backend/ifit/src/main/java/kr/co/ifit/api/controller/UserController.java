@@ -30,7 +30,6 @@ public class UserController {
     public ResponseEntity<String> registerUser(@RequestBody UserDTO userDTO) {
         try {
             userService.registerUser(userDTO);
-            // 이메일 인증 코드 전송 등 추가 로직이 필요한 경우 여기에 구현
             return ResponseEntity.ok("회원가입 성공. 이메일을 확인하여 인증해주세요.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -63,7 +62,6 @@ public class UserController {
         try {
             boolean authenticated = userService.loginUser(loginDTO.getLoginId(), loginDTO.getPassword(), session);
             if (authenticated) {
-                // 로그인 성공, 세션에 사용자 정보 저장
                 User user = (User) session.getAttribute("user");
                 if (user != null) {
                     return ResponseEntity.ok("로그인 성공. 사용자: " + user.getUserName());
@@ -82,8 +80,7 @@ public class UserController {
     @PostMapping("/user-logout")
     public ResponseEntity<String> logoutUser(HttpSession session) {
         try {
-            // 세션 무효화
-            session.invalidate();
+            userService.logoutUser(session); // Service에서 세션 무효화
             return ResponseEntity.ok("로그아웃 성공");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("로그아웃 실패: " + e.getMessage());
