@@ -12,7 +12,8 @@ public class AddGroupRequestDTO {
     private String topboxContext;
     private String sport;
     private String location;
-    private Integer person;
+    private int person;
+    private int peopleParticipation;
     private LocalDateTime date;
     private Long userId;
 }

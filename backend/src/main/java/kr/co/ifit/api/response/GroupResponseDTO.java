@@ -1,5 +1,6 @@
 package kr.co.ifit.api.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,23 +8,14 @@ import java.time.LocalDateTime;
 
 @Setter
 @Getter
+@AllArgsConstructor
 public class GroupResponseDTO {
     private Long communityId;
     private String title;
     private String topboxContent;
     private String sport;
     private String location;
-    private Integer person;
+    private int person;
+    private int peopleParticipation;
     private LocalDateTime date;
-
-    public GroupResponseDTO(Long communityId, String title, String topboxContent, String sport, String location, Integer person, LocalDateTime date) {
-        this.communityId = communityId;
-        this.title = title;
-        this.topboxContent = topboxContent;
-        this.sport = sport;
-        this.location = location;
-        this.person = person;
-        this.date = date;
-    }
-
 }

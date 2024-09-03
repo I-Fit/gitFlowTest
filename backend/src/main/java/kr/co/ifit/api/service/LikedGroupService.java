@@ -64,12 +64,16 @@ public class LikedGroupService {
             likedGroup.setUpdatedAt(LocalDateTime.now());
 
             likedGroupRepository.save(likedGroup);
-        } else {
-            //  좋아요 제거
-            LikedGroup likedGroup = likedGroupRepository.findByUserAndGroup(user, group);
-            if (likedGroup != null) {
-                likedGroupRepository.delete(likedGroup);
-            }
+        }
+    }
+    @Transactional
+    public void removeLike(LikedGroupRequestDTO dto) {
+        User user = userRepository.findById(dto.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+        Group group = groupRepository.findById(dto.getCommunityId()).orElseThrow(() -> new RuntimeException("Group not found"));
+
+        LikedGroup likedGroup = likedGroupRepository.findByUserAndGroup(user, group);
+        if (likedGroup != null) {
+            likedGroupRepository.delete(likedGroup);
         }
     }
 

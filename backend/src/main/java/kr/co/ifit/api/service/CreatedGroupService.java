@@ -8,6 +8,7 @@ import kr.co.ifit.db.repository.GroupRepository;
 import kr.co.ifit.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -43,6 +44,9 @@ public class CreatedGroupService {
     }
 
     //  내가 만든 모임에서 모임 삭제를 눌렀을 때 찾아서 없앤다
+    // transactional 사용 이유 : 모임을 삭제 하는 것이 communityId를 삭제하는데 communityId를 외래키로 가지고 있는 부분이 있어서
+    // 무결성 오류가 발생해서 transactional을 사용해서 데이터 무결성 유지
+    @Transactional
     public boolean deleteGroup(Long userId, Long communityId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         List<Group> groups = groupRepository.findByUser(user);
@@ -56,6 +60,10 @@ public class CreatedGroupService {
     }
 
     public void toggleLike(LikedGroupRequestDTO likedGroupRequestDTO) {
-        likedGroupService.toggleLike(likedGroupRequestDTO);
+        if (likedGroupRequestDTO.isHeartFilled()) {
+            likedGroupService.toggleLike(likedGroupRequestDTO);
+        } else {
+            likedGroupService.removeLike(likedGroupRequestDTO);
+        }
     }
 }

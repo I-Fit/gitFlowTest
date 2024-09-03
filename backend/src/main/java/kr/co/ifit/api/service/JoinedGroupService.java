@@ -1,6 +1,7 @@
 package kr.co.ifit.api.service;
 
 import kr.co.ifit.api.request.LikedGroupRequestDTO;
+import kr.co.ifit.api.response.GroupResponseDTO;
 import kr.co.ifit.db.entity.JoinedGroup;
 import kr.co.ifit.db.entity.Group;
 import kr.co.ifit.db.entity.User;
@@ -33,6 +34,27 @@ public class JoinedGroupService {
         this.likedGroupService = likedGroupService;
     }
 
+    @Transactional(readOnly = true)
+    //  특정 사용자가 참여한 모든 모임을 반환
+    public List<GroupResponseDTO> getGroupsByUserId(Long userId) {
+        //   userId로 사용자 조회
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+        //   사용자가 참여한 joinedGroup 엔티티를 조회하고, 엔티티에서 Group 객체를 추출하여 리스트로 반환
+        return joinedGroupRepository.findByUser(user).stream().map(joinedGroup -> {
+            Group group = joinedGroup.getGroup();
+            return new GroupResponseDTO(
+                    group.getCommunityId(),
+                    group.getTitle(),
+                    group.getTopboxContent(),
+                    group.getSport(),
+                    group.getLocation(),
+                    group.getPerson(),
+                    group.getPeopleParticipation(),
+                    group.getDate()
+            );
+        }).toList();
+    }
+
     // userId, communityId를 받아서 해당 User, group에 조회한 후 새로운 Join 엔티티를 생성하고 저장
     public void joinGroup(Long userId, Long communityId) {
         // userId로 사용자 조회
@@ -47,17 +69,14 @@ public class JoinedGroupService {
 
         // 호출해서 데이터베이스에 저장
         joinedGroupRepository.save(joinedGroup);
-    }
 
-    @Transactional(readOnly = true)
-    //  특정 사용자가 참여한 모든 모임을 반환
-    public List<Group> getGroupsByUserId(Long userId) {
-        //   userId로 사용자 조회
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
-        //   사용자가 참여한 joinedGroup 엔티티를 조회하고, 엔티티에서 Group 객체를 추출하여 리스트로 반환
-        return joinedGroupRepository.findByUser(user).stream()
-                                    .map(JoinedGroup::getGroup)
-                                    .collect(Collectors.toList());
+        //  모임 참여 인원 수 증가 및 인원 수 초과 됐을 때 오류
+        if (group.getPeopleParticipation() < group.getPerson()) {
+            group.incrementPeopleParticipation();
+            groupRepository.save(group);
+        } else {
+            throw new RuntimeException("모임이 가득 찼습니다.");
+        }
     }
 
     //  참석한 모임 중 삭제를 했을 때
@@ -67,12 +86,22 @@ public class JoinedGroupService {
 
         JoinedGroup joinedGroup = joinedGroupRepository.findByUserAndGroup(user, group).orElseThrow(() -> new RuntimeException("참여 모임 내역에서 찾을 수 없습니다"));
         joinedGroupRepository.delete(joinedGroup);
+
+        //  모임 참여 취소 후 모임 참여 인원 수 감소
+        if (group.getPeopleParticipation() > 0) {
+            group.decrementPeopleParticipation();
+            groupRepository.save(group);
+        }
         return true;
     }
 
     //  LikedGroupService에 있는 좋아요 추가, 삭제 기능 사용
     public void toggleLike(LikedGroupRequestDTO likedGroupRequestDTO) {
-        likedGroupService.toggleLike(likedGroupRequestDTO);
+        if (likedGroupRequestDTO.isHeartFilled()) {
+            likedGroupService.toggleLike(likedGroupRequestDTO);
+        } else {
+            likedGroupService.removeLike(likedGroupRequestDTO);
+        }
     }
 
 }

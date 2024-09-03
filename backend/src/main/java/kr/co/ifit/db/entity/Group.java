@@ -31,7 +31,10 @@ public class Group {
     private String location;
 
     @Column(name = "peopleTotal", nullable = false)
-    private Integer person;
+    private int person;
+
+    @Column(name = "peopleParticipation", nullable = false)
+    private int peopleParticipation = 0;
 
     @Column(name = "communityDatetime", columnDefinition = "TIMESTAMP")
     private LocalDateTime date;
@@ -43,10 +46,11 @@ public class Group {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    public Group(String title, String topboxContent, String sport, String location, Integer person, LocalDateTime date, User user) {
+    public Group(String title, String topboxContent, String sport, String location, int person, int peopleParticipation, LocalDateTime date, User user) {
         this.title = title;
         this.topboxContent = topboxContent;
         this.sport = sport;
+        this.peopleParticipation = peopleParticipation;
         this.location = location;
         this.person = person;
         this.date = date;
@@ -56,5 +60,16 @@ public class Group {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public void incrementPeopleParticipation() {
+        if (peopleParticipation <= person) {
+            this.peopleParticipation++;
+        }
+    }
+    public void decrementPeopleParticipation() {
+        if (peopleParticipation > 0) {
+            this.peopleParticipation--;
+        }
     }
 }
