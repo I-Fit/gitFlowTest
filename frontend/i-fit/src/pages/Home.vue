@@ -27,15 +27,17 @@
               {{ location.name }}
             </option>
           </select>
-          
+
           <div>
-            <VueDatePicker class="date-picker" placeholder="날짜" locale="ko" v-model="date" :enable-time-picker="false" year-first="true" select-text="확인" cancel-text="취소" />
+            <VueDatePicker class="date-picker" placeholder="날짜" locale="ko" v-model="date" :enable-time-picker="false"
+              year-first="true" select-text="확인" cancel-text="취소" />
           </div>
-          
+
           <div>
-            <VueDatePicker class="time-picker" placeholder="시간" locale="ko" v-model="time" time-picker select-text="확인" cancel-text="취소">
+            <VueDatePicker class="time-picker" placeholder="시간" locale="ko" v-model="time" time-picker select-text="확인"
+              cancel-text="취소">
               <template #input-icon>
-                <img class="input-slot-image" src="@/assets/images/clock-icon.png"/>
+                <img class="input-slot-image" src="@/assets/images/clock-icon.png" />
               </template>
             </VueDatePicker>
           </div>
@@ -164,41 +166,32 @@
               </div>
             </div>
           </div>
-          <div class="group-container">
-            <div class="user-info">
-              <img src="../assets/images/user_img.png" alt="사용자 이미지" class="user-img" />
-              <span>김계란</span>
+          <div class="new-group-container">
+            <div class="unicode-box">
               <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
-            </div>
-            <div class="group-content">
-              <span class="title"> 수영 같이 하실 분 구함 </span>
-            </div>
-            <p class="date">24.06.14 (금)</p>
-            <p class="time">8:00 PM</p>
-            <div class="group-info">
               <div class="title-heart" @click="toggleHeart">
                 <div :class="{
                   'filled-heart': isHeartFilled,
                   'empty-heart': !isHeartFilled,
                 }"></div>
               </div>
-              <span class="size">참여인원: 3/10</span>
-              <span class="location">강남구</span>
-              <button type="button" class="attend" @click="showConfirmPopup = true">
-                참석
-              </button>
-              <div v-if="showConfirmPopup" class="confirm-popup">
-                <div class="popup-content">
-                  <p>모임에 참여하시겠습니까?</p>
-                  <button class="confirm-btn" @click="confirmDeletion">
-                    확인
-                  </button>
-                  <button class="cancle-btn" @click="cancelDeletion">
-                    취소
-                  </button>
+              <span class="plus-icon">&#43;</span>
+            </div>
+            <div class="sport-image-box">
+              <img src="" alt="" class="sport-image">
+            </div>
+            <div class="group-information">
+              <div class="user-info-and-group-sport">
+                <p class="sport-text">요가</p>
+                <div class="user-info">
+                  <span>yoga123</span>
+                  <img src="" alt="">
                 </div>
               </div>
+              <div class="group-text"></div>
             </div>
+
+
           </div>
           <div class="group-container">
             <div class="user-info">
@@ -417,11 +410,11 @@ export default {
           "Content-Type": "application/json",   // todo - api 응답 데이터 구조 확인 후 수정 필요
         },
       })
-      .then(response => response.json())
-      .then(data => {
-        this.locations = data;
-      })
-      .catch(error => console.error("Error fetching location data:", error));
+        .then(response => response.json())
+        .then(data => {
+          this.locations = data;
+        })
+        .catch(error => console.error("Error fetching location data:", error));
     },
     sortItems(option) {
       switch (option) {
@@ -460,7 +453,7 @@ export default {
 
   setup() {
     const time = ref(null);
-  
+
     const selectedOption = ref('');
     const options = ref([
       // { value: '', text: '정렬' },
@@ -468,7 +461,7 @@ export default {
       { value: '2', text: '최신순' },
       { value: '3', text: '오래된순' },
     ])
-  
+
     const router = useRouter();
     const store = useStore();
     // 여러 모임 데이터 배열에 저장
@@ -477,7 +470,7 @@ export default {
     const userId = computed(() => store.getters['isLogged/userId']);
 
     const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, PerPage);
-    
+
     // creategroup에서 생성한 모임에 사용자 식별 ID값을 같이 보내줘서
     // 서버에서 username, user_img를 받아옴
     onMounted(async () => {
@@ -665,14 +658,19 @@ main {
   font-size: 18px;
   cursor: pointer;
   /* box-sizing: border-box; */
-  padding-right: 10px; /* 텍스트와 화살표 사이의 간격 확보 */
-  -webkit-appearance: none; /* 기본 화살표 제거 */
+  padding-right: 10px;
+  /* 텍스트와 화살표 사이의 간격 확보 */
+  -webkit-appearance: none;
+  /* 기본 화살표 제거 */
   -moz-appearance: none;
   appearance: none;
-  background-image: url('@/assets/images/custom-arrow.png'); /* 커스텀 화살표 이미지 경로 */
+  background-image: url('@/assets/images/custom-arrow.png');
+  /* 커스텀 화살표 이미지 경로 */
   background-repeat: no-repeat;
-  background-position: right 15px center; /* 아이콘 위치 조정 */
-  background-size: 12px; /* 아이콘 크기 조정 */
+  background-position: right 15px center;
+  /* 아이콘 위치 조정 */
+  background-size: 12px;
+  /* 아이콘 크기 조정 */
 }
 
 .date-picker {
@@ -776,20 +774,28 @@ main {
   box-sizing: border-box;
   font-size: 16px;
   cursor: pointer;
-  padding-right: 10px; /* 텍스트와 화살표 사이의 간격 확보 */
-  -webkit-appearance: none; /* 기본 화살표 제거 */
+  padding-right: 10px;
+  /* 텍스트와 화살표 사이의 간격 확보 */
+  -webkit-appearance: none;
+  /* 기본 화살표 제거 */
   -moz-appearance: none;
   appearance: none;
-  background-image: url('@/assets/images/custom-arrow.png'); /* 커스텀 화살표 이미지 경로 */
+  background-image: url('@/assets/images/custom-arrow.png');
+  /* 커스텀 화살표 이미지 경로 */
   background-repeat: no-repeat;
-  background-position: right 15px center; /* 아이콘 위치 조정 */
-  background-size: 12px; /* 아이콘 크기 조정 */
+  background-position: right 15px center;
+  /* 아이콘 위치 조정 */
+  background-size: 12px;
+  /* 아이콘 크기 조정 */
 }
 
 .sort-title option {
-  background-color: #ffffff; /* 옵션 배경색 */
-  color: #333; /* 옵션 글자 색 */
-  padding: 10px; /* 옵션 내부 여백 */
+  background-color: #ffffff;
+  /* 옵션 배경색 */
+  color: #333;
+  /* 옵션 글자 색 */
+  padding: 10px;
+  /* 옵션 내부 여백 */
 }
 
 /* 생성 모임 영역 */
@@ -801,6 +807,60 @@ main {
   margin-top: 25px;
 }
 
+/* 새로운 디자인 */
+.new-group-container {
+  display: grid;
+  grid-template-rows: 40px 250px 1fr;
+  width: 300px;
+  height: 400px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  margin-right: 120px;
+}
+
+.unicode-box {
+  display: flex;
+  justify-content: end;
+  margin: 10px 15px 0px 0px;
+}
+
+.plus-icon {
+  font-size: 25px;
+}
+
+.sport-image-box {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sport-image {
+  width: 268px;
+  height: 250px;
+  border: 1px solid black;
+}
+
+.group-information {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.user-info-and-group-sport {
+  width: 100%;
+  height: 30px;
+  display: flex;
+}
+
+.group-text {
+  border: 1px solid #ccc;
+  background-color: #1a73e8;
+  color: white;
+}
+
 /* 생성된 모임의 위치를 justify-content로 하지 않고 margin값을 준 다음에
 3번째 item에만 margin값을 주지 않음 */
 .group-container {
@@ -810,6 +870,7 @@ main {
   border-radius: 20px;
   margin-right: 120px;
 }
+
 
 .group-container:nth-child(3n) {
   margin-right: 0px;
@@ -997,9 +1058,9 @@ main {
 .title-heart {
   cursor: pointer;
   display: inline-block;
-  width: 35px;
+  width: 25px;
   /* 하트의 크기를 조정합니다 */
-  height: 35px;
+  height: 25px;
   /* 하트의 크기를 조정합니다 */
   position: relative;
   margin-left: 15px;
@@ -1009,14 +1070,14 @@ main {
   width: 100%;
   height: 100%;
   position: absolute;
-  bottom: 9px;
+  bottom: 5px;
   right: 10px;
 }
 
 .empty-heart::before {
   content: "\2764";
   /* 빈 하트 문자 */
-  font-size: 35px;
+  font-size: 25px;
   /* 하트의 크기 */
   color: transparent;
   /* 하트의 내부는 투명하게 */
@@ -1027,7 +1088,7 @@ main {
 .filled-heart::before {
   content: "\2764";
   /* 채워진 하트 문자 */
-  font-size: 35px;
+  font-size: 25px;
   /* 하트의 크기 */
   color: red;
   /* 채워진 하트의 색상 */
