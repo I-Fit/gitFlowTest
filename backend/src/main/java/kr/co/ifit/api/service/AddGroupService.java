@@ -5,6 +5,7 @@ import kr.co.ifit.db.entity.Group;
 import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.GroupRepository;
 import kr.co.ifit.db.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,16 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class AddGroupService {
 
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
-
-    @Autowired
-    public AddGroupService(GroupRepository groupRepository, UserRepository userRepository) {
-        this.groupRepository = groupRepository;
-        this.userRepository = userRepository;
-    }
 
     //  메서드가 데이터베이스 상태를 변경할 수 있다
     @Transactional

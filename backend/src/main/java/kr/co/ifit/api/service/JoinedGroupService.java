@@ -8,6 +8,7 @@ import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.GroupRepository;
 import kr.co.ifit.db.repository.JoinedGroupRepository;
 import kr.co.ifit.db.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,21 +19,13 @@ import java.util.stream.Collectors;
 
 // 사용자가 모임에 참가하는 기능을 구현
 @Service
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class JoinedGroupService {
 
     private final JoinedGroupRepository joinedGroupRepository;
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
     private final LikedGroupService likedGroupService;
-
-    // 의존성 주입(생성자 주입)
-    @Autowired
-    public JoinedGroupService(JoinedGroupRepository joinedGroupRepository, UserRepository userRepository, GroupRepository groupRepository, LikedGroupService likedGroupService) {
-        this.joinedGroupRepository = joinedGroupRepository;
-        this.userRepository = userRepository;
-        this.groupRepository = groupRepository;
-        this.likedGroupService = likedGroupService;
-    }
 
     @Transactional(readOnly = true)
     //  특정 사용자가 참여한 모든 모임을 반환
@@ -61,6 +54,10 @@ public class JoinedGroupService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
         // communityId로 모임 조회
         Group group = groupRepository.findById(communityId).orElseThrow(() -> new RuntimeException("모임을 찾을 수 없습니다."));
+
+        if (joinedGroupRepository.existsByUserAndGroup(user, group)) {
+            throw new RuntimeException("이미 참여 중인 모임입니다.");
+        }
 
         JoinedGroup joinedGroup = new JoinedGroup();
         joinedGroup.setUser(user);

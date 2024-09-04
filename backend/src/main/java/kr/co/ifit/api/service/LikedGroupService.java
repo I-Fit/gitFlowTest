@@ -8,6 +8,7 @@ import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.GroupRepository;
 import kr.co.ifit.db.repository.LikedGroupRepository;
 import kr.co.ifit.db.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,18 +17,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class LikedGroupService {
 
     private final LikedGroupRepository likedGroupRepository;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
-
-    @Autowired
-    public LikedGroupService(LikedGroupRepository likedGroupRepository, GroupRepository groupRepository, UserRepository userRepository) {
-        this.likedGroupRepository = likedGroupRepository;
-        this.groupRepository = groupRepository;
-        this.userRepository = userRepository;
-    }
 
     //  받아온 userId를 조회한다
     @Transactional
@@ -56,6 +51,9 @@ public class LikedGroupService {
         User user = userRepository.findById(dto.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
         Group group = groupRepository.findById(dto.getCommunityId()).orElseThrow(() -> new RuntimeException("Group not found"));
 
+        if (likedGroupRepository.existsByUserAndGroup(user, group)) {
+            throw new RuntimeException("이미 찜한 모임입니다.");
+        }
         if (dto.isHeartFilled()) {
             //  좋아요 추가
             LikedGroup likedGroup = new LikedGroup();

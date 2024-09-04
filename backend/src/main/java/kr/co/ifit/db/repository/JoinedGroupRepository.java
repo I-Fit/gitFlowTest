@@ -16,4 +16,6 @@ public interface JoinedGroupRepository extends JpaRepository<JoinedGroup, Long> 
     List<JoinedGroup> findByUser(User user);
 
     Optional<JoinedGroup> findByUserAndGroup(User user, Group group);
+
+    boolean existsByUserAndGroup(User user, Group group);
 }

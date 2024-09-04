@@ -4,21 +4,19 @@ import kr.co.ifit.api.request.LikedGroupRequestDTO;
 import kr.co.ifit.api.response.GroupResponseDTO;
 import kr.co.ifit.db.entity.Group;
 import kr.co.ifit.db.repository.GroupRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class HomeGroupService {
 
     private final GroupRepository groupRepository;
     private final LikedGroupService likedGroupService;
-
-    public HomeGroupService(GroupRepository groupRepository, LikedGroupService likedGroupService) {
-        this.groupRepository = groupRepository;
-        this.likedGroupService = likedGroupService;
-    }
 
     //  Group 엔티티를 HomeGroupResponseDTO 객체로 변환
     public List<GroupResponseDTO> getAllGroups() {

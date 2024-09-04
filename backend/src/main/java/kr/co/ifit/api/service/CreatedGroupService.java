@@ -6,6 +6,7 @@ import kr.co.ifit.db.entity.Group;
 import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.GroupRepository;
 import kr.co.ifit.db.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,18 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class CreatedGroupService {
 
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
     private final LikedGroupService likedGroupService;
 
-    @Autowired
-    public CreatedGroupService(UserRepository userRepository, GroupRepository groupRepository, LikedGroupService likedGroupService) {
-        this.userRepository = userRepository;
-        this.groupRepository = groupRepository;
-        this.likedGroupService = likedGroupService;
-    }
     //  GroupRepository에서 userId로 조회 후 GroupresponseDTO로 변환 후 groups 리스트 응답
     public List<GroupResponseDTO> getCreatedGroupsByUserId(Long userId) {
 

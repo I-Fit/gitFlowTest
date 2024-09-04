@@ -13,6 +13,8 @@ import java.util.List;
 @Entity
 @ToString
 @NoArgsConstructor
+//  AllArgsConstructor 를 사용하지 못하는 이유 : communityId, peopleParticipation 필드는 생성자에 추가되지 않도록 해야하는데 Lombok에서는 특정 필드를 제외할 수 없다.
+//  그래서 수동으로 작성해줌
 @Table(name = "Community")
 public class Group {
 

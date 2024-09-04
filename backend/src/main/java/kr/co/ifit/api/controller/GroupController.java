@@ -9,6 +9,7 @@ import kr.co.ifit.api.response.GroupResponseDTO;
 import kr.co.ifit.api.service.*;
 import kr.co.ifit.db.entity.Group;
 import kr.co.ifit.db.entity.LikedGroup;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,16 +21,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})   //final로 선언된 필드에 대한 생성자를 자동으로 생성
 public class GroupController {
-
-    @Autowired
-    public GroupController(AddGroupService addGroupService, HomeGroupService homeGroupService, JoinedGroupService joinedGroupService, CreatedGroupService createdGroupService, LikedGroupService likedGroupService) {
-        this.addGroupService = addGroupService;
-        this.homeGroupService = homeGroupService;
-        this.joinedGroupService = joinedGroupService;
-        this.createdGroupService = createdGroupService;
-        this.likedGroupService = likedGroupService;
-    }
 
     private final AddGroupService addGroupService;
     private final HomeGroupService homeGroupService;
