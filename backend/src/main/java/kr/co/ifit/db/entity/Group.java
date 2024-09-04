@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Setter
@@ -46,11 +48,16 @@ public class Group {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    public Group(String title, String topboxContent, String sport, String location, int person, int peopleParticipation, LocalDateTime date, User user) {
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JoinedGroup> joinedGroups = new ArrayList<>();
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LikedGroup> likedGroups = new ArrayList<>();
+
+    public Group(String title, String topboxContent, String sport, String location, int person, LocalDateTime date, User user) {
         this.title = title;
         this.topboxContent = topboxContent;
         this.sport = sport;
-        this.peopleParticipation = peopleParticipation;
         this.location = location;
         this.person = person;
         this.date = date;

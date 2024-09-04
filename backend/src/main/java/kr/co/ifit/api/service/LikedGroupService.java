@@ -44,6 +44,7 @@ public class LikedGroupService {
                         group.getSport(),
                         group.getLocation(),
                         group.getPerson(),
+                        group.getPeopleParticipation(),
                         group.getDate()
                     );
                 }).toList();

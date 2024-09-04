@@ -30,6 +30,7 @@ public class HomeGroupService {
                 group.getSport(),
                 group.getLocation(),
                 group.getPerson(),
+                group.getPeopleParticipation(),
                 group.getDate())).collect(Collectors.toList());         // 변환된 DTO 객체를 리스트로 수집
     }
     
