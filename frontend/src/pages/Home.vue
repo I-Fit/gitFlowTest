@@ -59,163 +59,56 @@
         <!-- 생성된 모임 영역 -->
         <div class="group">
           <div class="group-container">
-            <div class="user-info">
-              <img src="../assets/images/user_img.png" alt="사용자 이미지" class="user-img" />
-              <span>김계란</span>
-              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
-            </div>
-            <div class="group-content">
-              <span class="title"> 수영 같이 하실 분 구함 </span>
-            </div>
-            <p class="date">24.06.14 (금)</p>
-            <p class="time">8:00 PM</p>
-            <div class="group-info">
-              <div class="title-heart" @click="toggleHeart">
-                <div :class="{
-                  'filled-heart': isHeartFilled,
-                  'empty-heart': !isHeartFilled,
-                }"></div>
-              </div>
-              <span class="size">참여인원: 3/10</span>
-              <span class="location">강남구</span>
-              <button type="submit" class="attend" @click="showConfirmPopup = true">
-                참석
-              </button>
-              <div v-if="showConfirmPopup" class="confirm-popup">
-                <div class="popup-content">
-                  <p>모임에 참여하시겠습니까?</p>
-                  <button class="confirm-btn" @click="confirmDeletion">
-                    확인
-                  </button>
-                  <button class="cancle-btn" @click="cancelDeletion">
-                    취소
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="group-container">
-            <div class="user-info">
-              <img src="../assets/images/user_img.png" alt="사용자 이미지" class="user-img" />
-              <span>김계란</span>
-              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
-            </div>
-            <div class="group-content">
-              <span class="title"> 수영 같이 하실 분 구함 </span>
-            </div>
-            <p class="date">24.06.14 (금)</p>
-            <p class="time">8:00 PM</p>
-            <div class="group-info">
-              <div class="title-heart" @click="toggleHeart">
-                <div :class="{
-                  'filled-heart': isHeartFilled,
-                  'empty-heart': !isHeartFilled,
-                }"></div>
-              </div>
-              <span class="size">참여인원: 3/10</span>
-              <span class="location">강남구</span>
-              <button type="button" class="attend" @click="showConfirmPopup = true">
-                참석
-              </button>
-              <div v-if="showConfirmPopup" class="confirm-popup">
-                <div class="popup-content">
-                  <p>모임에 참여하시겠습니까?</p>
-                  <button class="confirm-btn" @click="confirmDeletion">
-                    확인
-                  </button>
-                  <button class="cancle-btn" @click="cancelDeletion">
-                    취소
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="group-container">
-            <div class="user-info">
-              <img src="../assets/images/user_img.png" alt="사용자 이미지" class="user-img" />
-              <span>김계란</span>
-              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
-            </div>
-            <div class="group-content">
-              <span class="title"> 수영 같이 하실 분 구함 </span>
-            </div>
-            <p class="date">24.06.14 (금)</p>
-            <p class="time">8:00 PM</p>
-            <div class="group-info">
-              <div class="title-heart" @click="toggleHeart">
-                <div :class="{
-                  'filled-heart': isHeartFilled,
-                  'empty-heart': !isHeartFilled,
-                }"></div>
-              </div>
-              <span class="size">참여인원: 3/10</span>
-              <span class="location">강남구</span>
-              <button type="button" class="attend" @click="showConfirmPopup = true">
-                참석
-              </button>
-              <div v-if="showConfirmPopup" class="confirm-popup">
-                <div class="popup-content">
-                  <p>모임에 참여하시겠습니까?</p>
-                  <button class="confirm-btn" @click="confirmDeletion">
-                    확인
-                  </button>
-                  <button class="cancle-btn" @click="cancelDeletion">
-                    취소
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="new-group-container">
             <div class="unicode-box">
-              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
+              <span class="group-detail" @click="openModal">&#128712;</span>
               <div class="title-heart" @click="toggleHeart">
                 <div :class="{
                   'filled-heart': isHeartFilled,
                   'empty-heart': !isHeartFilled,
                 }"></div>
               </div>
-              <span class="plus-icon">&#43;</span>
+              <span class="plus-icon" @click="showConfirmPopup = true">&#43;</span>
+              <div v-if="showConfirmPopup" class="confirm-popup">
+                <div class="popup-content">
+                  <p>모임에 참여하시겠습니까?</p>
+                  <button class="confirm-btn" @click="confirmDeletion">
+                    확인
+                  </button>
+                  <button class="cancle-btn" @click="cancelDeletion">
+                    취소
+                  </button>
+                </div>
+              </div>
             </div>
             <div class="sport-image-box">
-              <img src="" alt="" class="sport-image">
+              <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
             </div>
             <div class="group-information">
               <div class="user-info-and-group-sport">
                 <p class="sport-text">요가</p>
                 <div class="user-info">
-                  <span>yoga123</span>
-                  <img src="" alt="">
+                  <span class="user-name">yoga123</span>
+                  <img src="../assets/images/user-img-one.png" alt="사용자 이미지" class="user-img">
                 </div>
               </div>
-              <div class="group-text"></div>
+              <div class="group-text">
+                <p class="title"> 월요일 아침 같이 요가 해요 ~!</p>
+                <p class="date-and-time">24.08.26 (월) 6:00 <span class="location">| 강남구</span></p>
+                <p class="person">인원: 2 / 5</p>
+              </div>
             </div>
-
-
           </div>
+
           <div class="group-container">
-            <div class="user-info">
-              <img src="../assets/images/user_img.png" alt="사용자 이미지" class="user-img" />
-              <span>김계란</span>
-              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
-            </div>
-            <div class="group-content">
-              <span class="title"> 수영 같이 하실 분 구함 </span>
-            </div>
-            <p class="date">24.06.14 (금)</p>
-            <p class="time">8:00 PM</p>
-            <div class="group-info">
+            <div class="unicode-box">
+              <span class="group-detail" @click="openModal">&#128712;</span>
               <div class="title-heart" @click="toggleHeart">
                 <div :class="{
                   'filled-heart': isHeartFilled,
                   'empty-heart': !isHeartFilled,
                 }"></div>
               </div>
-              <span class="size">참여인원: 3/10</span>
-              <span class="location">강남구</span>
-              <button type="button" class="attend" @click="showConfirmPopup = true">
-                참석
-              </button>
+              <span class="plus-icon" @click="showConfirmPopup = true">&#43;</span>
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
@@ -228,30 +121,34 @@
                 </div>
               </div>
             </div>
+            <div class="sport-image-box">
+              <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
+            </div>
+            <div class="group-information">
+              <div class="user-info-and-group-sport">
+                <p class="sport-text">러닝</p>
+                <div class="user-info">
+                  <span class="user-name">러닝걸</span>
+                  <img src="../assets/images/user-img-two.png" alt="사용자 이미지" class="user-img">
+                </div>
+              </div>
+              <div class="group-text">
+                <p class="title">이번 주말 한강 러닝 고?!</p>
+                <p class="date-and-time">24.08.31 (토) 8:00 <span class="location">| 강남구</span></p>
+                <p class="person">인원: 0 / 6</p>
+              </div>
+            </div>
           </div>
           <div class="group-container">
-            <div class="user-info">
-              <img src="../assets/images/user_img.png" alt="사용자 이미지" class="user-img" />
-              <span>김계란</span>
-              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
-            </div>
-            <div class="group-content">
-              <span class="title"> 수영 같이 하실 분 구함 </span>
-            </div>
-            <p class="date">24.06.14 (금)</p>
-            <p class="time">8:00 PM</p>
-            <div class="group-info">
+            <div class="unicode-box">
+              <span class="group-detail" @click="openModal">&#128712;</span>
               <div class="title-heart" @click="toggleHeart">
                 <div :class="{
                   'filled-heart': isHeartFilled,
                   'empty-heart': !isHeartFilled,
                 }"></div>
               </div>
-              <span class="size">참여인원: 3/10</span>
-              <span class="location">강남구</span>
-              <button type="button" class="attend" @click="showConfirmPopup = true">
-                참석
-              </button>
+              <span class="plus-icon" @click="showConfirmPopup = true">&#43;</span>
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
@@ -262,34 +159,78 @@
                     취소
                   </button>
                 </div>
+              </div>
+            </div>
+            <div class="sport-image-box">
+              <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
+            </div>
+            <div class="group-information">
+              <div class="user-info-and-group-sport">
+                <p class="sport-text">요가</p>
+                <div class="user-info">
+                  <span class="user-name">yoga123</span>
+                  <img src="../assets/images/user-img-three.png" alt="사용자 이미지" class="user-img">
+                </div>
+              </div>
+              <div class="group-text">
+                <p class="title"> 월요일 아침 같이 요가 해요 ~!</p>
+                <p class="date-and-time">24.08.26 (월) 6:00 <span class="location">| 강남구</span></p>
+                <p class="person">인원: 2 / 5</p>
+              </div>
+            </div>
+          </div>
+          <div class="group-container">
+            <div class="unicode-box">
+              <span class="group-detail" @click="openModal">&#128712;</span>
+              <div class="title-heart" @click="toggleHeart">
+                <div :class="{
+                  'filled-heart': isHeartFilled,
+                  'empty-heart': !isHeartFilled,
+                }"></div>
+              </div>
+              <span class="plus-icon" @click="showConfirmPopup = true">&#43;</span>
+              <div v-if="showConfirmPopup" class="confirm-popup">
+                <div class="popup-content">
+                  <p>모임에 참여하시겠습니까?</p>
+                  <button class="confirm-btn" @click="confirmDeletion">
+                    확인
+                  </button>
+                  <button class="cancle-btn" @click="cancelDeletion">
+                    취소
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="sport-image-box">
+              <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
+            </div>
+            <div class="group-information">
+              <div class="user-info-and-group-sport">
+                <p class="sport-text">웨이트</p>
+                <div class="user-info">
+                  <span class="user-name">안유진</span>
+                  <img src="../assets/images/user-img-four.png" alt="사용자 이미지" class="user-img">
+                </div>
+              </div>
+              <div class="group-text">
+                <p class="title">퇴근 후 50분 웨이트 인원 모집!!! 선착순 3명</p>
+                <p class="date-and-time">24.08.26 (월) 20:00 <span class="location">| 용산구</span></p>
+                <p class="person">인원: 1 / 3</p>
               </div>
             </div>
           </div>
 
           <div v-for="group in visibleDatas" :key="group.communityId" class="group-container">
-            <div class="user-info">
-              <img :src="group.user_img || '/default-profile.png'" alt="사용자 이미지" class="user-img" />
-              <span>{{ group.username }}</span>
-              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
-            </div>
-            <div class="group-content">
-              <span class="title">{{ group.title }}</span>
-            </div>
-            <p class="date">{{ group.date }}</p>
-            <p class="time">{{ group.date }}</p>
-            <div class="group-info">
+            <div class="unicode-box">
+              <span class="group-detail" @click="openModal">&#128712;</span>
               <div class="title-heart" @click="toggleHeart(group.communityId)">
                 <div :class="{
                   'filled-heart': isHeartFilled,
                   'empty-heart': !isHeartFilled,
                 }"></div>
               </div>
-              <span class="size">참여인원: {{ group.person }}</span>
-              <span class="location">{{ group.location }}</span>
-              <button type="button" class="attend" @click="showConfirmPopup = true">
-                참석
-              </button>
-              <div v-if="showConfirmPopup === group.communityId" class="confirm-popup">
+              <span class="plus-icon" @click="showConfirmPopup = true">&#43;</span>
+              <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
                   <button class="confirm-btn" @click="confirmDeletion(group.communityId)">
@@ -299,6 +240,23 @@
                     취소
                   </button>
                 </div>
+              </div>
+            </div>
+            <div class="sport-image-box">
+              <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
+            </div>
+            <div class="group-information">
+              <div class="user-info-and-group-sport">
+                <p class="sport-text">{{ group.sport }}</p>
+                <div class="user-info">
+                  <span class="user-name">{{ group.username }}</span>
+                  <img :src="group.user_img || '/default-profile.png'" alt="사용자 이미지" class="user-img">
+                </div>
+              </div>
+              <div class="group-text">
+                <p class="new-title"> {{ group.title }}</p>
+                <p class="date-and-time">{{ group.date }}{{ group.time }} <span class="location">| {{ group.location }}</span></p>
+                <p class="person">인원: {{ group.peopleParticipaion }} / {{ group.person }}</p>
               </div>
             </div>
           </div>
@@ -466,7 +424,7 @@ export default {
     const store = useStore();
     // 여러 모임 데이터 배열에 저장
     const groups = ref([]);
-    const PerPage = 6;
+    const PerPage = 8;
     const userId = computed(() => store.getters['isLogged/userId']);
 
     const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, PerPage);
@@ -807,25 +765,35 @@ main {
   margin-top: 25px;
 }
 
+/* 생성된 모임의 위치를 justify-content로 하지 않고 margin값을 준 다음에
+3번째 item에만 margin값을 주지 않음 */
 /* 새로운 디자인 */
-.new-group-container {
+.group-container {
   display: grid;
   grid-template-rows: 40px 250px 1fr;
-  width: 300px;
-  height: 400px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  margin-right: 120px;
+  width: 280px;
+  height: 450px;
+  margin-right: 66px;
+}
+.group > .group-container:nth-of-type(4n) {
+  margin-right: 0px;
 }
 
 .unicode-box {
   display: flex;
-  justify-content: end;
-  margin: 10px 15px 0px 0px;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 5px 10px 0px 0px;
 }
-
+.group-detail {
+  font-size: 30px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  margin-right: 3px;
+}
 .plus-icon {
-  font-size: 25px;
+  font-size: 30px;
+  cursor: pointer;
 }
 
 .sport-image-box {
@@ -837,120 +805,83 @@ main {
 }
 
 .sport-image {
-  width: 268px;
+  width: 260px;
   height: 250px;
-  border: 1px solid black;
+  border: 1px solid #ccc;
 }
 
 .group-information {
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
 }
 
 .user-info-and-group-sport {
   width: 100%;
-  height: 30px;
+  height: 50px;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.group-text {
+.sport-text {
+  width: 60px;
+  height: 40px;
   border: 1px solid #ccc;
   background-color: #1a73e8;
   color: white;
-}
+  font-weight: bold;
+  font-size: 18px;
+  margin-left: 8px;
 
-/* 생성된 모임의 위치를 justify-content로 하지 않고 margin값을 준 다음에
-3번째 item에만 margin값을 주지 않음 */
-.group-container {
-  width: 360px;
-  height: 300px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  margin-right: 120px;
-}
-
-
-.group-container:nth-child(3n) {
-  margin-right: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .user-info {
   display: flex;
+  justify-content: center;
   align-items: center;
-  margin: 29px 0 0 20px;
+  margin-right: 8px;
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 10px;
+  margin-right: 5px;
 }
 
 .user-img {
-  width: 50px;
-  height: 40px;
-  margin-left: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
 }
 
-.detail-icon {
-  width: 20px;
-  height: 20px;
-  margin-left: 173px;
-}
-
-.group-content {
+.group-text {
   display: flex;
-  align-items: center;
-  margin-top: 15px;
-  justify-content: center;
+  flex-direction: column;
+  margin-top: 10px;
 }
 
 .title {
-  font-size: 28px;
+  font-size: 18px;
   font-weight: bold;
-  color: #5d5a88;
+  margin-left: 8px;
+  margin-bottom: 10px;
 }
-
-.date {
-  font-size: 18px;
-  color: #9795b5;
-  margin-left: 218px;
-  margin-top: 20px;
-  padding: 5px;
+.date-and-time {
+  font-size: 14px;
+  font-weight: lighter;
+  margin-left: 10px;
+  margin-bottom: 5px;
 }
-
-.time {
-  font-size: 18px;
-  color: #9795b5;
-  margin-left: 252px;
-  padding: 5px;
-}
-
-.group-info {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-}
-
-.like-img {
-  width: 35px;
-  height: 35px;
-  margin-right: 30px;
-}
-
-.size {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 12px;
-  margin-right: 5px;
+.person {
+  font-size: 14px;
+  font-weight: lighter;
   margin-left: 10px;
 }
-
-.location {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 12px;
-  margin-right: 5px;
-}
-
 .attend {
   padding: 11px 17px;
   border: none;
@@ -1092,7 +1023,7 @@ main {
   /* 하트의 크기 */
   color: red;
   /* 채워진 하트의 색상 */
-  -webkit-text-stroke: none;
+  /* -webkit-text-stroke: none; */
   /* 채워진 하트의 테두리 제거 */
 }
 </style>
