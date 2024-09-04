@@ -94,7 +94,7 @@
               <div class="group-text">
                 <p class="title"> 월요일 아침 같이 요가 해요 ~!</p>
                 <p class="date-and-time">24.08.26 (월) 6:00 <span class="location">| 강남구</span></p>
-                <p class="person">인원: 2 / 5</p>
+                <p class="person">인원 : 2 / 5</p>
               </div>
             </div>
           </div>
@@ -122,7 +122,7 @@
               </div>
             </div>
             <div class="sport-image-box">
-              <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
+              <img src="../assets/images/running-image.png" alt="러닝 이미지" class="sport-image">
             </div>
             <div class="group-information">
               <div class="user-info-and-group-sport">
@@ -135,7 +135,7 @@
               <div class="group-text">
                 <p class="title">이번 주말 한강 러닝 고?!</p>
                 <p class="date-and-time">24.08.31 (토) 8:00 <span class="location">| 강남구</span></p>
-                <p class="person">인원: 0 / 6</p>
+                <p class="person">인원 : 0 / 6</p>
               </div>
             </div>
           </div>
@@ -163,20 +163,20 @@
               </div>
             </div>
             <div class="sport-image-box">
-              <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
+              <img src="../assets/images/gym-image.png" alt="웨이트 이미지" class="sport-image">
             </div>
             <div class="group-information">
               <div class="user-info-and-group-sport">
-                <p class="sport-text">요가</p>
+                <p class="sport-text">웨이트</p>
                 <div class="user-info">
-                  <span class="user-name">yoga123</span>
+                  <span class="user-name">안유진</span>
                   <img src="../assets/images/user-img-three.png" alt="사용자 이미지" class="user-img">
                 </div>
               </div>
               <div class="group-text">
-                <p class="title"> 월요일 아침 같이 요가 해요 ~!</p>
-                <p class="date-and-time">24.08.26 (월) 6:00 <span class="location">| 강남구</span></p>
-                <p class="person">인원: 2 / 5</p>
+                <p class="title"> 퇴근 후 50분 웨이트 인원 모집!!! 선착순 3명</p>
+                <p class="date-and-time">24.08.26 (월) 20:00 <span class="location">| 용산구</span></p>
+                <p class="person">인원 : 1 / 3</p>
               </div>
             </div>
           </div>
@@ -204,20 +204,21 @@
               </div>
             </div>
             <div class="sport-image-box">
-              <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
+              <img src="../assets/images/running-image.png" alt="요가 이미지" class="sport-image">
             </div>
             <div class="group-information">
               <div class="user-info-and-group-sport">
-                <p class="sport-text">웨이트</p>
+                <p class="sport-text">러닝</p>
+                <p class="closing-soon">마감임박</p>
                 <div class="user-info">
-                  <span class="user-name">안유진</span>
+                  <span class="user-name">런닝맨</span>
                   <img src="../assets/images/user-img-four.png" alt="사용자 이미지" class="user-img">
                 </div>
               </div>
               <div class="group-text">
-                <p class="title">퇴근 후 50분 웨이트 인원 모집!!! 선착순 3명</p>
-                <p class="date-and-time">24.08.26 (월) 20:00 <span class="location">| 용산구</span></p>
-                <p class="person">인원: 1 / 3</p>
+                <p class="title">오늘 밤 가볍게 러닝하실 분</p>
+                <p class="date-and-time">24.08.26 (월) 21:30 <span class="location">| 마포구</span></p>
+                <p class="person">인원 : 5 / 6</p>
               </div>
             </div>
           </div>
@@ -515,6 +516,11 @@ export default {
 </script>
 
 <style scoped>
+/* @font-face{
+  font-family: sans-serif;
+  src:url('@/public/fonts/DMSans_18pt-Black.ttf')
+} */
+
 main {
   width: 100%;
   height: 100%;
@@ -777,6 +783,7 @@ main {
   height: 450px;
   margin-right: 66px;
 }
+
 .group > .group-container:nth-of-type(4n) {
   margin-right: 0px;
 }
@@ -785,17 +792,24 @@ main {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin: 5px 10px 0px 0px;
+  margin: 5px 5px 0px 0px;
 }
+
 .group-detail {
-  font-size: 30px;
+  font-size: 26px;
   cursor: pointer;
   margin-bottom: 3px;
   margin-right: 3px;
+  color: grey;
+  font-weight: 100;
+  margin-top: 2px;
 }
+
 .plus-icon {
-  font-size: 30px;
+  font-size: 35px;
   cursor: pointer;
+  margin-top: 3px;
+  color: grey;
 }
 
 .sport-image-box {
@@ -807,9 +821,8 @@ main {
 }
 
 .sport-image {
-  width: 260px;
+  width: 270px;
   height: 250px;
-  border: 1px solid #ccc;
 }
 
 .group-information {
@@ -828,14 +841,29 @@ main {
 }
 
 .sport-text {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   width: 60px;
-  height: 40px;
-  border: 1px solid #ccc;
+  height: 30px;
   background-color: #1a73e8;
   color: white;
   font-weight: bold;
-  font-size: 18px;
-  margin-left: 8px;
+  font-size: 15px;
+  margin-left: 5px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.closing-soon {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  width: 60px;
+  height: 30px;
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  margin-right: 70px;
 
   display: flex;
   justify-content: center;
@@ -850,8 +878,9 @@ main {
 }
 
 .user-name {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-weight: bold;
-  font-size: 10px;
+  font-size: 12px;
   margin-right: 5px;
 }
 
@@ -862,28 +891,43 @@ main {
 }
 
 .group-text {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
   display: flex;
   flex-direction: column;
   margin-top: 10px;
 }
 
 .title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-left: 8px;
-  margin-bottom: 10px;
-}
-.date-and-time {
-  font-size: 14px;
-  font-weight: lighter;
-  margin-left: 10px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+  font-size: 16px;
+  font-weight: bolder;
+  margin-top: -10px;
+  margin-left: 5px;
   margin-bottom: 5px;
 }
-.person {
+
+.date-and-time {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
   font-size: 14px;
-  font-weight: lighter;
-  margin-left: 10px;
+  font-weight: bolder;
+  margin-left: 6px;
+  margin-bottom: 2px;
+  color: grey;
 }
+
+.person {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 5px;
+  color: grey;
+  
+}
+
 .attend {
   padding: 11px 17px;
   border: none;
@@ -987,45 +1031,51 @@ main {
   /* 클릭 시 버튼 크기 살짝 축소 */
 }
 
-/* 하트 색상 변경 */
+/* 모임 찜 기능 */
 .title-heart {
   cursor: pointer;
   display: inline-block;
-  width: 25px;
+  width: 23px;
   /* 하트의 크기를 조정합니다 */
-  height: 25px;
+  height: 23px;
   /* 하트의 크기를 조정합니다 */
   position: relative;
-  margin-left: 15px;
+  margin-left: 10px;
+  margin-right: -12px;
+  margin-top: 7px;
+  border: grey;
+  color: grey;
 }
 
 .title-heart div {
-  width: 100%;
-  height: 100%;
-  position: absolute;
+  width: 23px;
+  height: 23px;
+  position: relative;
   bottom: 5px;
   right: 10px;
+  border: grey;
+  color: grey;
 }
 
 .empty-heart::before {
   content: "\2764";
   /* 빈 하트 문자 */
-  font-size: 25px;
+  font-size: 20px;
   /* 하트의 크기 */
   color: transparent;
   /* 하트의 내부는 투명하게 */
-  -webkit-text-stroke: 1px black;
+  -webkit-text-stroke: 2px grey;
   /* 하트의 테두리 색상 */
 }
 
 .filled-heart::before {
   content: "\2764";
   /* 채워진 하트 문자 */
-  font-size: 25px;
+  font-size: 23px;
   /* 하트의 크기 */
   color: red;
   /* 채워진 하트의 색상 */
-  /* -webkit-text-stroke: none; */
+  -webkit-text-stroke: 2px;
   /* 채워진 하트의 테두리 제거 */
 }
 </style>

@@ -8,8 +8,8 @@
     </div>
     <div class="text-btn">
       <a href="/main.html" @click="home">홈</a>
-      <a href="#" @click="creategroup">모임 생성하기</a>
-      <a href="#" @click="post">오운완 챌린지</a>
+      <a href="#" @click="creategroup">모임 생성</a>
+      <a href="#" @click="post">게시판</a>
       <a href="#" @click="membership">멤버십</a>
       <a href="#" @click="mypage">마이페이지</a>
       <div class="sign-in-btn">
