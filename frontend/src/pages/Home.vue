@@ -139,6 +139,7 @@
               </div>
             </div>
           </div>
+
           <div class="group-container">
             <div class="unicode-box">
               <span class="group-detail" @click="openModal">&#128712;</span>
@@ -179,6 +180,7 @@
               </div>
             </div>
           </div>
+          
           <div class="group-container">
             <div class="unicode-box">
               <span class="group-detail" @click="openModal">&#128712;</span>
