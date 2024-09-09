@@ -1,28 +1,48 @@
 package kr.co.ifit.api.service;
 
 import kr.co.ifit.api.request.UserDTO;
+import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.entity.User;
+import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final EmailVerificationRepository emailVerificationRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUserDetailService userDetailService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     // 회원가입
+    @Transactional
     public void registerUser(UserDTO userDTO) {
         if (userRepository.existsByLoginId(userDTO.getLoginId())) {
             throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
+        }
+
+        // 이메일 검증
+        Optional<EmailVerification> optionalEmail = emailVerificationRepository.findByUserEmail(userDTO.getEmail());
+        //  두 조건이 false일 때 예외가 발생되지 않고 회원가입이 완료됨
+        //  optional의 값이 비어 있지 않을 때, 이메일 인증이 true일 때
+        if (optionalEmail.isEmpty() || !optionalEmail.get().getEmailVerified()) {
+            throw new IllegalArgumentException("이메일이 인증되지 않았거나 존재하지 않습니다.");
         }
 
         User user = new User(
@@ -35,26 +55,34 @@ public class UserService {
         userRepository.save(user);
     }
 
-    // 로그인
-    public boolean loginUser(String loginId, String password, HttpSession session) {
-        Optional<User> optionalUser = userRepository.findByLoginId(loginId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                session.setAttribute("user", user);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // 로그아웃
-    public void logoutUser(HttpSession session) {
-        session.invalidate();
-    }
-
     // 아이디 중복 확인
     public boolean checkIdAvailability(String id) {
         return !userRepository.existsByLoginId(id);
     }
+
+
+    // 로그인 정보를 검증하는 기능
+    public boolean authenticateUser(String userName, String password) {
+        try {
+            //  사용자 정보를 로드
+            UserDetails userDetails = userDetailService.loadUserByUsername(userName);
+
+            if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+                return false;
+            }
+            //  인증 토큰 생성
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+            //   인증 시도
+            Authentication authentication = authenticationManager.authenticate(authToken);
+            //  인증 성공 여부 반환
+            return authentication.isAuthenticated();
+        } catch (AuthenticationException e) {
+            return false;
+        }
+    }
 }
+//
+//    // 로그아웃
+//    public void logoutUser(HttpSession session) {
+//        session.invalidate();
+//    }

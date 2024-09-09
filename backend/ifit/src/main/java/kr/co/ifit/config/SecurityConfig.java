@@ -1,49 +1,59 @@
 package kr.co.ifit.config;
 
+import kr.co.ifit.api.service.JwtUserDetailService;
+import kr.co.ifit.common.model.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtUserDetailService userDetailService;
+
+    @Bean
+    // 비밀번호 암호화 처리
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/user-account").permitAll() // 회원가입 허용
-                                .requestMatchers("/api/user-login").permitAll()  // 로그인 허용
-                                .requestMatchers("/api/user-logout").authenticated() // 로그아웃은 인증된 사용자만
-                                .anyRequest().authenticated() // 나머지 모든 요청은 인증 필요
-                )
-                .formLogin(formLogin ->
-                        formLogin
-                                .loginPage("/login") // 로그인 페이지 URL 설정
-                                .defaultSuccessUrl("/", true) // 로그인 성공 후 리디렉션 URL
-                                .permitAll()
-                )
-                .logout(logout ->
-                        logout
-                                .logoutUrl("/logout") // 로그아웃 URL 설정
-                                .logoutSuccessUrl("/login?logout") // 로그아웃 후 리디렉션 URL
-                                .permitAll()
+                                .requestMatchers("/api/login", "/api/user-account",
+                                        "/api/check-id", "/api/verifyEmail", "/api/sendVerificationCode").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->
                         sessionManagement
-                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션 정책 설정
+                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // 상태 비저장 세션
                 );
+        //  Jwt 필터 추가
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // 비밀번호 암호화 방식 설정
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.userDetailsService(userDetailService).passwordEncoder(passwordEncoder());
+        return authenticationManagerBuilder.build();
     }
 }

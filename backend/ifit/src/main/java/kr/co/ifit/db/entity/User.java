@@ -2,13 +2,20 @@ package kr.co.ifit.db.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
+@ToString
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 사용자 ID 자동 생성
@@ -30,64 +37,30 @@ public class User {
     @Column(name = "email", nullable = false, length = 50)
     private String email;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "createdAt", nullable = true)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(name = "modifiedAt", nullable = false)
+    @Column(name = "modifiedAt", nullable = true)
+    @UpdateTimestamp
     private LocalDateTime modifiedAt;
 
     @Lob
-    @Column(name = "profileUrl")
+    @Column(name = "profileUrl", nullable = true)
     private String profileUrl;
 
-    @Column(name = "emailVerified", nullable = false)
-    private Boolean emailVerified = false;
-
-    @Column(name = "emailCode")
-    private String emailCode;
-
-    @Column(name = "emailcodeExpiry")
-    private LocalDateTime emailcodeExpiry;
-
-    // 기본 생성자
-    public User() {}
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "emailverificationId")
+    private EmailVerification emailVerification;
 
     // 매개변수를 받는 생성자
     public User(String loginId, String password, String userName, String phoneNumber, String email) {
         this.loginId = loginId;
         this.password = password;
         this.userName = userName;
-        this.phoneNumber = phoneNumber;
         this.email = email;
+        this.phoneNumber = phoneNumber;
         this.createdAt = LocalDateTime.now();
         this.modifiedAt = LocalDateTime.now();
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        modifiedAt = LocalDateTime.now();
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", loginId='" + loginId + '\'' +
-                ", password='" + password + '\'' +
-                ", userName='" + userName + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", email='" + email + '\'' +
-                ", createdAt=" + createdAt +
-                ", modifiedAt=" + modifiedAt +
-                ", profileUrl='" + profileUrl + '\'' +
-                ", emailVerified=" + emailVerified +
-                ", emailCode='" + emailCode + '\'' +
-                ", emailcodeExpiry=" + emailcodeExpiry +
-                '}';
     }
 }

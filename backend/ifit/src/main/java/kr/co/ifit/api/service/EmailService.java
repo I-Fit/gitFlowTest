@@ -1,60 +1,60 @@
 package kr.co.ifit.api.service;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import jakarta.persistence.Table;
+import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.entity.User;
+import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
+//  이메일 인증 번호를 전송하는 메서드 구현
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
+    private final UserRepository userRepository;
+    private final EmailVerificationRepository emailVerificationRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    //  이메일 주소를 받아 인증 코드를 생성하고 이메일로 발송
+    @Transactional
+    public void sendVerificationEmail(String email) {
+        //  인증번호 생성
+        String verificationCode = generateVerificationCode();
 
-    public void sendEmail(String to, String subject, String content) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        //  인증번호 내용 설정
+        String subject = "[ifit] 메일 인증";
+        String text = "인증 번호는 : " + verificationCode;
 
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(content, true); // HTML content
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject(subject);
+        message.setText(text);
 
+        //  인증번호 전송
         mailSender.send(message);
+
+        // 이메일로 인증 번호를 보내고, 새로운 emailVerification을 만들어서 값들을 저장
+        EmailVerification emailVerification = new EmailVerification();
+        emailVerification.setUserEmail(email);      // 사용자가 입력한 이메일
+        emailVerification.setEmailCode(verificationCode);       // 서버가 만든 인증 코드
+        emailVerification.setExpiryTime(LocalDateTime.now().plusMinutes(5));        // 인증 번호 만료 시간
+
+        emailVerificationRepository.save(emailVerification);
     }
 
-    public String verifyEmail(String email, String code) {
-        // Optional로 반환된 User를 처리하는 부분
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-
-        if (!optionalUser.isPresent()) {
-            return "사용자를 찾을 수 없습니다.";
-        }
-
-        User user = optionalUser.get();
-
-        if (!code.equals(user.getEmailCode())) {
-            return "인증 코드가 올바르지 않습니다.";
-        }
-
-        if (user.getEmailcodeExpiry().isBefore(LocalDateTime.now())) {
-            return "인증 코드가 만료되었습니다.";
-        }
-
-        user.setEmailVerified(true);
-        user.setEmailCode(null);
-        user.setEmailcodeExpiry(null);
-        userRepository.save(user);
-
-        return "이메일 인증 성공";
+    //  6자리 인증 코드 생성
+    private String generateVerificationCode() {
+        Random random = new Random();
+        int code = random.nextInt(900000) + 100000;
+        return String.valueOf(code);
     }
 }

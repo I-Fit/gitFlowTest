@@ -1,29 +1,29 @@
 package kr.co.ifit.api.controller;
 
 import jakarta.servlet.http.HttpSession;
+import kr.co.ifit.api.response.LoginResponseDTO;
+import kr.co.ifit.common.util.JwtUtil;
 import kr.co.ifit.db.entity.User;
 import kr.co.ifit.api.request.LoginDTO;
 import kr.co.ifit.api.request.UserDTO;
 import kr.co.ifit.api.service.UserService;
 import kr.co.ifit.api.service.EmailService;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final EmailService emailService;
-
-    @Autowired
-    public UserController(UserService userService, EmailService emailService) {
-        this.userService = userService;
-        this.emailService = emailService;
-    }
+    private final JwtUtil jwtUtil;
 
     // 회원가입
     @PostMapping("/user-account")
@@ -45,47 +45,57 @@ public class UserController {
         return ResponseEntity.ok(new IdCheckResponse(available));
     }
 
-    // 이메일 인증
-    @PostMapping("/verify-email")
-    public ResponseEntity<String> verifyEmail(@RequestParam("email") String email, @RequestParam("code") String code) {
-        try {
-            String result = emailService.verifyEmail(email, code);
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("이메일 인증 실패: " + e.getMessage());
-        }
-    }
-
     // 로그인
-    @PostMapping("/user-login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginDTO loginDTO, HttpSession session) {
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody LoginDTO loginDTO) {
+        String loginId = loginDTO.getLoginId();
+        String password = loginDTO.getPassword();
+
         try {
-            boolean authenticated = userService.loginUser(loginDTO.getLoginId(), loginDTO.getPassword(), session);
-            if (authenticated) {
-                User user = (User) session.getAttribute("user");
-                if (user != null) {
-                    return ResponseEntity.ok("로그인 성공. 사용자: " + user.getUserName());
-                } else {
-                    return ResponseEntity.status(500).body("로그인 성공 후 사용자 정보를 세션에서 찾을 수 없습니다.");
-                }
+            boolean isAuthenticated = userService.authenticateUser(loginId, password);
+            if (isAuthenticated) {
+                String token = jwtUtil.generateToken(loginId);  //  jwt 토큰 생성
+                LoginResponseDTO loginResponseDTO =  new LoginResponseDTO("로그인 성공", token);
+                return ResponseEntity.ok(loginResponseDTO);
             } else {
-                return ResponseEntity.status(401).body("로그인 실패: 아이디 또는 비밀번호가 틀렸습니다.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("로그인 실패 : 잘못된 사용자 Id 또는 비밀번호 입니다.");
             }
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("로그인 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("서버 오류 : " + e.getMessage());
         }
     }
 
-    // 로그아웃
-    @PostMapping("/user-logout")
-    public ResponseEntity<String> logoutUser(HttpSession session) {
-        try {
-            userService.logoutUser(session); // Service에서 세션 무효화
-            return ResponseEntity.ok("로그아웃 성공");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("로그아웃 실패: " + e.getMessage());
-        }
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<String> loginUser(@RequestBody LoginDTO loginDTO) {
+//        try {
+//            String userName = loginDTO.getUserName();
+////            String loginId = loginDTO.getLoginId();
+//            String password = loginDTO.getPassword();
+//
+//            boolean isAuthenticated = userService.authenticateUser(userName, password);
+//            if (isAuthenticated) {
+//                return ResponseEntity.ok("로그인 성공");
+//            } else {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: 잘못된 사용자 Id 또는 비밀번호 입니다.");
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류: " + e.getMessage());
+//        }
+//    }
+//
+//
+//    // 로그아웃
+//    @PostMapping("/user-logout")
+//    public ResponseEntity<String> logoutUser(HttpSession session) {
+//        try {
+//            userService.logoutUser(session); // Service에서 세션 무효화
+//            return ResponseEntity.ok("로그아웃 성공");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).body("로그아웃 실패: " + e.getMessage());
+//        }
+//    }
 
     @Setter
     @Getter
