@@ -13,16 +13,16 @@
       <div class="arrow" id="left" @click="prevSlide">&#9001;</div>
       <div class="arrow" id="right" @click="nextSlide">&#9002;</div>
     </carousel>
-
-    <!-- 종목, 장소, 날짜, 시간 필터 -->
+    
     <div class="main-bottom">
+    <!-- 종목, 지역, 날짜, 시간 필터-->
       <div class="filter">
         <div class="filter-list">
           <select class="list-select" title="운동 종목">
             <option value="" selected disabled>운동</option>
           </select>
-          <select class="list-select" title="장소" @click="fetchLocationData">
-            <option value="" selected disabled>장소</option>
+          <select class="list-select" title="지역" @click="fetchLocationData">
+            <option value="" selected disabled>지역</option>
             <option v-for="location in locations" :key="location.id" :value="location.id">
               {{ location.name }}
             </option>
@@ -56,18 +56,34 @@
           </select>
         </div>
 
+      
+
         <!-- 생성된 모임 영역 -->
         <div class="group">
           <div class="group-container">
             <div class="unicode-box">
-              <span class="group-detail" @click="openModal">&#128712;</span>
-              <div class="title-heart" @click="toggleHeart">
+              <!-- <div class="group-button"> -->
+                <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
+                <!-- <div class="group-icon-text">상세설명</div> -->
+              <!-- </div> -->
+              <!-- <div class="group-button"> -->
+                <img class="group-save-icon" src="@/assets/images/save-icon.png" @click="toggleHeart"/>
+                <!-- <div class="group-icon-text">찜하기</div> -->
+              <!-- </div> -->
+              <!-- <div class="group-button"> -->
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
+              <!-- <div class="group-icon-text">참여하기</div> -->
+              <!-- </div> -->
+              
+              
+              <!-- <span class="group-detail" >&#128712;</span> -->
+              <!-- <div class="title-heart" @click="toggleHeart">
                 <div :class="{
                   'filled-heart': isHeartFilled,
                   'empty-heart': !isHeartFilled,
-                }"></div>
-              </div>
-              <span class="plus-icon" @click="showConfirmPopup = true">&#43;</span>
+                }"></div> -->
+              <!-- </div> -->
+              <!-- <span class="plus-icon" >&#43;</span> -->
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
@@ -101,14 +117,10 @@
 
           <div class="group-container">
             <div class="unicode-box">
-              <span class="group-detail" @click="openModal">&#128712;</span>
-              <div class="title-heart" @click="toggleHeart">
-                <div :class="{
-                  'filled-heart': isHeartFilled,
-                  'empty-heart': !isHeartFilled,
-                }"></div>
-              </div>
-              <span class="plus-icon" @click="showConfirmPopup = true">&#43;</span>
+              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
+              <img class="group-save-icon" src="@/assets/images/save-icon.png" @click="toggleHeart"/>
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
+
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
@@ -142,14 +154,9 @@
 
           <div class="group-container">
             <div class="unicode-box">
-              <span class="group-detail" @click="openModal">&#128712;</span>
-              <div class="title-heart" @click="toggleHeart">
-                <div :class="{
-                  'filled-heart': isHeartFilled,
-                  'empty-heart': !isHeartFilled,
-                }"></div>
-              </div>
-              <span class="plus-icon" @click="showConfirmPopup = true">&#43;</span>
+              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
+              <img class="group-save-icon" src="@/assets/images/save-icon.png" @click="toggleHeart"/>
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
@@ -183,14 +190,9 @@
           
           <div class="group-container">
             <div class="unicode-box">
-              <span class="group-detail" @click="openModal">&#128712;</span>
-              <div class="title-heart" @click="toggleHeart">
-                <div :class="{
-                  'filled-heart': isHeartFilled,
-                  'empty-heart': !isHeartFilled,
-                }"></div>
-              </div>
-              <span class="plus-icon" @click="showConfirmPopup = true">&#43;</span>
+              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
+              <img class="group-save-icon" src="@/assets/images/save-icon.png" @click="toggleHeart"/>
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
@@ -267,6 +269,7 @@
         <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" />
       </div>
     </div>
+
     <!-- 모달 창 -->
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
@@ -274,6 +277,7 @@
         <p>모임 상세설명 : {{ selectedItem ? selectedItem.content : "" }}</p>
       </div>
     </div>
+
   </main>
 </template>
 
@@ -284,11 +288,13 @@ import axios from "axios";
 import { useStore } from "vuex";
 import Pagination from "@/components/common/HomePagination";
 import { usePagination } from "@/utils/pagination";
+// import FilterModal from '@/components/common/FilterModal.vue';
 
 export default {
   name: "Home",
   components: {
     Pagination,
+    // FilterModal
   },
 
   data() {
@@ -326,7 +332,9 @@ export default {
       sortOption: "",
       isModalOpen: false, // 모달 창 상태
       selectedItem: null, // 선택된 아이템
-      locations: [],  // 장소 데이터 저장 배열
+      locations: [],  // 지역 데이터 저장 배열
+      isFilterOpen: false,
+      filters: null
     };
   },
   mounted() {
@@ -399,6 +407,21 @@ export default {
           break;
       }
     },
+    // openModal() {
+    //   this.isModalOpen = true;
+    // },
+    // closeModal() {
+    //   this.isModalOpen = false;
+    // },
+    openFilter() {
+      this.isFilterOpen = true;
+    },
+    closeFilter() {
+      this.isFilterOpen = false;
+    },
+    applyFilters(filters) {
+      this.filters = filters;
+    },
     openModal(group) {
       this.selectedItem = {
         content: group.topboxContent,
@@ -409,7 +432,7 @@ export default {
       this.isModalOpen = false;
       this.selectedItem = null;
     },
-    // TODO - 검색 필터링 메서드
+    //TODO - 검색 필터링 메서드
   },
 
   setup() {
@@ -600,6 +623,7 @@ main {
   justify-content: center;
 }
 
+
 .filter {
   width: 1320px;
   height: 900px;
@@ -613,54 +637,54 @@ main {
   justify-content: space-between;
 }
 
+
 .list-select {
   width: 200px;
   height: 48px;
-  border-radius: 10px;
+  border-radius: 3px;
   text-align: center;
-  color: grey;
+  color: black;
   background-color: #fff;
-  border: 1px solid lightgrey;
-  font-size: 18px;
+  border: 0.1px solid grey;
+  font-size: 14px;
   cursor: pointer;
   /* box-sizing: border-box; */
   padding-right: 10px;
   /* 텍스트와 화살표 사이의 간격 확보 */
-  -webkit-appearance: none;
+  /* -webkit-appearance: none; */
   /* 기본 화살표 제거 */
-  -moz-appearance: none;
+  /* -moz-appearance: none; */
   appearance: none;
-  background-image: url('@/assets/images/custom-arrow.png');
+  /* background-image: url('@/assets/images/custom-arrow.png'); */
   /* 커스텀 화살표 이미지 경로 */
-  background-repeat: no-repeat;
-  background-position: right 15px center;
+  /* background-repeat: no-repeat; */
+  /* background-position: right 15px center; */
   /* 아이콘 위치 조정 */
-  background-size: 12px;
+  /* background-size: 12px; */
   /* 아이콘 크기 조정 */
 }
 
 .date-picker {
   width: 200px;
   height: 48px;
-  border-radius: 10px;
   text-align: center;
   background-color: #fff;
-  border: 1px solid lightgrey;
   font-size: 16px;
   cursor: pointer;
 }
 
 ::v-deep .dp__input::placeholder {
-  font-size: 18px;
+  font-size: 14px;
+  color: black;
 }
 
 ::v-deep .dp__input {
   width: 200px;
   height: 48px;
-  border-radius: 10px;
+  border-radius: 3px;
   text-align: center;
   background-color: #fff;
-  border: 1px solid lightgrey;
+  border: 0.1px solid grey;
   font-size: 16px;
   cursor: pointer;
 }
@@ -668,10 +692,8 @@ main {
 .time-picker {
   width: 200px;
   height: 48px;
-  border-radius: 10px;
   text-align: center;
   background-color: #fff;
-  border: 1px solid lightgrey;
   font-size: 16px;
   cursor: pointer;
 }
@@ -679,48 +701,50 @@ main {
 ::v-deep .vue__time-picker input.vue__time-picker-input {
   width: 200px;
   height: 48px;
-  border-radius: 10px;
+  border-radius: 3px;
   text-align: center;
   background-color: #fff;
-  border: 1px solid lightgrey;
+  border: 0.1px solid grey;
   font-size: 16px;
   cursor: pointer;
+  color: black;
 }
 
 ::v-deep .vue__time-picker input.vue__time-picker-input::placeholder {
   font-size: 18px;
+  color: black;
 }
 
 .input-slot-image {
-  height: 17px;
+  height: 20px;
   width: auto;
   margin-left: 11px;
   margin-top: 5px;
-  color: #228b22;
 }
 
 /* 검색창 */
 .search-box {
   display: flex;
   align-items: center;
-  border: 1px solid lightgrey;
-  border-radius: 10px;
+  border: 1px solid grey;
+  border-radius: 3px;
   width: 250px;
-  height: 48px;
+  height: 50px;
 }
 
 .search-input {
   border: none;
   outline: none;
   padding: 5px 0px 5px 10px;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .search-icon {
   width: 15px;
   height: 15px;
-  margin-left: 15px;
+  margin-left: 220px;
   cursor: pointer;
+  position: absolute;
 }
 
 /* 정렬순 블럭 */
@@ -733,10 +757,9 @@ main {
   width: 110px;
   height: 40px;
   text-align: center;
-  border-radius: 10px;
-  background-color: #f5f5f5;
-  color: grey;
-  border: 1px solid #ddd;
+  border-radius: 3px;
+  /* color: grey; */
+  border: 1px solid grey;
   box-sizing: border-box;
   font-size: 16px;
   cursor: pointer;
@@ -795,6 +818,36 @@ main {
   margin: 5px 5px 0px 0px;
 }
 
+.group-button {
+  position: relative;
+  display: inline-block;
+}
+
+.group-detail-icon {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.group-icon-text {
+  visibility: hidden;
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.group-detail-icon:hover .group-icon-text {
+  visibility: visible;
+  opacity: 1;
+}
+
 .group-detail {
   font-size: 26px;
   cursor: pointer;
@@ -847,7 +900,7 @@ main {
   background-color: #1a73e8;
   color: white;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 14px;
   margin-left: 5px;
 
   display: flex;
@@ -1032,6 +1085,12 @@ main {
 }
 
 /* 모임 찜 기능 */
+.group-save-icon {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+
 .title-heart {
   cursor: pointer;
   display: inline-block;
@@ -1077,5 +1136,12 @@ main {
   /* 채워진 하트의 색상 */
   -webkit-text-stroke: 2px;
   /* 채워진 하트의 테두리 제거 */
+}
+
+.group-join-icon {
+  width: 23px;
+  height: 23px;
+  margin-left: auto;
+  cursor: pointer;
 }
 </style>

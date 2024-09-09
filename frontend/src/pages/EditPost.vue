@@ -18,7 +18,7 @@
         </div>
         <div class="content-topic">
           <p class="item topic-item">종목</p>
-          <p class="item">장소</p>
+          <p class="item">지역</p>
           <p class="item">인원</p>
         </div>
       </div>

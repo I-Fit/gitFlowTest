@@ -2,9 +2,9 @@
   <header>
     <div class="icon-table">
       <div class="icon-img">
-        <img src="../../assets/images/icon.png" alt="아이콘 이미지" />
+        <img src="../../assets/images/IFIT.png" alt="아이콘 이미지" />
       </div>
-      <div class="icon-text">I-Fit</div>
+      <!-- <div class="icon-text">I-Fit</div> -->
     </div>
     <div class="text-btn">
       <a href="#" @click="home">홈</a>
@@ -115,8 +115,8 @@ a:nth-child(1) {
 .join {
   border: 0.5px solid rgba(0, 0, 0, 0.103);
   padding: 12px;
-  border-radius: 10px;
-  font-weight: bold;
+  border-radius: 25px;
+  font-weight: bolder;
   cursor: pointer;
 }
 
@@ -124,10 +124,11 @@ a:nth-child(1) {
   margin: 10px;
   padding: 12px;
   border: 0.5px solid rgba(0, 0, 0, 0.103);
-  border-radius: 10px;
+  border-radius: 25px;
   background-color: #1a73e8;
   color: #fff;
-  font-weight: bold;
+  font-weight: bolder;
   cursor: pointer;
+  text-align: center;
 }
 </style>
