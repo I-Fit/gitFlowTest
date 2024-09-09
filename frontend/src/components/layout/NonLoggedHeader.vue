@@ -1,19 +1,19 @@
 <template>
   <header>
-    <div class="icon-table">
-      <div class="icon-img">
-        <img src="../../assets/images/IFIT.png" alt="아이콘 이미지" />
-      </div>
-      <!-- <div class="icon-text">I-Fit</div> -->
+    <div class="icon-img">
+      <img src="../../assets/images/IFIT.png" alt="아이콘 이미지" @click="home" />
     </div>
     <div class="text-btn">
-      <a href="#" @click="home">홈</a>
+      <!-- <a href="#" @click="home">홈</a> -->
       <a href="#" @click="creategroup">모임 생성</a>
       <a href="#" @click="post">게시판</a>
       <a href="#" @click="membership">멤버십</a>
       <a href="#" @click="mypage">마이페이지</a>
-      <div class="sign-in-btn">
-        <div class="join" @click="createAccount">회원가입</div>
+
+      <div class="register-and-login">
+        <img class="sign-up-icon" src="@/assets/images/sign-up-icon.png" @click="createAccount" />
+        <div class="sign-up" @click="createAccount">회원가입</div>
+        <img class="sign-in-icon" src="@/assets/images/sign-in-icon.png" @click="goSignIn" />
         <div class="sign-in" @click="goSignIn">로그인</div>
       </div>
     </div>
@@ -76,10 +76,11 @@ header {
   height: 150px;
 }
 
-.icon-table {
+.icon-img {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .icon-text {
@@ -93,41 +94,54 @@ header {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  font-weight: bold;
-  font-size: 18px;
+  font-weight: bolder;
+  font-size: 20px;
 }
-
+ 
 a {
   text-decoration: none;
   color: #5d5a88;
+  font-weight: bolder;
 }
+
 a:nth-child(1) {
-  margin-left: 150px;
+  margin-left: 280px;
 }
 
-.sign-in-btn {
+.register-and-login {
   display: flex;
-  justify-content: center;
-  align-items: center;
   margin-right: 20px;
+  align-items: center;
 }
 
-.join {
-  border: 0.5px solid rgba(0, 0, 0, 0.103);
+.sign-up-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: -3px;
+  cursor: pointer;
+}
+
+.sign-up {
   padding: 12px;
   border-radius: 25px;
-  font-weight: bolder;
+  font-size: 13px;
+  cursor: pointer;
+  margin-right: 10px;
+  text-align: center;
+}
+
+.sign-in-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: -17px;
   cursor: pointer;
 }
 
 .sign-in {
   margin: 10px;
   padding: 12px;
-  border: 0.5px solid rgba(0, 0, 0, 0.103);
   border-radius: 25px;
-  background-color: #1a73e8;
-  color: #fff;
-  font-weight: bolder;
+  font-size: 13px;
   cursor: pointer;
   text-align: center;
 }

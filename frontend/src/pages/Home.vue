@@ -56,34 +56,14 @@
           </select>
         </div>
 
-      
-
         <!-- 생성된 모임 영역 -->
         <div class="group">
           <div class="group-container">
             <div class="unicode-box">
-              <!-- <div class="group-button"> -->
-                <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-                <!-- <div class="group-icon-text">상세설명</div> -->
-              <!-- </div> -->
-              <!-- <div class="group-button"> -->
-                <img class="group-save-icon" src="@/assets/images/save-icon.png" @click="toggleHeart"/>
-                <!-- <div class="group-icon-text">찜하기</div> -->
-              <!-- </div> -->
-              <!-- <div class="group-button"> -->
-              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
-              <!-- <div class="group-icon-text">참여하기</div> -->
-              <!-- </div> -->
-              
-              
-              <!-- <span class="group-detail" >&#128712;</span> -->
-              <!-- <div class="title-heart" @click="toggleHeart">
-                <div :class="{
-                  'filled-heart': isHeartFilled,
-                  'empty-heart': !isHeartFilled,
-                }"></div> -->
-              <!-- </div> -->
-              <!-- <span class="plus-icon" >&#43;</span> -->
+              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
+              <img :src="isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')" class="group-save-icon" @click="likeGroup" />
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
+
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
@@ -118,7 +98,7 @@
           <div class="group-container">
             <div class="unicode-box">
               <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-              <img class="group-save-icon" src="@/assets/images/save-icon.png" @click="toggleHeart"/>
+              <img :src="isSaved ? require('@/assets/images/saved-icon.png') : require('@/assets/images/save-icon.png')" class="group-save-icon" @click="likeGroup" />
               <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
 
               <div v-if="showConfirmPopup" class="confirm-popup">
@@ -155,7 +135,7 @@
           <div class="group-container">
             <div class="unicode-box">
               <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-              <img class="group-save-icon" src="@/assets/images/save-icon.png" @click="toggleHeart"/>
+              <img :src="isSaved ? require('@/assets/images/saved-icon.png') : require('@/assets/images/save-icon.png')" class="group-save-icon" @click="likeGroup" />
               <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
@@ -191,7 +171,7 @@
           <div class="group-container">
             <div class="unicode-box">
               <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-              <img class="group-save-icon" src="@/assets/images/save-icon.png" @click="toggleHeart"/>
+              <img :src="isSaved ? require('@/assets/images/saved-icon.png') : require('@/assets/images/save-icon.png')" class="group-save-icon" @click="likeGroup" />
               <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
@@ -227,14 +207,9 @@
 
           <div v-for="group in visibleDatas" :key="group.communityId" class="group-container">
             <div class="unicode-box">
-              <span class="group-detail" @click="openModal">&#128712;</span>
-              <div class="title-heart" @click="toggleHeart(group.communityId)">
-                <div :class="{
-                  'filled-heart': isHeartFilled,
-                  'empty-heart': !isHeartFilled,
-                }"></div>
-              </div>
-              <span class="plus-icon" @click="showConfirmPopup = true">&#43;</span>
+              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
+              <img class="group-save-icon" src="@/assets/images/save-icon.png" @click="toggleHeart"/>
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
@@ -270,7 +245,7 @@
       </div>
     </div>
 
-    <!-- 모달 창 -->
+    <!-- 모임 상세설명 모달 창 -->
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
@@ -288,13 +263,11 @@ import axios from "axios";
 import { useStore } from "vuex";
 import Pagination from "@/components/common/HomePagination";
 import { usePagination } from "@/utils/pagination";
-// import FilterModal from '@/components/common/FilterModal.vue';
 
 export default {
   name: "Home",
   components: {
     Pagination,
-    // FilterModal
   },
 
   data() {
@@ -330,11 +303,10 @@ export default {
       ],
       slideInterval: null,
       sortOption: "",
+      isSaved: false,
       isModalOpen: false, // 모달 창 상태
       selectedItem: null, // 선택된 아이템
       locations: [],  // 지역 데이터 저장 배열
-      isFilterOpen: false,
-      filters: null
     };
   },
   mounted() {
@@ -407,20 +379,8 @@ export default {
           break;
       }
     },
-    // openModal() {
-    //   this.isModalOpen = true;
-    // },
-    // closeModal() {
-    //   this.isModalOpen = false;
-    // },
-    openFilter() {
-      this.isFilterOpen = true;
-    },
-    closeFilter() {
-      this.isFilterOpen = false;
-    },
-    applyFilters(filters) {
-      this.filters = filters;
+    likeGroup() {
+      this.isSaved = !this.isSaved;
     },
     openModal(group) {
       this.selectedItem = {
@@ -499,20 +459,20 @@ export default {
     };
 
     // 모임 찜 이벤트
-    const isHeartFilled = ref(false);
+    // const isHeartFilled = ref(false);
 
     // 하트 색상 변하면 서버에 보내서 찜한 모임 저장
-    const toggleHeart = async (communityId) => {
-      isHeartFilled.value = !isHeartFilled.value;
-      try {
-        await axios.post('/api/like-group', {
-          userId: userId.value,
-          communityId: communityId,
-        });
-      } catch (error) {
-        console.error("Error", error);
-      }
-    };
+    // const toggleHeart = async (communityId) => {
+    //   isHeartFilled.value = !isHeartFilled.value;
+    //   try {
+    //     await axios.post('/api/like-group', {
+    //       userId: userId.value,
+    //       communityId: communityId,
+    //     });
+    //   } catch (error) {
+    //     console.error("Error", error);
+    //   }
+    // };
 
     return {
       selectedOption,
@@ -531,19 +491,12 @@ export default {
       toggleTooltip,
       confirmDeletion,
       cancelDeletion,
-      isHeartFilled,
-      toggleHeart,
     };
   },
 };
 </script>
 
 <style scoped>
-/* @font-face{
-  font-family: sans-serif;
-  src:url('@/public/fonts/DMSans_18pt-Black.ttf')
-} */
-
 main {
   width: 100%;
   height: 100%;
@@ -761,7 +714,7 @@ main {
   /* color: grey; */
   border: 1px solid grey;
   box-sizing: border-box;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   padding-right: 10px;
   /* 텍스트와 화살표 사이의 간격 확보 */
@@ -815,37 +768,14 @@ main {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin: 5px 5px 0px 0px;
+  margin: 5px 3px 0px 4px;
 }
 
-.group-button {
-  position: relative;
-  display: inline-block;
-}
-
+/* 그룹 상세설명 버튼 */
 .group-detail-icon {
   width: 25px;
   height: 25px;
   cursor: pointer;
-}
-
-.group-icon-text {
-  visibility: hidden;
-  position: absolute;
-  bottom: 125%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: #fff;
-  padding: 5px;
-  border-radius: 3px;
-  opacity: 0;
-  transition: opacity 0.3s, visibility 0.3s;
-}
-
-.group-detail-icon:hover .group-icon-text {
-  visibility: visible;
-  opacity: 1;
 }
 
 .group-detail {
@@ -856,13 +786,6 @@ main {
   color: grey;
   font-weight: 100;
   margin-top: 2px;
-}
-
-.plus-icon {
-  font-size: 35px;
-  cursor: pointer;
-  margin-top: 3px;
-  color: grey;
 }
 
 .sport-image-box {
@@ -1004,41 +927,6 @@ main {
   /* 클릭 시 버튼 크기 살짝 축소 */
 }
 
-/* 모달 창 스타일 */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 600px;
-  position: relative;
-}
-
-.close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.modal-content p {
-  font-size: 16px;
-  text-align: start;
-}
 
 /* 팝업 스타일링 */
 .confirm-popup {
@@ -1084,63 +972,17 @@ main {
   /* 클릭 시 버튼 크기 살짝 축소 */
 }
 
-/* 모임 찜 기능 */
+/* 모임 찜 버튼 */
 .group-save-icon {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+
+/* 모임 참석 버튼 */
+.group-join-icon {
   width: 25px;
   height: 25px;
-  cursor: pointer;
-}
-
-.title-heart {
-  cursor: pointer;
-  display: inline-block;
-  width: 23px;
-  /* 하트의 크기를 조정합니다 */
-  height: 23px;
-  /* 하트의 크기를 조정합니다 */
-  position: relative;
-  margin-left: 10px;
-  margin-right: -12px;
-  margin-top: 7px;
-  border: grey;
-  color: grey;
-}
-
-.title-heart div {
-  width: 23px;
-  height: 23px;
-  position: relative;
-  bottom: 5px;
-  right: 10px;
-  border: grey;
-  color: grey;
-}
-
-.empty-heart::before {
-  content: "\2764";
-  /* 빈 하트 문자 */
-  font-size: 20px;
-  /* 하트의 크기 */
-  color: transparent;
-  /* 하트의 내부는 투명하게 */
-  -webkit-text-stroke: 2px grey;
-  /* 하트의 테두리 색상 */
-}
-
-.filled-heart::before {
-  content: "\2764";
-  /* 채워진 하트 문자 */
-  font-size: 23px;
-  /* 하트의 크기 */
-  color: red;
-  /* 채워진 하트의 색상 */
-  -webkit-text-stroke: 2px;
-  /* 채워진 하트의 테두리 제거 */
-}
-
-.group-join-icon {
-  width: 23px;
-  height: 23px;
   margin-left: auto;
   cursor: pointer;
 }
