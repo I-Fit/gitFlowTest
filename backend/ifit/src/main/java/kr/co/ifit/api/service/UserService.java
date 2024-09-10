@@ -1,18 +1,16 @@
 package kr.co.ifit.api.service;
 
-import kr.co.ifit.api.request.UserDTO;
+import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,13 +30,13 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public void registerUser(UserDTO userDTO) {
-        if (userRepository.existsByLoginId(userDTO.getLoginId())) {
+    public void registerUser(UserDtoReq userDtoReq) {
+        if (userRepository.existsByLoginId(userDtoReq.getLoginId())) {
             throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
         }
 
         // 이메일 검증
-        Optional<EmailVerification> optionalEmail = emailVerificationRepository.findByUserEmail(userDTO.getEmail());
+        Optional<EmailVerification> optionalEmail = emailVerificationRepository.findByUserEmail(userDtoReq.getEmail());
         //  두 조건이 false일 때 예외가 발생되지 않고 회원가입이 완료됨
         //  optional의 값이 비어 있지 않을 때, 이메일 인증이 true일 때
         if (optionalEmail.isEmpty() || !optionalEmail.get().getEmailVerified()) {
@@ -46,11 +44,11 @@ public class UserService {
         }
 
         User user = new User(
-                userDTO.getLoginId(),
-                passwordEncoder.encode(userDTO.getPassword()),
-                userDTO.getUserName(),
-                userDTO.getPhoneNumber(),
-                userDTO.getEmail()
+                userDtoReq.getLoginId(),
+                passwordEncoder.encode(userDtoReq.getPassword()),
+                userDtoReq.getUserName(),
+                userDtoReq.getPhoneNumber(),
+                userDtoReq.getEmail()
         );
         userRepository.save(user);
     }

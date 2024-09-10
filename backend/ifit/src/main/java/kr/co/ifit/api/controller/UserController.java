@@ -1,20 +1,22 @@
 package kr.co.ifit.api.controller;
 
-import jakarta.servlet.http.HttpSession;
-import kr.co.ifit.api.response.LoginResponseDTO;
+import kr.co.ifit.api.response.LoginDtoRes;
 import kr.co.ifit.common.util.JwtUtil;
-import kr.co.ifit.db.entity.User;
-import kr.co.ifit.api.request.LoginDTO;
-import kr.co.ifit.api.request.UserDTO;
+import kr.co.ifit.db.entity.Token;
+import kr.co.ifit.api.request.LoginDtoReq;
+import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.api.service.UserService;
-import kr.co.ifit.api.service.EmailService;
+import kr.co.ifit.db.entity.User;
+import kr.co.ifit.db.repository.TokenRepository;
+import kr.co.ifit.db.repository.UserRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api")
@@ -22,14 +24,16 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final EmailService emailService;
     private final JwtUtil jwtUtil;
+    private final TokenRepository tokenRepository;
+    private final UserRepository userRepository;
+
 
     // 회원가입
     @PostMapping("/user-account")
-    public ResponseEntity<String> registerUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> registerUser(@RequestBody UserDtoReq userDtoReq) {
         try {
-            userService.registerUser(userDTO);
+            userService.registerUser(userDtoReq);
             return ResponseEntity.ok("회원가입 성공. 이메일을 확인하여 인증해주세요.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -47,16 +51,30 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginDTO loginDTO) {
-        String loginId = loginDTO.getLoginId();
-        String password = loginDTO.getPassword();
+    public ResponseEntity<?> loginUser(@RequestBody LoginDtoReq loginDtoReq) {
+        String loginId = loginDtoReq.getLoginId();
+        String password = loginDtoReq.getPassword();
 
         try {
             boolean isAuthenticated = userService.authenticateUser(loginId, password);
             if (isAuthenticated) {
-                String token = jwtUtil.generateToken(loginId);  //  jwt 토큰 생성
-                LoginResponseDTO loginResponseDTO =  new LoginResponseDTO("로그인 성공", token);
-                return ResponseEntity.ok(loginResponseDTO);
+                String accessToken = jwtUtil.generateToken(loginId);  //  jwt 토큰 생성 - Token
+                String refreshToken = jwtUtil.generateRefreshToken(loginId);    //  refresh Token 생성
+
+                // refresh token DB에 저장
+                Token refresh_token_entity = new Token();
+                refresh_token_entity.setRefreshToken(refreshToken);
+                refresh_token_entity.setExpiration(LocalDateTime.now().plusSeconds(jwtUtil.getRefreshExpiration()));
+                refresh_token_entity.setUser(userRepository.findByLoginId(loginId));
+
+                tokenRepository.save(refresh_token_entity);
+
+                // 사용자 식별 Id 가져오기
+                User user = userRepository.findByLoginId(loginId);
+                Long userId = user.getUserId();
+
+                LoginDtoRes loginDtoRes =  new LoginDtoRes("로그인 성공", accessToken, userId);
+                return ResponseEntity.ok(loginDtoRes);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body("로그인 실패 : 잘못된 사용자 Id 또는 비밀번호 입니다.");

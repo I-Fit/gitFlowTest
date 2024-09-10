@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,11 +17,13 @@ import java.util.HashMap;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
-    private String secretKey;
+    @Value("${jwt.access_expiration}")
+    private Long accessExpiration;
 
-    @Value("${jwt.expiration}")
-    private Long expiration;
+    @Getter
+    @Value("${jwt.refresh_expiration}")
+    private Long refreshExpiration;
+
 
     //  비밀 키 생성 : HMAC 비밀 키를 생성
 //    private SecretKey getSigningKey() {
@@ -38,12 +41,12 @@ public class JwtUtil {
         this.publicKey = keyPair.getPublic();
     }
 
-    //  Jwt 토큰 생성
+    //  Jwt 토큰 생성(access token)
     public String generateToken(String loginId) {
         return Jwts.builder()
                 .setSubject(loginId)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + accessExpiration))
                 //  ECDSA 알고리즘을 사용
                 .signWith(privateKey, SignatureAlgorithm.ES256)    //  비밀 키 사용
                 .compact();
@@ -69,9 +72,46 @@ public class JwtUtil {
     }
 
     //  토큰 유효성 검증
-    public boolean validateToken(String token, String username) {
+    public boolean validateToken(String token, String loginId) {
         try {
-            return (username.equals(extractUsername(token)) && !isTokenExpired(token));
+            return (loginId.equals(extractUsername(token)) && !isTokenExpired(token));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    // refresh token 생성
+    public String generateRefreshToken(String loginId) {
+        return Jwts.builder()
+                .setSubject(loginId)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration))
+                .signWith(privateKey, SignatureAlgorithm.ES256)
+                .compact();
+    }
+
+    //  refresh token에서 Claims(사용자 정보) 추출
+    public Claims extractRefreshClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(publicKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    // refresh token 사용자 이름 추출
+    public String extractRefreshUsername(String token) {
+        return extractRefreshClaims(token).getSubject();
+    }
+
+    // refresh token 만료 여부 확인
+    public boolean isRefreshTokenExpired(String token) {
+        return extractRefreshClaims(token).getExpiration().before(new Date());
+    }
+
+    public boolean validateRefreshToken(String token, String loginId) {
+        try {
+            return (loginId.equals(extractRefreshUsername(token)) && !isRefreshTokenExpired(token));
         } catch (Exception e) {
             return false;
         }

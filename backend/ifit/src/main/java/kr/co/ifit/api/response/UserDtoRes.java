@@ -1,6 +1,6 @@
 package kr.co.ifit.api.response;
 
-public class UserResponseDTO {
+public class UserDtoRes {
     private Long user_id;
 
 }

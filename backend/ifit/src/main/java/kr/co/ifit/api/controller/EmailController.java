@@ -1,13 +1,11 @@
 package kr.co.ifit.api.controller;
 
-import kr.co.ifit.api.request.EmailDTO;
-import kr.co.ifit.api.request.UserDTO;
+import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.api.service.EmailService;
 import kr.co.ifit.api.service.EmailVerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -21,16 +19,16 @@ public class EmailController {
     private final EmailVerificationService emailVerificationService;
 
     @PostMapping("/sendVerificationCode")
-    public ResponseEntity<?> sendVerificationCode(@RequestBody UserDTO userDTO) {
-        String email = userDTO.getEmail();
+    public ResponseEntity<?> sendVerificationCode(@RequestBody UserDtoReq userDtoReq) {
+        String email = userDtoReq.getEmail();
         emailService.sendVerificationEmail(email);
         return ResponseEntity.ok("인증 번호 발송");
     }
 
     @PostMapping("/verifyEmail")
-    public ResponseEntity<?> verifyEmail(@RequestBody UserDTO userDTO) {
-        String email = userDTO.getEmail();
-        String enteredCode = userDTO.getEnteredCode();
+    public ResponseEntity<?> verifyEmail(@RequestBody UserDtoReq userDtoReq) {
+        String email = userDtoReq.getEmail();
+        String enteredCode = userDtoReq.getEnteredCode();
 
         boolean verified = emailVerificationService.verifyEmail(email, enteredCode);
         if (verified) {
