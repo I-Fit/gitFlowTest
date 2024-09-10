@@ -13,7 +13,7 @@
         <div class="signup-pw input-block">
           <label class="signup-label" for="id">비밀번호<span class="signup-pw-find" @click="FindPw">비밀번호 재설정</span></label>
           <div class="signup-field">
-            <input type="text" id="pw" name="id" placeholder="비밀번호를 입력하세요." class="signup-field-input"
+            <input type="password" id="pw" name="id" placeholder="비밀번호를 입력하세요." class="signup-field-input"
               v-model="formData.password" />
           </div>
         </div>
@@ -58,6 +58,7 @@ export default {
     });
 
     console.log(toRaw(formData));
+    const loading = ref(false); // 로딩 상태
 
     // 로그인 성공 시 메인으로 이동
     const Complete = async () => {
@@ -66,8 +67,10 @@ export default {
         return;
       }
 
+      loading.value = true;   // 요청 시작 시 로딩 상태 설정
+
       try {
-        await store.dispatch('isLogged/sign-in', {
+        await store.dispatch('isLogged/signin', {
           id: formData.value.id,
           password: formData.value.password,
         });
@@ -81,6 +84,8 @@ export default {
       } catch (error) {
         console.error("로그인 요청 중 오류 발생", error);
         alert("서버와의 요청에 실패");
+      } finally {
+        loading.value = false;    // 요청 완료 후 로딩 상태 해제
       }
     };
 

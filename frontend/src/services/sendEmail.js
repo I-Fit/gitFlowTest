@@ -20,7 +20,7 @@ export function useEmail() {
     form.append("email", email.value);
 
     try {
-      const response = await axios.post("", form); //api 주소 넣기
+      const response = await axios.post("http://localhost:8080/api/sendVerificationCode", form); //api 주소 넣기
       if (response.data.exist) {
         alert(response.data.exist);
       } else if (response.status === 200) {

@@ -143,7 +143,7 @@ export default {
     // 아이디 중복 확인 요청
     const checkId = async () => {
       try {
-        const response = await axios.get("/api/check-id", {
+        const response = await axios.get("http://localhost:8080/api/check-id", {
           params: { id: formData.value.id },
         });
         idAvailable.value = response.data.available;
@@ -165,7 +165,7 @@ export default {
       }
 
       try {
-        await axios.post("/api/user-signup", formData.value);
+        await axios.post("http://localhost:8080/api/user-account", formData.value);
         alert("회원가입 성공!");
         router.push({ name: "SignIn" });
       } catch (error) {
