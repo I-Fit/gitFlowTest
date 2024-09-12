@@ -54,7 +54,7 @@
             v-for="(comment, index) in comments"
             :key="index"
             :id="'comment-' + index"
-            :class="{ 'highlighted': index === highlightedCommentIndex }"
+            :class="{ highlighted: index === highlightedCommentIndex }"
           >
             <div @click="navigateToPost(postId, index)">
               <div :class="{ 'author-comment': comment.user === postAuthor }">
@@ -136,32 +136,29 @@ export default {
       {
         user: "밤편지",
         text: "대단하십니다.",
-        replies: [
-          { user: "김계란", text: "감사합니다! 열심히 했어요!!" }
-        ],
+        replies: [{ user: "김계란", text: "감사합니다! 열심히 했어요!!" }],
         replyText: "",
       },
       {
         user: "wimper",
         text: "며칠 걸리셨나요??",
-        replies: [
-          { user: "김계란", text: "5일 걸렸습니다." }
-        ],
+        replies: [{ user: "김계란", text: "5일 걸렸습니다." }],
         replyText: "",
       },
       {
         user: "건넛",
         text: "담에 또 하실건가요? +_+",
-        replies: [
-          { user: "김계란", text: "시원할 때, 다시 해보고 싶네요." }
-        ],
+        replies: [{ user: "김계란", text: "시원할 때, 다시 해보고 싶네요." }],
         replyText: "",
       },
       {
         user: "qwer",
         text: "저도! 한번 도전해보고 싶어요!! +_+",
         replies: [
-          { user: "김계란", text: "일정 넉넉하게 잡으시면 누구든 가능합니다! 도전 ㄱㄱ" }
+          {
+            user: "김계란",
+            text: "일정 넉넉하게 잡으시면 누구든 가능합니다! 도전 ㄱㄱ",
+          },
         ],
         replyText: "",
       },
@@ -175,32 +172,31 @@ export default {
         user: "한강교차로인간",
         text: "3일 컷은 했었야지~",
         replies: [
-          { user: "김계란", text: "제 능력으로 3일 컷은 무리입니다 ㅋㅋ" }
+          { user: "김계란", text: "제 능력으로 3일 컷은 무리입니다 ㅋㅋ" },
         ],
         replyText: "",
       },
       {
         user: "좋으면짖는개",
         text: "왈왈 크르르릉 왈왈!!",
-        replies: [
-          { user: "김계란", text: "기분이 좋으시군요 ㅋㅋㅋ" }
-        ],
+        replies: [{ user: "김계란", text: "기분이 좋으시군요 ㅋㅋㅋ" }],
         replyText: "",
       },
       {
         user: "박일두",
         text: "거리 어떻게 배분하셨나요??",
         replies: [
-          { user: "김계란", text: "마지막날 200km 달렸고요.. 다른 날들은 100km 정도로.." }
+          {
+            user: "김계란",
+            text: "마지막날 200km 달렸고요.. 다른 날들은 100km 정도로..",
+          },
         ],
         replyText: "",
       },
       {
         user: "냉카",
         text: "종주 인증 메달이랑 인증서 신청하셨나요?",
-        replies: [
-          { user: "김계란", text: "예전에 신청해서 받았어요!" }
-        ],
+        replies: [{ user: "김계란", text: "예전에 신청해서 받았어요!" }],
         replyText: "",
       },
       {
@@ -218,9 +214,7 @@ export default {
       {
         user: "외데가르드",
         text: "공 차러 나와~",
-        replies: [
-          { user: "김계란", text: "조만간 같이 공 찹시다 ㅋㅋ" }
-        ],
+        replies: [{ user: "김계란", text: "조만간 같이 공 찹시다 ㅋㅋ" }],
         replyText: "",
       },
     ]);
@@ -293,7 +287,7 @@ export default {
       const element = document.getElementById(commentId);
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "start" });
-        highlightedCommentIndex.value = parseInt(commentId.split('-')[1]);
+        highlightedCommentIndex.value = parseInt(commentId.split("-")[1]);
         setTimeout(() => {
           highlightedCommentIndex.value = null;
         }, 2000); // 강조 효과 2초간 유지
@@ -302,10 +296,14 @@ export default {
       }
     };
 
+    const navigateToPost = (postId, index) => {
+      scrollToComment("comment-" + index);
+    };
+
     onMounted(() => {
       const commentId = route.query.commentId;
       if (commentId) {
-        scrollToComment('comment-' + commentId);
+        scrollToComment("comment-" + commentId);
       }
     });
 
@@ -327,12 +325,11 @@ export default {
       submitReply,
       highlightedCommentIndex,
       scrollToComment,
+      navigateToPost, // 이 부분을 반환에 추가해야 합니다.
     };
   },
 };
 </script>
-
-
 
 <style scoped>
 main {
