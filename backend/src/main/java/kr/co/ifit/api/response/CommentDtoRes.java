@@ -12,19 +12,21 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentRes {
+public class CommentDtoRes {
 
     private Long commentId;
     private Long postId;
     private String content;
-    private String author;
+    private Long userId;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public CommentRes(Comment comment) {
+    public CommentDtoRes(Comment comment) {
         this.commentId = comment.getCommentId();
         this.postId = comment.getPostId();
         this.content = comment.getContent();
-        this.author = comment.getAuthor();
-//        this.createdAt = comment.getCreatedAt();
+        this.userId = comment.getUserId();
+        this.createdAt = comment.getCreatedAt();
+        this.updatedAt = comment.getUpdatedAt();
     }
 }

@@ -9,27 +9,31 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostRes {
+public class PostDtoRes {
 
     private Long postId;
     private String title;
     private String content;
     private String imageUrl;
-    private String author;  // User user
+    private Long userId;  // User user
     private String exercise;
     private String location;
     private LocalDateTime createdAt;
-    private long likesCnt;
-    private long commentsCnt;
+    private LocalDateTime updatedAt;
+    private int likesCnt;
+    private int commentsCnt;
 
-    public PostRes(Post post) {
+    public PostDtoRes(Post post) {
         this.postId = post.getPostId();
         this.title = post.getTitle();
         this.content = post.getContent();
-        this.author = post.getAuthor();
+        this.imageUrl = post.getImageUrl();
+        this.userId = post.getUserId();
         this.exercise = post.getExercise();
         this.location = post.getLocation();
         this.createdAt = post.getCreatedAt();
-        this.imageUrl = post.getImageUrl();
+        this.updatedAt = post.getUpdatedAt();
+        this.likesCnt = post.getLikesCnt();
+        this.commentsCnt = post.getCommentsCnt();
     }
 }

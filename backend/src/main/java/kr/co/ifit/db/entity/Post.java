@@ -20,7 +20,7 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "id")
     private Long postId;
 
     private String title;
@@ -34,7 +34,8 @@ public class Post {
 
     private String location;
 
-    private String author;  // User user
+    @Column(name = "user_id")
+    private Long userId;  // User user
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP")
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
@@ -46,16 +47,15 @@ public class Post {
     @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
     private LocalDateTime updatedAt;
 
-    @Transient
-    private long likesCnt;
+//    @Transient
+    private int likesCnt;
 
-    @Transient
-    private long commentsCnt;
+//    @Transient
+    private int commentsCnt;
 
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
@@ -63,13 +63,13 @@ public class Post {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Post(String title, String content, String imageUrl, String exercise, String location, String author) {
+    public Post(String title, String content, String imageUrl, String exercise, String location, Long userId) {
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
         this.exercise = exercise;
         this.location = location;
-        this.author = author;
+        this.userId = userId;
     }
 
 //    private int capacity;   // 총 모집인원

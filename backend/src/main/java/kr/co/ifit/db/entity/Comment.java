@@ -20,12 +20,14 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
+    @Column(name = "id")
     private Long commentId;
 
     private String content;
 
-    private String author;  //User user
+    @Column(name = "user_id")
+    private Long userId;  //User user
+
     @Column(name = "post_id")
     private Long postId;
 
@@ -34,17 +36,15 @@ public class Comment {
     @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
-    public Comment(String content, String author, LocalDateTime createdAt, Long postId) {
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
+    private LocalDateTime updatedAt;
+
+    public Comment(String content, Long userId, Long postId) {
 
         this.content = content;
-        this.author = author;
-        this.createdAt = createdAt;
+        this.userId = userId;
         this.postId = postId;
     }
-
-    // 수정일
-//    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
-//    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
-//    private LocalDateTime updatedAt;
 }

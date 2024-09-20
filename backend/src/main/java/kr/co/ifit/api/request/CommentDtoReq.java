@@ -11,11 +11,9 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentReq {
+public class CommentDtoReq {
 
     private Long postId;
     private String content;
-    private String author;
-    private LocalDateTime createdAt;
-
+    private Long userId;
 }

@@ -1,7 +1,7 @@
 package kr.co.ifit.api.service;
 
-import kr.co.ifit.api.request.PostReq;
-import kr.co.ifit.api.response.PostRes;
+import kr.co.ifit.api.request.PostDtoReq;
+import kr.co.ifit.api.response.PostDtoRes;
 import kr.co.ifit.db.entity.Post;
 import kr.co.ifit.db.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class PostService {
     private final PostRepository postRepository;
 
     // 게시글 생성
-    public PostRes createPost(PostReq postReq) {
+    public PostDtoRes createPost(PostDtoReq postReq) {
         // post 엔티티 생성
         Post post = new Post(
                 postReq.getTitle(),
@@ -25,7 +25,7 @@ public class PostService {
                 postReq.getImageUrl(),
                 postReq.getExercise(),
                 postReq.getLocation(),
-                postReq.getAuthor()
+                postReq.getUserId()
         );
 
         post.setCreatedAt(LocalDateTime.now());
@@ -35,25 +35,25 @@ public class PostService {
         Post savedPost = postRepository.save(post);
 
         // PostRes 객체 생성 후 반환
-        return new PostRes(savedPost);
+        return new PostDtoRes(savedPost);
     }
 
     // 게시글 상세
-    public PostRes getPost(Long id) {
+    public PostDtoRes getPost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-//        Long likeCnt = postRepository.findLikeCntById(id);
-//        Long commentCnt = postRepository.findCommentCntById(id);
+//        long likeCnt = postRepository.findLikeCntById(id);
+//        long commentCnt = postRepository.findCommentCntById(id);
 
 //        postRes.setLikesCnt(likeCnt);
 //        postRes.setCommentsCnt(commentCnt);
 
-        return new PostRes(post);
+        return new PostDtoRes(post);
     }
 
     // 게시글 수정
-    public boolean updatePost(Long id, PostReq postReq) {
+    public boolean updatePost(Long id, PostDtoReq postReq) {
         if (postRepository.existsById(id)) {
             Post post = postRepository.findById(id).orElseThrow();
 
@@ -62,8 +62,6 @@ public class PostService {
             post.setImageUrl(postReq.getImageUrl());
             post.setExercise(postReq.getExercise());
             post.setLocation(postReq.getLocation());
-            post.setAuthor(postReq.getAuthor());
-            post.setCreatedAt(LocalDateTime.now());
             post.setUpdatedAt(LocalDateTime.now());
 
             postRepository.save(post);

@@ -11,17 +11,12 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostReq {
+public class PostDtoReq {
 
     private String title;
     private String content;
     private String imageUrl;
     private String exercise;
     private String location;
-
-    private String author;  // User user
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
+    private Long userId;
 }
