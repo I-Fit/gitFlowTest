@@ -51,11 +51,18 @@ public class UserService {
                 userDtoReq.getEmail()
         );
         userRepository.save(user);
+        // 회원가입 후 이메일 테이블에 있는 이메일 삭제
+        emailVerificationRepository.deleteByUserEmail(userDtoReq.getEmail());
     }
 
     // 아이디 중복 확인
     public boolean checkIdAvailability(String id) {
-        return !userRepository.existsByLoginId(id);
+        return userRepository.existsByLoginId(id);
+    }
+
+    // 로그인 ID로 사용자 조회
+    public User findByLoginId(String loginId) {
+        return userRepository.findByLoginId(loginId);
     }
 
 
@@ -78,9 +85,21 @@ public class UserService {
             return false;
         }
     }
+
+    // 아이디 찾기 - email로 사용자 정보 찾아서 loginId 반환
+    public String findUserIdByEmail(String email) {
+        User user = userRepository.findFirstByEmail(email);
+        emailVerificationRepository.deleteByUserEmail(email);
+        return user != null ? user.getLoginId() : null;
+    }
+
+    //  비밀번호 재설정 - email로 사용자 정보 찾아서 password 업데이트
+    public void updatePassword(String loginId, String password) {
+        User user = userRepository.findByLoginId(loginId);
+
+        String encodedPassword = passwordEncoder.encode(password);
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+        emailVerificationRepository.deleteByUserEmail(user.getEmail());
+    }
 }
-//
-//    // 로그아웃
-//    public void logoutUser(HttpSession session) {
-//        session.invalidate();
-//    }

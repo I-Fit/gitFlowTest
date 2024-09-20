@@ -14,4 +14,5 @@ public class UserDtoReq {
     private String phoneNumber;
     private String email;
     private String enteredCode;
+    private String passwordCheck;
 }

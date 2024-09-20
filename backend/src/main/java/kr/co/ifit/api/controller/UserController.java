@@ -1,13 +1,16 @@
 package kr.co.ifit.api.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.co.ifit.api.response.LoginDtoRes;
+import kr.co.ifit.api.service.EmailVerificationService;
 import kr.co.ifit.common.auth.JwtTokenProvider;
 import kr.co.ifit.common.util.JwtUtil;
+import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.entity.Token;
-import kr.co.ifit.api.request.LoginDtoReq;
 import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.api.service.UserService;
 import kr.co.ifit.db.entity.User;
+import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.TokenRepository;
 import kr.co.ifit.db.repository.UserRepository;
 import lombok.Getter;
@@ -26,6 +29,9 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -36,34 +42,129 @@ public class UserController {
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
-
-
+    private final EmailVerificationService emailVerificationService;
+    private final EmailVerificationRepository emailVerificationRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     // 회원가입
     @PostMapping("/user-account")
     public ResponseEntity<String> registerUser(@RequestBody UserDtoReq userDtoReq) {
         try {
             userService.registerUser(userDtoReq);
-            return ResponseEntity.ok("회원가입 성공. 이메일을 확인하여 인증해주세요.");
+            return ResponseEntity.ok("회원가입 성공");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(500).body("회원가입 실패: " + e.getMessage());
         }
     }
-
-    // 아이디 중복 확인
+    // 아이디 중복 확인 (회원가입 시)
     @GetMapping("/check-id")
-    public ResponseEntity<IdCheckResponse> checkId(@RequestParam("id") String id) {
+    public ResponseEntity<?> checkId(@RequestBody UserDtoReq userDtoReq) {
+        String id = userDtoReq.getLoginId();
         boolean available = userService.checkIdAvailability(id);
-        return ResponseEntity.ok(new IdCheckResponse(available));
+
+        if (available) {
+            return ResponseEntity.ok("존재하는 아이디입니다.");
+        } else {
+            return ResponseEntity.ok("사용 가능한 아이디입니다.");
+        }
+    }
+
+    //  아이디 찾기
+    @PostMapping("/find-id")
+    public ResponseEntity<?> findIdUser(@RequestBody UserDtoReq userDtoReq) {
+        String email = userDtoReq.getEmail();
+        String enteredCode = userDtoReq.getEnteredCode();
+
+        boolean isEmailVerified = emailVerificationService.verifyEmail(email, enteredCode);
+        if (isEmailVerified) {
+            String loginId = userService.findUserIdByEmail(email);
+            if (loginId != null) {
+                return ResponseEntity.ok(loginId);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "사용자를 찾을 수 없습니다."));
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","이메일 인증 실패"));
+        }
+    }
+
+    //  비밀번호 재설정 - 아이디 입력 부분
+    @PostMapping("/password/check-id")
+    public ResponseEntity<?> checkIdPassword(@RequestBody UserDtoReq userDtoReq) {
+        String loginId = userDtoReq.getLoginId();
+        boolean available = userService.checkIdAvailability(loginId);
+        if (available) {
+            return ResponseEntity.ok("확인");
+        } else {
+            return ResponseEntity.ok("존재하지 않는 아이디입니다.");
+        }
+    }
+
+    // 비밀번호 재설정 - 이메일 인증
+    @PostMapping("/password/emailVerification")
+    public ResponseEntity<?> findPassword(@RequestBody UserDtoReq userDtoReq) {
+        String loginId = userDtoReq.getLoginId();
+        String email = userDtoReq.getEmail();
+        String enteredCode = userDtoReq.getEnteredCode();
+        //  아이디로 사용자 정보 찾기
+        User user = userService.findByLoginId(loginId);
+        //  사용자 정보에서 이메일과 입력된 이메일이 일치하는지 확인
+        if (!user.getEmail().equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("가입한 이메일과 일치 하지 않습니다.");
+        }
+
+        boolean isEmailVerified = emailVerificationService.verifyEmail(email, enteredCode);
+        if (isEmailVerified) {
+            return ResponseEntity.ok("이메일 인증을 성공했습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "이메일 인증 실패 또는 인증 번호가 다릅니다."));
+        }
+    }
+
+    //  비밀번호 재설정
+    @PostMapping("/password/modified")
+    public ResponseEntity<?> modifyPassword(@RequestBody UserDtoReq userDtoReq) {
+        String password = userDtoReq.getPassword();
+        String passwordCheck = userDtoReq.getPasswordCheck();
+        String loginId = userDtoReq.getLoginId();
+        String email = userDtoReq.getEmail();
+
+        if (!password.equals(passwordCheck)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 일치하지 않습니다.");
+        }
+
+        User user = userService.findByLoginId(loginId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자입니다.");
+        }
+
+        Optional<EmailVerification> emailVerification = emailVerificationRepository.findByUserEmail(email);
+        if (emailVerification.isEmpty() || !emailVerification.get().getEmailVerified()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 인증이 필요합니다.");
+        }
+
+        // 기존 비밀번호와 일치하는지 확인
+        String existingEncodedPassword = user.getPassword();
+        if (passwordEncoder.matches(password, existingEncodedPassword)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("새 비밀번호와 기존 비밀번호가 일치합니다.");
+        }
+
+        try {
+            userService.updatePassword(loginId, password);
+            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 변경 중 오류가 발생했습니다.");
+        }
     }
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginDtoReq loginDtoReq) {
-        String loginId = loginDtoReq.getLoginId();
-        String password = loginDtoReq.getPassword();
+    public ResponseEntity<?> loginUser(@RequestBody UserDtoReq userDtoReq) {
+        String loginId = userDtoReq.getLoginId();
+        String password = userDtoReq.getPassword();
 
         try {
             if (!userService.authenticateUser(loginId, password)) {
@@ -77,12 +178,12 @@ public class UserController {
 
             User user = userRepository.findByLoginId(loginId);
             // Refresh Token을 DB에 저장
-            Instant now = Instant.now();
-            Instant expiration = now.plusSeconds(jwtTokenProvider.getRefreshExpiration() / 1000);
+            LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(jwtTokenProvider.getRefreshExpiration() / 1000 / 60);
 
             Token refreshTokenEntity = new Token();
             refreshTokenEntity.setRefreshToken(refreshToken);
-            refreshTokenEntity.setExpiration(LocalDateTime.ofInstant(expiration, ZoneId.systemDefault()));
+            refreshTokenEntity.setExpiration(expirationTime);
+            refreshTokenEntity.setCreatedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
             refreshTokenEntity.setUser(user);
 
             tokenRepository.save(refreshTokenEntity);
@@ -100,43 +201,29 @@ public class UserController {
         }
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<String> loginUser(@RequestBody LoginDTO loginDTO) {
-//        try {
-//            String userName = loginDTO.getUserName();
-////            String loginId = loginDTO.getLoginId();
-//            String password = loginDTO.getPassword();
-//
-//            boolean isAuthenticated = userService.authenticateUser(userName, password);
-//            if (isAuthenticated) {
-//                return ResponseEntity.ok("로그인 성공");
-//            } else {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: 잘못된 사용자 Id 또는 비밀번호 입니다.");
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류: " + e.getMessage());
-//        }
-//    }
-//
-//
-//    // 로그아웃
-//    @PostMapping("/user-logout")
-//    public ResponseEntity<String> logoutUser(HttpSession session) {
-//        try {
-//            userService.logoutUser(session); // Service에서 세션 무효화
-//            return ResponseEntity.ok("로그아웃 성공");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(500).body("로그아웃 실패: " + e.getMessage());
-//        }
-//    }
+    //  로그아웃
+    public ResponseEntity<?> logoutUser(HttpServletRequest request) {
+        String refreshToken = resolveToken(request);
+        Boolean isTokenValid = (Boolean) request.getAttribute("isTokenValid");
+        String loginId = (String) request.getAttribute("loginId");
 
-    @Setter
-    @Getter
-    public static class IdCheckResponse {
-        private boolean available;
-
-        public IdCheckResponse(boolean available) {
-            this.available = available;
+        if (isTokenValid && loginId != null) {
+            Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(refreshToken);
+            if (tokenOptional.isPresent()) {
+                tokenRepository.delete(tokenOptional.get());
+                return ResponseEntity.ok("로그아웃 성공");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("토큰이 없습니다.");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("토큰의 만료 되었습니다.");
         }
+    }
+    private String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("refresh-token");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }

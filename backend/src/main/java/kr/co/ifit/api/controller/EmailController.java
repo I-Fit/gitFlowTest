@@ -1,6 +1,5 @@
 package kr.co.ifit.api.controller;
 
-import kr.co.ifit.api.request.EmailDtoReq;
 import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.api.service.EmailService;
 import kr.co.ifit.api.service.EmailVerificationService;
@@ -27,9 +26,9 @@ public class EmailController {
     }
 
     @PostMapping("/verifyEmail")
-    public ResponseEntity<?> verifyEmail(@RequestBody EmailDtoReq emailDtoReq) {
-        String email = emailDtoReq.getEmail();
-        String enteredCode = emailDtoReq.getEnteredCode();
+    public ResponseEntity<?> verifyEmail(@RequestBody UserDtoReq userDtoReq) {
+        String email = userDtoReq.getEmail();
+        String enteredCode = userDtoReq.getEnteredCode();
 
         boolean verified = emailVerificationService.verifyEmail(email, enteredCode);
         if (verified) {

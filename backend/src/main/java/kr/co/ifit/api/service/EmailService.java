@@ -47,6 +47,7 @@ public class EmailService {
         emailVerification.setUserEmail(email);      // 사용자가 입력한 이메일
         emailVerification.setEmailCode(verificationCode);       // 서버가 만든 인증 코드
         emailVerification.setExpiryTime(LocalDateTime.now().plusMinutes(5));        // 인증 번호 만료 시간
+        emailVerification.setEmailVerified(false);
 
         emailVerificationRepository.save(emailVerification);
     }

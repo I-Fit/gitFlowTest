@@ -22,7 +22,7 @@ public class User {
     @Column(name = "id", nullable = false)
     private Long userId;
 
-    @Column(name = "login_Id", nullable = false, length = 50)
+    @Column(name = "login_id", nullable = false, length = 50)
     private String loginId;
 
     @Column(name = "password", nullable = false)
@@ -48,10 +48,6 @@ public class User {
     @Lob
     @Column(name = "profile_url", nullable = true)
     private String profileUrl;
-
-//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "id")
-//    private EmailVerification emailVerification;
 
     // 매개변수를 받는 생성자
     public User(String loginId, String password, String username, String phoneNumber, String email) {

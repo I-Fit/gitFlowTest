@@ -37,6 +37,7 @@ public class EmailVerificationService {
                 Optional<EmailVerification> optionalEmail = emailVerificationRepository.findByUserEmail(email);
                 optionalEmail.ifPresent(verification -> {
                     verification.setEmailVerified(true);        // 인증 상태 true 저장
+                    verification.setExpiryTime(LocalDateTime.now());        // 만료 시간을 즉시 만료시킨다.
                     emailVerificationRepository.save(verification); // 저장
                 });
                 return true;    //  인증 성공
@@ -45,5 +46,4 @@ public class EmailVerificationService {
 
         return false;       // 인증 정보가 없으면
     }
-
 }
