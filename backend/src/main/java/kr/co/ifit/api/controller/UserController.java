@@ -1,32 +1,23 @@
 package kr.co.ifit.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.api.response.LoginDtoRes;
 import kr.co.ifit.api.service.EmailVerificationService;
+import kr.co.ifit.api.service.UserService;
 import kr.co.ifit.common.auth.JwtTokenProvider;
-import kr.co.ifit.common.util.JwtUtil;
 import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.entity.Token;
-import kr.co.ifit.api.request.UserDtoReq;
-import kr.co.ifit.api.service.UserService;
 import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.TokenRepository;
 import kr.co.ifit.db.repository.UserRepository;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -178,12 +169,12 @@ public class UserController {
 
             User user = userRepository.findByLoginId(loginId);
             // Refresh Token을 DB에 저장
-            LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(jwtTokenProvider.getRefreshExpiration() / 1000 / 60);
+            LocalDateTime expirationTime = ZonedDateTime.now().plusMinutes(jwtTokenProvider.getRefreshExpiration() / 1000 / 60).toLocalDateTime();
 
             Token refreshTokenEntity = new Token();
             refreshTokenEntity.setRefreshToken(refreshToken);
             refreshTokenEntity.setExpiration(expirationTime);
-            refreshTokenEntity.setCreatedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+            refreshTokenEntity.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
             refreshTokenEntity.setUser(user);
 
             tokenRepository.save(refreshTokenEntity);
@@ -201,23 +192,28 @@ public class UserController {
         }
     }
 
-    //  로그아웃
+    //  로그아웃 - refreshToken을 보내서 검증 후 데이터베이스에서 찾아서 삭제 후 로그아웃 성공
+    @PostMapping("/logout")
     public ResponseEntity<?> logoutUser(HttpServletRequest request) {
         String refreshToken = resolveToken(request);
-        Boolean isTokenValid = (Boolean) request.getAttribute("isTokenValid");
-        String loginId = (String) request.getAttribute("loginId");
 
-        if (isTokenValid && loginId != null) {
-            Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(refreshToken);
-            if (tokenOptional.isPresent()) {
-                tokenRepository.delete(tokenOptional.get());
-                return ResponseEntity.ok("로그아웃 성공");
+        if (refreshToken != null) {
+            String loginId = jwtTokenProvider.extractUsername(refreshToken);
+            boolean isTokenValid = jwtTokenProvider.validateToken(refreshToken, loginId);
+
+            if (isTokenValid) {
+                Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(refreshToken);
+                if (tokenOptional.isPresent()) {
+                    tokenRepository.delete(tokenOptional.get());
+                    return ResponseEntity.ok("로그아웃 성공");
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("토큰이 없습니다.");
+                }
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("토큰이 없습니다.");
+                return ResponseEntity.badRequest().body("토큰의 만료 되었습니다.");
             }
-        } else {
-            return ResponseEntity.badRequest().body("토큰의 만료 되었습니다.");
         }
+        return ResponseEntity.badRequest().body("refresh token 이 제공되지 않았습니다. ");
     }
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("refresh-token");

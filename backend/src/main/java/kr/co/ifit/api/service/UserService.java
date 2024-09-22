@@ -93,6 +93,7 @@ public class UserService {
         return user != null ? user.getLoginId() : null;
     }
 
+    @Transactional
     //  비밀번호 재설정 - email로 사용자 정보 찾아서 password 업데이트
     public void updatePassword(String loginId, String password) {
         User user = userRepository.findByLoginId(loginId);

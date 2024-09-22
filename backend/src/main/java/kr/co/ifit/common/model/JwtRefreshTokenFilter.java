@@ -7,12 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import kr.co.ifit.api.service.JwtUserDetailService;
 import kr.co.ifit.common.auth.JwtTokenProvider;
 import kr.co.ifit.db.entity.Token;
+import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.TokenRepository;
+import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,6 +24,7 @@ public class JwtRefreshTokenFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtUserDetailService userDetailService;
     private final TokenRepository tokenRepository;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
@@ -61,11 +60,29 @@ public class JwtRefreshTokenFilter extends OncePerRequestFilter {
                         response.getWriter().write("{\"error\": \"refreshToken이 데이터베이스에 존재하지 않습니다.\"}");
                     }
                 } else {
-                    // 만료된 토큰 처리
-                    tokenRepository.deleteByRefreshToken(refreshToken);
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.setContentType("application/json");
-                    response.getWriter().write("{\"error\": \"토큰이 만료되었습니다. 재로그인 해주세요.\"}");
+
+                    User user = userRepository.findByLoginId(loginId);
+                    if (user != null) {
+                        Long userId = user.getUserId();
+                        Optional<Token> tokenOptional = tokenRepository.findByUser_UserId(userId);
+
+                        if (tokenOptional.isPresent()) {
+                            try {
+                                // 만료된 토큰 처리
+                                tokenRepository.delete(tokenOptional.get());
+                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                response.setContentType("application/json");
+                                response.getWriter().write("{\"error\": \"토큰이 만료되었습니다. 재로그인 해주세요.\"}");
+                            } catch (Exception e) {
+                                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                                response.getWriter().write("{\"error\": \"서버 오류가 발생했습니다.\"}");
+                            }
+                        } else {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"refreshToken이 데이터베이스에 존재하지 않습니다.\"}");
+                        }
+                    }
                 }
             } else {
                 // 토큰이 제공되지 않은 경우
