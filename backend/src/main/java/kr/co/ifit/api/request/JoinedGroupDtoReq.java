@@ -8,7 +8,7 @@ import lombok.Setter;
 // getter, setter 를 자동으로 생성
 @Setter
 @Getter
-public class JoinedGroupRequestDTO {
-    private Long communityId;
+public class JoinedGroupDtoReq {
     private Long userId;
+    private Long communityId;
 }

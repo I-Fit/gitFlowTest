@@ -1,5 +1,7 @@
 package kr.co.ifit.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,41 +15,42 @@ import java.util.List;
 @Entity
 @ToString
 @NoArgsConstructor
-//  AllArgsConstructor 를 사용하지 못하는 이유 : communityId, peopleParticipation 필드는 생성자에 추가되지 않도록 해야하는데 Lombok에서는 특정 필드를 제외할 수 없다.
-//  그래서 수동으로 작성해줌
-@Table(name = "Community")
+@AllArgsConstructor
+@Table(name = "`group`")
 public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long communityId;
 
-    @Column(name = "communityName", nullable = false)
+    @Column(name = "name", nullable = false)
     private String title;
 
-    @Column(name = "communityDescription", nullable = false)
+    @Column(name = "`desc`", nullable = false)
     private String topboxContent;
 
-    @Column(name = "exerciseName", nullable = false)
+    @Column(name = "exercise", nullable = false)
     private String sport;
 
     @Column(name = "address", nullable = false)
     private String location;
 
-    @Column(name = "peopleTotal", nullable = false)
+    @Column(name = "total_ppl", nullable = false)
     private int person;
 
-    @Column(name = "peopleParticipation", nullable = false)
+    @Column(name = "party_ppl", nullable = false)
     private int peopleParticipation = 0;
 
-    @Column(name = "communityDatetime", columnDefinition = "TIMESTAMP")
+    @Column(name = "date_time", columnDefinition = "TIMESTAMP")
     private LocalDateTime date;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore     // 생성자가 생기지 않도록 하기 위해 작성
     private User user;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -56,7 +59,7 @@ public class Group {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikedGroup> likedGroups = new ArrayList<>();
 
-    public Group(String title, String topboxContent, String sport, String location, int person, LocalDateTime date, User user) {
+    public Group(String title, String topboxContent, String sport, String location, int person,LocalDateTime date, User user) {
         this.title = title;
         this.topboxContent = topboxContent;
         this.sport = sport;
@@ -70,6 +73,7 @@ public class Group {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+
 
     public void incrementPeopleParticipation() {
         if (peopleParticipation <= person) {

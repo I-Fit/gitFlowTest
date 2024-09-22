@@ -2,65 +2,61 @@ package kr.co.ifit.db.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-@Setter
 @Getter
+@Setter
 @Entity
+@Table(name = "user")
 @ToString
-@Table(name = "Users")
+@NoArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userId")
-    private int userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 사용자 ID 자동 생성
+    @Column(name = "id", nullable = false)
+    private Long userId;
 
-    @Column(name = "loginId")
-    private int id;
+    @Column(name = "login_id", nullable = false, length = 50)
+    private String loginId;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "userName")
-    private String name;
+    @Column(name = "username", nullable = false, length = 50)
+    private String username;
 
-    @Column(name = "phoneNumber")
-    private String phone;
+    @Column(name = "phone", nullable = false, length = 11)
+    private String phoneNumber;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, length = 50)
     private String email;
 
-    @Column(name = "createdAt")
+    @Column(name = "created_at", nullable = true)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(name = "modifiedAt")
+    @Column(name = "updated_at", nullable = true)
+    @UpdateTimestamp
     private LocalDateTime modifiedAt;
 
+    @Lob
+    @Column(name = "profile_url", nullable = true)
+    private String profileUrl;
 
-    public User() {
-
-    }
-
-    public User(int id, String password, String name, String phone, String email) {
-        this.id = id;
+    // 매개변수를 받는 생성자
+    public User(String loginId, String password, String username, String phoneNumber, String email) {
+        this.loginId = loginId;
         this.password = password;
-        this.name = name;
-        this.phone = phone;
+        this.username = username;
         this.email = email;
+        this.phoneNumber = phoneNumber;
         this.createdAt = LocalDateTime.now();
         this.modifiedAt = LocalDateTime.now();
     }
-
-    //    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    protected void onUpdate() {
-        this.modifiedAt = LocalDateTime.now();
-    }
-
 }

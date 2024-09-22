@@ -13,25 +13,26 @@ import java.time.LocalDateTime;
 @Entity
 @ToString
 @NoArgsConstructor
-@Table(name = "Dibs")
+@Table(name = "save")
 public class LikedGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long dibsId;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updatedAt", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "communityId", nullable = false)
+    @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
 }

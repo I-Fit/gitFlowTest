@@ -1,15 +1,14 @@
-package kr.co.ifit.api.request;
+package kr.co.ifit.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Setter
 @Getter
 @AllArgsConstructor
-public class LikedGroupRequestDTO {
+public class AddGroupDtoRes {
     private Long communityId;
-    private Long userId;
-    private boolean isHeartFilled;
+    private String message;
 }
-
