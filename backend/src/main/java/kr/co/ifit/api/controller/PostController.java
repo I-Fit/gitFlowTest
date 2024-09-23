@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/board")
 @RequiredArgsConstructor
 public class PostController {
@@ -23,6 +23,7 @@ public class PostController {
     private final PostService postService;
     private final PostRepository postRepository;
 
+    // 게시글 생성
     @PostMapping("/new")
     public ResponseEntity<Map<String, String>> createPost(@RequestBody PostDtoReq postReq) {
         Map<String, String> response = new HashMap<>();
@@ -40,6 +41,7 @@ public class PostController {
         }
     }
 
+    // 모든 게시글 가져오기
     @GetMapping("/list")
     public ResponseEntity<List<Post>> getAllPosts() {
         List<Post> posts = postService.getAllPosts();
@@ -47,6 +49,7 @@ public class PostController {
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
+    // 특정 게시글 가져오기
     @GetMapping("/post/{id}")
     public ResponseEntity<PostDtoRes> getPost(@PathVariable Long id) {
         PostDtoRes postRes = postService.getPost(id);
@@ -54,6 +57,7 @@ public class PostController {
         return ResponseEntity.ok(postRes);
     }
 
+    // 게시글 수정
     @PutMapping("/update/{id}")
     public ResponseEntity<Map<String, String>> updatePost(@PathVariable Long id, @RequestBody PostDtoReq postReq) {
         Map<String, String> response = new HashMap<>();
@@ -70,6 +74,7 @@ public class PostController {
         }
     }
 
+    // 게시글 삭제
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Map<String, String>> deletePost(@PathVariable Long id) {
 
@@ -86,6 +91,7 @@ public class PostController {
         }
     }
 
+    // 게시글 좋아요
     @PostMapping("/{id}/like")
     public ResponseEntity<PostDtoRes> likePost(@PathVariable Long id) {
         Post post = postRepository.findById(id)
@@ -95,5 +101,22 @@ public class PostController {
         postRepository.save(post);
 
         return ResponseEntity.ok(new PostDtoRes(post));
+    }
+
+    // 운동명으로 게시글 검색
+    @GetMapping("/search")
+    public ResponseEntity<List<Post>> searchByExercise(@RequestParam String exercise) {
+        List<Post> posts = postService.searchByExercise(exercise);
+
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    // 게시글 정렬
+    @GetMapping("/sort")
+    public ResponseEntity<List<Post>> getSortedPosts(@RequestParam(required = false) String sort,
+                                                     @RequestParam(required = false) String direction) {
+        List<Post> posts = postService.getSortedPosts(sort, direction);
+
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 }

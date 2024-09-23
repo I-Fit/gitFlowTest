@@ -5,6 +5,7 @@ import kr.co.ifit.api.response.PostDtoRes;
 import kr.co.ifit.db.entity.Post;
 import kr.co.ifit.db.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -84,5 +85,33 @@ public class PostService {
     // 게시글 목록
     public List<Post> getAllPosts() {
         return postRepository.findAll();
+    }
+
+    // 운동명으로 게시글 검색
+    public List<Post> searchByExercise(String exercise) {
+        List<Post> posts = postRepository.findAllByExercise(exercise);
+
+        return posts;
+    }
+
+    public List<Post> getSortedPosts(String sort, String direction) {
+
+        // 생성일 기준으로 정렬
+        Sort.Direction sortDirection = (direction != null &&
+                direction.equalsIgnoreCase("DESC")) ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        // 정렬 기준 없는 경우 기본값은 생성일 순
+        if (sort == null || sort.isEmpty()) {
+            sort = "createdAt";
+        }
+
+        switch (sort) {
+            case "older":
+                return postRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt"));
+            case "morePopular":
+                return postRepository.findAll(Sort.by(sortDirection, "likesCnt"));
+            default:
+                return postRepository.findAll(Sort.by(sortDirection, "createdAt"));
+        }
     }
 }

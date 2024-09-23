@@ -58,7 +58,7 @@ public class CommentController {
 //    }
 
     // 특정 게시글의 댓글 가져오기
-    @GetMapping("/get-post/{postId}")
+    @GetMapping("/get/post/{postId}")
     public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable Long postId) {
         List<Comment> comments = commentService.getCommentsByPostId(postId);
 
@@ -66,7 +66,7 @@ public class CommentController {
     }
 
     // 특정 유저가 작성한 댓글 가져오기
-    @GetMapping("/get-user/{userId}")
+    @GetMapping("/get/user/{userId}")
     public ResponseEntity<List<Comment>> getCommentsByUserId(@PathVariable Long userId) {
         List<Comment> comments = commentService.getCommentsByUserId(userId);
 

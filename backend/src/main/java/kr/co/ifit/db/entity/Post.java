@@ -47,10 +47,10 @@ public class Post {
     @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
     private LocalDateTime updatedAt;
 
-//    @Transient
+    @Column(name = "likes_cnt")
     private int likesCnt;
 
-//    @Transient
+    @Column(name = "comments_cnt")
     private int commentsCnt;
 
     @PrePersist
