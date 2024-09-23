@@ -31,22 +31,7 @@ public class Token {
     @JsonFormat(timezone = "Asia/Seoul")
     private LocalDateTime expiration;          // 만료 시간
 
-    @Column(name = "created_at", nullable = false)
-    @CreationTimestamp
-    @JsonFormat(timezone = "Asia/Seoul")
-    private LocalDateTime createdAt;
-
-    // 생성 시간
-    @Column(name = "updated_at", nullable = true)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;            // 갱신 시간
-
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    public void updateToken(String newRefreshToken, LocalDateTime newExpiration) {
-        this.refreshToken = newRefreshToken;
-        this.expiration = newExpiration;
-    }
 }

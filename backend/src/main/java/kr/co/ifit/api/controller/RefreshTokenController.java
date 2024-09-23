@@ -3,10 +3,7 @@ package kr.co.ifit.api.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -20,5 +17,10 @@ public class RefreshTokenController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("서버와 통신 실패");
         }
+    }
+
+    @DeleteMapping("/tokens/user/{userId}")
+    public ResponseEntity<String> invalidRefreshToken(@PathVariable Long userId) {
+        return ResponseEntity.ok("인증 만료, 재로그인 해주세요.");
     }
 }

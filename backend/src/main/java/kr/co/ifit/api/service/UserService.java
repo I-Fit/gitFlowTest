@@ -1,8 +1,10 @@
 package kr.co.ifit.api.service;
 
 import kr.co.ifit.api.request.UserDtoReq;
+import kr.co.ifit.db.entity.Coupon;
 import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.entity.User;
+import kr.co.ifit.db.repository.CouponRepository;
 import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Service
@@ -26,6 +30,7 @@ public class UserService {
     private final EmailVerificationRepository emailVerificationRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUserDetailService userDetailService;
+    private final CouponRepository couponRepository;
 
 
     // 회원가입
@@ -53,6 +58,18 @@ public class UserService {
         userRepository.save(user);
         // 회원가입 후 이메일 테이블에 있는 이메일 삭제
         emailVerificationRepository.deleteByUserEmail(userDtoReq.getEmail());
+        
+        //  회원가입 쿠폰 생성
+        Coupon coupon = new Coupon();
+        coupon.setName("10% 할인 쿠폰(멤버십 한정)");
+        coupon.setPercentage(10.0);
+        coupon.setCreatedAt(ZonedDateTime.now().toLocalDateTime());
+        //  쿠폰의 유효 기간 설정 (예 : 7일 후)
+        coupon.setExpiredAt(ZonedDateTime.now().toLocalDateTime().plusDays(7));
+        //  쿠폰과 사용자 연결
+        coupon.setUser(user);
+
+        couponRepository.save(coupon);
     }
 
     // 아이디 중복 확인

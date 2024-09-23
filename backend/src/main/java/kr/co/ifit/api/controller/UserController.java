@@ -174,7 +174,7 @@ public class UserController {
             Token refreshTokenEntity = new Token();
             refreshTokenEntity.setRefreshToken(refreshToken);
             refreshTokenEntity.setExpiration(expirationTime);
-            refreshTokenEntity.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
+//            refreshTokenEntity.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
             refreshTokenEntity.setUser(user);
 
             tokenRepository.save(refreshTokenEntity);
@@ -204,13 +204,14 @@ public class UserController {
             if (isTokenValid) {
                 Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(refreshToken);
                 if (tokenOptional.isPresent()) {
+                    //  유효한 토큰이 존재하면 삭제
                     tokenRepository.delete(tokenOptional.get());
                     return ResponseEntity.ok("로그아웃 성공");
                 } else {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("토큰이 없습니다.");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이미 로그아웃 처리되었습니다.");
                 }
             } else {
-                return ResponseEntity.badRequest().body("토큰의 만료 되었습니다.");
+                return ResponseEntity.badRequest().body("토큰이 만료 되었습니다.");
             }
         }
         return ResponseEntity.badRequest().body("refresh token 이 제공되지 않았습니다. ");
