@@ -7,11 +7,7 @@
         <div class="top-profile">
           <div class="top-image-box">
             <!-- <div class="top-box-img"> -->
-              <img
-                :src="profileImage"
-                alt="Profile Image"
-                class="profile-img"
-              />
+            <img :src="profileImage" alt="Profile Image" class="profile-img" />
             <!-- </div> -->
             <div class="top-box-icon" @click="triggerFileInput">&#43;</div>
           </div>
@@ -63,11 +59,7 @@
               <div class="profile-frame">
                 <span id="phone">ifit@kosta.com</span>
               </div>
-              <button
-                type="submit"
-                class="changec-btn"
-                @click="goToEditEmail"
-              >
+              <button type="submit" class="changec-btn" @click="goToEditEmail">
                 변경
               </button>
             </div>
@@ -99,11 +91,7 @@
               <div class="profile-frame">
                 <span id="member-rank">근린이</span>
               </div>
-              <button
-                type="submit"
-                class="changem-btn"
-                @click="goToMembership"
-              >
+              <button type="submit" class="changem-btn" @click="goToMembership">
                 변경
               </button>
             </div>
@@ -144,9 +132,9 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import AppNav from '@/components/layout/AppNav.vue';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import AppNav from "@/components/layout/AppNav.vue";
 
 export default {
   name: "MypageComponent",
@@ -158,12 +146,12 @@ export default {
     const router = useRouter();
 
     const profileImage = ref(require("@/assets/images/default-profile.png"));
-    const fileInput = ref(null)
+    const fileInput = ref(null);
 
     //파일 선택 창 트리거 함수
     const triggerFileInput = () => {
       fileInput.value.click();
-    }
+    };
 
     // 파일 변경 핸들러
     const handleFileChange = (event) => {
@@ -184,14 +172,14 @@ export default {
     // 쿠폰 조회 함수
     const fetchCoupons = async () => {
       try {
-        const response = await fetch('/api/coupons'); // 실제 API 엔드포인트로 교체
+        const response = await fetch("/api/coupons?userId=${userId}"); // userId로 찾기
         if (!response.ok) {
-          throw new Error('네트워크 응답이 정상적이지 않습니다.');
+          throw new Error("네트워크 응답이 정상적이지 않습니다.");
         }
         const data = await response.json();
         coupons.value = data;
       } catch (error) {
-        console.error('쿠폰 조회 중 오류 발생:', error);
+        console.error("쿠폰 조회 중 오류 발생:", error);
       }
     };
 
@@ -207,48 +195,48 @@ export default {
     };
 
     const goToMembership = () => {
-      router.push( { path: '/membership', hash: '#target' });
+      router.push({ path: "/membership", hash: "#target" });
     };
 
     const goToChangePassword = () => {
-      router.push('/find-password');
-    }
+      router.push("/find-password");
+    };
 
     const goToAccountDeleted = () => {
-      router.push('/account-deleted')
-    }
+      router.push("/account-deleted");
+    };
 
     const goToEditEmail = () => {
-      router.push('/edit-email')
-    }
+      router.push("/edit-email");
+    };
 
     const goToHome = () => {
-      router.push('/')
-    }
+      router.push("/");
+    };
 
-    const showConfirmPopup = ref(false)
+    const showConfirmPopup = ref(false);
 
     const confirmDeletion = async () => {
       try {
         // 백엔드 API 호출
-        const response = await fetch('/api/delete-account', {
-          method: 'DELETE',
+        const response = await fetch("/api/delete-account", {
+          method: "DELETE",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer YOUR_AUTH_TOKEN' // 인증 토큰이 필요한 경우
-          }
+            "Content-Type": "application/json",
+            Authorization: "Bearer YOUR_AUTH_TOKEN", // 인증 토큰이 필요한 경우
+          },
         });
 
         if (!response.ok) {
-          throw new Error('회원 탈퇴 요청이 실패했습니다.');
+          throw new Error("회원 탈퇴 요청이 실패했습니다.");
         }
 
-        alert('회원 탈퇴가 완료되었습니다.');
+        alert("회원 탈퇴가 완료되었습니다.");
         // 성공적인 회원탈퇴 후 처리
-        window.location.href = '/account-deleted'; // 탈퇴완료 페이지로 리다이렉트
+        window.location.href = "/account-deleted"; // 탈퇴완료 페이지로 리다이렉트
       } catch (error) {
-        console.error('회원 탈퇴 중 오류 발생:', error);
-        alert('회원 탈퇴 중 오류가 발생했습니다.');
+        console.error("회원 탈퇴 중 오류 발생:", error);
+        alert("회원 탈퇴 중 오류가 발생했습니다.");
       }
 
       showConfirmPopup.value = false;
@@ -274,10 +262,10 @@ export default {
       goToChangePassword,
       goToAccountDeleted,
       goToEditEmail,
-      goToHome
-    }
-  }
-}
+      goToHome,
+    };
+  },
+};
 </script>
 
 <style scoped>
