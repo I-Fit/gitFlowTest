@@ -6,6 +6,7 @@ import kr.co.ifit.api.service.PostService;
 import kr.co.ifit.db.entity.Post;
 import kr.co.ifit.db.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
