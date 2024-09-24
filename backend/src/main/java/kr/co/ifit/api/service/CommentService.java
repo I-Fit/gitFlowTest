@@ -52,9 +52,9 @@ public class CommentService {
     }
 
     // 모든 댓글 가져오기
-//    public List<Comment> getAllComments() {
-//        return commentRepository.findAll();
-//    }
+    public List<Comment> getAllComments() {
+        return commentRepository.findAll();
+    }
 
     // 특정 게시글의 댓글 가져오기
     public List<Comment> getCommentsByPostId(Long postId) {
@@ -82,9 +82,9 @@ public class CommentService {
     }
 
     // 댓글 삭제
-    public boolean deleteComment(Long id) {
-        if (commentRepository.existsById(id)) {
-            commentRepository.deleteById(id);
+    public boolean deleteComment(Long commentId) {
+        if (commentRepository.existsById(commentId)) {
+            commentRepository.deleteById(commentId);
             return true;
         } else {
             return false;

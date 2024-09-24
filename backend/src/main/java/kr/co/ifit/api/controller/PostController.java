@@ -8,7 +8,6 @@ import kr.co.ifit.db.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -75,18 +74,18 @@ public class PostController {
     }
 
     // 게시글 삭제
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Map<String, String>> deletePost(@PathVariable Long id) {
+    @DeleteMapping("/delete/{postId}")
+    public ResponseEntity<Map<String, String>> deletePost(@PathVariable Long postId) {
 
         Map<String, String> response = new HashMap<>();
-        boolean isDeleted = postService.deletePost(id);
+        boolean isDeleted = postService.deletePost(postId);
         if (isDeleted) {
             response.put("status", "success");
             response.put("message", "Post deleted successfully");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             response.put("status", "fail");
-            response.put("message", id + ": Post not found");
+            response.put("message", postId + ": Post not found");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }

@@ -21,6 +21,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    // 댓글 생성
     @PostMapping("/new")
     public ResponseEntity<Map<String, String>> createComment(@RequestBody CommentDtoReq commentReq) {
         Map<String, String> response = new HashMap<>();
@@ -35,7 +36,7 @@ public class CommentController {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
             response.put("status", "error");
-            response.put("message", "Failed to create comment" + e.getMessage());
+            response.put("message", "Failed to create comment: " + e.getMessage());
 
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
@@ -50,12 +51,12 @@ public class CommentController {
     }
 
     // 모든 댓글 리스트 가져오기
-//    @GetMapping("/list")
-//    public ResponseEntity<List<Comment>> getAllComments() {
-//        List<Comment> comments = commentService.getAllComments();
-//
-//        return new ResponseEntity<>(comments, HttpStatus.OK);
-//    }
+    @GetMapping("/list")
+    public ResponseEntity<List<Comment>> getAllComments() {
+        List<Comment> comments = commentService.getAllComments();
+
+        return new ResponseEntity<>(comments, HttpStatus.OK);
+    }
 
     // 특정 게시글의 댓글 가져오기
     @GetMapping("/get/post/{postId}")
@@ -73,6 +74,7 @@ public class CommentController {
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
+    // 댓글 수정
     @PutMapping("/update/{id}")
     public ResponseEntity<Map<String, String>> updateComment(@PathVariable Long id, @RequestBody CommentDtoReq commentReq) {
         Map<String, String> response = new HashMap<>();
@@ -89,17 +91,20 @@ public class CommentController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Map<String, String>> deleteComment(@PathVariable Long id) {
+    // 댓글 삭제
+    @DeleteMapping("/delete/{commentId}")
+    public ResponseEntity<Map<String, String>> deleteComment(@PathVariable Long commentId
+                                                             ) {
         Map<String, String> response = new HashMap<>();
-        boolean isDeleted = commentService.deleteComment(id);
+
+        boolean isDeleted = commentService.deleteComment(commentId);
         if (isDeleted) {
             response.put("status", "success");
             response.put("message", "Comment deleted successfully");
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             response.put("status", "fail");
-            response.put("message", id + ": Failed to delete comment");
+            response.put("message", commentId + ": Failed to delete comment");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }

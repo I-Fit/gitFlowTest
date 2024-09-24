@@ -3,10 +3,12 @@ package kr.co.ifit.api.service;
 import kr.co.ifit.api.request.PostDtoReq;
 import kr.co.ifit.api.response.PostDtoRes;
 import kr.co.ifit.db.entity.Post;
+import kr.co.ifit.db.repository.CommentRepository;
 import kr.co.ifit.db.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     // 게시글 생성
     public PostDtoRes createPost(PostDtoReq postReq) {
@@ -73,9 +76,11 @@ public class PostService {
     }
 
     // 게시글 삭제
-    public boolean deletePost(Long id) {
-        if (postRepository.existsById(id)) {
-            postRepository.deleteById(id);
+    @Transactional
+    public boolean deletePost(Long postId) {
+        if (postRepository.existsById(postId)) {
+            commentRepository.deleteByPostId(postId);
+            postRepository.deleteById(postId);
             return true;
         } else {
             return false;
