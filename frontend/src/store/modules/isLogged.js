@@ -5,7 +5,8 @@ export default {
     state: {
         Loggedin: false,
         userId: null,   // 사용자 식별 Id
-        token: null,    // JWT 토큰
+        accessToken: null,    // JWT 토큰(accessToken)
+        refreshToken: null,   // JWT 토큰(refreshToken)
     },
 
     mutations: {
@@ -15,13 +16,17 @@ export default {
         SET_USERID(state, payload) {
             state.userId = payload;
         },
-        SET_TOKEN(state, payload) {
-            state.token = payload;
+        SET_ACCESSTOKEN(state, payload) {
+            state.accessToken = payload;
+        },
+        SET_REFRESHTOKEN(state, payload) {
+            state.refreshToken = payload;
         },
         LOGOUT(state) {
             state.Loggedin = false;
             state.userId = null;
-            state.token = null;
+            state.accessToken = null;
+            state.refreshToken = null;
         },
     },
 
@@ -36,21 +41,24 @@ export default {
                 if (response.data.success) {
                     commit('SET_LOGGEDIN', true);
                     commit('SET_USERID', response.data.userId);
-                    commit('SET_TOKEN', response.data.token);
+                    commit('SET_ACCESSTOKEN', response.data.accessToken);
+                    commit('SET_REFRESHTOKEN', response.data.refreshToken);
 
                     //  쿠키에 토큰 저장 (7일?)
-                    this.$cookies.set('token', response.data.token, { expires : 7 });
+                    Cookies.set('accessToken', response.data.accessToken, { expires : 1/24 });
+                    Cookies.set('refreshToken', response.data.refreshToken, { expires : 7 });
 
                 } else {
                     commit('SET_LOGGEDIN', false);
                     commit('SET_USERID', null);
-                    commit('SET_TOKEN', null);
+                    commit('SET_ACCESSTOKEN', null);
+                    commit('SET_REFRESHTOKEN', null);
                     throw new Error(response.data.message || '로그인 실패');
                 }
 
             } catch (error) {
                 console.error('로그인 요청 중 오류 발생', error);
-                commit('SET_ERROR', error.message || 'Id와 비밀번호 오류');
+                commit('SET_ERROR', error.message || '로그인 Id, 비밀번호 중 하나 오류');
             }
         },
         async logout({ commit }) {
@@ -58,7 +66,8 @@ export default {
                 await axios.post('/api/logout');
 
                 commit('LOGOUT');
-                this.$cookies.remove('token')  //  쿠키에서 토큰 삭제
+                Cookies.remove('accessToken')  //  쿠키에서 엑세스 토큰 삭제
+                Cokkies.remove('refreshToken') //  쿠키에서 리프레시 토큰 삭제
             } catch (error) {
                 console.error('로그아웃 요청 중 오류 발생', error);
             }
@@ -66,8 +75,9 @@ export default {
     },
 
     getters: {
-        LOGGEDIN: (state) => state.Loggedin,
+        loggedIn: (state) => state.Loggedin,
         userId: (state) => state.userId,
-        token: (state) => state.token,
+        accessToken: (state) => state.accessToken,
+        refreshToken: (state) => state.refreshToken,
     },
 };

@@ -18,8 +18,9 @@
     <!-- 종목, 지역, 날짜, 시간 필터-->
       <div class="filter">
         <div class="filter-list">
-          <select class="list-select" title="운동 종목">
+          <select class="list-select" title="운동 종목" @change="SportGroupList">
             <option value="" selected disabled>운동</option>
+            <option v-for="(sport, key) in sports" :key="key" :value="key">{{ sport }}</option>
           </select>
           <select class="list-select" title="지역" @click="fetchLocationData">
             <option value="" selected disabled>지역</option>
@@ -263,6 +264,7 @@ import axios from "axios";
 import { useStore } from "vuex";
 import Pagination from "@/components/common/HomePagination";
 import { usePagination } from "@/utils/pagination";
+import apiClient from '@/api/apiClien';
 
 export default {
   name: "Home",
@@ -410,14 +412,48 @@ export default {
     const store = useStore();
     // 여러 모임 데이터 배열에 저장
     const groups = ref([]);
+    const sports = ref({});   // 운동 종목을 저장할 객체
     const PerPage = 8;
     const userId = computed(() => store.getters['isLogged/userId']);
 
     const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, PerPage);
 
+    //  운동 종목 요청
+    const sportList = async () => {
+      try {
+        const response = await axios.get("/api/filter/exercises");
+        const data = response.data;
+
+        sports.value = Object.fromEntries(
+          Object.entries(data).map(([key, sport]) => [key, sport])
+        );
+      } catch (error) {
+        console.error("서버와의 통신 오류", error);
+      }
+    };
+
+    // 선택된 운동 종목에 따라 모임 리스트를 가져오는 함수
+    const SportGroupList = async(event) => {
+      const selectedSportValue = event.target.value;
+
+      if (selectedSportValue) {
+        try {
+          const response = await axios.post(`/api/filter/exercises?sport=${selectedSportValue}`);
+          groups.value = response.data.groups;
+        } catch (error) {
+          console.error("모임 리스트를 가져오는 데 오류가 발생했습니다.", error);
+        }
+      }
+    };
+
+    onMounted(async () => {
+      await sportList();
+      await groupList();
+    });
+
     // creategroup에서 생성한 모임에 사용자 식별 ID값을 같이 보내줘서
     // 서버에서 username, user_img를 받아옴
-    onMounted(async () => {
+    const groupList = async () => {
       try {
         const response = await axios.get('/api/group-list');
 
@@ -428,7 +464,7 @@ export default {
       } catch (error) {
         console.error("Error", error);
       }
-    });
+    };
 
     const isTooltipVisible = ref(true);
 
@@ -437,16 +473,22 @@ export default {
     };
 
     // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
-    // 사용자 식별 키와 모임 식별 키를 query로 보내줌
+    // 헤더에 토큰(사용자 식별 키)과 모임 식별 키를 query로 보내줌
     const showConfirmPopup = ref(false);
 
     const confirmDeletion = async (communityId) => {
+      const group = groups.value.find(group => group.communityId === communityId);
+
+      if (!group) {
+        console.error("유효하지 않는 Id입니다.", communityId);
+        return;
+      }
+
       try {
-        await axios.post('/api/join-group', {
+        await apiClient.post('/join-group', {
           communityId: communityId,
-          userId: userId.value
         });
-        router.push({ name: "JoinedGroups", query: { communityId, userId: userId.value } });
+        router.push({ name: "JoinedGroups", query: { communityId } });
       } catch (error) {
         console.error("Error", error);
       }
@@ -491,6 +533,9 @@ export default {
       toggleTooltip,
       confirmDeletion,
       cancelDeletion,
+
+      sports,
+      sportList,
     };
   },
 };

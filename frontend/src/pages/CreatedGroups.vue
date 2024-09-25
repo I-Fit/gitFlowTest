@@ -13,13 +13,13 @@
         <div class="middle-filter">
           <div class="middle-filter-search-box">
             <input type="text" name="search" id="search_input" placeholder="검색어를 입력하세요." class="search-box-input"
-              v-model="searchQuery" @input="onInput" />
-            <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" @click="onSearch" />
+              v-model="searchTerm" @keyup.enter="searchGroups" />
+            <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" @click="searchGroups" />
           </div>
-          <select title="정렬" class="middle-filter-sort">
-            <option value="" selected disabled>정렬</option>
-            <option value="popular">인기순</option>
-            <option value="latest">최신순</option>
+          <select title="정렬" class="middle-filter-sort" v-model="selectedSort" @change="SortedGroups">
+            <option value="1" selected disabled>정렬</option>
+            <option value="2">인기순</option>
+            <option value="3">최신순</option>
           </select>
         </div>
         <!-- 참여 한 모임 내역 -->
@@ -123,6 +123,7 @@ import { usePagination } from "@/utils/pagination";
 import { useStore } from "vuex";
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
+import apiClient from "@/api/apiClient";
 
 export default {
   name: "CreatedGroups",
@@ -153,6 +154,8 @@ export default {
   setup() {
     const router = useRouter();
     const store = useStore();
+    const selectedSort = ref('1') // 기본값(정렬)
+    const searchTerm = ref('');   // 검색어를 저장할 변수
     const groups = ref([]);
 
     const groupJoinlist = () => {
@@ -172,10 +175,9 @@ export default {
     //  웹 페이지가 로딩 되기 전에 userId를 서버에 보내서 해당되는 모임을 로딩해줌
     const loadgroups = async () => {
       try {
-        const response = await axios.post(`/api/created-groups`, {
-          data: { userId: userId.value }
-        });
-        groups.value = response.data;
+        const response = await apiClient.get('/created');
+        groups.value = response.data; // 수정 필요
+
         fetchdatas(1);
       } catch (error) {
         console.error("Error", error);
@@ -191,11 +193,11 @@ export default {
     const toggleTooltip = () => {
       isTooltipVisible.value = !isTooltipVisible.value;
     };
-    // 모임 삭제 버튼 클릭 후 확인 버튼 클릭하면 삭제되고 다시 로드
+    // 내가 만든 모임 삭제 후 다시 로드
     const showConfirmPopup = ref(null);
     const confirmDeletion = async (communityId) => {
       try {
-        await axios.delete(`/api/delete-groups/${communityId}`);
+        await apiClient.delete('/created/delete');
       } catch (error) {
         console.error("Error", error);
       } finally {
@@ -205,6 +207,35 @@ export default {
     const cancelDeletion = () => {
       showConfirmPopup.value = null;
     };
+
+    //  검색어
+    const searchGroups = async() => {
+      if (!searchTerm.value) {
+        return;
+      }
+      try {
+        const response = await apiClient.post("/created/search", {
+          searchValue: searchTerm.value,
+        });
+        groups.value = response.data.groups;
+      } catch (error) {
+        console.error("오류가 발생", error);
+      }
+    };
+
+    // 정렬
+    const SortedGroups = async() => {
+      try {
+        const response = await apiClient.post("/created/sort", {
+          sortValue: selectedSort.value,
+        });
+        // 서버에서 받은 모임 리스트
+        groups.value = response.data.groups;  
+      } catch (error) {
+        console.error("오류가 발생", error);
+      }
+    };
+
     // 모임 찜 이벤트
     // 각각의 모임의 좋아요가 되도록 구현
     // 좋아요가 되면 서버에 모임 Id, 좋아요의 상태가 true인 것을 서버에 보내준다
@@ -215,8 +246,7 @@ export default {
         group.isHeartFilled = !group.isHeartFilled;
 
         try {
-          await axios.post("/api/", {
-            userId : userId,
+          await apiClient.post("/created/delete", {
             communityId: group.communityId,
             isHeartFilled: group.isHeartFilled,
           });
@@ -246,6 +276,12 @@ export default {
       cancelDeletion,
       isHeartFilled,
       toggleHeart,
+
+      SortedGroups,
+      selectedSort,
+      
+      searchTerm,
+      searchGroups,
     };
   },
 };

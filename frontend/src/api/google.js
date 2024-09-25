@@ -8,6 +8,6 @@ export default {
     setup() {
         const cliendId = '';    // google cliendId
 
-        const 
+    
     }
 }

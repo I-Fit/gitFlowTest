@@ -12,15 +12,16 @@
       <div class="party-middle">
         <div class="middle-filter">
           <div class="middle-filter-search-box">
-            <input type="text" name="search" id="search-input" placeholder="검색어를 입력하세요." class="search-box-input" />
-            <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" />
+            <input type="text" name="search" id="search-input" placeholder="검색어를 입력하세요." class="search-box-input"
+            v-model="searchTerm" @keyup.enter="searchGroups"/>
+            <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" @click="searchGroups"/>
           </div>
-          <select title="정렬" class="middle-filter-sort">
-            <option value="" selected="selected" disabled="disabled">
+          <select title="정렬" class="middle-filter-sort" v-model="selectedSort" @change="SortedGroups">
+            <option value="1" selected="selected" disabled="disabled">
               정렬
             </option>
-            <option value="popular">인기순</option>
-            <option value="latest">최신순</option>
+            <option value="2">인기순</option>
+            <option value="3">최신순</option>
           </select>
         </div>
         <!-- 찜한 모임 내역 -->
@@ -95,6 +96,7 @@ import { useStore } from 'vuex';
 import Pagination from "@/components/common/Pagination.vue";
 import { usePagination } from '@/utils/pagination';
 import axios from 'axios';
+import apiClient from '@/api/apiClient';
 
 export default {
   name: "LikedGroups",
@@ -126,6 +128,8 @@ export default {
   setup() {
     const router = useRouter();
     const store = useStore();
+    const selectedSort = ref('1') // 기본값(정렬)
+    const searchTerm = ref('');   // 검색어를 저장할 변수
     const groups = ref([]);
 
     const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
@@ -145,10 +149,8 @@ export default {
     // 서버에 사용자 식별 Id를 보내 찜한 모임을 받아옴
     const loadGroups = async () => {
       try {
-        const userId = store.getters['isLogged/userId'];
-        const response = await axios.get('/api/liked-groups', {
-          params: { userId }
-        });
+        // const userId = store.getters['isLogged/userId'];
+        const response = await apiClient.get('/liked');
         groups.value = response.data.groups;
 
         isHeartFilled.value = {};
@@ -168,26 +170,52 @@ export default {
 
     // 하트 상태를 토글하고 서버에 업데이트 요청을 보내는 함수
     const isHeartFilled = ref({});
-    const toggleHeart = async (group) => {
-      // isHeartFilled.value = !isHeartFilled.value;
-      const groupId = group.communityid;
-      try {
-        if (isHeartFilled.value[groupId]) {
-          // 하트를 빈 상태가 된 경우
-          await axios.post("/api/", { communityid: groupId});
-          groups.value = groups.value.filter(g => g.communityid !== groupId);
-          isHeartFilled.value[groupId] = false;
-        } else {
-          await axios.post("/api/", { communityid: groupId });
-          isHeartFilled.value[groupId] = true;
-        }
-      } catch (error) {
-        console.error("Error", error);
-      } finally {
-        // 변경 사항 업데이트 위해 그룹 데이터 새로 로드
-        await loadGroups();
+
+    const toggleHeart = async (communityId) => {
+      isHeartFilled.value = !isHeartFilled.value;
+      
+      if (!isHeartFilled[communityId]) {
+        confirmDeletion(communityId);
       }
-    }
+    };
+
+    const confirmDeletion = async (communityId) => {
+      try {
+        await apiClient.delete('/created/delete');
+        
+        await loadGroups;
+      } catch (error) {
+        console.error("error", error);
+      }
+    };
+
+    //  검색어
+    const searchGroups = async() => {
+      if (!searchTerm.value) {
+        return;
+      }
+      try {
+        const response = await apiClient.post("/created/search", {
+          searchValue: searchTerm.value,
+        });
+        groups.value = response.data.groups;
+      } catch (error) {
+        console.error("오류가 발생", error);
+      }
+    };
+
+    // 정렬
+    const SortedGroups = async() => {
+      try {
+        const response = await apiClient.post("/created/sort", {
+          sortValue: selectedSort.value,
+        });
+        // 서버에서 받은 모임 리스트
+        groups.value = response.data.groups;  
+      } catch (error) {
+        console.error("오류가 발생", error);
+      }
+    };
 
     return {
       loadGroups,
@@ -203,6 +231,12 @@ export default {
       isHeartFilled,
       toggleHeart,
       myCreategroup,
+
+      SortedGroups,
+      selectedSort,
+      
+      searchTerm,
+      searchGroups,
     }
   },
 };
