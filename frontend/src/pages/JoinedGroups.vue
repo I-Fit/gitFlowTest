@@ -10,18 +10,21 @@
         <p class="text03" @click="likeGroup">찜한 모임 내역</p>
       </div>
       <div class="party-middle">
+
         <div class="middle-filter">
-          <div class="middle-filter-search-box">
+          <form class="middle-filter-search-box">
             <input type="text" name="search" id="search_input" placeholder="검색어를 입력하세요." class="search-box-input"
             v-model="searchTerm" @keyup.enter="searchGroups"/>
             <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" @click="searchGroups"/>
-          </div>
-          <select title="정렬" class="middle-filter-sort" v-model="selectedSort" @change="SortedGroups">
-            <option value="1" selected="selected" disabled="disabled">
-              정렬</option>
-            <option value="2">인기순</option>
-            <option value="3">최신순</option>
+          </form>
+
+          <select title="정렬" class="middle-filter-sort" v-model="selectedOption" @change="selectedGroupList">
+            <option value="" selected disabled>정렬</option>
+            <option v-for="option in options" :key="option.value" :value="option.value">
+              {{ option.text }}
+            </option>
           </select>
+
         </div>
         <!-- 참여 한 모임 내역 -->
         <div class="group">
@@ -112,8 +115,7 @@
 <script>
 import AppNav from "@/components/layout/AppNav.vue";
 import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import axios from "axios";
+import { useRouter } from "vue-router";
 import Pagination from "@/components/common/Pagination.vue";
 import { usePagination } from "@/utils/pagination";
 import apiClient from '@/api/apiClient';
@@ -145,10 +147,16 @@ export default {
 
   setup() {
     const router = useRouter();
-    const route = useRoute();
-    const selectedSort = ref('1') // 기본값(정렬)
     const searchTerm = ref('');   // 검색어를 저장할 변수
     const groups = ref([]);       // 모임 리스트를 저장할 변수
+
+    const selectedOption = ref('');
+    const options = ref([
+      // { value: '', text: '정렬' },
+      { value: '1', text: '인기순' },
+      { value: '2', text: '최신순' },
+      { value: '3', text: '오래된순' },
+    ])
 
     const myCreategroup = () => {
       router.push({ name: "CreatedGroups" });
@@ -159,8 +167,6 @@ export default {
     };
 
     const { currentPage, totalPages, visibleGroups, fetchdatas, onPageChange } = usePagination(groups, 6);
-    const userId = ref(route.query.userId);
-    const communityId = ref(route.query.communityId);
 
     // 홈 페이지에서 모임 식별 키와 사용자 식별 키를 받아와
     // 서버에 보내서 조회
@@ -224,10 +230,10 @@ export default {
     };
 
     // 정렬
-    const SortedGroups = async() => {
+    const selectedGroupList = async() => {
       try {
         const response = await apiClient.post("/joined/sort", {
-          sortValue: selectedSort.value,
+          sortValue: selectedOption.value,
         });
         // 서버에서 받은 모임 리스트
         groups.value = response.data.groups;  
@@ -258,6 +264,8 @@ export default {
     };
 
     return {
+      selectedOption,
+      options,
       currentPage,
       totalPages,
       visibleGroups,
@@ -274,8 +282,7 @@ export default {
       myCreategroup,
       likeGroup,
 
-      SortedGroups,
-      selectedSort,
+      selectedGroupList,
       
       searchTerm,
       searchGroups,

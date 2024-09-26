@@ -16,10 +16,11 @@
               v-model="searchTerm" @keyup.enter="searchGroups" />
             <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" @click="searchGroups" />
           </div>
-          <select title="정렬" class="middle-filter-sort" v-model="selectedSort" @change="SortedGroups">
-            <option value="1" selected disabled>정렬</option>
-            <option value="2">인기순</option>
-            <option value="3">최신순</option>
+          <select title="정렬" class="middle-filter-sort" v-model="selectedOption" @change="selectedGroupList">
+            <option value="" selected disabled>정렬</option>
+            <option v-for="option in options" :key="option.value" :value="option.value">
+              {{ option.text }}
+            </option>
           </select>
         </div>
         <!-- 참여 한 모임 내역 -->
@@ -120,9 +121,8 @@ import AppNav from "@/components/layout/AppNav.vue";
 import { useRouter } from "vue-router";
 import Pagination from "@/components/common/Pagination.vue";
 import { usePagination } from "@/utils/pagination";
-import { useStore } from "vuex";
-import { ref, computed, onMounted } from "vue";
-import axios from "axios";
+import { ref, onMounted } from "vue";
+// import axios from "axios";
 import apiClient from "@/api/apiClient";
 
 export default {
@@ -153,8 +153,7 @@ export default {
 
   setup() {
     const router = useRouter();
-    const store = useStore();
-    const selectedSort = ref('1') // 기본값(정렬)
+    // const store = useStore();
     const searchTerm = ref('');   // 검색어를 저장할 변수
     const groups = ref([]);
 
@@ -170,7 +169,7 @@ export default {
     const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
 
     // 사용자 식별 ID의 상태를 가져옴
-    const userId = computed(() => store.getters["isLogged/userId"]);
+    // const userId = computed(() => store.getters["isLogged/userId"]);
 
     //  웹 페이지가 로딩 되기 전에 userId를 서버에 보내서 해당되는 모임을 로딩해줌
     const loadgroups = async () => {
@@ -197,7 +196,9 @@ export default {
     const showConfirmPopup = ref(null);
     const confirmDeletion = async (communityId) => {
       try {
-        await apiClient.delete('/created/delete');
+        await apiClient.delete('/created/delete', {
+          data: communityId,
+        });
       } catch (error) {
         console.error("Error", error);
       } finally {
@@ -224,10 +225,18 @@ export default {
     };
 
     // 정렬
-    const SortedGroups = async() => {
+    const selectedOption = ref('');
+    const options = ref([
+      // { value: '', text: '정렬' },
+      { value: '1', text: '인기순' },
+      { value: '2', text: '최신순' },
+      { value: '3', text: '오래된순' },
+    ])
+
+    const selectedGroupList = async() => {
       try {
         const response = await apiClient.post("/created/sort", {
-          sortValue: selectedSort.value,
+          sortValue: selectedOption.value,
         });
         // 서버에서 받은 모임 리스트
         groups.value = response.data.groups;  
@@ -277,8 +286,9 @@ export default {
       isHeartFilled,
       toggleHeart,
 
-      SortedGroups,
-      selectedSort,
+      options,
+      selectedGroupList,
+      selectedOption,
       
       searchTerm,
       searchGroups,

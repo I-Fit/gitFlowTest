@@ -1,4 +1,5 @@
 import axios from "axios";
+import VueCookies from 'vue-cookies';
 
 export default {
     namespaced: true,
@@ -32,6 +33,7 @@ export default {
 
     actions: {
         async signin({ commit }, userSignInData) {
+            const Cookies = VueCookies;
             try {
                 const response = await axios.post('http://localhost:8080/api/login', {      /* sign-in */
                     id: userSignInData.id,
@@ -62,12 +64,13 @@ export default {
             }
         },
         async logout({ commit }) {
+            const Cookies = VueCookies;
             try {
                 await axios.post('/api/logout');
 
                 commit('LOGOUT');
                 Cookies.remove('accessToken')  //  쿠키에서 엑세스 토큰 삭제
-                Cokkies.remove('refreshToken') //  쿠키에서 리프레시 토큰 삭제
+                Cookies.remove('refreshToken') //  쿠키에서 리프레시 토큰 삭제
             } catch (error) {
                 console.error('로그아웃 요청 중 오류 발생', error);
             }

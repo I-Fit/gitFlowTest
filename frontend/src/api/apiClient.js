@@ -1,8 +1,11 @@
 import axios from 'axios';
+import VueCookies from 'vue-cookies';
 
 const apiClient = axios.create({
     baseURL: 'http://localhost:8080/api',
 });
+
+const Cookies = VueCookies;
 
 apiClient.interceptors.request.use(
     (config) => {

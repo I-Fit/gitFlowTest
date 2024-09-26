@@ -16,12 +16,11 @@
             v-model="searchTerm" @keyup.enter="searchGroups"/>
             <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" @click="searchGroups"/>
           </div>
-          <select title="정렬" class="middle-filter-sort" v-model="selectedSort" @change="SortedGroups">
-            <option value="1" selected="selected" disabled="disabled">
-              정렬
+          <select title="정렬" class="middle-filter-sort" v-model="selectedOption" @change="selectedGroupList">
+            <option value="" selected disabled>정렬</option>
+            <option v-for="option in options" :key="option.value" :value="option.value">
+              {{ option.text }}
             </option>
-            <option value="2">인기순</option>
-            <option value="3">최신순</option>
           </select>
         </div>
         <!-- 찜한 모임 내역 -->
@@ -92,10 +91,10 @@
 import AppNav from '@/components/layout/AppNav.vue';
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
+// import { useStore } from 'vuex';
 import Pagination from "@/components/common/Pagination.vue";
 import { usePagination } from '@/utils/pagination';
-import axios from 'axios';
+// import axios from 'axios';
 import apiClient from '@/api/apiClient';
 
 export default {
@@ -127,8 +126,6 @@ export default {
 
   setup() {
     const router = useRouter();
-    const store = useStore();
-    const selectedSort = ref('1') // 기본값(정렬)
     const searchTerm = ref('');   // 검색어를 저장할 변수
     const groups = ref([]);
 
@@ -181,7 +178,9 @@ export default {
 
     const confirmDeletion = async (communityId) => {
       try {
-        await apiClient.delete('/created/delete');
+        await apiClient.delete('/created/delete', {
+          data:communityId,
+        });
         
         await loadGroups;
       } catch (error) {
@@ -205,10 +204,18 @@ export default {
     };
 
     // 정렬
-    const SortedGroups = async() => {
+    const selectedOption = ref('');
+    const options = ref([
+      // { value: '', text: '정렬' },
+      { value: '1', text: '인기순' },
+      { value: '2', text: '최신순' },
+      { value: '3', text: '오래된순' },
+    ])
+
+    const selectedGroupList = async() => {
       try {
-        const response = await apiClient.post("/created/sort", {
-          sortValue: selectedSort.value,
+        const response = await apiClient.post("/liked/sort", {
+          sortValue: selectedOption.value,
         });
         // 서버에서 받은 모임 리스트
         groups.value = response.data.groups;  
@@ -232,8 +239,9 @@ export default {
       toggleHeart,
       myCreategroup,
 
-      SortedGroups,
-      selectedSort,
+      selectedGroupList,
+      options,
+      selectedOption,
       
       searchTerm,
       searchGroups,

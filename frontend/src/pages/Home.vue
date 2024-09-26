@@ -20,8 +20,9 @@
         <div class="filter-list">
           <select class="list-select" title="운동 종목" @change="SportGroupList">
             <option value="" selected disabled>운동</option>
-            <option v-for="(sport, key) in sports" :key="key" :value="key">{{ sport }}</option>
+            <option v-for="sport in sports" :key="sport.key" :value="sport.key">{{ sport.sport }}</option>
           </select>
+
           <select class="list-select" title="지역" @click="fetchLocationData">
             <option value="" selected disabled>지역</option>
             <option v-for="location in locations" :key="location.id" :value="location.id">
@@ -31,12 +32,12 @@
 
           <div>
             <VueDatePicker class="date-picker" placeholder="날짜" locale="ko" v-model="date" :enable-time-picker="false"
-              year-first="true" select-text="확인" cancel-text="취소" />
+              year-first="true" select-text="확인" cancel-text="취소" @select="dateSelect"/>
           </div>
 
           <div>
             <VueDatePicker class="time-picker" placeholder="시간" locale="ko" v-model="time" time-picker select-text="확인"
-              cancel-text="취소">
+              cancel-text="취소" @select="timeSelcet">
               <template #input-icon>
                 <img class="input-slot-image" src="@/assets/images/clock-icon.png" />
               </template>
@@ -44,12 +45,13 @@
           </div>
 
           <form class="search-box">
-            <input type="text" name="search" class="search-input" placeholder="검색어를 입력하세요." />
-            <img src="../assets/images/search.icon.png" alt="search" class="search-icon" />
+            <input type="text" name="search" class="search-input" placeholder="검색어를 입력하세요."
+            v-model="searchTerm" @keyup.enter="searchGroups"/>
+            <img src="../assets/images/search.icon.png" alt="search" class="search-icon" @click="searchGroups"/>
           </form>
         </div>
         <div class="sort">
-          <select class="sort-title" title="정렬" v-model="selectedOption">
+          <select class="sort-title" title="정렬" v-model="selectedOption" @change="selectedGroupList">
             <option value="" selected disabled>정렬</option>
             <option v-for="option in options" :key="option.value" :value="option.value">
               {{ option.text }}
@@ -208,9 +210,10 @@
 
           <div v-for="group in visibleDatas" :key="group.communityId" class="group-container">
             <div class="unicode-box">
-              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-              <img class="group-save-icon" src="@/assets/images/save-icon.png" @click="toggleHeart"/>
-              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
+              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal(group.communityId)" />
+              <img :src="isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')" class="group-save-icon" @click="likeGroup" />
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
+
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
@@ -223,6 +226,7 @@
                 </div>
               </div>
             </div>
+
             <div class="sport-image-box">
               <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
             </div>
@@ -264,7 +268,8 @@ import axios from "axios";
 import { useStore } from "vuex";
 import Pagination from "@/components/common/HomePagination";
 import { usePagination } from "@/utils/pagination";
-import apiClient from '@/api/apiClien';
+import apiClient from '@/api/apiClient';
+import { toRaw } from 'vue';
 
 export default {
   name: "Home",
@@ -398,8 +403,6 @@ export default {
   },
 
   setup() {
-    const time = ref(null);
-
     const selectedOption = ref('');
     const options = ref([
       // { value: '', text: '정렬' },
@@ -413,6 +416,7 @@ export default {
     // 여러 모임 데이터 배열에 저장
     const groups = ref([]);
     const sports = ref({});   // 운동 종목을 저장할 객체
+    const searchTerm = ref('');   // 검색어를 저장할 객체
     const PerPage = 8;
     const userId = computed(() => store.getters['isLogged/userId']);
 
@@ -424,9 +428,11 @@ export default {
         const response = await axios.get("/api/filter/exercises");
         const data = response.data;
 
-        sports.value = Object.fromEntries(
-          Object.entries(data).map(([key, sport]) => [key, sport])
-        );
+        sports.value = data.map(item => ({
+          key: item.key,
+          sport: item.sport
+        }));
+    
       } catch (error) {
         console.error("서버와의 통신 오류", error);
       }
@@ -443,6 +449,78 @@ export default {
         } catch (error) {
           console.error("모임 리스트를 가져오는 데 오류가 발생했습니다.", error);
         }
+      }
+    };
+
+    //  날짜 필터
+    const date = ref(null); //  선택된 날짜
+
+    console.log(toRaw(date));
+  
+    const dateSelect = async() => {
+      try {
+        if (date.value) {
+          const formatDate = new Date(date.value).toISOString();
+
+          const response = await axios.post('/api/filter/date', {
+            date: formatDate,
+          });
+          groups.value = response.data.groups; 
+        } else {
+          alert("날짜를 다시 선택해 주세요.");
+        }
+      } catch (error) {
+        console.error('모임 리스트를 가져오는 중 오류 발생', error);
+        alert("모임 리스트 가져오기 실패");
+      }
+    };
+
+    // 시간 필터
+    const time = ref(null);
+    console.log(toRaw(time));
+
+    const timeSelcet = async() => {
+      if (!time.value) {
+        alert("시간을 다시 선택해 주세요.");
+        return;
+      }
+      try {
+        const response = await axios.post('/api/filter/time', {
+          time: time.value,
+        });
+        groups.value = response.data.groups;
+      } catch (error) {
+        console.error("모임 리스트를 가져오는 중 오류 발생", error);
+        alert("모임 리스트 가져오기 실패");
+      }
+    }
+
+
+    //  검색어
+    const searchGroups = async() => {
+      if (!searchTerm.value) {
+        return;
+      }
+      try {
+        const response = await apiClient.post("/joined/search", {
+          searchValue: searchTerm.value,
+        });
+        groups.value = response.data.groups;
+      } catch (error) {
+        console.error("오류가 발생", error);
+      }
+    };
+
+    // 정렬
+    const selectedGroupList = async() => {
+      try {
+        const response = await apiClient.post("/joined/sort", {
+          sortValue: selectedOption.value,
+        });
+        // 서버에서 받은 모임 리스트
+        groups.value = response.data.groups;  
+      } catch (error) {
+        console.error("오류가 발생", error);
       }
     };
 
@@ -500,26 +578,13 @@ export default {
       showConfirmPopup.value = false;
     };
 
-    // 모임 찜 이벤트
-    // const isHeartFilled = ref(false);
-
-    // 하트 색상 변하면 서버에 보내서 찜한 모임 저장
-    // const toggleHeart = async (communityId) => {
-    //   isHeartFilled.value = !isHeartFilled.value;
-    //   try {
-    //     await axios.post('/api/like-group', {
-    //       userId: userId.value,
-    //       communityId: communityId,
-    //     });
-    //   } catch (error) {
-    //     console.error("Error", error);
-    //   }
-    // };
-
     return {
       selectedOption,
       options,
+      date,
+      dateSelect,
       time,
+      timeSelcet,
       groups,
       userId,
 
@@ -533,8 +598,13 @@ export default {
       toggleTooltip,
       confirmDeletion,
       cancelDeletion,
+      searchTerm,
 
+      searchGroups,
+      selectedGroupList,
       sports,
+
+      SportGroupList,
       sportList,
     };
   },
