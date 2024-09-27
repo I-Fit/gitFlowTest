@@ -24,26 +24,30 @@ tap<template>
             {{ category }}
           </button>
         </div>
+
         <div class="category-input">
           <input class="input-event" v-model="sportInput" @keydown.enter="handleEnterKey" @click="setSport" type="text"
             placeholder="운동 종목을 입력하세요." />
         </div>
+
         <p class="category-text">Choose Location</p>
         <div class="category-input">
           <input class="input-event" v-model="locationInput" @keydown.enter="handleEnterKey" @click="setLocation"
             type="text" placeholder="위치를 검색하세요." />
         </div>
+
         <p class="category-text">Choose Date and Time</p>
         <div class="category-date">
-          <VueDatePicker locale="ko" time-picker-inline v-model="date" @change="updateFormData"
-            class="input-datepicker">
+          <VueDatePicker locale="ko" time-picker-inline v-model="date" @change="updateFormData" class="input-datepicker">
           </VueDatePicker>
         </div>
+
         <p class="category-text">Choose Group Size</p>
         <div class="category-input">
           <input class="input-event" v-model="personInput" @keydown.enter="handleEnterKey" @click="setPerson"
             type="text" placeholder="인원을 입력하세요." />
         </div>
+
         <button class="category-register" @click="registerGroup">등록</button>
       </div>
     </div>
@@ -71,7 +75,8 @@ export default {
     const locationInput = ref('');
     const personInput = ref('');
     // 날짜
-    const date = ref('');
+    const date = ref(null);
+
     // 운동 종목 카테고리 중 고르기
     const selectedCategory = ref(null);
 
@@ -108,12 +113,17 @@ export default {
     ];
 
     watch(date, (newDate) => {
-      formData.date = newDate;
+      if (newDate) {
+        const dateObject = new Date(newDate);
+        formData.date = dateObject.toISOString();
+      } else {
+        formData.date = "";
+      }
     });
 
     // 메서드
     const updateFormData = () => {
-      formData.date = date.value;
+      formData.date = date.value ? new Date(date.value).toISOString() : "";
     };
 
     const updateTopboxContent = () => {

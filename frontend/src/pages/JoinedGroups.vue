@@ -10,18 +10,21 @@
         <p class="text03" @click="likeGroup">찜한 모임 내역</p>
       </div>
       <div class="party-middle">
+
         <div class="middle-filter">
-          <div class="middle-filter-search-box">
-            <input type="text" name="search" id="search_input" placeholder="검색어를 입력하세요." class="search-box-input" />
-            <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" />
-          </div>
-          <select title="정렬" class="middle-filter-sort">
-            <option value="" selected="selected" disabled="disabled">
-              정렬
+          <form class="middle-filter-search-box">
+            <input type="text" name="search" id="search_input" placeholder="검색어를 입력하세요." class="search-box-input"
+            v-model="searchTerm" @keyup.enter="searchGroups"/>
+            <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" @click="searchGroups"/>
+          </form>
+
+          <select title="정렬" class="middle-filter-sort" v-model="selectedOption" @change="selectedGroupList">
+            <option value="" selected disabled>정렬</option>
+            <option v-for="option in options" :key="option.value" :value="option.value">
+              {{ option.text }}
             </option>
-            <option value="popular">인기순</option>
-            <option value="latest">최신순</option>
           </select>
+
         </div>
         <!-- 참여 한 모임 내역 -->
         <div class="group">
@@ -112,10 +115,10 @@
 <script>
 import AppNav from "@/components/layout/AppNav.vue";
 import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import axios from "axios";
+import { useRouter } from "vue-router";
 import Pagination from "@/components/common/Pagination.vue";
 import { usePagination } from "@/utils/pagination";
+import apiClient from '@/api/apiClient';
 
 export default {
   name: "JoinedGroups",
@@ -144,7 +147,16 @@ export default {
 
   setup() {
     const router = useRouter();
-    const route = useRoute();
+    const searchTerm = ref('');   // 검색어를 저장할 변수
+    const groups = ref([]);       // 모임 리스트를 저장할 변수
+
+    const selectedOption = ref('');
+    const options = ref([
+      // { value: '', text: '정렬' },
+      { value: '1', text: '인기순' },
+      { value: '2', text: '최신순' },
+      { value: '3', text: '오래된순' },
+    ])
 
     const myCreategroup = () => {
       router.push({ name: "CreatedGroups" });
@@ -154,22 +166,13 @@ export default {
       router.push({ name: "LikedGroups" });
     };
 
-    const groups = ref([]);
-
     const { currentPage, totalPages, visibleGroups, fetchdatas, onPageChange } = usePagination(groups, 6);
-    const userId = ref(route.query.userId);
-    const communityId = ref(route.query.communityId);
 
     // 홈 페이지에서 모임 식별 키와 사용자 식별 키를 받아와
     // 서버에 보내서 조회
     const fetchGroups = async () => {
       try {
-        const response = await axios.get('/api/joined-groups/details', {
-          params: {
-            communityId: communityId.value,
-            userId: userId.value
-          }
-        });
+        const response = await apiClient.get('/joined');
         groups.value = response.data.groups;
         fetchdatas(1);
       } catch (error) {
@@ -177,6 +180,7 @@ export default {
       }
     };
 
+    //  페이지 로드시 데이터를 가져온다.
     onMounted(async () => {
       await fetchGroups();
     });
@@ -187,16 +191,16 @@ export default {
     const toggleTooltip = () => {
       isTooltipVisible.value = !isTooltipVisible.value;
     };
-    // 모임 취소 버튼 클릭 후 확인 버튼 누르면 삭제되고 다시 로드
 
+    // 모임 취소 버튼 클릭 후 확인 버튼 누르면 삭제되고 다시 로드
     // 어떤 사용자가 어떤 모임을 삭제 했는지 모르기 때문에
-    // userId도 보내줘야한다.
+    // userId도 보내줘야한다. - 토큰 전송
     const showConfirmPopup = ref(false);
     const confirmDeletion = async (communityId) => {
       try {
-        await axios.delete('/api/', { data: { 
+        await apiClient.delete('/joined/delete', { 
+          data: { 
           communityId : communityId,
-          userId: userId.value
         } 
       });
         showConfirmPopup.value = false;
@@ -210,16 +214,43 @@ export default {
       showConfirmPopup.value = false;
     };
 
+    //  검색어
+    const searchGroups = async() => {
+      if (!searchTerm.value) {
+        return;
+      }
+      try {
+        const response = await apiClient.post("/joined/search", {
+          searchValue: searchTerm.value,
+        });
+        groups.value = response.data.groups;
+      } catch (error) {
+        console.error("오류가 발생", error);
+      }
+    };
+
+    // 정렬
+    const selectedGroupList = async() => {
+      try {
+        const response = await apiClient.post("/joined/sort", {
+          sortValue: selectedOption.value,
+        });
+        // 서버에서 받은 모임 리스트
+        groups.value = response.data.groups;  
+      } catch (error) {
+        console.error("오류가 발생", error);
+      }
+    };
+
     // 하트 클릭
     const isHeartFilled = ref(false);
     const toggleHeart = async (communityId) => {
-      const group = groups.value.find(group => group.communityid === communityId);
+      const group = groups.value.find(group => group.communityId === communityId);
       if (group) {
         group.isHeartFilled = !group.isHeartFilled;
 
         try {
-          await axios.post("/api/", {
-            userId : userId.value,
+          await apiClient.post("/joined/liked", {
             communityId: group.communityId,
             isHeartFilled: group.isHeartFilled,
           });
@@ -233,6 +264,8 @@ export default {
     };
 
     return {
+      selectedOption,
+      options,
       currentPage,
       totalPages,
       visibleGroups,
@@ -248,6 +281,11 @@ export default {
       toggleHeart,
       myCreategroup,
       likeGroup,
+
+      selectedGroupList,
+      
+      searchTerm,
+      searchGroups,
     };
   },
 };
