@@ -85,7 +85,7 @@
   
   nav {
     display: flex;
-    flex-direction: column;
+    flex-direction: row-reverse;
   }
   
   .nav-list {
@@ -102,7 +102,7 @@
   .selector::after {
     content: "";
     display: block;
-    width: 87%;
+    width: 110%;
     height: 2px;
     background-color: #ccc;
     margin: 5px 0 0 10px;
@@ -110,8 +110,10 @@
   
   .selector-title {
     font-size: 20px;
-    font-weight: bold;
+    font-weight: bolder;
     margin: 0;
+    margin-top: 20px;
+    margin-bottom: 5px;
   }
   
   .selector-text {

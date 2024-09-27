@@ -4,7 +4,7 @@
       <div class="main-content">
         <div class="content-changeimages">
           <div class="changeimages-icon" @click="triggerFileInput"></div>
-          <span>이미지 추가</span>
+          <span class="add-image-text">이미지 추가</span>
           <input type="file" ref="fileInput" @change="onFileChange" accept="image/*" style="display: none;" />
         </div>
         <div class="content-title">
@@ -12,8 +12,8 @@
         </div>
         <div class="content-box" ref="contentBox" contenteditable="true" @input="onContentInput" placeholder="내용을 입력하세요"></div>
         <div class="content-topic">
-          <p class="item topic-item">{{ formData.exercise }}</p>
-          <p class="item" id="location">{{ formData.location }}</p>
+          <p class="item topic-item" v-if="formData.exercise">{{ formData.exercise }}</p>
+          <p class="item topic-item" id="location" v-if="formData.location">{{ formData.location }}</p>
         </div>
       </div>
       <div class="main-feature">
@@ -30,10 +30,10 @@
           <input
             class="input-box" 
             v-model="exerciseInput" 
-            @keydown.enter="handleEnterKey"
+            @keydown.enter="setExercise"
             @click="setExercise" 
             type="text" 
-            placeholder="운동 종목을 입력하세요." />
+            placeholder="운동명을 입력하세요." />
         </div>
         <p class="category-text">Choose location</p>
         <div class="feature-input">
@@ -44,8 +44,6 @@
             type="text" 
             placeholder="위치를 검색하세요."
             /> 
-             <!-- :disabled="!isScriptLoaded" -->
-            <!-- <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> -->
         </div>
         <!-- <p class="category-text">Choose group size</p>
         <div class="feature-input">
@@ -73,7 +71,7 @@ export default {
       formData: {
         title: '',
         content: '',
-        imageUrl: '',
+        imageStr: null,
         exercise: '',
         location: '',
         isScriptLoaded: false,
@@ -87,14 +85,43 @@ export default {
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
+
     onFileChange(event) {
-      if (event.target.files.length > 0) {
-        this.formData.image = event.target.files[0];
+      const file = event.target.files[0];
+      if (file) {
+        this.formData.imageStr = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          //content-box에 이미지 추가
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.style.width = '100%';
+          img.style.height = 'auto';
+          img.style.marginBottom = '10px';
+
+          const contentBox = this.$refs.contentBox;
+          contentBox.innerHTML += img.outerHTML;
+          contentBox.focus();
+        };
+        reader.readAsDataURL(file);
       }
     },
+
     onContentInput(event) {
       this.formData.content = event.target.innerText;
     },
+
+    setExercise() {
+      this.formData.exercise = this.exerciseInput;
+      this.exerciseInput = '';
+    },
+
+    handleEnterKey(event) {
+      if (event.key === 'Enter') {
+        this.setExercise();
+      }
+    },
+
     openDaumApi() {
       new window.daum.Postcode({
         oncomplete: (data) => {
@@ -103,34 +130,45 @@ export default {
         }
       }).open();
     },
+
     async confirmSubmit() {
       // FormData 객체 생성
       const formData = new FormData();
+
       formData.append('title', this.formData.title);
       formData.append('content', this.formData.content);
       formData.append('exercise', this.formData.exercise);
       formData.append('location', this.formData.location);
-      formData.append('image', this.formData.image);
 
+      if (this.formData.imageStr) {
+        const reader = new FileReader();
+
+        reader.onloadend = async () => {
+      const base64Image = reader.result.split(',')[1]; // Base64 문자열만 추출
+      formData.append('imageStr', base64Image); // Base64 이미지 추가
+
+      // 게시글 전송
       try {
-        const response = await axios.post('http://localhost:8081/board/new', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+        const response = await axios.post('http://localhost:8081/api/board/new', formData, {
+          // Content-Type을 설정하지 않음 (FormData가 자동으로 설정)
         });
 
         console.log(response.data);
         if (response.data.status === "success") {
-          alert('게시글이 성공적으로 등록되었습니다!')
+          alert('게시글이 성공적으로 등록되었습니다!');
           this.$router.push('/board');  // 게시판 메인으로 이동
         }
-        // this.responseMessage = response.data.message; // 성공 메세지
-      } catch(error) {
+      } catch (error) {
         console.error('게시글 작성 실패: ', error);
-        alert('게시글 작성에 실패했습니다.')
-        // this.responseMessage = error.response.data.message || 'Failed to create post';  // 실패 메세지
+        alert('게시글 작성에 실패했습니다.');
       }
-    },
+    };
+
+        reader.readAsDataURL(this.formData.imageStr);
+      } else {
+        alert('이미지를 첨부해주세요!');
+      }
+    }
     
   },
 
@@ -199,13 +237,17 @@ input {
   align-items: center;
 }
 
+.add-image-text {
+  margin-left: 10px;
+}
+
 .changeimages-icon {
-  width: 35px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   background-color: #f2f2f2;
   background-image: url("@/assets/images/camera.png");
   background-repeat: no-repeat;
-  background-size: 80% 80%;
+  background-size: 70% 70%;
   background-position: center;
   border-radius: 100%;
   margin: 10px 0;
@@ -264,6 +306,12 @@ input {
   overflow-wrap: break-word; */
 }
 
+.content-box img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
 .content-topic {
   display: flex;
   flex-direction: row;
@@ -272,7 +320,6 @@ input {
 }
 
 .topic-item {
-  width: 58px;
   height: 24px;
   font-size: 13px;
   cursor: pointer;
@@ -283,6 +330,8 @@ input {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 10px;
+  white-space: nowarp;
 }
 
 .item {

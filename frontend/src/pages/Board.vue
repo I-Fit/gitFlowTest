@@ -4,7 +4,7 @@
       <div class="search-and-list">
         <div class="feature">
           <div class="feature-add">
-              <div class="add-btn" @click="postUpload">+</div>
+              <div class="add-btn" @click="goToCreatePost">+</div>
             <span>운동을 인증해보세요!</span>
           </div>
           <button type="button" class="feature-sort">
@@ -89,10 +89,8 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
 import Pagination from "@/components/common/Pagination.vue";
-import { usePagination } from "@/utils/pagination";
+import { useRouter } from "vue-router";
 
 export default {
   name: 'Board',
@@ -100,179 +98,110 @@ export default {
     Pagination,
   },
 
-  // methods: {
-  //   postUpload() {
-  //     this.$router.push('/CreatePost');
-  //   }
-  // },
+  methods: {
+    fetchPosts() {
+      fetch('http://localhost:8080/api/board/list')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.visibleDatas = data;
+        })
+        .catch(error => {
+          console.error('Error fetching posts: ', error);
+        });
+    },
+    sortPosts() {
+      const [order, direction] = this.selectedSort.split('_');
+
+      fetch(`http://localhost:8080/api/board/sort?sort=${order}&direction=${direction}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          this.visibleDatas = data;
+        })
+        .catch(error => {
+          console.error('Error fetching sorted posts: ', error);
+        });
+    }
+  },
+
+  data() {
+    return {
+      visibleDatas: [],
+      selectedSort: '',
+      posts: []
+    };
+  },
+
+  mounted() {
+    this.fetchPosts();  // 컴포넌트가 마운트될 때 게시글 목록 가져오기
+  },
 
   setup() {
     const router = useRouter();
-
-    const posts = ref([
-      { 
-        id: 1, 
-        writerName: '김계란', 
-        createdAt: '6 days ago', 
-        title: '종주할 때 사진 모아봤습니다.', 
-        content: '힘들었지만, 보람된 시간이였습니다.', 
-        topic: '라이딩', location: '부산', scale: '소규모', 
-        likes: 54, comments: 20, 
-        imageUrl: require('@/assets/images/riding-1.png'),
-        isHeartFilled: false
-      },
-      { 
-        id: 2, 
-        writerName: '김계란', 
-        createdAt: '6 days ago', 
-        title: '부산 하구둑 인증합니다.^^', 
-        content: '국토종주 마지막 날이였습니다...', 
-        topic: '라이딩', location: '부산', scale: '소규모', 
-        likes: 72, comments: 17, 
-        imageUrl: require('@/assets/images/riding-3.png'),
-        isHeartFilled: false
-      },
-      { 
-        id: 3, 
-        writerName: '김계란', 
-        createdAt: '6 days ago', 
-        title: '아라뱃길 정서진까지 라이딩', 
-        content: '목동 한강 합수부에서 만나서...', 
-        topic: '라이딩', location: '목동', scale: '소규모', 
-        likes: 87, comments: 10, 
-        imageUrl: require('@/assets/images/riding-2.jpg'),
-        isHeartFilled: false
-      },
-      { 
-        id: 4, 
-        writerName: '김계란', 
-        createdAt: '6 days ago', 
-        title: '골든리트리버 난입한 썰', 
-        content: '공 차는데 큰 개 한마리가 들어왔어요!!', 
-        topic: '축구', location: '신사중', scale: '22', 
-        likes: 123, comments: 34, 
-        imageUrl: require('@/assets/images/doginvade.jpg'),
-        isHeartFilled: false
-      },
-      { 
-        id: 5, 
-        writerName: '김계란', 
-        createdAt: '6 days ago', 
-        title: '비오는 날, 모임한 날', 
-        content: '날씨가 좋지 않음에도 참석해주신 분들이 많았습니다.', 
-        topic: '풋살', location: '가디단', scale: '15', 
-        likes: 33, comments: 19, 
-        imageUrl: require('@/assets/images/rainfootball.jpg'),
-        isHeartFilled: false
-      },
-      { 
-        id: 6, 
-        writerName: '김계란', 
-        createdAt: '6 days ago', 
-        title: '광복절에 용산에서 축구', 
-        content: '날씨가 무척 더워서 힘들었습니다.', 
-        topic: '축구', location: '용산', scale: '22', 
-        likes: 54, comments: 19, 
-        imageUrl: require('@/assets/images/dmfootball.jpg'),
-        isHeartFilled: false
-      },
-      { 
-        id: 7, 
-        writerName: '김계란', 
-        createdAt: '6 days ago', 
-        title: '추운 날씨에...', 
-        content: '다친 분 없이 모임이 끝나서 다행입니다.', 
-        topic: '축구', location: '한강공원', scale: '22', 
-        likes: 144, comments: 45, 
-        imageUrl: require('@/assets/images/winterfootball.jpg'),
-        isHeartFilled: false
-      },
-    ]);
-
-    const { currentPage, totalPages, visibleDatas, onPageChange } = usePagination(posts, 3);
-
-    const categories = ref(['러닝', '웨이트', '라이딩', '요가', '수영', '등산', '테니스', '클라이밍', '필라테스', 'GX']);
-    const selectedSort = ref('');
-    const searchQuery = ref('');
-    const selectedCategory = ref('');
-
-    const sortedPosts = computed(() => {
-      let sorted = [...posts.value];
-
-      if (searchQuery.value) {
-        sorted = sorted.filter(post =>
-          post.title.includes(searchQuery.value) ||
-          post.content.includes(searchQuery.value) ||
-          post.topic.includes(searchQuery.value)
-        );
-      }
-
-      if (selectedCategory.value) {
-        sorted = sorted.filter(post =>
-          post.topic === selectedCategory.value
-        );
-      }
-
-      if (selectedSort.value === 'popularity') {
-        sorted.sort((a, b) => b.likes - a.likes);
-      } else if (selectedSort.value === 'latest') {
-        sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      } else if (selectedSort.value === 'oldest') {
-        sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      }
-
-      console.log('Sorted Posts:', sorted)
-      return sorted;
-    });
-
-    watch(sortedPosts, (newSortedPosts) => {
-      console.log('Updated Sorted Posts', newSortedPosts);
-      visibleDatas.value = newSortedPosts;
-      totalPages.value = Math.ceil(newSortedPosts.length / 3);
-    });
-
-    const postUpload = () => {
-      router.push("/upload-post");
-    };
-
-    const viewPost = (postId) => {
-      router.push({ name: 'Post', params: { id: postId } });
-    };
-
-    const commentPost = (postId) => {
-      router.push({ name: 'Post', params: { id: postId } });
-    };
-
-    const selectCategory = (category) => {
-      selectedCategory.value = category;
-      searchQuery.value = ''; // 검색어를 초기화하거나 유지할 수 있습니다
-    };
-
-    const toggleHeart = (postId) => {
-      const post = posts.value.find(post => post.id === postId);
-      if (post) {
-        post.isHeartFilled = !post.isHeartFilled;
-      }
+    
+    const goToCreatePost = () => {
+      router.push("/create-post");
     };
 
     return {
-      posts,
-      categories,
-      selectedSort,
-      searchQuery,
-      selectedCategory,
-      sortedPosts,
-      postUpload,
-      viewPost,
-      commentPost,
-      selectCategory,
-      toggleHeart,
-      currentPage,
-      totalPages,
-      visibleDatas,
-      onPageChange,
-    };
-  },
+      goToCreatePost,
+    }
+  }
+
+//   setup() {
+//     const router = useRouter();
+
+//     const categories = ref(['러닝', '웨이트', '라이딩', '요가', '수영', '등산', '테니스', '클라이밍', '필라테스', 'GX']);
+//     const searchQuery = ref('');
+//     const selectedCategory = ref('');
+
+//     const postUpload = () => {
+//       router.push("/upload-post");
+//     };
+
+//     const viewPost = (postId) => {
+//       router.push({ name: 'Post', params: { id: postId } });
+//     };
+
+//     const commentPost = (postId) => {
+//       router.push({ name: 'Post', params: { id: postId } });
+//     };
+
+//     const selectCategory = (category) => {
+//       selectedCategory.value = category;
+//       searchQuery.value = ''; // 검색어를 초기화하거나 유지할 수 있습니다
+//     };
+
+//     const toggleHeart = (postId) => {
+//       const post = posts.value.find(post => post.id === postId);
+//       if (post) {
+//         post.isHeartFilled = !post.isHeartFilled;
+//       }
+//     };
+
+//     return {
+//       categories,
+//       searchQuery,
+//       selectedCategory,
+//       postUpload,
+//       viewPost,
+//       commentPost,
+//       selectCategory,
+//       toggleHeart,
+//       currentPage,
+//       totalPages,
+//       onPageChange,
+//     };
+//   },
 };
 </script>
 

@@ -108,7 +108,7 @@ const routes = [
   },
 
   {
-    path: "/upload-post",
+    path: "/create-post",
     name: "CreatePost",
     // meta: { showNav: false },
     component: CreatePost,
