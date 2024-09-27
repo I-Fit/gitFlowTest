@@ -59,7 +59,7 @@ import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 export default {
-  name: 'UploadPost',
+  name: 'CreatePost',
   setup() {
     const router = useRouter();
     const store = useStore();

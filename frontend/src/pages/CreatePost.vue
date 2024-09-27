@@ -4,16 +4,15 @@
       <div class="main-content">
         <div class="content-changeimages">
           <div class="changeimages-icon" @click="triggerFileInput"></div>
-          <span>이미지 변경</span>
-          <input type="file" ref="fileInput" @change="onFileChange" accept="image/*" multiple style="display: none;" />
+          <span>이미지 추가</span>
+          <input type="file" ref="fileInput" @change="onFileChange" accept="image/*" style="display: none;" />
         </div>
         <div class="content-title">
-          <textarea v-model="formData.title" placeholder="제목을 입력하세요."></textarea>
+          <textarea v-model="formData.title" placeholder="제목을 입력하세요." required></textarea>
         </div>
-        <div class="content-box" ref="contentBox" contenteditable="true" @input="onContentInput">
-        </div>
+        <div class="content-box" ref="contentBox" contenteditable="true" @input="onContentInput" placeholder="내용을 입력하세요"></div>
         <div class="content-topic">
-          <p class="item topic-item">{{ formData.sport }}</p>
+          <p class="item topic-item">{{ formData.exercise }}</p>
           <p class="item" id="location">{{ formData.location }}</p>
         </div>
       </div>
@@ -22,41 +21,43 @@
         <div class="feature-topic">
           <div class="topic-category">
             <button class="category-tag" type="button" v-for="category in categories" :key="category"
-            :class="{ selected: formData.sport === category }" @click="selectCategory(category)">
+            :class="{ selected: formData.exercise === category }" @click="selectCategory(category)">
             {{ category }}
             </button>
           </div>
         </div>
         <div class="feature-input">
           <input
-            class="input-framebox" 
-            v-model="sportInput" 
+            class="input-box" 
+            v-model="exerciseInput" 
             @keydown.enter="handleEnterKey"
-            @click="setSport" 
+            @click="setExercise" 
             type="text" 
             placeholder="운동 종목을 입력하세요." />
         </div>
         <p class="category-text">Choose location</p>
         <div class="feature-input">
           <input 
-            class="input-framebox" 
-            v-model="locationInput" 
-            @keydown.enter="handleEnterKey"
-            @click="setLocation"
+            class="input-box" 
+            v-model="formData.location" 
+            @click="openDaumApi"
             type="text" 
-            placeholder="위치를 검색하세요." />
+            placeholder="위치를 검색하세요."
+            /> 
+             <!-- :disabled="!isScriptLoaded" -->
+            <!-- <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> -->
         </div>
-        <p class="category-text">Choose group size</p>
+        <!-- <p class="category-text">Choose group size</p>
         <div class="feature-input">
           <input 
-            class="input-framebox" 
+            class="input-box" 
             v-model="personInput"
             @click="setPerson" 
             @keydown.enter="handleEnterKey" 
             type="text" 
             placeholder="인원을 입력하세요." />
-        </div>
-        <button class="feature-modify" @click="confirmSubmit">작성 완료</button>
+        </div> -->
+        <button class="confirm-btn" @click="confirmSubmit">작성 완료</button>
       </div>
     </div>
   </main>
@@ -64,155 +65,106 @@
 
 <script>
 import axios from 'axios';
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
 
 export default {
-  name: 'UploadPost',
-  setup() {
-    const router = useRouter();
-    const store = useStore();
-
-    // State
-    const title = ref('');
-    const sportInput = ref('');
-    const locationInput = ref('');
-    const personInput = ref('');
-    const selectedCategory = ref(null);
-    const files = ref([]);
-
-    const formData = reactive({
-      title: '',
-      sport: '종목',
-      location: '',
-      person: '',
-      content: '',
-      userId: store.getters.userId || '', // Vuex에서 userId 가져오기
-    });
-
-    console.log(formData);
-
-    const categories = [
-      '러닝', '웨이트', 
-      '라이딩', '요가', 
-      '수영', '등산', 
-      '테니스', '클라이밍', 
-      '필라테스', 'GX'
-    ];
-
-    // Methods
-    const triggerFileInput = () => {
-      document.querySelector('input[type="file"]').click();
+  name: 'CreatePost',
+  data() {
+    return {
+      formData: {
+        title: '',
+        content: '',
+        imageUrl: '',
+        exercise: '',
+        location: '',
+        isScriptLoaded: false,
+        userId: null,
+      },
+      responseMessage: '',
     };
+  },
 
-    const onFileChange = (event) => {
-      files.value = event.target.files;
-      const contentBox = document.querySelector('.content-box');
-      contentBox.innerHTML = ''; // 기존 이미지 제거
-
-      for (let i = 0; i < files.value.length; i++) {
-        const file = files.value[i];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = document.createElement('img');
-          img.src = e.target.result;
-          img.style.maxWidth = '100%';
-          img.style.display = 'block';
-          img.style.margin = '10px 0';
-          contentBox.appendChild(img);
-          contentBox.appendChild(document.createElement('br'));
-        };
-        reader.readAsDataURL(file);
+  methods: {
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
+    onFileChange(event) {
+      if (event.target.files.length > 0) {
+        this.formData.image = event.target.files[0];
       }
-    };
-
-    const onContentInput = (event) => {
-      formData.content = event.target.innerHTML;
-    };
-
-    const selectCategory = (category) => {
-      formData.sport = category;
-      selectedCategory.value = category;
-    };
-
-    const handleEnterKey = () => {
-      setSport();
-      setLocation();
-      setPerson();
-    };
-
-    const setSport = () => {
-      formData.sport = sportInput.value;
-    };
-
-    const setLocation = () => {
-      formData.location = locationInput.value;
-    };
-
-    const setPerson = () => {
-      formData.person = personInput.value;
-    };
-
-    const confirmSubmit = () => {
-      if (confirm('글 작성을 완료하시겠습니까?')) {
-        submitData();
-      }
-    };
-
-    const submitData = async () => {
-      const userId = store.getters['isLogged/userId'];
-
+    },
+    onContentInput(event) {
+      this.formData.content = event.target.innerText;
+    },
+    openDaumApi() {
+      new window.daum.Postcode({
+        oncomplete: (data) => {
+          console.log("받은 주소 : ", data)
+          this.formData.location = data.sigungu;
+        }
+      }).open();
+    },
+    async confirmSubmit() {
       // FormData 객체 생성
-      const data = new FormData();
-      data.append('userId', userId);
-      data.append('title', formData.title);
-      data.append('content', formData.content);
-      data.append('category', formData.sport);
-      data.append('location', formData.location);
-      data.append('groupSize', formData.person);
-
-      // 이미지 파일들을 FormData에 추가
-      for (let i = 0; i < files.value.length; i++) {
-        data.append('files', files.value[i]);
-      }
+      const formData = new FormData();
+      formData.append('title', this.formData.title);
+      formData.append('content', this.formData.content);
+      formData.append('exercise', this.formData.exercise);
+      formData.append('location', this.formData.location);
+      formData.append('image', this.formData.image);
 
       try {
-        // 서버로 FormData 전송
-        const response = await axios.post('/api/posts/modify', data, {
+        const response = await axios.post('http://localhost:8081/board/new', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
-        console.log('Data submitted successfully:', response.data);
-        router.push({ name: 'Post', query: { content: encodeURIComponent(formData.content)} });
-      } catch (error) {
-        console.error('Error submitting data:', error);
-      }
-    };
 
-    return {
-      title,
-      sportInput,
-      locationInput,
-      personInput,
-      selectedCategory,
-      files,
-      formData,
-      categories,
-      triggerFileInput,
-      onFileChange,
-      onContentInput,
-      selectCategory,
-      handleEnterKey,
-      setSport,
-      setLocation,
-      setPerson,
-      confirmSubmit,
-      submitData,
-    };
-  }
-};
+        console.log(response.data);
+        if (response.data.status === "success") {
+          alert('게시글이 성공적으로 등록되었습니다!')
+          this.$router.push('/board');  // 게시판 메인으로 이동
+        }
+        // this.responseMessage = response.data.message; // 성공 메세지
+      } catch(error) {
+        console.error('게시글 작성 실패: ', error);
+        alert('게시글 작성에 실패했습니다.')
+        // this.responseMessage = error.response.data.message || 'Failed to create post';  // 실패 메세지
+      }
+    },
+    
+  },
+
+  // setup() {
+  //   const exerciseInput = ref('');
+  //   const selectedCategory = ref(null);
+
+  //   const categories = [
+  //     '러닝', '웨이트', 
+  //     '라이딩', '요가', 
+  //     '수영', '등산', 
+  //     '테니스', '클라이밍', 
+  //     '필라테스', 'GX'
+  //   ];
+
+  //   const selectCategory = (category) => {
+  //     formData.sport = category;
+  //     selectedCategory.value = category;
+  //   };
+
+  //   const setExercise = () => {
+  //     formData.exercise = exerciseInput.value;
+  //   };
+
+  //   return {
+  //     exerciseInput,
+  //     selectCategory,
+  //     categories,
+  //     selectCategory,
+  //     setExercise,
+  //   }
+  // }
+  
+}
 </script>
 
 
@@ -404,8 +356,8 @@ input {
   align-items: center;
 }
 
-.input-framebox {
-  width: 303px;
+.input-box {
+  width: 315px;
   height: 40px;
   border: 1px solid #ccc;
   border-radius: 0.1875rem;
@@ -418,9 +370,9 @@ input {
   text-align: start;
 }
 
-.feature-modify {
-  margin-top: 115px;
-  width: 323px;
+.confirm-btn {
+  margin-top: 203px;
+  width: 315px;
   height: 40px;
   border: none;
   border-radius: 0.1875rem;

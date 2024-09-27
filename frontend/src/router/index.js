@@ -13,7 +13,7 @@ import MyComments from "@/pages/MyComments.vue";
 import LikedPosts from "@/pages/LikedPosts.vue";
 import Post from "@/pages/Post.vue";
 import Board from "@/pages/Board.vue";
-import UploadPost from "@/pages/UploadPost.vue";
+import CreatePost from "@/pages/CreatePost.vue";
 import EditPost from "@/pages/EditPost.vue";
 
 import Membership from "@/pages/Membership.vue";
@@ -109,9 +109,9 @@ const routes = [
 
   {
     path: "/upload-post",
-    name: "UploadPost",
+    name: "CreatePost",
     // meta: { showNav: false },
-    component: UploadPost,
+    component: CreatePost,
   },
 
   {

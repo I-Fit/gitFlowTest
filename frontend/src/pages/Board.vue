@@ -4,7 +4,7 @@
       <div class="search-and-list">
         <div class="feature">
           <div class="feature-add">
-            <div class="add-btn" @click="postUpload">+</div>
+              <div class="add-btn" @click="postUpload">+</div>
             <span>운동을 인증해보세요!</span>
           </div>
           <button type="button" class="feature-sort">
@@ -99,6 +99,12 @@ export default {
   components: {
     Pagination,
   },
+
+  // methods: {
+  //   postUpload() {
+  //     this.$router.push('/CreatePost');
+  //   }
+  // },
 
   setup() {
     const router = useRouter();
@@ -226,7 +232,7 @@ export default {
     });
 
     const postUpload = () => {
-      router.push({ name: 'UploadPost' });
+      router.push("/upload-post");
     };
 
     const viewPost = (postId) => {
@@ -270,10 +276,7 @@ export default {
 };
 </script>
 
-
-
-
-  <style scoped>
+<style scoped>
   main {
     display: grid;
     grid-template-columns: 3fr 2fr;

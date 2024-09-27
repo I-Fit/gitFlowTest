@@ -111,12 +111,13 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import PostActions from "@/components/common/PostActions.vue";
 
+
 export default {
   name: "Post",
   components: {
     PostActions,
   },
-
+  
   setup() {
     const router = useRouter();
     const route = useRoute();
