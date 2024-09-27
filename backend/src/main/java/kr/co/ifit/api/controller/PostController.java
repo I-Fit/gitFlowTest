@@ -6,11 +6,11 @@ import kr.co.ifit.api.service.PostService;
 import kr.co.ifit.db.entity.Post;
 import kr.co.ifit.db.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,14 +29,23 @@ public class PostController {
         Map<String, String> response = new HashMap<>();
 
         try {
+            String base64Image = null;
+            if (postReq.getImage() != null && !postReq.getImage().isEmpty()) {
+                byte[] bytes = postReq.getImage().getBytes();
+                base64Image = Base64.getEncoder().encodeToString(bytes);
+            }
+
             PostDtoRes post = postService.createPost(postReq);
+
             response.put("status", "success");
             response.put("message", "Post created successfully");
             response.put("postId", String.valueOf(post.getPostId()));
+
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
             response.put("status", "fail");
             response.put("message", "Failed to create post" + e.getMessage());
+
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
@@ -119,4 +128,5 @@ public class PostController {
 
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
+
 }

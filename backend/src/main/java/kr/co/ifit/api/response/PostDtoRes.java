@@ -14,7 +14,7 @@ public class PostDtoRes {
     private Long postId;
     private String title;
     private String content;
-    private String imageUrl;
+    private String imageStr;
     private Long userId;  // User user
     private String exercise;
     private String location;
@@ -27,7 +27,7 @@ public class PostDtoRes {
         this.postId = post.getPostId();
         this.title = post.getTitle();
         this.content = post.getContent();
-        this.imageUrl = post.getImageUrl();
+        this.imageStr = post.getImageUrl();
         this.userId = post.getUserId();
         this.exercise = post.getExercise();
         this.location = post.getLocation();
