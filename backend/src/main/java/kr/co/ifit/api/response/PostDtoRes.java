@@ -27,7 +27,7 @@ public class PostDtoRes {
         this.postId = post.getPostId();
         this.title = post.getTitle();
         this.content = post.getContent();
-        this.imageStr = post.getImageUrl();
+        this.imageStr = post.getImageStr();
         this.userId = post.getUserId();
         this.exercise = post.getExercise();
         this.location = post.getLocation();

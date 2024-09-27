@@ -15,8 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/board")
+@RequestMapping("/api/board")
 @RequiredArgsConstructor
 public class PostController {
 
@@ -29,12 +30,6 @@ public class PostController {
         Map<String, String> response = new HashMap<>();
 
         try {
-            String base64Image = null;
-            if (postReq.getImage() != null && !postReq.getImage().isEmpty()) {
-                byte[] bytes = postReq.getImage().getBytes();
-                base64Image = Base64.getEncoder().encodeToString(bytes);
-            }
-
             PostDtoRes post = postService.createPost(postReq);
 
             response.put("status", "success");

@@ -26,7 +26,7 @@ public class PostService {
         Post post = new Post(
                 postReq.getTitle(),
                 postReq.getContent(),
-                postReq.getImageUrl(),
+                postReq.getImageStr(),
                 postReq.getExercise(),
                 postReq.getLocation(),
                 postReq.getUserId()
@@ -63,7 +63,7 @@ public class PostService {
 
             post.setTitle(postReq.getTitle());
             post.setContent(postReq.getContent());
-            post.setImageUrl(postReq.getImageUrl());
+            post.setImageStr(String.valueOf(postReq.getImageStr()));
             post.setExercise(postReq.getExercise());
             post.setLocation(postReq.getLocation());
             post.setUpdatedAt(LocalDateTime.now());
@@ -119,4 +119,5 @@ public class PostService {
                 return postRepository.findAll(Sort.by(sortDirection, "createdAt"));
         }
     }
+
 }

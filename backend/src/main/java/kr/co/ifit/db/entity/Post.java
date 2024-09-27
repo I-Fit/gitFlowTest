@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -28,7 +29,7 @@ public class Post {
     private String content;
 
     @Column(name = "image_url")
-    private String imageUrl;
+    private String imageStr;
 
     private String exercise;
 
@@ -53,6 +54,7 @@ public class Post {
     @Column(name = "comments_cnt")
     private int commentsCnt;
 
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
@@ -63,10 +65,10 @@ public class Post {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Post(String title, String content, String imageUrl, String exercise, String location, Long userId) {
+    public Post(String title, String content, String imageStr, String exercise, String location, Long userId) {
         this.title = title;
         this.content = content;
-        this.imageUrl = imageUrl;
+        this.imageStr = imageStr;
         this.exercise = exercise;
         this.location = location;
         this.userId = userId;
