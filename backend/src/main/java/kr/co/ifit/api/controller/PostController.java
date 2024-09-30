@@ -9,13 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api/board")
 @RequiredArgsConstructor
@@ -26,11 +27,17 @@ public class PostController {
 
     // 게시글 생성
     @PostMapping("/new")
-    public ResponseEntity<Map<String, String>> createPost(@RequestBody PostDtoReq postReq) {
+    public ResponseEntity<Map<String, String>> createPost(@ModelAttribute PostDtoReq postReq, @RequestParam("imageStr") MultipartFile image) {
         Map<String, String> response = new HashMap<>();
 
+        System.out.println("image file: " + image.getOriginalFilename());
+
         try {
-            PostDtoRes post = postService.createPost(postReq);
+            System.out.println("createPost() 호출 성공");
+            String base64Image = Base64.getEncoder().encodeToString(image.getBytes());
+//            postReq.setImageStr(base64Image);
+
+            PostDtoRes post = postService.createPost(postReq, base64Image);
 
             response.put("status", "success");
             response.put("message", "Post created successfully");

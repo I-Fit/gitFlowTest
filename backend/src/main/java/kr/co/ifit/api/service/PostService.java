@@ -21,12 +21,13 @@ public class PostService {
     private final CommentRepository commentRepository;
 
     // 게시글 생성
-    public PostDtoRes createPost(PostDtoReq postReq) {
+    public PostDtoRes createPost(PostDtoReq postReq, String imageStr) {
         // post 엔티티 생성
         Post post = new Post(
                 postReq.getTitle(),
                 postReq.getContent(),
-                postReq.getImageStr(),
+                imageStr,
+//                postReq.getImageStr(),
                 postReq.getExercise(),
                 postReq.getLocation(),
                 postReq.getUserId()
@@ -63,7 +64,7 @@ public class PostService {
 
             post.setTitle(postReq.getTitle());
             post.setContent(postReq.getContent());
-            post.setImageStr(String.valueOf(postReq.getImageStr()));
+//            post.setImageStr(String.valueOf(postReq.getImageStr()));
             post.setExercise(postReq.getExercise());
             post.setLocation(postReq.getLocation());
             post.setUpdatedAt(LocalDateTime.now());

@@ -54,7 +54,6 @@ public class Post {
     @Column(name = "comments_cnt")
     private int commentsCnt;
 
-
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
@@ -71,7 +70,7 @@ public class Post {
         this.imageStr = imageStr;
         this.exercise = exercise;
         this.location = location;
-        this.userId = userId;
+        this.userId = 1L;
     }
 
 //    private int capacity;   // 총 모집인원
