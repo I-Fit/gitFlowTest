@@ -13,5 +13,7 @@ app.use(store);
 app.component('VueDatePicker', VueDatePicker);
 app.use(VueCookies);
 
+store.dispatch('isLogged/restoreToken');
+
 app.mount("#app");
 app.$cookies.config("7d");

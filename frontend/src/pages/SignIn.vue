@@ -42,8 +42,7 @@
 <script>
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { ref } from "vue";
-import { toRaw } from "vue";
+import { ref, computed } from "vue";
 
 export default {
   name: "SignIn",
@@ -57,11 +56,13 @@ export default {
       password: "",
     });
 
-    console.log(toRaw(formData));
     const loading = ref(false); // 로딩 상태
+    const loggedIn = computed(() => store.getters['isLogged/loggedIn']);
 
     // 로그인 성공 시 메인으로 이동
-    const Complete = async () => {
+    const Complete = async (event) => {
+      event.preventDefault();
+
       if (!formData.value.id || !formData.value.password) {
         alert("아이디와 비밀번호를 입력해주세요.");
         return;
@@ -75,7 +76,7 @@ export default {
           password: formData.value.password,
         });
 
-        if (store.getters['isLogged/Loggedin']) {
+        if (loggedIn.value) {
           alert("로그인 성공");
           router.push({ name: "Home" });
         } else {

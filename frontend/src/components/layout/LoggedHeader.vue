@@ -2,16 +2,16 @@
   <header>
     <div class="icon-table">
       <div id="icon-img">
-        <img src="../../assets/images/icon.png" alt="I-FIT-icon" />
+        <img src="../../assets/images/IFIT.png" alt="I-FIT-icon" @click="home" />
       </div>
-      <div class="icon-text">I-Fit</div>
+      <!-- <div class="icon-text">I-Fit</div> -->
     </div>
     <div class="text-btn">
-      <a href="/main.html" @click="home">홈</a>
       <a href="#" @click="creategroup">모임 생성</a>
       <a href="#" @click="post">게시판</a>
       <a href="#" @click="membership">멤버십</a>
       <a href="#" @click="mypage">마이페이지</a>
+
       <div class="sign-in-btn">
         <img :src="userImage" alt="사용자 이미지" />
         <p class="sign-in-user-name">{{ userName }}</p>
@@ -23,18 +23,24 @@
 
 <script>
 import { useRouter } from 'vue-router';
+import { useStore } from "vuex";
+import { computed } from "vue";
 
 export default {
   name: "Logged",
 
   setup() {
     const router = useRouter();
+    const store = useStore();
+
+    const userName = computed(() => store.getters['isLogged/userName']);
+    const userImage = computed(() => store.getters['isLogged/userImage']);
 
     const home = () => {
       router.push({ name: "Home" });
     };
     const creategroup = () => {
-      router.push({ name: "AddNewGroups" });
+      router.push({ name: "AddNewGroup" });
     };
     const post = () => {
       router.push({ name: "Board" });
@@ -52,6 +58,8 @@ export default {
       post,
       membership,
       mypage,
+      userName,
+      userImage,
     }
   }
 };

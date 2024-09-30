@@ -7,60 +7,32 @@
         <div class="finder-id input-block">
           <label class="finder-label" for="id">아이디</label>
           <div class="finder-field">
-            <input
-              type="text"
-              id="id"
-              name="id"
-              placeholder="아이디를 입력하세요."
-              class="finder-field-input"
-            />
-            <button class="finder-field-btn" type="submit">확인</button>
+            <input type="text" id="id" name="id" placeholder="아이디를 입력하세요." class="finder-field-input"
+              v-model="loginId" />
+            <button class="finder-field-btn" type="button" @click="checkId">확인</button>
           </div>
         </div>
         <div class="finder-email input-block">
           <label class="finder-label" for="email">이메일</label>
           <div class="finder-field">
-            <input
-              type="text"
-              id="email"
-              name="email"
-              placeholder="이메일을 입력하세요."
-              class="finder-field-input"
-              v-model="email"
-            />
-            <button class="finder-field-btn" type="submit" @click="sendEmail">
+            <input type="text" id="email" name="email" placeholder="이메일을 입력하세요." class="finder-field-input"
+              v-model="email" />
+            <button class="finder-field-btn" type="button" @click="sendEmailRequest">
               인증 요청
             </button>
           </div>
         </div>
         <div class="finder-email-auth input-block">
-          <label class="finder-label" for="email-auth"
-            >이메일 인증번호
-            <span v-if="timerStarted && timeLeft > 0" class="timer"
-              >{{ minutes }}:{{ seconds }}</span
-            >
-            <button
-              v-if="!timerStarted && timeLeft === 0"
-              class="re-request-btn"
-              @click="handleReRequest"
-            >
+          <label class="finder-label" for="email-auth">이메일 인증번호
+            <span v-if="timerStarted && timeLeft > 0" class="timer">{{ minutes }}:{{ seconds }}</span>
+            <button v-if="!timerStarted && timeLeft === 0" class="re-request-btn" @click="handleReRequest">
               재전송
             </button>
           </label>
           <div class="finder-field">
-            <input
-              type="text"
-              id="email-auth"
-              name="email-auth"
-              placeholder="인증번호를 입력해주세요."
-              class="finder-field-input"
-              v-model="enteredCode"
-            />
-            <button
-              class="finder-field-btn"
-              type="submit"
-              @click="updateEmailAfterCheck"
-            >
+            <input type="text" id="email-auth" name="email-auth" placeholder="인증번호를 입력해주세요." class="finder-field-input"
+              v-model="enteredCode" />
+            <button class="finder-field-btn" type="button" @click="updateEmailAfterCheck">
               확인
             </button>
           </div>
@@ -68,42 +40,23 @@
         <div class="finder-pw input-block">
           <label class="finder-label" for="password">새 비밀번호</label>
           <div class="finder-field">
-            <input
-              type="text"
-              id="password"
-              name="password"
-              placeholder="비밀번호를 입력하세요."
-              class="finder-field-input"
-              v-model="newPassword"
-            />
+            <input type="text" id="password" name="password" placeholder="비밀번호를 입력하세요." class="finder-field-input"
+              v-model="password" />
             <!-- <button class="finder-field-btn" type="submit">확인</button> -->
           </div>
         </div>
         <div class="finder-pw-check input-block">
-          <label class="finder-label" for="pw-check"
-            >새 비밀번호 확인
-            <span v-if="Bothpasswords && passwordMatch" class="password-same"
-              >일치합니다.</span
-            >
-            <span
-              v-else-if="Bothpasswords && !passwordMatch"
-              class="password-different"
-              >일치하지 않습니다.</span
-            >
+          <label class="finder-label" for="pw-check">새 비밀번호 확인
+            <span v-if="Bothpasswords && passwordMatch" class="password-same">일치합니다.</span>
+            <span v-else-if="Bothpasswords && !passwordMatch" class="password-different">일치하지 않습니다.</span>
           </label>
           <div class="finder-field">
-            <input
-              type="text"
-              id="password-check"
-              name="pw-check"
-              placeholder="비밀번호 재입력"
-              class="finder-field-input"
-              v-model="newPasswordCheck"
-            />
+            <input type="text" id="password-check" name="pw-check" placeholder="비밀번호 재입력" class="finder-field-input"
+              v-model="passwordCheck" />
             <!-- <button class="finder-field-btn" type="submit">확인</button> -->
           </div>
         </div>
-        <button type="submit" class="finder-pw-btn" @click="goSignIn">
+        <button type="button" class="finder-pw-btn" @click="goSignIn">
           비밀번호 변경완료
         </button>
       </form>
@@ -114,8 +67,7 @@
 <script>
 import { useRouter } from "vue-router";
 import { useEmail } from "@/services/sendEmail";
-import { useStore } from "vuex";
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import axios from "axios";
 
 export default {
@@ -123,19 +75,28 @@ export default {
 
   setup() {
     const router = useRouter();
-    const store = useStore();
 
-    const formData = computed({
-      get: () => store.state.user.formData,
-      set: (value) => store.dispatch("user/updateFormData", value),
-    });
+    const loginId = ref("");
+    const password = ref("");
+    const passwordCheck = ref("");
+    const email = ref("");
+    const enteredCode = ref("");
+
+    console.log(`${loginId.value}`);
+
+    const checkId = async () => {
+      try {
+        const response = await axios.post("/api/password/check-id", {
+          loginId: loginId.value,
+        });
+        alert(response.data);
+      } catch (error) {
+        alert("아이디 확인 실패");
+      }
+    };
 
     const {
-      email,
-      enteredCode,
-      emailKey,
       sendEmail,
-      emailCheck,
       timeLeft,
       minutes,
       seconds,
@@ -143,33 +104,33 @@ export default {
       timerStarted,
     } = useEmail();
 
-    // 이메일이 변경되면 formData를 업데이트
-    watch(email, (newEmail) => {
-      if (newEmail) {
-        formData.value.email = newEmail;
-      }
-    });
-
-    const updateEmailAfterCheck = async () => {
+    const sendEmailRequest = async () => {
       try {
-        const result = await emailCheck();
-        if (result === "확인 완료") {
-          formData.value.email = email.value; // 인증 완료 후 email을 formData에 업데이트
-        }
+        await sendEmail(email.value);
       } catch (error) {
-        console.error("이메일 인증 오류: ", error);
+        alert("이메일 전송에 실패했습니다.");
       }
     };
 
-    // 새로운 패스워드
-    const Password = ref("");
-    const PasswordCheck = ref("");
+    //  이메일 인증 번호 인증 확인
+    const updateEmailAfterCheck = async () => {
+      try {
+        const response = await axios.post("/api/password/emailVerification", {
+          loginId: loginId.value,
+          email: email.value,
+          enteredCode: enteredCode.value,
+        });
+        alert(response.data);
+      } catch (error) {
+        alert("이메일 인증 확인 실패");
+      }
+    };
 
     const passwordMatch = computed(() => {
-      return Password.value === PasswordCheck.value;
+      return password.value === passwordCheck.value;
     });
     const Bothpasswords = computed(() => {
-      return Password.value && PasswordCheck.value;
+      return password.value && passwordCheck.value;
     });
 
     const goSignIn = async () => {
@@ -179,14 +140,15 @@ export default {
       }
 
       try {
-        const response = await axios.post("", {
+        const response = await axios.post("/api/password/modified", {
           email: email.value,
-          key: emailKey.value,
-          newPassword: Password.value,
+          loginId: loginId.value,
+          passwordCheck: passwordCheck.value,
+          password: password.value,
         });
 
         if (response.status === 200) {
-          alert("비밀번호가 성공적으로 변경되었습니다.");
+          alert(response.data);
           router.push({ name: "SignIn" });
         } else {
           alert("비밀번호 변경에 실패했습니다.");
@@ -197,15 +159,16 @@ export default {
     };
 
     return {
+      checkId,
+      loginId,
       email,
-      Password,
-      PasswordCheck,
+      enteredCode,
+      password,
+      passwordCheck,
       passwordMatch,
       Bothpasswords,
       goSignIn,
-      enteredCode,
       sendEmail,
-      emailCheck,
 
       timeLeft,
       minutes,
@@ -213,6 +176,7 @@ export default {
       timerStarted,
       handleReRequest,
       updateEmailAfterCheck,
+      sendEmailRequest,
     };
   },
 };

@@ -22,7 +22,7 @@
 
           <div class="top-boxinfo">
             <span class="boxinfo-username">김계란</span>
-            <span class="boxinfo-logout" @click="goToHome">로그아웃</span><br />
+            <span class="boxinfo-logout" @click="logoutUser">로그아웃</span><br />
             <span class="boxinfo-membership">나는야 득근을 꿈꾸는 근린이!</span>
 
             <button
@@ -134,7 +134,10 @@
 <script>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex"
 import AppNav from "@/components/layout/AppNav.vue";
+// import axios from 'axios';
+import VueCookies from 'vue-cookies';
 
 export default {
   name: "MypageComponent",
@@ -144,6 +147,7 @@ export default {
 
   setup() {
     const router = useRouter();
+    const store = useStore();
 
     const profileImage = ref(require("@/assets/images/default-profile.png"));
     const fileInput = ref(null);
@@ -210,9 +214,29 @@ export default {
       router.push("/edit-email");
     };
 
-    const goToHome = () => {
-      router.push("/");
-    };
+    // 로그아웃 요청
+    const logoutUser = async () => {
+      const refreshToken = VueCookies.get('refreshToken');
+      
+      if (!refreshToken) {
+        alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
+        return;
+      }
+
+      try {
+        const success = await store.dispatch('isLogged/logout'); // Vuex 액션 호출
+
+        if (success) {
+            router.push('/'); // 로그아웃 성공 시 홈페이지로 리디렉션
+            alert("로그아웃 성공"); // 로그아웃 성공 메시지
+        } else {
+            alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
+        }
+    } catch (error) {
+        console.error("로그아웃 요청 중 오류 발생:", error);
+        alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
+    }
+};
 
     const showConfirmPopup = ref(false);
 
@@ -262,7 +286,7 @@ export default {
       goToChangePassword,
       goToAccountDeleted,
       goToEditEmail,
-      goToHome,
+      logoutUser,
     };
   },
 };

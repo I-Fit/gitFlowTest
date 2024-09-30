@@ -626,6 +626,7 @@ export default {
 
     const selectAll = () => {
       const allSelected = agree01.value && agree02.value && agree03.value;
+      agreeAll.value = !allSelected;
       agree01.value = !allSelected;
       agree02.value = !allSelected;
       agree03.value = !allSelected;

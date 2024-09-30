@@ -2,11 +2,10 @@
   <main>
     <div class="find-id">
       <h1>아이디 찾기</h1>
-      <span
-        >고객님의 아이디는
-        <p class="find-userid">{{ userId }}</p>
-        입니다.</span
-      >
+      <span>고객님의 아이디는
+        <p class="find-userid">{{ loginId }}</p>
+        입니다.
+      </span>
       <button type="submit" class="sign-in-go-btn" @click="goSignIn">
         로그인하기
       </button>
@@ -23,7 +22,7 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
-    const userId = route.params.userId;
+    const loginId = route.query.loginId;
 
     const goSignIn = () => {
       router.push({ name: "SignIn" });
@@ -31,7 +30,7 @@ export default {
 
     return {
       goSignIn,
-      userId,
+      loginId,
     };
   },
 };

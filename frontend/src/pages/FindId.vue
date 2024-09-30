@@ -1,7 +1,7 @@
 <template>
   <main>
     <div class="finder-box">
-      <form action="#" class="finder-form">
+      <form @submit.prevent class="finder-form">
         <h1>아이디 찾기</h1>
         <p class="finder-text">아이디를 잊어버리셨나요?</p>
         <div class="finder-id input-block">
@@ -15,7 +15,7 @@
           <div class="finder-field">
             <input type="email" id="email" name="email" placeholder="이메일을 입력하세요." class="finder-field-input"
               v-model="email" />
-            <button class="finder-field-btn" type="submit" @click="sendEmail">
+            <button class="finder-field-btn" type="button" @click="sendEmailRequest">
               인증요청
             </button>
           </div>
@@ -23,19 +23,20 @@
         <div class="finder-email-auth input-block">
           <label class="finder-label" for="email-number">이메일 인증번호
             <span v-if="timerStarted && timeLeft > 0" class="timer">{{ minutes }}:{{ seconds }}</span>
-            <button v-if="!timerStarted && timeLeft === 0" class="re-request-btn" @click="handleReRequest">
+            <button type="button" v-if="!timerStarted && timeLeft === 0" class="re-request-btn"
+              @click="handleReRequest">
               재전송
             </button>
           </label>
           <div class="finder-field">
             <input type="text" id="email-number" name="email-number" placeholder="인증번호를 입력해주세요."
               class="finder-field-input" v-model="enteredCode" />
-            <button class="finder-field-btn" type="submit" @click="updateEmailAfterCheck">
+            <button class="finder-field-btn" type="button" @click="updateEmailAfterCheck">
               확인
             </button>
           </div>
         </div>
-        <button type="submit" class="finder-id-btn" @click="findComplete">
+        <button type="button" class="finder-id-btn" @click="findComplete">
           아이디 찾기
         </button>
       </form>
@@ -46,28 +47,20 @@
 <script>
 import { useRouter } from "vue-router";
 import { useEmail } from "@/services/sendEmail";
-import { useStore } from "vuex";
+// import { useStore } from "vuex";
 import { default as axios } from "axios";
-import { watch, computed } from "vue";
 
 export default {
   name: "FindId",
 
   setup() {
     const router = useRouter();
-    const store = useStore();
-
-    const formData = computed({
-      get: () => store.state.user.formData,
-      set: (value) => store.dispatch("user/updateFormData", value),
-    });
 
     const {
       email,
       enteredCode,
-      emailKey,
       sendEmail,
-      emailCheck,
+      verifyEmail,
       timeLeft,
       minutes,
       seconds,
@@ -75,38 +68,37 @@ export default {
       timerStarted,
     } = useEmail();
 
-    // 이메일이 변경되면 formData를 업데이트
-    watch(email, (newEmail) => {
-      if (newEmail) {
-        formData.value.email = newEmail;
-      }
-    });
-
-    const updateEmailAfterCheck = async () => {
+    const sendEmailRequest = async () => {
       try {
-        const result = await emailCheck();
-        if (result === "확인 완료") {
-          formData.value.email = email.value; // 인증 완료 후 email을 formData에 업데이트
-        }
+        await sendEmail();
       } catch (error) {
-        console.error("이메일 인증 오류: ", error);
+        alert("이메일 전송에 실패했습니다.");
       }
     };
 
-    const findComplete = async () => {
-      await sendEmail();
+    //  이메일 인증 번호 인증 확인
+    const updateEmailAfterCheck = async () => {
+      const isVerified = await verifyEmail();
+      if (isVerified) {
+        alert("인증 완료");
+      } else {
+        alert("인증 실패");
+      }
+    };
 
+    //  아이디 찾기
+    const findComplete = async () => {
       try {
         // 이메일로 아이디 요청
-        const response = await axios.post("서버_주소_아이디_찾기", {
+        const response = await axios.post("/api/find-id", {
           email: email.value,
         });
-
-        if (response.data.id) {
+        const loginId = response.data;
+        if (loginId) {
           // 아이디 찾기 성공
           router.push({
-            name: "FindIdComplete",
-            params: { userId: response.data.id },
+            name: "IdFound",
+            query: { loginId },
           });
         } else {
           alert("해당 이메일로 찾을 수 있는 아이디가 없습니다.");
@@ -120,15 +112,15 @@ export default {
     return {
       email,
       enteredCode,
-      emailKey,
       sendEmail,
-      emailCheck,
+      verifyEmail,
       timeLeft,
       minutes,
       seconds,
       handleReRequest,
       timerStarted,
 
+      sendEmailRequest,
       updateEmailAfterCheck,
       findComplete,
     };

@@ -25,66 +25,18 @@
         </div>
         <!-- 참여 한 모임 내역 -->
         <div class="group">
-          <div class="group-container">
-            <div class="user-info">
-              <img src="@/assets/images/user_img.png" alt="사용자 이미지" class="user-images" />
-              <span>김계란</span>
-              <img src="@/assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
-            </div>
-            <div class="group-content">
-              <span class="title"> 수영 같이 하실 분 구함 </span>
-            </div>
-            <p class="date">24.06.14 (금)</p>
-            <p class="time">8:00 PM</p>
-            <div class="group-info">
-              <div class="title-heart" @click="toggleHeart">
-                <div :class="{
-                  'filled-heart': isHeartFilled,
-                  'empty-heart': !isHeartFilled,
-                }"></div>
-              </div>
-              <span class="size">참여인원: 3/10</span>
-              <span class="location">강남구</span>
-              <button type="button" class="cancel" @click="showConfirmPopup = true">삭제</button>
+          <div v-for="group in groups" :key="group.communityId" class="group-container">
+            <div class="unicode-box">
+              <img class="group-detail-icon" src="@/assets/images/info-icon.png"
+                @click="openModal(group.communityId)" />
+              <img
+                :src="isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')"
+                class="group-save-icon" @click="likeGroup" />
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
+
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
-                  <p>모임을 삭제하시겠습니까?</p>
-                  <button class="confirm-btn" @click="confirmDeletion">
-                    확인
-                  </button>
-                  <button class="cancle-btn" @click="cancelDeletion">
-                    취소
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div v-for="group in visibleDatas" :key="group.communityId" class="group-container">
-            <div class="user-info">
-              <img :src="group.user_img || '/default-profile.png'" alt="사용자 이미지" class="user-img" />
-              <span>{{ group.username }}</span>
-              <img src="../assets/images/상세설명 아이콘.png" alt="" class="detail-icon" @click="openModal" />
-            </div>
-            <div class="group-content">
-              <span class="title">{{ group.title }}</span>
-            </div>
-            <p class="date">{{ group.selectedDate }}</p>
-            <p class="time">{{ group.selectedTime }}</p>
-            <div class="group-info">
-              <div class="title-heart" @click="toggleHeart(group.communityId)">
-                <div :class="{
-                  'filled-heart': group.isHeartFilled,
-                  'empty-heart': !group.isHeartFilled,
-                }"></div>
-              </div>
-              <span class="size">참여인원: {{ group.person }}</span>
-              <span class="location">{{ group.location }}</span>
-              <button type="button" class="attend" @click="showConfirmPopup = true">
-                삭제
-              </button>
-              <div v-if="showConfirmPopup" class="confirm-popup">
-                <div class="popup-content">
-                  <p>모임을 삭제하시겠습니까?</p>
+                  <p>모임에 참여하시겠습니까?</p>
                   <button class="confirm-btn" @click="confirmDeletion(group.communityId)">
                     확인
                   </button>
@@ -94,14 +46,30 @@
                 </div>
               </div>
             </div>
+
+            <div class="sport-image-box">
+              <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
+            </div>
+            <div class="group-information">
+              <div class="user-info-and-group-sport">
+                <p class="sport-text">{{ group.sport }}</p>
+                <div class="user-info">
+                  <span class="user-name">{{ group.username }}</span>
+                  <img :src="group.user_img || require('@/assets/images/default-profile.png')" alt="사용자 이미지"
+                    class="user-img">
+                </div>
+              </div>
+              <div class="group-text">
+                <p class="new-title"> {{ group.title }}</p>
+                <p class="date-and-time">{{ group.date }}{{ group.time }} <span class="location">| {{ group.location
+                    }}</span>
+                </p>
+                <p class="person">인원: {{ group.peopleParticipation }} / {{ group.person }}</p>
+              </div>
+            </div>
           </div>
-          <div class="group-container"></div>
-          <div class="group-container"></div>
-          <div class="group-container"></div>
-          <div class="group-container"></div>
-          <div class="group-container"></div>
         </div>
-        <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchGroups" />
+        <!-- <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchGroups" /> -->
       </div>
       <!-- <div class="mygroup-floor">
       </div> -->
@@ -119,9 +87,9 @@
 <script>
 import AppNav from "@/components/layout/AppNav.vue";
 import { useRouter } from "vue-router";
-import Pagination from "@/components/common/Pagination.vue";
+// import Pagination from "@/components/common/Pagination.vue";
 import { usePagination } from "@/utils/pagination";
-import { ref, onMounted } from "vue";
+import { ref, onBeforeMount } from "vue";
 // import axios from "axios";
 import apiClient from "@/api/apiClient";
 
@@ -129,7 +97,7 @@ export default {
   name: "CreatedGroups",
   components: {
     AppNav,
-    Pagination,
+    // Pagination,
   },
 
   data() {
@@ -175,15 +143,15 @@ export default {
     const loadgroups = async () => {
       try {
         const response = await apiClient.get('/created');
-        groups.value = response.data; // 수정 필요
+        groups.value = response.data;
 
-        fetchdatas(1);
+        // fetchdatas(1);
       } catch (error) {
         console.error("Error", error);
       }
     };
 
-    onMounted(async () => {
+    onBeforeMount(async () => {
       await loadgroups();
     });
 
@@ -210,7 +178,7 @@ export default {
     };
 
     //  검색어
-    const searchGroups = async() => {
+    const searchGroups = async () => {
       if (!searchTerm.value) {
         return;
       }
@@ -233,13 +201,13 @@ export default {
       { value: '3', text: '오래된순' },
     ])
 
-    const selectedGroupList = async() => {
+    const selectedGroupList = async () => {
       try {
         const response = await apiClient.post("/created/sort", {
           sortValue: selectedOption.value,
         });
         // 서버에서 받은 모임 리스트
-        groups.value = response.data.groups;  
+        groups.value = response.data.groups;
       } catch (error) {
         console.error("오류가 발생", error);
       }
@@ -261,7 +229,7 @@ export default {
           });
         } catch (error) {
           console.error("Error", error);
-  
+
           // 서버 요청 실패 시 상태 롤백
           group.isHeartFilled = !group.isHeartFilled;
         }
@@ -289,7 +257,7 @@ export default {
       options,
       selectedGroupList,
       selectedOption,
-      
+
       searchTerm,
       searchGroups,
     };
@@ -426,92 +394,158 @@ h2 {
 }
 
 .group-container {
-  width: 360px;
-  height: 300px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  margin-bottom: 50px;
-  margin-right: 95px;
+  display: grid;
+  grid-template-rows: 40px 250px 1fr;
+  width: 280px;
+  height: 450px;
+  margin-right: 50px;
 }
 
-.group-container:nth-child(3n) {
+.group>.group-container:nth-of-type(4n) {
   margin-right: 0px;
+}
+
+.unicode-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 5px 3px 0px 4px;
+}
+
+/* 그룹 상세설명 버튼 */
+.group-detail-icon {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.group-detail {
+  font-size: 26px;
+  cursor: pointer;
+  margin-bottom: 3px;
+  margin-right: 3px;
+  color: grey;
+  font-weight: 100;
+  margin-top: 2px;
+}
+
+.sport-image-box {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sport-image {
+  width: 270px;
+  height: 250px;
+}
+
+.group-information {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-info-and-group-sport {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sport-text {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  width: 60px;
+  height: 30px;
+  background-color: #1a73e8;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: 5px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.closing-soon {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  width: 60px;
+  height: 30px;
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  margin-right: 70px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .user-info {
   display: flex;
-  align-items: center;
-  margin: 29px 0 0 20px;
-}
-
-.user-images {
-  width: 50px;
-  height: 40px;
-  margin-left: 10px;
-}
-
-.detail-icon {
-  width: 20px;
-  height: 20px;
-  margin-left: 173px;
-}
-
-.group-content {
-  display: flex;
-  align-items: center;
-  margin-top: 15px;
   justify-content: center;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.user-name {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.user-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+}
+
+.group-text {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
 }
 
 .title {
-  font-size: 28px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+  font-size: 16px;
+  font-weight: bolder;
+  margin-top: -10px;
+  margin-left: 5px;
+  margin-bottom: 5px;
+}
+
+.date-and-time {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+  font-size: 14px;
+  font-weight: bolder;
+  margin-left: 6px;
+  margin-bottom: 2px;
+  color: grey;
+}
+
+.person {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+  font-size: 14px;
   font-weight: bold;
-  color: #5d5a88;
+  margin-left: 5px;
+  color: grey;
+
 }
 
-.date {
-  font-size: 18px;
-  color: #9795b5;
-  margin-left: 218px;
-  margin-top: 20px;
-  padding: 5px;
-}
-
-.time {
-  font-size: 18px;
-  color: #9795b5;
-  margin-left: 252px;
-  padding: 5px;
-}
-
-.group-info {
-  margin-top: 20px;
-  display: flex;
-}
-
-.like-images {
-  width: 35px;
-  height: 35px;
-  margin-right: 30px;
-}
-
-.size {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 12px;
-  margin-right: 5px;
-}
-
-.location {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 12px;
-  margin-right: 5px;
-}
-
-.cancel {
+.attend {
   padding: 11px 17px;
   border: none;
   border-radius: 10px;
@@ -524,11 +558,11 @@ h2 {
   cursor: pointer;
 }
 
-.cancel:hover {
+.attend:hover {
   background-color: #87cefa;
 }
 
-.cancel:active {
+.attend:active {
   background-color: #87cefa;
   transform: scale(0.98);
   /* 클릭 시 버튼 크기 살짝 축소 */
@@ -577,7 +611,7 @@ h2 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -614,49 +648,18 @@ h2 {
   /* 클릭 시 버튼 크기 살짝 축소 */
 }
 
-/* 하트 색상 변경 */
-.title-heart {
+/* 모임 찜 버튼 */
+.group-save-icon {
+  width: 28px;
+  height: 28px;
   cursor: pointer;
-  display: inline-block;
-  width: 35px;
-  /* 하트의 크기를 조정합니다 */
-  height: 35px;
-  /* 하트의 크기를 조정합니다 */
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-left: 40px;
-  margin-right: 20px;
 }
 
-.title-heart div {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.empty-heart::before {
-  content: "\2764";
-  /* 빈 하트 문자 */
-  font-size: 35px;
-  /* 하트의 크기 */
-  color: transparent;
-  /* 하트의 내부는 투명하게 */
-  -webkit-text-stroke: 1px black;
-  /* 하트의 테두리 색상 */
-}
-
-.filled-heart::before {
-  content: "\2764";
-  /* 채워진 하트 문자 */
-  font-size: 35px;
-  /* 하트의 크기 */
-  color: red;
-  /* 채워진 하트의 색상 */
-  -webkit-text-stroke: none;
-  /* 채워진 하트의 테두리 제거 */
+/* 모임 참석 버튼 */
+.group-join-icon {
+  width: 25px;
+  height: 25px;
+  margin-left: auto;
+  cursor: pointer;
 }
 </style>

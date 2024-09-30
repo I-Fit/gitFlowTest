@@ -4,15 +4,18 @@ import VueCookies from 'vue-cookies';
 export default {
     namespaced: true,
     state: {
-        Loggedin: false,
+        loggedIn: !!VueCookies.get('accessToken'),
         userId: null,   // 사용자 식별 Id
-        accessToken: null,    // JWT 토큰(accessToken)
-        refreshToken: null,   // JWT 토큰(refreshToken)
+        accessToken: VueCookies.get('accessToken') || null,    // JWT 토큰(accessToken)
+        refreshToken: VueCookies.get('refreshToken') || null,   // JWT 토큰(refreshToken)
+        errorMessage: null,
+        userName: null,
+        userImage: null,
     },
 
     mutations: {
         SET_LOGGEDIN(state, payload) {
-            state.Loggedin = payload;
+            state.loggedIn = payload;
         },
         SET_USERID(state, payload) {
             state.userId = payload;
@@ -23,11 +26,23 @@ export default {
         SET_REFRESHTOKEN(state, payload) {
             state.refreshToken = payload;
         },
+        SET_USERNAME(state, payload) {
+            state.userName = payload;
+        },
+        SET_USERIMAGE(state, payload) {
+            state.userImage = payload;
+        },
         LOGOUT(state) {
-            state.Loggedin = false;
+            state.loggedIn = false;
             state.userId = null;
+            state.userName = null,
+            state.userImage = null,
             state.accessToken = null;
             state.refreshToken = null;
+        },
+        SET_ERROR(state, payload) {
+            state.errorMessage = payload;
+            console.error(payload);
         },
     },
 
@@ -35,16 +50,22 @@ export default {
         async signin({ commit }, userSignInData) {
             const Cookies = VueCookies;
             try {
-                const response = await axios.post('http://localhost:8080/api/login', {      /* sign-in */
-                    id: userSignInData.id,
-                    password: userSignInData.password,
+                const response = await axios.post('/api/login', {
+                        loginId: userSignInData.id,
+                        password: userSignInData.password,
                 });
 
-                if (response.data.success) {
+                if (response.data.message === '로그인 성공') {
                     commit('SET_LOGGEDIN', true);
-                    commit('SET_USERID', response.data.userId);
                     commit('SET_ACCESSTOKEN', response.data.accessToken);
                     commit('SET_REFRESHTOKEN', response.data.refreshToken);
+                    commit('SET_USERID', response.data.userId);
+                    commit('SET_USERNAME', response.data.userName);
+                    commit('SET_USERIMAGE', response.data.userImage);
+                    
+                    // userImage가 null 일 경우 기본 이미지로 설정
+                    const userImage = response.data.userImage || require('@/assets/images/default-profile.png');
+                    commit('SET_USERIMAGE', userImage);
 
                     //  쿠키에 토큰 저장 (7일?)
                     Cookies.set('accessToken', response.data.accessToken, { expires : 1/24 });
@@ -52,35 +73,73 @@ export default {
 
                 } else {
                     commit('SET_LOGGEDIN', false);
-                    commit('SET_USERID', null);
-                    commit('SET_ACCESSTOKEN', null);
-                    commit('SET_REFRESHTOKEN', null);
-                    throw new Error(response.data.message || '로그인 실패');
+                    commit('LOGOUT');
+                    commit('SET_ERROR', '로그인 실패');
                 }
 
             } catch (error) {
-                console.error('로그인 요청 중 오류 발생', error);
                 commit('SET_ERROR', error.message || '로그인 Id, 비밀번호 중 하나 오류');
             }
         },
         async logout({ commit }) {
             const Cookies = VueCookies;
             try {
-                await axios.post('/api/logout');
+                const refreshToken = Cookies.get('refreshToken');
 
-                commit('LOGOUT');
-                Cookies.remove('accessToken')  //  쿠키에서 엑세스 토큰 삭제
-                Cookies.remove('refreshToken') //  쿠키에서 리프레시 토큰 삭제
+                if (refreshToken) {
+                    await axios.post('/api/logout', {}, {
+                        headers: {
+                            'refresh-token': `Bearer ${refreshToken}`,
+                        },
+                    });
+                    
+                    commit('LOGOUT');
+                    Cookies.remove('accessToken')  //  쿠키에서 엑세스 토큰 삭제
+                    Cookies.remove('refreshToken') //  쿠키에서 리프레시 토큰 삭제
+                    return true;
+                }
             } catch (error) {
                 console.error('로그아웃 요청 중 오류 발생', error);
+                return false;
+            }
+        },
+        async restoreToken({ commit }) {
+            const Cookies = VueCookies;
+            const accessToken = Cookies.get("accessToken");
+            const refreshToken = Cookies.get("refreshToken");
+
+            if (accessToken) {
+                commit('SET_ACCESSTOKEN', accessToken);
+                commit('SET_REFRESHTOKEN', refreshToken);
+                commit('SET_LOGGEDIN', true);
+
+                try {
+                    const response = await axios.get('/api/user-info', {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    });
+                    if (response.data) {
+                        commit('SET_USERID', response.data.userId);
+                        commit('SET_USERNAME', response.data.userName);
+                        commit('SET_USERIMAGE', response.data.userImage);
+                    }
+                } catch (error) {
+                    console.error('사용자 정보 로드 중 오류 발생', error);
+                }
+            } else {
+                commit('LOGOUT');
             }
         },
     },
 
     getters: {
-        loggedIn: (state) => state.Loggedin,
+        loggedIn: (state) => state.loggedIn,
         userId: (state) => state.userId,
+        userName: (state) => state.userName,
+        userImage: (state) => state.userImage,
         accessToken: (state) => state.accessToken,
         refreshToken: (state) => state.refreshToken,
+        errorMessage: (state) => state.errorMessage,
     },
 };

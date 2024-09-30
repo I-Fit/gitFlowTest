@@ -12,8 +12,8 @@
             </span>
           </label>
           <div class="signup-field">
-            <input type="text" id="id" name="id" placeholder="아이디를 입력하세요." class="signup-input" v-model="formData.id" />
-            <button type="submit" class="signup-btn" @click="checkId">
+            <input type="text" id="id" name="id" placeholder="아이디를 입력하세요." class="signup-input" v-model="formData.loginId" />
+            <button type="button" class="signup-btn" @click="checkId">
               중복 확인
             </button>
           </div>
@@ -34,44 +34,46 @@
           </label>
           <div class="signup-field">
             <input type="password" id="password-check" name="passwordcheck" placeholder="비밀번호 재입력" class="signup-input"
-              v-model="formData.passwordCheck" />
+              v-model="passwordCheck" />
           </div>
         </div>
         <div class="signup-name input-block">
           <label class="signup-label" for="name">이름</label>
           <div class="signup-field">
             <input type="text" id="name" name="name" placeholder="이름을 입력해주세요." class="signup-input"
-              v-model="formData.name" />
+              v-model="formData.username" />
           </div>
         </div>
         <div class="signup-phone input-block">
           <label class="signup-label" for="phone">전화번호</label>
           <div class="signup-field">
             <input type="text" id="phone" name="phone" placeholder="전화번호를 입력해주세요." class="signup-input"
-              v-model="formData.phone" />
+              v-model="formData.phoneNumber" />
           </div>
         </div>
         <div class="signup-email input-block">
           <label class="signup-label" for="email">이메일</label>
           <div class="signup-field">
             <input type="text" id="email" name="email" placeholder="이메일을 입력해주세요." class="signup-input"
-              v-model="email" />
-            <button type="submit" class="signup-btn" @click="sendEmail" :disabled="timerStarted">
+              v-model="emailValue" />
+            <button type="button" class="signup-btn" @click="sendEmailRequest" :disabled="timerStarted">
               인증 요청
             </button>
           </div>
+          <!-- <div v-if="loading" class="loading-indicator"></div> -->
         </div>
         <div class="signup-email-auth input-block">
           <label class="signup-label" for="email-number">이메일 인증번호
             <span v-if="timerStarted && timeLeft > 0" class="timer">{{ minutes }}:{{ seconds }}</span>
-            <button v-if="!timerStarted && timeLeft === 0" class="re-request-btn" @click="handleReRequest">
+            <button type="button" v-if="!timerStarted && timeLeft === 0" class="re-request-btn"
+              @click="handleReRequest">
               재전송
             </button>
           </label>
           <div class="signup-field">
             <input type="text" id="email-number" name="email-number" placeholder="인증번호를 입력해주세요." class="signup-input"
               v-model="enteredCode" />
-            <button type="submit" class="signup-btn" @click="updateEmailAfterCheck" :disabled="timerStarted && timeLeft > 0">
+            <button type="button" class="signup-btn" @click="updateEmailAfterCheck">
               확인
             </button>
           </div>
@@ -94,7 +96,7 @@
             <span class="signup-terms-text">프로모션 정보 수신 동의(선택)<span @click="goTos">&#62;</span></span>
           </label>
         </div>
-        <button class="signup-terms-btn" type="submit" @click="account">
+        <button class="signup-terms-btn" type="button" @click="account">
           회원가입
         </button>
         <p class="signup-account-check">
@@ -106,7 +108,7 @@
 </template>
 
 <script>
-import { ref, computed, watch } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useEmail } from "@/services/sendEmail";
 import axios from "axios";
@@ -119,42 +121,121 @@ export default {
     const router = useRouter();
 
     const formData = ref({
-      id: "",
+      loginId: "",
       password: "",
-      passwordCheck: "",
-      name: "",
-      phone: "",
+      username: "",
+      phoneNumber: "",
       email: "",
     });
-    
+    const passwordCheck = ref("");
+    const enteredCode = ref("");
+    const emailValue = ref("");
+
+    onMounted(() => {
+      const storedData = JSON.parse(localStorage.getItem('signupData')) || {};
+      formData.value = { ...formData.value, ...storedData };
+      passwordCheck.value = storedData.passwordCheck || "";
+      emailValue.value = storedData.emailValue || "";
+      enteredCode.value = storedData.enteredCode || "";
+
+      window.addEventListener('beforeunload', () => {
+        localStorage.removeItem('signupData');
+      });
+    });
+
+    watch([formData, passwordCheck, enteredCode], ([newFormData, newPasswordCheck, newEmailValue, newEnteredCode]) => {
+      localStorage.setItem('signupData', JSON.stringify({
+        ...newFormData,
+        passwordCheck: newPasswordCheck,
+        emailValue: newEmailValue,
+        enteredCode: newEnteredCode,
+      }));
+    }, { deep: true });
+
+    watch(router.currentRoute, (to) => {
+      if (to.path === '/sign-up') {
+        const FromTerms = router.currentRoute.value.path === '/terms-of-service';
+        if (!FromTerms) {
+          localStorage.removeItem('signupData');
+          formData.value = {
+            loginId: "",
+            password: "",
+            username: "",
+            phoneNumber: "",
+            email: "",
+          };
+          passwordCheck.value = "";
+          emailValue.value = "";
+          enteredCode.value = "";
+        }
+      }
+    });
+
     // formData에 값 콘솔에서 볼려고 작성함
-    console.log(toRaw(formData));
+    console.log(toRaw(formData.value));
     // 아이디 사용 가능 여부 저장 상태
-    const idAvailable = ref(null);
 
     const passwordsMatch = computed(() => {
-      return formData.value.password === formData.value.passwordCheck;
+      return formData.value.password === passwordCheck.value;
     })
     // 패스워드 입력이 끝난 후 메시지 표시
     const Bothpasswords = computed(
-      () => formData.value.password && formData.value.passwordCheck
+      () => formData.value.password && passwordCheck.value
     );
 
+    const idAvailable = ref(null);
     // 아이디 중복 확인 요청
     const checkId = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/check-id", {
-          params: { id: formData.value.id },
+        const response = await axios.post("/api/check-id", {
+          loginId: formData.value.loginId,
         });
-        idAvailable.value = response.data.available;
+
+        if (response.data === "사용가능한 아이디입니다.") {
+          idAvailable.value = true;
+          alert("아이디 사용 가능합니다.");
+        } else if (response.data === "존재하는 아이디입니다.") {
+          idAvailable.value = false;
+          alert("아이디가 이미 존재합니다.");
+        } else {
+          idAvailable.value = false;
+          alert("오류");
+        }
       } catch (error) {
         console.error(error);
-        idAvailable.value = false;
+        alert("아이디 중복 확인 중 오류가 발생했습니다.");
       }
     };
 
+    //  이메일 전송
+    const sendEmailRequest = async () => {
+      try {
+        await sendEmail(emailValue.value);
+      } catch (error) {
+        alert("이메일 전송에 실패했습니다.");
+      }
+    };
+    //  이메일 인증
+    const updateEmailAfterCheck = async () => {
+      try {
+        const isVerified = await verifyEmail(emailValue.value, enteredCode.value);
+        console.log("인증 결과: ", isVerified);
+        if (isVerified) {
+          formData.value.email = emailValue.value; // 인증 완료 후 email을 formData에 업데이트
+          alert("인증 완료");
+        } else {
+          alert("인증 번호가 만료되었거나, 일치하지 않습니다.");
+        }
+      } catch (error) {
+        console.error("이메일 인증 오류: ", error);
+      }
+    };
+
+    console.log(toRaw(formData));
+
     // 회원가입 버튼 클릭 시 사용자 데이터(formData) 서버에 보냄
     const account = async () => {
+
       if (!passwordsMatch.value) {
         alert("비밀번호가 불일치 합니다.");
         return;
@@ -163,10 +244,21 @@ export default {
         alert("아이디 중복 확인 해주세요.");
         return;
       }
+      if (formData.value.username === null) {
+        alert("이름을 입력해주세요.");
+        return;
+      }
+      if (formData.value.phoneNumber === null) {
+        alert("전화번호를 입력해주세요.");
+        return;
+      }
 
       try {
-        await axios.post("http://localhost:8080/api/user-account", formData.value);
+        await axios.post("/api/user-account", formData.value);
         alert("회원가입 성공!");
+
+        localStorage.removeItem('signupData');
+        
         router.push({ name: "SignIn" });
       } catch (error) {
         console.log("회원가입 시 서버와 통신 에러");
@@ -183,6 +275,7 @@ export default {
 
     const selectAll = () => {
       const allSelected = agree01.value && agree02.value && agree03.value;
+      agreeAll.value = !allSelected;
       agree01.value = !allSelected;
       agree02.value = !allSelected;
       agree03.value = !allSelected;
@@ -198,35 +291,14 @@ export default {
     const agreeAll = ref(query.agreeAll === "true");
 
     const {
-      email,
-      enteredCode,
-      emailKey,
       sendEmail,
-      emailCheck,
+      verifyEmail,
       timeLeft,
       minutes,
       seconds,
       handleReRequest,
       timerStarted,
     } = useEmail();
-
-    // 이메일이 변경되면 formData를 업데이트
-    watch(email, (newEmail) => {
-      if (newEmail) {
-        formData.value.email = newEmail;
-      }
-    });
-
-    const updateEmailAfterCheck = async () => {
-      try {
-        const result = await emailCheck();
-        if (result === "확인 완료") {
-          formData.value.email = email.value; // 인증 완료 후 email을 formData에 업데이트
-        }
-      } catch (error) {
-        console.error("이메일 인증 오류: ", error);
-      }
-    };
 
     return {
       goTos,
@@ -239,22 +311,23 @@ export default {
       agree03,
       selectAll,
 
-      email,
-      emailKey,
       updateEmailAfterCheck,
 
       timeLeft,
       minutes,
       seconds,
       timerStarted,
+      emailValue,
       enteredCode,
       sendEmail,
-      emailCheck,
+      verifyEmail,
       handleReRequest,
+      sendEmailRequest,
 
       formData,
       idAvailable,
       checkId,
+      passwordCheck,
       passwordsMatch,
       Bothpasswords,
     };

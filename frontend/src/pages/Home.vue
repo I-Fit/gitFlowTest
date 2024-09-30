@@ -1,26 +1,26 @@
 <template>
   <main>
     <!-- 캐러셀 부분 -->
-    <carousel class="carousel">
-      <carousel-box class="carousel-box" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
+    <div class="carousel">
+      <div class="carousel-box" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
         <div class="carousel-item" v-for="item in items" :key="item.id">
           <img :src="item.images" :alt="item.content" class="slide-images" />
           <div class="slide-content">
             {{ item.content }}
           </div>
         </div>
-      </carousel-box>
+      </div>
       <div class="arrow" id="left" @click="prevSlide">&#9001;</div>
       <div class="arrow" id="right" @click="nextSlide">&#9002;</div>
-    </carousel>
-    
+    </div>
+
     <div class="main-bottom">
-    <!-- 종목, 지역, 날짜, 시간 필터-->
+      <!-- 종목, 지역, 날짜, 시간 필터-->
       <div class="filter">
         <div class="filter-list">
           <select class="list-select" title="운동 종목" @change="SportGroupList">
             <option value="" selected disabled>운동</option>
-            <option v-for="sport in sports" :key="sport.key" :value="sport.key">{{ sport.sport }}</option>
+            <option v-for="sport in sports" :key="sport.key" :value="sport.sport">{{ sport.sport }}</option>
           </select>
 
           <select class="list-select" title="지역" @click="fetchLocationData">
@@ -32,12 +32,12 @@
 
           <div>
             <VueDatePicker class="date-picker" placeholder="날짜" locale="ko" v-model="date" :enable-time-picker="false"
-              year-first="true" select-text="확인" cancel-text="취소" @select="dateSelect"/>
+              select-text="확인" cancel-text="취소" @date-update="dateClicked" format="yyyy-MM-dd" />
           </div>
 
           <div>
             <VueDatePicker class="time-picker" placeholder="시간" locale="ko" v-model="time" time-picker select-text="확인"
-              cancel-text="취소" @select="timeSelcet">
+              cancel-text="취소" @change="timeSelcet">
               <template #input-icon>
                 <img class="input-slot-image" src="@/assets/images/clock-icon.png" />
               </template>
@@ -45,9 +45,9 @@
           </div>
 
           <form class="search-box">
-            <input type="text" name="search" class="search-input" placeholder="검색어를 입력하세요."
-            v-model="searchTerm" @keyup.enter="searchGroups"/>
-            <img src="../assets/images/search.icon.png" alt="search" class="search-icon" @click="searchGroups"/>
+            <input type="text" name="search" class="search-input" placeholder="검색어를 입력하세요." v-model="searchTerm"
+              @keyup.enter="searchGroups" />
+            <img src="../assets/images/search.icon.png" alt="search" class="search-icon" @click="searchGroups" />
           </form>
         </div>
         <div class="sort">
@@ -64,7 +64,9 @@
           <div class="group-container">
             <div class="unicode-box">
               <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-              <img :src="isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')" class="group-save-icon" @click="likeGroup" />
+              <img
+                :src="isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')"
+                class="group-save-icon" @click="likeGroup" />
               <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
 
               <div v-if="showConfirmPopup" class="confirm-popup">
@@ -101,8 +103,9 @@
           <div class="group-container">
             <div class="unicode-box">
               <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-              <img :src="isSaved ? require('@/assets/images/saved-icon.png') : require('@/assets/images/save-icon.png')" class="group-save-icon" @click="likeGroup" />
-              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
+              <img :src="isSaved ? require('@/assets/images/saved-icon.png') : require('@/assets/images/save-icon.png')"
+                class="group-save-icon" @click="likeGroup" />
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
 
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
@@ -138,8 +141,9 @@
           <div class="group-container">
             <div class="unicode-box">
               <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-              <img :src="isSaved ? require('@/assets/images/saved-icon.png') : require('@/assets/images/save-icon.png')" class="group-save-icon" @click="likeGroup" />
-              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
+              <img :src="isSaved ? require('@/assets/images/saved-icon.png') : require('@/assets/images/save-icon.png')"
+                class="group-save-icon" @click="likeGroup" />
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
@@ -170,12 +174,13 @@
               </div>
             </div>
           </div>
-          
+
           <div class="group-container">
             <div class="unicode-box">
               <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-              <img :src="isSaved ? require('@/assets/images/saved-icon.png') : require('@/assets/images/save-icon.png')" class="group-save-icon" @click="likeGroup" />
-              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true"/>
+              <img :src="isSaved ? require('@/assets/images/saved-icon.png') : require('@/assets/images/save-icon.png')"
+                class="group-save-icon" @click="likeGroup" />
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
               <div v-if="showConfirmPopup" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
@@ -208,10 +213,13 @@
             </div>
           </div>
 
-          <div v-for="group in visibleDatas" :key="group.communityId" class="group-container">
+          <div v-for="group in groups" :key="group.communityId" class="group-container">
             <div class="unicode-box">
-              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal(group.communityId)" />
-              <img :src="isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')" class="group-save-icon" @click="likeGroup" />
+              <img class="group-detail-icon" src="@/assets/images/info-icon.png"
+                @click="openModal(group.communityId)" />
+              <img
+                :src="isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')"
+                class="group-save-icon" @click="likeGroup" />
               <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
 
               <div v-if="showConfirmPopup" class="confirm-popup">
@@ -235,18 +243,21 @@
                 <p class="sport-text">{{ group.sport }}</p>
                 <div class="user-info">
                   <span class="user-name">{{ group.username }}</span>
-                  <img :src="group.user_img || '/default-profile.png'" alt="사용자 이미지" class="user-img">
+                  <img :src="group.user_img || require('@/assets/images/default-profile.png')" alt="사용자 이미지"
+                    class="user-img">
                 </div>
               </div>
               <div class="group-text">
                 <p class="new-title"> {{ group.title }}</p>
-                <p class="date-and-time">{{ group.date }}{{ group.time }} <span class="location">| {{ group.location }}</span></p>
-                <p class="person">인원: {{ group.peopleParticipaion }} / {{ group.person }}</p>
+                <p class="date-and-time">{{ group.date }}{{ group.time }} <span class="location">| {{ group.location
+                    }}</span>
+                </p>
+                <p class="person">인원: {{ group.peopleParticipation }} / {{ group.person }}</p>
               </div>
             </div>
           </div>
         </div>
-        <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" />
+        <!-- <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" /> -->
       </div>
     </div>
 
@@ -262,19 +273,18 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useStore } from "vuex";
-import Pagination from "@/components/common/HomePagination";
+// import Pagination from "@/components/common/HomePagination";
 import { usePagination } from "@/utils/pagination";
 import apiClient from '@/api/apiClient';
-import { toRaw } from 'vue';
 
 export default {
   name: "Home",
   components: {
-    Pagination,
+    // Pagination,
   },
 
   data() {
@@ -415,7 +425,7 @@ export default {
     const store = useStore();
     // 여러 모임 데이터 배열에 저장
     const groups = ref([]);
-    const sports = ref({});   // 운동 종목을 저장할 객체
+    const sports = ref([]);   // 운동 종목을 저장할 객체
     const searchTerm = ref('');   // 검색어를 저장할 객체
     const PerPage = 8;
     const userId = computed(() => store.getters['isLogged/userId']);
@@ -432,20 +442,25 @@ export default {
           key: item.key,
           sport: item.sport
         }));
-    
+
       } catch (error) {
         console.error("서버와의 통신 오류", error);
       }
     };
 
     // 선택된 운동 종목에 따라 모임 리스트를 가져오는 함수
-    const SportGroupList = async(event) => {
+    const SportGroupList = async (event) => {
       const selectedSportValue = event.target.value;
+      console.log(`sport${selectedSportValue}`);
 
       if (selectedSportValue) {
         try {
-          const response = await axios.post(`/api/filter/exercises?sport=${selectedSportValue}`);
-          groups.value = response.data.groups;
+          const response = await axios.get("/api/filter/exercises/sport", {
+            params: {
+              sport: selectedSportValue,
+            }
+          });
+          groups.value = response.data;
         } catch (error) {
           console.error("모임 리스트를 가져오는 데 오류가 발생했습니다.", error);
         }
@@ -455,20 +470,18 @@ export default {
     //  날짜 필터
     const date = ref(null); //  선택된 날짜
 
-    console.log(toRaw(date));
-  
-    const dateSelect = async() => {
+    const dateClicked = async (date) => {
       try {
-        if (date.value) {
-          const formatDate = new Date(date.value).toISOString();
+        console.log(`Selected ${date}`);
+        const isoDate = date.toISOString();
+        console.log(`Selected ${isoDate}`);
 
-          const response = await axios.post('/api/filter/date', {
-            date: formatDate,
-          });
-          groups.value = response.data.groups; 
-        } else {
-          alert("날짜를 다시 선택해 주세요.");
-        }
+        const response = await axios.get("/api/filter/date", {
+          params: {
+            date: isoDate,
+          }
+        });
+        groups.value = response.date;
       } catch (error) {
         console.error('모임 리스트를 가져오는 중 오류 발생', error);
         alert("모임 리스트 가져오기 실패");
@@ -477,9 +490,9 @@ export default {
 
     // 시간 필터
     const time = ref(null);
-    console.log(toRaw(time));
+    console.log(`Select${time.value}`);
 
-    const timeSelcet = async() => {
+    const timeSelcet = async () => {
       if (!time.value) {
         alert("시간을 다시 선택해 주세요.");
         return;
@@ -488,7 +501,7 @@ export default {
         const response = await axios.post('/api/filter/time', {
           time: time.value,
         });
-        groups.value = response.data.groups;
+        groups.value = response.data;
       } catch (error) {
         console.error("모임 리스트를 가져오는 중 오류 발생", error);
         alert("모임 리스트 가져오기 실패");
@@ -497,34 +510,38 @@ export default {
 
 
     //  검색어
-    const searchGroups = async() => {
+    const searchGroups = async () => {
       if (!searchTerm.value) {
         return;
       }
       try {
-        const response = await apiClient.post("/joined/search", {
-          searchValue: searchTerm.value,
+        const response = await axios.get("/api/search", {
+          params: {
+            searchTerm: searchTerm.value,
+          }
         });
-        groups.value = response.data.groups;
+        groups.value = response.data;
       } catch (error) {
         console.error("오류가 발생", error);
       }
     };
 
     // 정렬
-    const selectedGroupList = async() => {
+    const selectedGroupList = async () => {
       try {
-        const response = await apiClient.post("/joined/sort", {
-          sortValue: selectedOption.value,
+        const response = await axios.get("/api/sort", {
+          params: {
+            value: selectedOption.value,
+          }
         });
         // 서버에서 받은 모임 리스트
-        groups.value = response.data.groups;  
+        groups.value = response.data;
       } catch (error) {
         console.error("오류가 발생", error);
       }
     };
 
-    onMounted(async () => {
+    onBeforeMount(async () => {
       await sportList();
       await groupList();
     });
@@ -536,7 +553,7 @@ export default {
         const response = await axios.get('/api/group-list');
 
         // 서버로부터 받은 데이터를 groups배열에 저장
-        groups.value = response.data.groups;
+        groups.value = response.data;
         fetchdatas(1);  // 데이터 로딩 후 초기 페이지 설정
 
       } catch (error) {
@@ -567,6 +584,7 @@ export default {
           communityId: communityId,
         });
         router.push({ name: "JoinedGroups", query: { communityId } });
+        alert("모임 참석 완료")
       } catch (error) {
         console.error("Error", error);
       }
@@ -582,7 +600,7 @@ export default {
       selectedOption,
       options,
       date,
-      dateSelect,
+      dateClicked,
       time,
       timeSelcet,
       groups,
@@ -875,7 +893,7 @@ main {
   margin-right: 66px;
 }
 
-.group > .group-container:nth-of-type(4n) {
+.group>.group-container:nth-of-type(4n) {
   margin-right: 0px;
 }
 
@@ -1016,7 +1034,7 @@ main {
   font-weight: bold;
   margin-left: 5px;
   color: grey;
-  
+
 }
 
 .attend {

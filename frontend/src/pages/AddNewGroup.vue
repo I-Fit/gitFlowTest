@@ -6,9 +6,8 @@ tap<template>
           <textarea v-model="title" placeholder="제목을 입력하세요."></textarea>
         </div>
         <div class="topwrap-box" role="textbox">
-          <div class="topbox-content" contenteditable="true" 
-            data-placeholder="생성할 모임의 상세설명을 작성해주세요." ref="topboxContent"
-            @input="updateTopboxContent">
+          <div class="topbox-content" contenteditable="true" data-placeholder="생성할 모임의 상세설명을 작성해주세요."
+            ref="topboxContent" @input="updateTopboxContent">
           </div>
         </div>
         <div class="topwrap-tag">
@@ -32,13 +31,14 @@ tap<template>
 
         <p class="category-text">Choose Location</p>
         <div class="category-input">
-          <input class="input-event" v-model="locationInput" @keydown.enter="handleEnterKey" @click="setLocation"
+          <input class="input-event" v-model="locationInput" @keydown.enter="handleEnterKey" @click="openDaumApi"
             type="text" placeholder="위치를 검색하세요." />
         </div>
 
         <p class="category-text">Choose Date and Time</p>
         <div class="category-date">
-          <VueDatePicker locale="ko" time-picker-inline v-model="date" @change="updateFormData" class="input-datepicker">
+          <VueDatePicker locale="ko" time-picker-inline v-model="date" @change="updateFormData"
+            class="input-datepicker">
           </VueDatePicker>
         </div>
 
@@ -138,6 +138,14 @@ export default {
     const setSport = () => {
       formData.sport = sportInput.value;
     };
+    const openDaumApi = () => {
+      new window.daum.Postcode({
+        oncomplete: (data) => {
+          console.log("받은 주소 : ", data)
+          this.formData.location = data.sigungu;
+        }
+      }).open();
+    };
 
     const setLocation = () => {
       formData.location = locationInput.value;
@@ -174,6 +182,7 @@ export default {
       locationInput,
       personInput,
       date,
+      openDaumApi,
 
       formData,
       updateFormData,
@@ -278,7 +287,8 @@ main {
   pointer-events: none;
   color: gray;
   padding: 0 5px;
-  font-size: 18px; /* Placeholder 텍스트의 폰트 크기를 조정합니다 */
+  font-size: 18px;
+  /* Placeholder 텍스트의 폰트 크기를 조정합니다 */
   transition: opacity 0.2s ease;
 }
 
