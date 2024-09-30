@@ -30,9 +30,9 @@
               </div>
               <div class="post-tags">
                 <div class="tag-items">
-                  <div class="topic"><span>{{ post.topic }}</span></div>
+                  <div class="topic"><span>{{ post.exercise }}</span></div>
                   <div class="location"><span>{{ post.location }}</span></div>
-                  <div class="scale"><span>{{ post.scale }}</span></div>
+                  <!-- <div class="scale"><span>{{ post.scale }}</span></div> -->
                 </div>
                 <div class="likes-and-comments">
                   <div class="likes">
@@ -52,7 +52,7 @@
                 </div>
               </div>
             </div>
-            <img class="post-image" :src="post.imageUrl" alt="게시글 이미지" />
+            <img class="post-image" :src="`data:image/png;base64,${post.imageStr}`" alt="게시글 이미지" />
           </div>
         </div>
       </div>

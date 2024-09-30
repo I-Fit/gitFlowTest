@@ -90,10 +90,11 @@ export default {
       const file = event.target.files[0];
       if (file) {
         this.formData.imageStr = file;
+        console.log("selected file: ", file.name);
         const reader = new FileReader();
         reader.onload = (e) => {
           //content-box에 이미지 추가
-          const img = document.createElement('img');
+          const img = document.createElement('img');  
           img.src = e.target.result;
           img.style.width = '100%';
           img.style.height = 'auto';
@@ -132,42 +133,71 @@ export default {
     },
 
     async confirmSubmit() {
-      // FormData 객체 생성
       const formData = new FormData();
-
+      formData.append('userId', 1);
       formData.append('title', this.formData.title);
       formData.append('content', this.formData.content);
       formData.append('exercise', this.formData.exercise);
       formData.append('location', this.formData.location);
 
       if (this.formData.imageStr) {
-        const reader = new FileReader();
+        formData.append('imageStr', this.formData.imageStr);  // 파일을 'imageStr' 키로 추가
 
-        reader.onloadend = async () => {
-      const base64Image = reader.result.split(',')[1]; // Base64 문자열만 추출
-      formData.append('imageStr', base64Image); // Base64 이미지 추가
+        try {
+          const response = await axios.post('http://localhost:8080/api/board/new', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data', // 멀티파트로 요청 보냄
+            },
+          });
 
-      // 게시글 전송
-      try {
-        const response = await axios.post('http://localhost:8081/api/board/new', formData, {
-          // Content-Type을 설정하지 않음 (FormData가 자동으로 설정)
-        });
-
-        console.log(response.data);
-        if (response.data.status === "success") {
-          alert('게시글이 성공적으로 등록되었습니다!');
-          this.$router.push('/board');  // 게시판 메인으로 이동
+          if (response.data.status === "success") {
+            alert('게시글이 성공적으로 등록되었습니다!');
+            this.$router.push('/board');
+          }
+        } catch (error) {
+          console.error('게시글 작성 실패: ', error);
+          alert('게시글 작성에 실패했습니다.');
         }
-      } catch (error) {
-        console.error('게시글 작성 실패: ', error);
-        alert('게시글 작성에 실패했습니다.');
-      }
-    };
-
-        reader.readAsDataURL(this.formData.imageStr);
       } else {
         alert('이미지를 첨부해주세요!');
       }
+      // FormData 객체 생성
+    //   const formData = new FormData();
+
+    //   formData.append('title', this.formData.title);
+    //   formData.append('content', this.formData.content);
+    //   formData.append('exercise', this.formData.exercise);
+    //   formData.append('location', this.formData.location);
+
+    //   if (this.formData.imageStr) {
+    //     const reader = new FileReader();
+
+    //     reader.onloadend = async () => {
+    //   const base64Image = reader.result.split(',')[1]; // Base64 문자열만 추출
+    //   formData.append('imageStr', base64Image); // Base64 이미지 추가
+
+    //   // 게시글 전송
+    //   try {
+    //     const response = await axios.post('http://localhost:8080/api/board/new', formData, {
+    //       'Content-Type': 'multipart/form-data'
+    //     });
+
+    //     console.log(response.data);
+    //     if (response.data.status === "success") {
+    //       alert('게시글이 성공적으로 등록되었습니다!');
+    //       this.$router.push('/board');  // 게시판 메인으로 이동
+    //     }
+    //   } catch (error) {
+    //     console.error('게시글 작성 실패: ', error);
+    //     alert('게시글 작성에 실패했습니다.');
+    //   }
+    // };
+
+    //     reader.readAsDataURL(this.formData.imageStr);
+    //   } else {
+    //     alert('이미지를 첨부해주세요!');
+    //   }
+
     }
     
   },

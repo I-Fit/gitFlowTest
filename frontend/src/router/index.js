@@ -101,10 +101,11 @@ const routes = [
   },
 
   {
-    path: "/post",
+    path: "/post/:id",
     name: "Post",
     // meta: { showNav: false },
     component: Post,
+    props: true
   },
 
   {
