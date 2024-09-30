@@ -99,20 +99,31 @@ export default {
   },
 
   methods: {
-    fetchPosts() {
-      fetch('http://localhost:8080/api/board/list')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          this.visibleDatas = data;
-        })
-        .catch(error => {
-          console.error('Error fetching posts: ', error);
-        });
+    async fetchPosts() {
+      try {
+        const response = await fetch('http://localhost:8080/api/board/list');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        this.visibleDatas = data;
+      } catch (error) {
+        console.error('게시글 불러오기 실패: ', error);
+      }
+
+      // fetch('http://localhost:8080/api/board/list')
+      //   .then(response => {
+      //     if (!response.ok) {
+      //       throw new Error('Network response was not ok');
+      //     }
+      //     return response.json();
+      //   })
+      //   .then(data => {
+      //     this.visibleDatas = data;
+      //   })
+      //   .catch(error => {
+      //     console.error('Error fetching posts: ', error);
+      //   });
     },
     sortPosts() {
       const [order, direction] = this.selectedSort.split('_');
@@ -130,12 +141,27 @@ export default {
         .catch(error => {
           console.error('Error fetching sorted posts: ', error);
         });
+    },
+
+    viewPost(id) {
+      console.log('viewPost 호출, id: ', id);
+      if (id) {
+        console.log('게시글 id: ', id);
+        this.selectedPostId = id;
+        this.$router.push(`/post/${id}`)
+        .catch(err => {
+          console.error('라우팅 오류: ', err);
+        });
+      } else {
+        console.error('존재하지 않는 게시글입니다');
+      }
     }
   },
 
   data() {
     return {
       visibleDatas: [],
+      selectedPostId: null,
       selectedSort: '',
       posts: []
     };

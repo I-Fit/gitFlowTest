@@ -19,8 +19,8 @@
       </div>
 
       <!-- 제목 및 좋아요 버튼 -->
-      <div class="content-title">
-        <h1>종주할 때 사진 모아봤습니다.</h1>
+      <div v-if="post" class="content-title">
+        <h1>{{ post.title }}</h1>
         <div class="title-heart" @click="toggleHeart">
           <div
             :class="{
@@ -32,48 +32,76 @@
       </div>
 
       <!-- 이미지 -->
-      <div class="content-images">
-        <img src="@/assets/images/riding-1.png" alt="" />
+      <div v-if="post" class="content-images">
+        <img :src="`data:image/png;base64,${post.imageStr}`" alt="게시글 이미지" />
       </div>
 
       <!-- 줄 바꿈이나 다른 html 태그가 그대로 렌더링된다 -->
-      <div class="content-box" v-html="formattedContent"></div>
+      <p v-if="post" class="content-box">{{ post.content }}</p>
+      <!-- <div class="content-box" v-html="formattedContent">{{ post.con }}</div> -->
 
       <!-- 태그 -->
-      <div class="content-topic">
+      <div v-if="post" class="content-topic">
         <p class="topic-item">라이딩</p>
         <p class="item">부산</p>
         <p class="item">소규모</p>
+      </div>
+
+      <div v-else>
+        <p>게시글 로드중...</p>
       </div>
     </div>
   </main>
 </template>
 
 <script>
-// import PostActions from "@/components/common/PostActions.vue";
 import axios from 'axios';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
 export default {
-  name: "Post",
-  props: ['id'],
-  data() {
-    return {
-      post: null
-    };
-  },
-  created() {
-    this.fetchPost();
-  },
-  methods: {
-    async fetchPost() {
+  name: 'Post',
+  setup() {
+    const route = useRoute();
+    const post = ref(null); // 게시글 데이터 저장할 변수
+    
+    //게시글 id로 데이터 가져오기
+    const fetchPost = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/board/post/${this.id}`);
-        this.post = response.data;
+        const response = await axios.get(`http://localhost:8080/api/board/post/${route.params.id}`);
+        post.value = response.data;
       } catch (error) {
         console.error('게시글 로드 실패: ', error);
       }
-    }
+    };
+
+    onMounted(() => {
+      fetchPost();
+    });
+
+    return {
+      post
+    };
   },
+  // props: ['id'],
+  // data() {
+  //   return {
+  //     post: null
+  //   };
+  // },
+  // created() {
+  //   this.fetchPost();
+  // },
+  // methods: {
+  //   async fetchPost() {
+  //     try {
+  //       const response = await axios.get(`http://localhost:8080/api/board/post/${this.id}`);
+  //       this.post = response.data;
+  //     } catch (error) {
+  //       console.error('게시글 로드 실패: ', error);
+  //     }
+  //   }
+  // },
 };
 </script>
 
