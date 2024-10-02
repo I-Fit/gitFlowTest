@@ -6,7 +6,7 @@
         <div class="user-post">
           <div class="post-profile"></div>
           <span class="user-name">{{ userId }}</span>
-          <span class="creation-date">4 days ago</span>
+          <span class="creation-date">{{ createdAt }}</span>
         </div>
         <div class="user-option" @click="toggleActions">
           <div class="dot-icon"></div>
@@ -21,7 +21,7 @@
       <!-- 제목 및 좋아요 버튼 -->
       <div v-if="post" class="content-title">
         <h1>{{ post.title }}</h1>
-        <div class="title-heart" @click="toggleHeart">
+        <div class="title-heart" @click="toggleHeart(post.id)">
           <div
             :class="{
               'filled-heart': isHeartFilled,
@@ -61,17 +61,35 @@ import { useRoute } from 'vue-router';
 
 export default {
   name: 'Post',
+  // props: ["id"],
+  
   setup() {
     const route = useRoute();
     const post = ref(null); // 게시글 데이터 저장할 변수
+    const isHeartFilled = ref(false);
+    const postId = route.params.id;
     
-    //게시글 id로 데이터 가져오기
+    // 게시글 데이터 가져오기
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/board/post/${route.params.id}`);
+        const response = await axios.get(`http://localhost:8080/api/board/post/${postId}`);
         post.value = response.data;
+        isHeartFilled.value = response.data.isHeartFilled;
       } catch (error) {
         console.error('게시글 로드 실패: ', error);
+      }
+    };
+
+    const toggleHeart = async () => {
+      try {
+        const response = await axios.post(`http://localhost:8080/api/board/post/${postId}`);
+
+        if (response.status === 200) {
+          post.value = response.data;
+          isHeartFilled.value = post.value.isHeartFilled;
+        }
+      } catch (error) {
+        console.error('좋아요 토글 실패: ', error);
       }
     };
 
@@ -80,28 +98,11 @@ export default {
     });
 
     return {
-      post
+      post,
+      isHeartFilled,
+      toggleHeart,
     };
   },
-  // props: ['id'],
-  // data() {
-  //   return {
-  //     post: null
-  //   };
-  // },
-  // created() {
-  //   this.fetchPost();
-  // },
-  // methods: {
-  //   async fetchPost() {
-  //     try {
-  //       const response = await axios.get(`http://localhost:8080/api/board/post/${this.id}`);
-  //       this.post = response.data;
-  //     } catch (error) {
-  //       console.error('게시글 로드 실패: ', error);
-  //     }
-  //   }
-  // },
 };
 </script>
 

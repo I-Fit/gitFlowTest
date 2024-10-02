@@ -80,24 +80,22 @@
         </div>
       </div>
     </div>
-    <Pagination class="pagination"
+    <!-- <Pagination class="pagination"
       :currentPage="currentPage"
       :totalPages="totalPages"
       @page-changed="onPageChange"
-    />
+    /> -->
   </main>
 </template>
 
 <script>
-import Pagination from "@/components/common/Pagination.vue";
+// import Pagination from "@/components/common/Pagination.vue";
 import { useRouter } from "vue-router";
 
 export default {
   name: 'Board',
-  components: {
-    Pagination,
-  },
 
+  
   methods: {
     async fetchPosts() {
       try {
@@ -125,6 +123,7 @@ export default {
       //     console.error('Error fetching posts: ', error);
       //   });
     },
+
     sortPosts() {
       const [order, direction] = this.selectedSort.split('_');
 
@@ -142,28 +141,14 @@ export default {
           console.error('Error fetching sorted posts: ', error);
         });
     },
-
-    viewPost(id) {
-      console.log('viewPost 호출, id: ', id);
-      if (id) {
-        console.log('게시글 id: ', id);
-        this.selectedPostId = id;
-        this.$router.push(`/post/${id}`)
-        .catch(err => {
-          console.error('라우팅 오류: ', err);
-        });
-      } else {
-        console.error('존재하지 않는 게시글입니다');
-      }
-    }
   },
 
   data() {
     return {
       visibleDatas: [],
-      selectedPostId: null,
+      // selectedPostId: null,
       selectedSort: '',
-      posts: []
+      // posts: []
     };
   },
 
@@ -173,13 +158,35 @@ export default {
 
   setup() {
     const router = useRouter();
+
+    // const visibleDatas = ref([]);
+    // const selectedSort = ref('');
+
+    // const fetchPosts = async () => {
+    //   try {
+    //     const response = await fetch('http://localhost:8080/api/board/list');
+    //     if (!response.ok) {
+    //       throw new Error('Network response was not ok');
+    //     }
+    //     const data = await response.json();
+    //     visibleDatas.value = data;
+    //   } catch (error) {
+    //     console.error('게시글 불러오기 실패: ', error);
+    //   }
+    // }
     
     const goToCreatePost = () => {
       router.push("/create-post");
     };
 
+    const viewPost = (postId) => {
+      console.log('Navigating to post with Id: ', postId);
+      router.push({ name: 'Post', params: { id: postId } });
+    }
+
     return {
       goToCreatePost,
+      viewPost,
     }
   }
 
@@ -413,6 +420,7 @@ export default {
     border-radius: 10px;
     margin-top: 10px;
     margin-right: 5px;
+    cursor: pointer;
   }
   
   .tag-items {
