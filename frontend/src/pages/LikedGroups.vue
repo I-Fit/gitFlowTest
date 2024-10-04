@@ -30,7 +30,7 @@
               <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal(group)" />
 
               <img
-                :src="!group.isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')"
+                :src="group.saved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')"
                 class="group-save-icon" @click="likeGroup(group.communityId)" />
 
               <img class="group-join-icon" src="@/assets/images/plus-icon2.png"
@@ -197,7 +197,7 @@ export default {
     // 검색
     const selectedGroupList = async () => {
       try {
-        const response = await apiClient.post("/liked/sort", {
+        const response = await apiClient.get("/liked/sort", {
           params: {
             value: selectedOption.value,
           }
@@ -218,12 +218,12 @@ export default {
         const response = await apiClient.delete("/liked/nolike", {
           data: {
             communityId: group.communityId,
-            saved: !group.isSaved,
+            saved: !group.saved,
           },
         });
 
         if (response.status === 200) {
-          group.isSaved = !group.isSaved;
+          group.saved = !group.saved;
 
           if (!group.isSaved) {
             groups.value = groups.value.filter(g => g.communityId !== communityId);

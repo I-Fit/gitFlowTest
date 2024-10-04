@@ -60,7 +60,7 @@ export default {
                     commit('SET_ACCESSTOKEN', response.data.accessToken);
                     commit('SET_REFRESHTOKEN', response.data.refreshToken);
                     commit('SET_USERID', response.data.userId);
-                    commit('SET_USERNAME', response.data.userName);
+                    commit('SET_USERNAME', response.data.username);
                     commit('SET_USERIMAGE', response.data.userImage);
                     
                     // userImage가 null 일 경우 기본 이미지로 설정
@@ -119,16 +119,13 @@ export default {
                             Authorization: `Bearer ${accessToken}`,
                         },
                     });
-
-                    console.log(response.data);
                     if (response.data) {
                         commit('SET_USERID', response.data.userId);
-                        commit('SET_USERNAME', response.data.userName);
+                        commit('SET_USERNAME', response.data.username);
                         commit('SET_USERIMAGE', response.data.userImage);
 
-                         // userImage가 null 일 경우 기본 이미지로 설정
-                         const userImage = response.data.userImage || require('@/assets/images/default-profile.png');
-                         commit('SET_USERIMAGE', userImage);
+                        const userImage = response.data.userImage || require('@/assets/images/default-profile.png');
+                        commit('SET_USERIMAGE', userImage);
                     }
                 } catch (error) {
                     console.error('사용자 정보 로드 중 오류 발생', error);

@@ -23,7 +23,7 @@
 
 <script>
 import { useRouter } from 'vue-router';
-import { useStore } from "vuex";
+import { useStore } from 'vuex';
 import { computed } from "vue";
 
 export default {
@@ -108,8 +108,9 @@ a:nth-child(1) {
 }
 
 .sign-in-btn img {
-  width: 50px;
+  width: 45px;
   height: 40px;
+  margin-right: 5px;
 }
 
 .sign-in-user-name {

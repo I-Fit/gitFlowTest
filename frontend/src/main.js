@@ -16,4 +16,4 @@ app.use(VueCookies);
 store.dispatch('isLogged/restoreToken');
 
 app.mount("#app");
-app.$cookies.config("7d");
+app.$cookies.config("7d");          

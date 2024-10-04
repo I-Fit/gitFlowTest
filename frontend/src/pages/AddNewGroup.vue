@@ -55,11 +55,11 @@
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 // import axios from 'axios';
 import { toRaw } from 'vue';
-import { useStore } from 'vuex';
+// import { useStore } from 'vuex';
 import apiClient from "@/api/apiClient";
 
 export default {
@@ -67,9 +67,9 @@ export default {
 
   setup() {
     const router = useRouter();
-    const store = useStore();
+    // const store = useStore();
 
-    const userId = computed(() => store.getters.userId);
+    // const userId = computed(() => store.getters.userId);
 
     const title = ref('');
     const sportInput = ref('');
@@ -172,7 +172,25 @@ export default {
     const registerGroup = async () => {
       formData.value.title = title.value;
       title.value = '';
-      formData.value.userId = userId.value ? userId.value : '';
+      
+
+      const requiredFields = [
+        { key: 'title', label: '모임 제목' },
+        { key: 'topboxContent', label: '상세 내용' },
+        { key: 'sport', label: '종목' },
+        { key: 'location', label: '위치' },
+        { key: 'person', label: '인원 수' },
+        { key: 'date', label: '날짜' }
+      ];
+
+      const emptyFields = requiredFields.filter(field => !formData.value[field.key]);
+      if (emptyFields.length > 0) {
+        const messages = emptyFields.map(field => `${field.label}이 비어있습니다`).join('\n');
+        alert(messages);
+        return;
+      }
+
+
       try {
         await apiClient.post('/create-group', formData.value);
         alert("모임이 등록되었습니다.");

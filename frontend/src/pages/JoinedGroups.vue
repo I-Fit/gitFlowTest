@@ -34,7 +34,7 @@
               <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal(group)" />
 
               <img
-                :src="group.isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')"
+                :src="group.saved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')"
                 class="group-save-icon" @click="likeGroup(group.communityId)" />
 
               <img class="group-join-icon" src="@/assets/images/plus-icon2.png"
@@ -231,7 +231,7 @@ export default {
       if (!group) return;   // 그룹을 찾지 못하면 종료
 
       try {
-        const method = group.isSaved ? 'DELETE' : 'POST';
+        const method = group.saved ? 'DELETE' : 'POST';
         const url = '/joined/like';
 
         const response = await apiClient({
@@ -239,12 +239,12 @@ export default {
           url: url,
           data: {
             communityId: group.communityId,
-            saved: !group.isSaved,
+            saved: !group.saved,
           },
         });
 
         if (response.status === 200) {
-          group.isSaved = !group.isSaved;
+          group.saved = !group.saved;
 
         } else {
           console.error("찜 실패", response.data.message);
