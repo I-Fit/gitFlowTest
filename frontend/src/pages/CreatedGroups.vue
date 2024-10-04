@@ -9,38 +9,46 @@
         <p class="line text02" @click="groupJoinlist">모임 참여 내역</p>
         <p class="text03" @click="likeGroup">찜한 모임 내역</p>
       </div>
+
       <div class="party-middle">
         <div class="middle-filter">
+
           <div class="middle-filter-search-box">
             <input type="text" name="search" id="search_input" placeholder="검색어를 입력하세요." class="search-box-input"
               v-model="searchTerm" @keyup.enter="searchGroups" />
             <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" @click="searchGroups" />
           </div>
+
           <select title="정렬" class="middle-filter-sort" v-model="selectedOption" @change="selectedGroupList">
             <option value="" selected disabled>정렬</option>
             <option v-for="option in options" :key="option.value" :value="option.value">
               {{ option.text }}
             </option>
           </select>
+
         </div>
+
         <!-- 참여 한 모임 내역 -->
         <div class="group">
+
           <div v-for="group in groups" :key="group.communityId" class="group-container">
             <div class="unicode-box">
-              <img class="group-detail-icon" src="@/assets/images/info-icon.png"
-                @click="openModal(group.communityId)" />
-              <img
-                :src="isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')"
-                class="group-save-icon" @click="likeGroup" />
-              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
+              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal(group)" />
 
-              <div v-if="showConfirmPopup" class="confirm-popup">
+              <img
+                :src="group.isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')"
+                class="group-save-icon" @click="likeGroup(group.communityId)" />
+
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png"
+                @click="showConfirmPopup = true; currentGroupId = group.communityId" />
+
+              <div v-if="showConfirmPopup && currentGroupId === group.communityId" class="confirm-popup">
                 <div class="popup-content">
-                  <p>모임에 참여하시겠습니까?</p>
+                  <p>모임을 삭제 하시겠습니까?</p>
                   <button class="confirm-btn" @click="confirmDeletion(group.communityId)">
                     확인
                   </button>
-                  <button class="cancle-btn" @click="cancelDeletion">
+                  <button class="cancle-btn" @click="cancelDeletion(group)">
                     취소
                   </button>
                 </div>
@@ -71,8 +79,6 @@
         </div>
         <!-- <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchGroups" /> -->
       </div>
-      <!-- <div class="mygroup-floor">
-      </div> -->
     </div>
     <!-- 모달 창 -->
     <div class="modal" v-if="isModalOpen">
@@ -88,7 +94,7 @@
 import AppNav from "@/components/layout/AppNav.vue";
 import { useRouter } from "vue-router";
 // import Pagination from "@/components/common/Pagination.vue";
-import { usePagination } from "@/utils/pagination";
+// import { usePagination } from "@/utils/pagination";
 import { ref, onBeforeMount } from "vue";
 // import axios from "axios";
 import apiClient from "@/api/apiClient";
@@ -129,12 +135,8 @@ export default {
       router.push({ name: "JoinedGroups" });
     };
 
-    const likeGroup = () => {
-      router.push({ name: "LikedGroups" });
-    };
-
     // 페이지네이션
-    const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
+    // const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
 
     // 사용자 식별 ID의 상태를 가져옴
     // const userId = computed(() => store.getters["isLogged/userId"]);
@@ -160,22 +162,6 @@ export default {
     const toggleTooltip = () => {
       isTooltipVisible.value = !isTooltipVisible.value;
     };
-    // 내가 만든 모임 삭제 후 다시 로드
-    const showConfirmPopup = ref(null);
-    const confirmDeletion = async (communityId) => {
-      try {
-        await apiClient.delete('/created/delete', {
-          data: communityId,
-        });
-      } catch (error) {
-        console.error("Error", error);
-      } finally {
-        await loadgroups();
-      }
-    };
-    const cancelDeletion = () => {
-      showConfirmPopup.value = null;
-    };
 
     //  검색어
     const searchGroups = async () => {
@@ -183,10 +169,12 @@ export default {
         return;
       }
       try {
-        const response = await apiClient.post("/created/search", {
-          searchValue: searchTerm.value,
+        const response = await apiClient.get("/created/search", {
+          params: {
+            searchTerm: searchTerm.value,
+          }
         });
-        groups.value = response.data.groups;
+        groups.value = response.data;
       } catch (error) {
         console.error("오류가 발생", error);
       }
@@ -203,46 +191,87 @@ export default {
 
     const selectedGroupList = async () => {
       try {
-        const response = await apiClient.post("/created/sort", {
-          sortValue: selectedOption.value,
+        const response = await apiClient.get("/created/sort", {
+          params: {
+            value: selectedOption.value,
+          }
         });
         // 서버에서 받은 모임 리스트
-        groups.value = response.data.groups;
+        groups.value = response.data;
       } catch (error) {
         console.error("오류가 발생", error);
       }
     };
 
-    // 모임 찜 이벤트
-    // 각각의 모임의 좋아요가 되도록 구현
-    // 좋아요가 되면 서버에 모임 Id, 좋아요의 상태가 true인 것을 서버에 보내준다
-    const isHeartFilled = ref(false);
-    const toggleHeart = async (communityId) => {
-      const group = groups.value.find(group => group.communityid === communityId);
-      if (group) {
-        group.isHeartFilled = !group.isHeartFilled;
+    // 내가 만든 모임 삭제 후 다시 로드
+    const showConfirmPopup = ref(false);
+    const currentGroupId = ref(null);
 
-        try {
-          await apiClient.post("/created/delete", {
-            communityId: group.communityId,
-            isHeartFilled: group.isHeartFilled,
-          });
-        } catch (error) {
-          console.error("Error", error);
+    const confirmDeletion = async (communityId) => {
+      const group = groups.value.find(group => group.communityId === communityId);
 
-          // 서버 요청 실패 시 상태 롤백
-          group.isHeartFilled = !group.isHeartFilled;
-        }
+      if (!group) {
+        console.error("유효하지 않는 모임 입니다.", communityId);
+        return;
+      }
+
+      try {
+        await apiClient.delete('/created/delete', {
+          params: {
+            communityId: communityId,
+          },
+        });
+        alert("모임 삭제 완료")
+      } catch (error) {
+        console.error("Error", error);
+      } finally {
+        await loadgroups();
+        showConfirmPopup.value = false;
+        currentGroupId.value = null;
       }
     };
+    //  참석 모달 닫기
+    const cancelDeletion = () => {
+      showConfirmPopup.value = false;
+      currentGroupId.value = null;
+    };
+
+    // 찜
+    const likeGroup = async (communityId) => {
+      const group = groups.value.find(g => g.communityId === communityId);
+      if (!group) return;   // 그룹을 찾지 못하면 종료
+
+      try {
+        const method = group.isSaved ? 'DELETE' : 'POST';
+        const url = '/created/like';
+
+        const response = await apiClient({
+          method: method,
+          url: url,
+          data: {
+            communityId: group.communityId,
+            saved: !group.isSaved,
+          },
+        });
+
+        if (response.status === 200) {
+          group.isSaved = !group.isSaved;
+
+        } else {
+          console.error("찜 실패", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error", error);
+      }
+    }
 
     return {
       loadgroups,
-      currentPage,
-      totalPages,
-      visibleDatas,
-      fetchdatas,
-      onPageChange,
+      // currentPage,
+      // totalPages,
+      // visibleDatas,
+      // fetchdatas,
+      // onPageChange,
       showConfirmPopup,
 
       groups,
@@ -251,8 +280,6 @@ export default {
       toggleTooltip,
       confirmDeletion,
       cancelDeletion,
-      isHeartFilled,
-      toggleHeart,
 
       options,
       selectedGroupList,

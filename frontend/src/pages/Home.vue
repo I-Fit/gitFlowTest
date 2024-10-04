@@ -61,180 +61,29 @@
 
         <!-- 생성된 모임 영역 -->
         <div class="group">
-          <div class="group-container">
-            <div class="unicode-box">
-              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-              <img
-                :src="isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')"
-                class="group-save-icon" @click="likeGroup" />
-              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
-
-              <div v-if="showConfirmPopup" class="confirm-popup">
-                <div class="popup-content">
-                  <p>모임에 참여하시겠습니까?</p>
-                  <button class="confirm-btn" @click="confirmDeletion">
-                    확인
-                  </button>
-                  <button class="cancle-btn" @click="cancelDeletion">
-                    취소
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="sport-image-box">
-              <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
-            </div>
-            <div class="group-information">
-              <div class="user-info-and-group-sport">
-                <p class="sport-text">요가</p>
-                <div class="user-info">
-                  <span class="user-name">yoga123</span>
-                  <img src="../assets/images/user-img-one.png" alt="사용자 이미지" class="user-img">
-                </div>
-              </div>
-              <div class="group-text">
-                <p class="title"> 월요일 아침 같이 요가 해요 ~!</p>
-                <p class="date-and-time">24.08.26 (월) 6:00 <span class="location">| 강남구</span></p>
-                <p class="person">인원 : 2 / 5</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="group-container">
-            <div class="unicode-box">
-              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-              <img :src="isSaved ? require('@/assets/images/saved-icon.png') : require('@/assets/images/save-icon.png')"
-                class="group-save-icon" @click="likeGroup" />
-              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
-
-              <div v-if="showConfirmPopup" class="confirm-popup">
-                <div class="popup-content">
-                  <p>모임에 참여하시겠습니까?</p>
-                  <button class="confirm-btn" @click="confirmDeletion">
-                    확인
-                  </button>
-                  <button class="cancle-btn" @click="cancelDeletion">
-                    취소
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="sport-image-box">
-              <img src="../assets/images/running-image.png" alt="러닝 이미지" class="sport-image">
-            </div>
-            <div class="group-information">
-              <div class="user-info-and-group-sport">
-                <p class="sport-text">러닝</p>
-                <div class="user-info">
-                  <span class="user-name">러닝걸</span>
-                  <img src="../assets/images/user-img-two.png" alt="사용자 이미지" class="user-img">
-                </div>
-              </div>
-              <div class="group-text">
-                <p class="title">이번 주말 한강 러닝 고?!</p>
-                <p class="date-and-time">24.08.31 (토) 8:00 <span class="location">| 강남구</span></p>
-                <p class="person">인원 : 0 / 6</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="group-container">
-            <div class="unicode-box">
-              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-              <img :src="isSaved ? require('@/assets/images/saved-icon.png') : require('@/assets/images/save-icon.png')"
-                class="group-save-icon" @click="likeGroup" />
-              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
-              <div v-if="showConfirmPopup" class="confirm-popup">
-                <div class="popup-content">
-                  <p>모임에 참여하시겠습니까?</p>
-                  <button class="confirm-btn" @click="confirmDeletion">
-                    확인
-                  </button>
-                  <button class="cancle-btn" @click="cancelDeletion">
-                    취소
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="sport-image-box">
-              <img src="../assets/images/gym-image.png" alt="웨이트 이미지" class="sport-image">
-            </div>
-            <div class="group-information">
-              <div class="user-info-and-group-sport">
-                <p class="sport-text">웨이트</p>
-                <div class="user-info">
-                  <span class="user-name">안유진</span>
-                  <img src="../assets/images/user-img-three.png" alt="사용자 이미지" class="user-img">
-                </div>
-              </div>
-              <div class="group-text">
-                <p class="title"> 퇴근 후 50분 웨이트 인원 모집!!! 선착순 3명</p>
-                <p class="date-and-time">24.08.26 (월) 20:00 <span class="location">| 용산구</span></p>
-                <p class="person">인원 : 1 / 3</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="group-container">
-            <div class="unicode-box">
-              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal" />
-              <img :src="isSaved ? require('@/assets/images/saved-icon.png') : require('@/assets/images/save-icon.png')"
-                class="group-save-icon" @click="likeGroup" />
-              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
-              <div v-if="showConfirmPopup" class="confirm-popup">
-                <div class="popup-content">
-                  <p>모임에 참여하시겠습니까?</p>
-                  <button class="confirm-btn" @click="confirmDeletion">
-                    확인
-                  </button>
-                  <button class="cancle-btn" @click="cancelDeletion">
-                    취소
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="sport-image-box">
-              <img src="../assets/images/running-image.png" alt="요가 이미지" class="sport-image">
-            </div>
-            <div class="group-information">
-              <div class="user-info-and-group-sport">
-                <p class="sport-text">러닝</p>
-                <p class="closing-soon">마감임박</p>
-                <div class="user-info">
-                  <span class="user-name">런닝맨</span>
-                  <img src="../assets/images/user-img-four.png" alt="사용자 이미지" class="user-img">
-                </div>
-              </div>
-              <div class="group-text">
-                <p class="title">오늘 밤 가볍게 러닝하실 분</p>
-                <p class="date-and-time">24.08.26 (월) 21:30 <span class="location">| 마포구</span></p>
-                <p class="person">인원 : 5 / 6</p>
-              </div>
-            </div>
-          </div>
-
           <div v-for="group in groups" :key="group.communityId" class="group-container">
             <div class="unicode-box">
-              <img class="group-detail-icon" src="@/assets/images/info-icon.png"
-                @click="openModal(group.communityId)" />
-              <img
-                :src="isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')"
-                class="group-save-icon" @click="likeGroup" />
-              <img class="group-join-icon" src="@/assets/images/plus-icon2.png" @click="showConfirmPopup = true" />
+              <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal(group)" />
 
-              <div v-if="showConfirmPopup" class="confirm-popup">
+              <img
+                :src="group.isSaved ? require('@/assets/images/saved-icon3.png') : require('@/assets/images/save-icon.png')"
+                class="group-save-icon" @click="likeGroup(group.communityId)" />
+
+              <img class="group-join-icon" src="@/assets/images/plus-icon2.png"
+                @click="showConfirmPopup = true; currentGroupId = group.communityId" />
+
+              <div v-if="showConfirmPopup && currentGroupId === group.communityId" class="confirm-popup">
                 <div class="popup-content">
                   <p>모임에 참여하시겠습니까?</p>
                   <button class="confirm-btn" @click="confirmDeletion(group.communityId)">
                     확인
                   </button>
-                  <button class="cancle-btn" @click="cancelDeletion">
+                  <button class="cancle-btn" @click="cancelDeletion(group)">
                     취소
                   </button>
                 </div>
               </div>
             </div>
-
             <div class="sport-image-box">
               <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
             </div>
@@ -256,8 +105,9 @@
               </div>
             </div>
           </div>
+          <!-- <infinite-loading @infinite="load"></infinite-loading> -->
+          <!-- <div v-if="loading">Loading...</div> -->
         </div>
-        <!-- <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" /> -->
       </div>
     </div>
 
@@ -277,14 +127,16 @@ import { ref, computed, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useStore } from "vuex";
-// import Pagination from "@/components/common/HomePagination";
-import { usePagination } from "@/utils/pagination";
+// import { usePagination } from "@/utils/pagination";
 import apiClient from '@/api/apiClient';
+// import InfiniteLoading from 'vue3-infinite-loading';
+
 
 export default {
   name: "Home",
   components: {
     // Pagination,
+    // InfiniteLoading,
   },
 
   data() {
@@ -320,7 +172,6 @@ export default {
       ],
       slideInterval: null,
       sortOption: "",
-      isSaved: false,
       isModalOpen: false, // 모달 창 상태
       selectedItem: null, // 선택된 아이템
       locations: [],  // 지역 데이터 저장 배열
@@ -361,19 +212,6 @@ export default {
       this.currentIndex =
         this.currentIndex < this.items.length - 1 ? this.currentIndex + 1 : 0;
     },
-    fetchLocationData() {
-      fetch("https://api.example.com/locations", {    // todo - 실제 api 주소의 엔드포인트로 수정 필요
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",   // todo - api 응답 데이터 구조 확인 후 수정 필요
-        },
-      })
-        .then(response => response.json())
-        .then(data => {
-          this.locations = data;
-        })
-        .catch(error => console.error("Error fetching location data:", error));
-    },
     sortItems(option) {
       switch (option) {
         case "1":
@@ -395,9 +233,6 @@ export default {
         default:
           break;
       }
-    },
-    likeGroup() {
-      this.isSaved = !this.isSaved;
     },
     openModal(group) {
       this.selectedItem = {
@@ -423,14 +258,64 @@ export default {
 
     const router = useRouter();
     const store = useStore();
+
     // 여러 모임 데이터 배열에 저장
     const groups = ref([]);
+    // const displayedGroups = ref([]);
+    const perPage = 12;
+    const loading = ref(false);
+    let page = ref(1);
+
     const sports = ref([]);   // 운동 종목을 저장할 객체
     const searchTerm = ref('');   // 검색어를 저장할 객체
-    const PerPage = 8;
     const userId = computed(() => store.getters['isLogged/userId']);
 
-    const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, PerPage);
+    // const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, PerPage);
+
+    onBeforeMount(async () => {
+      await sportList();
+      await groupList();
+    });
+
+    // creategroup에서 생성한 모임에 사용자 식별 ID값을 같이 보내줘서
+    // 서버에서 username, user_img를 받아옴
+    const groupList = async () => {
+      loading.value = true;
+      try {
+        const response = await axios.get('/api/group-list');
+        // 서버로부터 받은 데이터를 groups배열에 저장
+        groups.value = response.data;
+        //  처음 몇개만 표시
+      } catch (error) {
+        console.error("Error", error);
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    // const load = async ($state) => {
+    //   if (loading.value) return;
+    //   loading.value = true;
+    //   try {
+    //     const response = await axios.get('/api/group-list', {
+    //       params: { page: page.value, perPage: perPage }
+    //     });
+    //     const json = response.data;
+
+    //     if (json.length < 1) {
+    //       $state.complete();    // 더 이상 데이터가 없음을 알림
+    //     } else {
+    //       groups.value.push(...json);
+    //       $state.loaded();      // 로딩 완료 상태로 변경
+    //     }
+    //     page.value++;
+    //   } catch (error) {
+    //     console.error('Error', error);
+    //     $state.complete();        // 에러 발생 시 로딩 완료 상태로 변경
+    //   } finally {
+    //     loading.value = false;
+    //   }
+    // };
 
     //  운동 종목 요청
     const sportList = async () => {
@@ -541,26 +426,6 @@ export default {
       }
     };
 
-    onBeforeMount(async () => {
-      await sportList();
-      await groupList();
-    });
-
-    // creategroup에서 생성한 모임에 사용자 식별 ID값을 같이 보내줘서
-    // 서버에서 username, user_img를 받아옴
-    const groupList = async () => {
-      try {
-        const response = await axios.get('/api/group-list');
-
-        // 서버로부터 받은 데이터를 groups배열에 저장
-        groups.value = response.data;
-        fetchdatas(1);  // 데이터 로딩 후 초기 페이지 설정
-
-      } catch (error) {
-        console.error("Error", error);
-      }
-    };
-
     const isTooltipVisible = ref(true);
 
     const toggleTooltip = () => {
@@ -570,33 +435,66 @@ export default {
     // 참석 모달 연 후 참석 버튼 누르면 페이지 이동
     // 헤더에 토큰(사용자 식별 키)과 모임 식별 키를 query로 보내줌
     const showConfirmPopup = ref(false);
+    const currentGroupId = ref(null);
 
     const confirmDeletion = async (communityId) => {
       const group = groups.value.find(group => group.communityId === communityId);
 
       if (!group) {
-        console.error("유효하지 않는 Id입니다.", communityId);
+        console.error("유효하지 않는 모임 입니다.", communityId);
         return;
       }
 
       try {
-        await apiClient.post('/join-group', {
+        await apiClient.post('/home/join-group', {
           communityId: communityId,
         });
-        router.push({ name: "JoinedGroups", query: { communityId } });
+        router.push({ name: "JoinedGroups" });
         alert("모임 참석 완료")
       } catch (error) {
         console.error("Error", error);
+      } finally {
+        showConfirmPopup.value = false;
+        currentGroupId.value = null;
       }
-
-      showConfirmPopup.value = false;
     };
-
+    //  참석 모달 닫기
     const cancelDeletion = () => {
       showConfirmPopup.value = false;
+      currentGroupId.value = null;
     };
 
+    // 찜
+    const likeGroup = async (communityId) => {
+      const group = groups.value.find(g => g.communityId === communityId);
+      if (!group) return;   // 그룹을 찾지 못하면 종료
+
+      try {
+        const method = group.isSaved ? 'DELETE' : 'POST';
+        const url = '/home/like-group';
+
+        const response = await apiClient({
+          method: method,
+          url: url,
+          data: {
+            communityId: group.communityId,
+            saved: !group.isSaved,
+          },
+        });
+
+        if (response.status === 200) {
+          group.isSaved = !group.isSaved;
+
+        } else {
+          console.error("찜 실패", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error", error);
+      }
+    }
+
     return {
+      likeGroup,
       selectedOption,
       options,
       date,
@@ -604,13 +502,12 @@ export default {
       time,
       timeSelcet,
       groups,
+      // displayedGroups,
+      loading,
+      // load,
       userId,
-
-      currentPage,
-      totalPages,
-      visibleDatas,
-      onPageChange,
-      fetchdatas,
+      page,
+      perPage,
 
       showConfirmPopup,
       toggleTooltip,
@@ -707,6 +604,12 @@ main {
   height: 100%;
   display: flex;
   justify-content: center;
+  flex-grow: 1;
+}
+
+.scroll-container {
+  overflow-y: auto;
+  max-height: 80vh;
 }
 
 
@@ -1058,6 +961,42 @@ main {
   background-color: #87cefa;
   transform: scale(0.98);
   /* 클릭 시 버튼 크기 살짝 축소 */
+}
+
+/* 모달 창 스타일 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 600px;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.modal-content p {
+  font-size: 16px;
+  text-align: start;
 }
 
 

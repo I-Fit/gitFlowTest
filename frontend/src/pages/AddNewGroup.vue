@@ -1,4 +1,4 @@
-tap<template>
+<template>
   <main>
     <div class="main-container">
       <div class="contain-topwrap">
@@ -55,11 +55,12 @@ tap<template>
 </template>
 
 <script>
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+// import axios from 'axios';
 import { toRaw } from 'vue';
 import { useStore } from 'vuex';
+import apiClient from "@/api/apiClient";
 
 export default {
   name: "AddNewGroup",
@@ -87,7 +88,7 @@ export default {
       setPerson();
     };
 
-    const formData = reactive({
+    const formData = ref({
       title: "",
       topboxContent: "",
       sport: "종목",
@@ -115,48 +116,53 @@ export default {
     watch(date, (newDate) => {
       if (newDate) {
         const dateObject = new Date(newDate);
-        formData.date = dateObject.toISOString();
+        formData.value.date = dateObject.toISOString();
       } else {
-        formData.date = "";
+        formData.value.date = "";
       }
+    });
+
+    watch(personInput, (newValue) => {
+      formData.value.person = newValue;
     });
 
     // 메서드
     const updateFormData = () => {
-      formData.date = date.value ? new Date(date.value).toISOString() : "";
+      formData.value.date = date.value ? new Date(date.value).toISOString() : "";
     };
 
     const updateTopboxContent = () => {
-      formData.topboxContent = (document.querySelector('.topbox-content') || '').innerText;
+      formData.value.topboxContent = (document.querySelector('.topbox-content') || '').innerText;
     };
 
     const selectCategory = (category) => {
-      formData.sport = category;
+      formData.value.sport = category;
       selectedCategory.value = category;
     };
 
     const setSport = () => {
-      formData.sport = sportInput.value;
+      formData.value.sport = sportInput.value;
     };
     const openDaumApi = () => {
       new window.daum.Postcode({
         oncomplete: (data) => {
           console.log("받은 주소 : ", data)
-          this.formData.location = data.sigungu;
+          formData.value.location = data.sigungu;
+          locationInput.value = data.sigungu;
         }
       }).open();
     };
 
     const setLocation = () => {
-      formData.location = locationInput.value;
+      formData.value.location = locationInput.value;
     };
 
     const handleDateChange = (event) => {
-      formData.selectedDate = event.target.value;
+      formData.value.selectedDate = event.target.value;
     };
 
     const setPerson = () => {
-      formData.person = personInput.value;
+      formData.value.person = personInput.value;
     };
 
 
@@ -164,11 +170,11 @@ export default {
     // 사용자 식별 Id값도 formData에 추가해서 서버에 보내줘야 한다.
     // 모임 식별 Id값은 서버에서 만들어서 다시 응답해주는 형식?
     const registerGroup = async () => {
-      formData.title = title.value;
+      formData.value.title = title.value;
       title.value = '';
-      formData.userId = userId.value ? userId.value : '';
+      formData.value.userId = userId.value ? userId.value : '';
       try {
-        await axios.post('/api/create-group', formData);
+        await apiClient.post('/create-group', formData.value);
         alert("모임이 등록되었습니다.");
         router.push({ name: "Home" });
       } catch (error) {
