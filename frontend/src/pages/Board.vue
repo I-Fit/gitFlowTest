@@ -80,16 +80,10 @@
         </div>
       </div>
     </div>
-    <!-- <Pagination class="pagination"
-      :currentPage="currentPage"
-      :totalPages="totalPages"
-      @page-changed="onPageChange"
-    /> -->
   </main>
 </template>
 
 <script>
-// import Pagination from "@/components/common/Pagination.vue";
 import { useRouter } from "vue-router";
 
 export default {
@@ -109,20 +103,6 @@ export default {
       } catch (error) {
         console.error('게시글 불러오기 실패: ', error);
       }
-
-      // fetch('http://localhost:8080/api/board/list')
-      //   .then(response => {
-      //     if (!response.ok) {
-      //       throw new Error('Network response was not ok');
-      //     }
-      //     return response.json();
-      //   })
-      //   .then(data => {
-      //     this.visibleDatas = data;
-      //   })
-      //   .catch(error => {
-      //     console.error('Error fetching posts: ', error);
-      //   });
     },
 
     sortPosts() {
@@ -147,9 +127,7 @@ export default {
   data() {
     return {
       visibleDatas: [],
-      // selectedPostId: null,
       selectedSort: '',
-      // posts: []
     };
   },
 
@@ -159,22 +137,6 @@ export default {
 
   setup() {
     const router = useRouter();
-
-    // const visibleDatas = ref([]);
-    // const selectedSort = ref('');
-
-    // const fetchPosts = async () => {
-    //   try {
-    //     const response = await fetch('http://localhost:8080/api/board/list');
-    //     if (!response.ok) {
-    //       throw new Error('Network response was not ok');
-    //     }
-    //     const data = await response.json();
-    //     visibleDatas.value = data;
-    //   } catch (error) {
-    //     console.error('게시글 불러오기 실패: ', error);
-    //   }
-    // }
     
     const goToCreatePost = () => {
       router.push("/create-post");

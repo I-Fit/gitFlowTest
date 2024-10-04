@@ -115,7 +115,7 @@ const routes = [
   },
 
   {
-    path: "/edit-post",
+    path: "/edit-post/:id",
     name: "EditPost",
     // meta: { showNav: false },
     component: EditPost,

@@ -161,43 +161,6 @@ export default {
       } else {
         alert('이미지를 첨부해주세요!');
       }
-      // FormData 객체 생성
-    //   const formData = new FormData();
-
-    //   formData.append('title', this.formData.title);
-    //   formData.append('content', this.formData.content);
-    //   formData.append('exercise', this.formData.exercise);
-    //   formData.append('location', this.formData.location);
-
-    //   if (this.formData.imageStr) {
-    //     const reader = new FileReader();
-
-    //     reader.onloadend = async () => {
-    //   const base64Image = reader.result.split(',')[1]; // Base64 문자열만 추출
-    //   formData.append('imageStr', base64Image); // Base64 이미지 추가
-
-    //   // 게시글 전송
-    //   try {
-    //     const response = await axios.post('http://localhost:8080/api/board/new', formData, {
-    //       'Content-Type': 'multipart/form-data'
-    //     });
-
-    //     console.log(response.data);
-    //     if (response.data.status === "success") {
-    //       alert('게시글이 성공적으로 등록되었습니다!');
-    //       this.$router.push('/board');  // 게시판 메인으로 이동
-    //     }
-    //   } catch (error) {
-    //     console.error('게시글 작성 실패: ', error);
-    //     alert('게시글 작성에 실패했습니다.');
-    //   }
-    // };
-
-    //     reader.readAsDataURL(this.formData.imageStr);
-    //   } else {
-    //     alert('이미지를 첨부해주세요!');
-    //   }
-
     }
     
   },

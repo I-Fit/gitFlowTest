@@ -10,12 +10,11 @@
         </div>
         <div class="user-option" @click="toggleActions">
           <div class="dot-icon"></div>
-          <!-- <PostActions
-            :visible="showActions"
-            @navigate="handleNavigation"
-            class="post-actions"
-          /> -->
         </div>
+        <PostActions 
+          :visible="showActions"
+          @navigate="handleNavigation"
+        />
       </div>
 
       <!-- 제목 및 좋아요 버튼 -->
@@ -55,22 +54,28 @@
 </template>
 
 <script>
+import PostActions from '@/components/common/PostActions.vue';
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
   name: 'Post',
-  // props: ["id"],
+  components: {
+    PostActions,
+  },
   
   setup() {
     const route = useRoute();
+    const router = useRouter();
+
     const post = ref(null); // 게시글 데이터 저장할 변수
     const userId = ref('')
     const createdAt = ref('');
-    const isHeartFilled = ref(false);
     const postId = route.params.id;
-    console.log('Post Id: ', postId);
+
+    const isHeartFilled = ref(false);
+    const showActions = ref(false);
     
     // 게시글 데이터 가져오기
     const fetchPost = async () => {
@@ -99,6 +104,30 @@ export default {
       }
     };
 
+    const toggleActions = () => {
+      showActions.value = !showActions.value;
+    };
+
+    const handleNavigation = async (action) => {
+      if (action === 'EditPost') {
+        showActions.value = false;
+        router.push({ path: `/edit-post/${postId}` });
+      } else if (action === 'delete') {
+        await deletePost();
+      }
+    };
+
+    const deletePost = async () => {
+      if (confirm('정말로 삭제하시겠습니까?')) {
+        try {
+          await axios.delete(`http://localhost:8080/api/board/post/${postId}`);
+          router.push(`/board`);
+        } catch(error) {
+          console.error('게시물 삭제 실패: ', error);
+        }
+      }
+    };
+
     onMounted(() => {
       fetchPost();
     });
@@ -109,6 +138,9 @@ export default {
       createdAt,
       isHeartFilled,
       toggleHeart,
+      showActions,
+      toggleActions,
+      handleNavigation,
     };
   },
 };
@@ -195,7 +227,6 @@ input {
 }
 
 .post-actions {
-  position: absolute;
   top: -5px; /* Adjust this value as needed */
   right: -50px;
   z-index: 10;

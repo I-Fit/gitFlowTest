@@ -6,20 +6,21 @@
           <div class="changeimages-icon" @click="triggerFileInput"></div>
           <span>이미지 변경</span>
           <!-- 파일 업로드 input 추가 -->
-          <input type="file" ref="fileInput" @change="onFileChange" accept="images/*" multiple style="display: none;" />
+          <input type="file" ref="fileInput" @change="onFileChange" accept="image/*" multiple style="display: none;" />
         </div>
         <div class="content-title">
-          <textarea v-model="title" type="text" placeholder="제목을 입력하세요."></textarea>
+          <textarea v-model="formData.title" placeholder="제목을 입력하세요." required></textarea>
         </div>
-        <div class="content-box" contenteditable="true" @input="onContentInput" ref="contentBox">
-          <div class="contentbox-images"></div>
-          <img src="@/assets/images/riding-1.png" alt="" />
-          <p>힘들었지만, 보람된 시간이였습니다.</p>
+        <div class="content-box" ref="contentBox" contenteditable="true" @input="onContentInput" placeholder="내용을 입력하세요">
+          <div v-html="formData.content"></div>
+        </div>
+        <div class="content-image">
+          <img v-if="formData.imageStr" :src="formData.imageStr" alt="게시글 이미지" style="width: 100%; height: auto; margin-bottom: 10px;" />
         </div>
         <div class="content-topic">
-          <p class="item topic-item">종목</p>
-          <p class="item">지역</p>
-          <p class="item">인원</p>
+          <p class="item topic-item" v-if="formData.exercise">{{ formData.exercise }}</p>
+          <p class="item topic-item" id="location" v-if="formData.location">{{ formData.location }}</p>
+          <!-- <p class="item">인원</p> -->
         </div>
       </div>
       <div class="main-feature">
@@ -33,20 +34,20 @@
           </div>
         </div>
         <div class="feature-input">
-          <input type="text" v-model="activity" class="input-framebox" placeholder="운동명을 입력하세요." />
-          <button class="frame-btn" @click="confirmActivity">확인</button>
+          <input class="input-box" type="text" v-model="exerciseInput" @keydown.enter="setExercise" placeholder="운동명을 입력하세요." />
+          <button class="confirm-btn" @click="setExercise">확인</button>
         </div>
         <p class="category-text">Choose Location</p>
         <div class="feature-input">
-          <input type="text" v-model="location" class="input-framebox" placeholder="위치를 검색하세요." />
-          <button class="frame-btn" @click="confirmLocation">확인</button>
+          <input class="input-box" type="text" v-model="formData.location" @click="openDaumApi" placeholder="위치를 검색하세요." />
+          <button class="confirm-btn" @click="setLocation">확인</button>
         </div>
-        <p class="category-text">Choose Group Size</p>
+        <!-- <p class="category-text">Choose Group Size</p>
         <div class="feature-input">
-          <input type="text" v-model="groupSize" class="input-framebox" placeholder="인원을 입력하세요." />
-          <button class="frame-btn" @click="confirmGroupSize">확인</button>
-        </div>
-        <button class="feature-modify" @click="confirmSubmit">수정</button>
+          <input type="text" v-model="groupSize" class="input-box" placeholder="인원을 입력하세요." />
+          <button class="confirm-btn" @click="confirmGroupSize">확인</button>
+        </div> -->
+        <button class="feature-modify" @click="confirmSubmit">수정 완료</button>
       </div>
     </div>
   </main>
@@ -54,138 +55,202 @@
 
 <script>
 import axios from "axios";
-import { toRaw, ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
 export default {
-  name: 'CreatePost',
+  name: 'EditPost',
+  // data() {
+  //   return {
+  //     formData: {
+  //       title: '',
+  //       content: '',
+  //       imageStr: null,
+  //       exercise: '',
+  //       location: '',
+  //     },
+  //     responseMessage: '',
+  //     exerciseInput: '',
+  //     categories: ['운동1', '운동2', '운동3'],  // todo
+  //   };
+  // },
+  // methods: {
+  //   triggerFileInput() {
+  //     this.$refs.fileInput.click();
+  //   },
+
+  //   onFileChange(event) {
+  //     const file = event.target.files[0];
+  //     if (file) {
+  //       this.formData.imageStr = file;
+        
+  //       const reader = new FileReader();
+  //       reader.onload = (e) => {
+  //         //content-box에 이미지 추가
+  //         const img = document.createElement('img');
+  //         img.src = e.target.result;
+  //         img.style.width = '100%';
+  //         img.style.height = 'auto';
+  //         img.style.marginBottom = '10px';
+
+  //         const contentBox = this.$refs.contentBox;
+  //         contentBox.innerHTML += img.outerHTML;
+  //         contentBox.focus();
+  //       };
+  //       reader.readAsDataURL(file);
+  //     }
+  //   },
+
+  //   onContentInput(event) {
+  //     this.formData.content = event.target.innerText;
+  //   },
+
+  //   setExercise() {
+  //     this.formData.exercise = this.exerciseInput;
+  //     this.exerciseInput = '';
+  //   },
+
+  //   openDaumApi() {
+  //     new window.daum.Postcode({
+  //       oncomplete: (data) => {
+  //         console.log("받은 주소: ", data);
+  //         this.formData.location = data.sigungu;
+  //       }
+  //     }).open();
+  //   },
+
+  //   async confirmSubmit() {
+  //     const formData = new FormData();
+  //     formData.append('title', this.formData.title);
+  //     formData.append('content', this.formData.content);
+  //     formData.append('exercise', this.formData.exercise);
+  //     formData.append('location', this.formData.location);
+
+  //     if (this.formData.imageStr) {
+  //       formData.append('imageStr', this.formData.imageStr);
+  //     }
+
+  //     try {
+  //       const response = await axios.put(`http://localhost:8080/api/board/update/${this.postId}`, formData, {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       });
+
+  //       if (response.data.status === "success") {
+  //         alert('게시글이 성공적으로 수정되었습니다!');
+  //         this.$router.push(`/post/${this.postId}`);  // 수정 후 상세 페이지로 리다이렉션
+  //       }
+  //     } catch (error) {
+  //       console.error('게시글 수정 실패: ', error);
+  //       alert('게시글 수정이 실패했습니다.');
+  //     }
+
+  //   }
+  // },
+  
   setup() {
-    const router = useRouter();
-    const store = useStore();
-
-    // State
-    const title = ref('');
-    const sportInput = ref('');
-    const locationInput = ref('');
-    const personInput = ref('');
-    const selectedCategory = ref(null);
-
-    const formData = reactive({
+    const route = useRoute();
+    const postId = route.params.id;
+    const formData = ref({
       title: '',
-      sport: '종목',
+      content: '',
+      imageStr: null,
+      exercise: '',
       location: '',
-      person: '',
-      date: '',
-      userId: store.getters.userId || '', // Vuex에서 userId 가져오기
     });
 
-    console.log(toRaw(formData));
+    const fetchPost = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/board/post/${postId}`);
 
-    const categories = [
-      '러닝', '웨이트',
-      '라이딩', '요가',
-      '수영', '등산',
-      '테니스', '클라이밍',
-      '필라테스', 'GX'
-    ];
+        const post = response.data;
+        formData.value.title = post.title;
+        formData.value.content = post.content;
+        formData.value.exercise = post.exercise;
+        formData.value.location = post.location;
+        formData.value.imageStr = post.imageStr;
 
-    // Methods
+        if (post.imageStr) {
+          const img = `<img src="${post.imageStr}" style="width: 100%; height: auto; margin-bottom: 10px;" alt="게시글 이미지" />`;
+          // const contentBox = document.querySelector('.content-box');
+          
+          formData.value.content = img + formData.value.content;
+
+          // const img = document.createElement('img');
+          // img.src = post.imageStr;
+          // img.style.width = '100%';
+          // img.style.height = 'auto';
+          // img.style.marginBottom = '10px';
+          
+          // contentBox.appendChild(img);
+          
+        }
+      } catch (error) {
+        console.error('게시글 로드 실패: ', error);
+      }
+    };
+
     const triggerFileInput = () => {
       document.querySelector('input[type="file"]').click();
     };
 
     const onFileChange = (event) => {
-      const files = event.target.files;
-      const contentBox = document.querySelector('.content-box');
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+      const file= event.target.files[0];
+      if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          const img = document.createElement('img');
-          img.src = e.target.result;
-          img.style.maxWidth = '100%';
-          img.style.display = 'block';
-          img.style.margin = '10px 0';
-          contentBox.appendChild(img);
-          contentBox.appendChild(document.createElement('br'));
+          formData.value.imageStr = e.target.result;
+
+          const img = `<img src="${e.target.result}" style="width: 100%; height: auto; margin-bottom: 10px;" alt="게시글 이미지" />`;
+          formData.value.content = img + formData.value.content;
+          // const contentBox = document.querySelector('.content-box');
+          // contentBox.innerHTML = '';
+          // contentBox.innerHTML += `<img src="${e.target.result}" style="width: 100%; height: auto; margin-bottom: 10px;" />`;
         };
         reader.readAsDataURL(file);
       }
     };
 
     const onContentInput = (event) => {
-      formData.content = event.target.innerHTML;
+      formData.value.content = event.target.innerHTML;
     };
 
-    const selectCategory = (category) => {
-      formData.sport = category;
-      selectedCategory.value = category;
-    };
+    const confirmSubmit = async () => {
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.value.title);
+      formDataToSend.append('content', formData.value.content);
+      formDataToSend.append('exercise', formData.value.exercise);
+      formDataToSend.append('location', formData.value.location);
 
-    const handleEnterKey = () => {
-      setSport();
-      setLocation();
-      setPerson();
-    };
+      if (formData.value.imageStr) {
+        formDataToSend.append('imageStr', formData.value.imageStr);
+      }
 
-    const setSport = () => {
-      formData.sport = sportInput.value;
-    };
+      try {
+        const response = await axios.put(`http://localhost:8080/api/board/update/${postId}`, formDataToSend, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
 
-    const setLocation = () => {
-      formData.location = locationInput.value;
-    };
-
-    const setPerson = () => {
-      formData.person = personInput.value;
-    };
-
-    const confirmSubmit = () => {
-      if (confirm('글 작성을 완료하시겠습니까?')) {
-        submitData();
+        if (response.data.status === "success") {
+          alert('게시글이 성공적으로 수정되었습니다!');
+          this.$router.push('/board');
+        }
+      } catch (error) {
+        console.error('게시글 수정 실패: ', error);
+        alert('게시글 수정에 실패했습니다.');
       }
     };
 
-    const submitData = () => {
-      const userId = store.getters['isLogged/userId'];
-
-      const data = {
-        userId: userId,
-        title: formData.title,
-        content: formData.content,
-        imagess: [], // 이미지를 다룰 로직 추가해야함
-        category: formData.sport,
-        location: formData.location,
-        groupSize: formData.person,
-      };
-
-      axios.post('/api/posts/modify', data)
-        .then((response) => {
-          console.log('Data submitted successfully:', response.data);
-          router.push({ name: 'Post', query: { content: encodeURIComponent(formData.content) } });
-        })
-        .catch((error) => {
-          console.error('Error submitting data:', error);
-        });
-    };
+    onMounted(fetchPost);
 
     return {
-      title,
-      sportInput,
-      locationInput,
-      personInput,
-      selectedCategory,
       formData,
-      categories,
       triggerFileInput,
       onFileChange,
       onContentInput,
-      selectCategory,
-      handleEnterKey,
-      setSport,
-      setLocation,
-      setPerson,
       confirmSubmit,
     };
   }
@@ -389,7 +454,7 @@ textarea {
   align-items: center;
 }
 
-.input-framebox {
+.input-box {
   width: 245px;
   height: 35px;
   border: 1px solid #ccc;
@@ -399,7 +464,7 @@ textarea {
   opacity: 0.5;
 }
 
-.frame-btn {
+.confirm-btn {
   width: 60px;
   height: 35px;
   margin-left: 5px;
