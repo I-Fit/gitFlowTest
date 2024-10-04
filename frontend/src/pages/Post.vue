@@ -10,11 +10,11 @@
         </div>
         <div class="user-option" @click="toggleActions">
           <div class="dot-icon"></div>
-          <PostActions
+          <!-- <PostActions
             :visible="showActions"
             @navigate="handleNavigation"
             class="post-actions"
-          />
+          /> -->
         </div>
       </div>
 
@@ -66,14 +66,20 @@ export default {
   setup() {
     const route = useRoute();
     const post = ref(null); // 게시글 데이터 저장할 변수
+    const userId = ref('')
+    const createdAt = ref('');
     const isHeartFilled = ref(false);
     const postId = route.params.id;
+    console.log('Post Id: ', postId);
     
     // 게시글 데이터 가져오기
     const fetchPost = async () => {
+      console.log(`Fetching post with Id: ${postId}`);
       try {
         const response = await axios.get(`http://localhost:8080/api/board/post/${postId}`);
         post.value = response.data;
+        userId.value = response.data.userId;
+        createdAt.value = response.data.createdAt;
         isHeartFilled.value = response.data.isHeartFilled;
       } catch (error) {
         console.error('게시글 로드 실패: ', error);
@@ -99,6 +105,8 @@ export default {
 
     return {
       post,
+      userId,
+      createdAt,
       isHeartFilled,
       toggleHeart,
     };

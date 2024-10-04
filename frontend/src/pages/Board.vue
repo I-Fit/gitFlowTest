@@ -25,7 +25,7 @@
                 <span class="created-at">{{ post.createdAt }}</span>
               </div>
               <div class="title-and-content">
-                <h2 class="title" @click="viewPost(post.id)">{{ post.title }}</h2>
+                <h2 class="title" @click="viewPost(post)">{{ post.title }}</h2>
                 <span class="text">{{ post.content }}</span>
               </div>
               <div class="post-tags">
@@ -104,6 +104,7 @@ export default {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
+        console.log(data);  // 데이터 확인
         this.visibleDatas = data;
       } catch (error) {
         console.error('게시글 불러오기 실패: ', error);
@@ -179,9 +180,9 @@ export default {
       router.push("/create-post");
     };
 
-    const viewPost = (postId) => {
-      console.log('Navigating to post with Id: ', postId);
-      router.push({ name: 'Post', params: { id: postId } });
+    const viewPost = (post) => {
+      console.log('Navigating to post: ', post);
+      router.push({ path: `/post/${post.postId}` });
     }
 
     return {
