@@ -7,7 +7,6 @@ import kr.co.ifit.db.entity.Comment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -43,7 +42,7 @@ public class CommentController {
     }
 
     // 특정 댓글 가져오기
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<CommentDtoRes> getComment(@PathVariable Long id) {
         CommentDtoRes commentRes = commentService.getComment(id);
 
@@ -59,7 +58,7 @@ public class CommentController {
     }
 
     // 특정 게시글의 댓글 가져오기
-    @GetMapping("/get/post/{postId}")
+    @GetMapping("/on/{postId}")
     public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable Long postId) {
         List<Comment> comments = commentService.getCommentsByPostId(postId);
 
@@ -67,7 +66,7 @@ public class CommentController {
     }
 
     // 특정 유저가 작성한 댓글 가져오기
-    @GetMapping("/get/user/{userId}")
+    @GetMapping("/by/{userId}")
     public ResponseEntity<List<Comment>> getCommentsByUserId(@PathVariable Long userId) {
         List<Comment> comments = commentService.getCommentsByUserId(userId);
 

@@ -44,6 +44,7 @@ public class PostService {
     }
 
     // 게시글 상세
+    @Transactional(readOnly = true)
     public PostDtoRes getPost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -100,6 +101,7 @@ public class PostService {
         return posts;
     }
 
+    // 게시글 정렬
     public List<Post> getSortedPosts(String sort, String direction) {
 
         // 생성일 기준으로 정렬

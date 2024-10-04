@@ -86,7 +86,7 @@ public class PostController {
     }
 
     // 게시글 삭제
-    @DeleteMapping("/delete/{postId}")
+    @DeleteMapping("/post/{postId}")
     public ResponseEntity<Map<String, String>> deletePost(@PathVariable Long postId) {
 
         Map<String, String> response = new HashMap<>();
