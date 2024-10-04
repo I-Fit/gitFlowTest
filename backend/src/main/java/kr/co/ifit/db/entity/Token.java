@@ -1,6 +1,5 @@
 package kr.co.ifit.db.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,10 +27,14 @@ public class Token {
     private String refreshToken;
 
     @Column(name = "expired_at", nullable = false)
-    @JsonFormat(timezone = "Asia/Seoul")
-    private LocalDateTime expiration;          // 만료 시간
+    private LocalDateTime expiration;           // 만료 시간
 
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void updateToken(String newRefreshToken, LocalDateTime newExpiration) {
+        this.refreshToken = newRefreshToken;
+        this.expiration = newExpiration;
+    }
 }

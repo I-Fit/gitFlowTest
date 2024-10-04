@@ -3,30 +3,39 @@ package kr.co.ifit.api.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.api.response.LoginDtoRes;
+import kr.co.ifit.api.response.UserDtoRes;
 import kr.co.ifit.api.service.EmailVerificationService;
 import kr.co.ifit.api.service.UserService;
 import kr.co.ifit.common.auth.JwtTokenProvider;
+import kr.co.ifit.common.util.UserContextUtil;
 import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.entity.Token;
 import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.TokenRepository;
 import kr.co.ifit.db.repository.UserRepository;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class UserController {
 
     private final UserService userService;
@@ -36,21 +45,39 @@ public class UserController {
     private final EmailVerificationService emailVerificationService;
     private final EmailVerificationRepository emailVerificationRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final UserContextUtil userContextUtil;
 
     // 회원가입
     @PostMapping("/user-account")
     public ResponseEntity<String> registerUser(@RequestBody UserDtoReq userDtoReq) {
-        try {
-            userService.registerUser(userDtoReq);
-            return ResponseEntity.ok("회원가입 성공");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("회원가입 실패: " + e.getMessage());
+        String email = userDtoReq.getEmail();
+        String username = userDtoReq.getUsername();
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.badRequest().body("이메일은 필수입니다.");
+        }
+        if (username == null || username.isEmpty()) {
+            return ResponseEntity.badRequest().body("이름은 필수입니다.");
+        }
+
+
+        Boolean isEmailVerified = emailVerificationRepository.findByUserEmail(email)
+                .map(EmailVerification::getEmailVerified).orElse(false);
+        if (isEmailVerified) {
+            try {
+                userService.registerUser(userDtoReq);
+                return ResponseEntity.ok("회원가입 성공");
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            } catch (Exception e) {
+                return ResponseEntity.status(500).body("회원가입 실패: " + e.getMessage());
+            }
+        } else {
+            return ResponseEntity.ok("이메일 인증을 완료해주세요.");
         }
     }
+
     // 아이디 중복 확인 (회원가입 시)
-    @GetMapping("/check-id")
+    @PostMapping("/check-id")
     public ResponseEntity<?> checkId(@RequestBody UserDtoReq userDtoReq) {
         String id = userDtoReq.getLoginId();
         boolean available = userService.checkIdAvailability(id);
@@ -58,7 +85,7 @@ public class UserController {
         if (available) {
             return ResponseEntity.ok("존재하는 아이디입니다.");
         } else {
-            return ResponseEntity.ok("사용 가능한 아이디입니다.");
+            return ResponseEntity.ok("사용가능한 아이디입니다.");
         }
     }
 
@@ -66,9 +93,10 @@ public class UserController {
     @PostMapping("/find-id")
     public ResponseEntity<?> findIdUser(@RequestBody UserDtoReq userDtoReq) {
         String email = userDtoReq.getEmail();
-        String enteredCode = userDtoReq.getEnteredCode();
 
-        boolean isEmailVerified = emailVerificationService.verifyEmail(email, enteredCode);
+        Boolean isEmailVerified = emailVerificationRepository.findByUserEmail(email)
+                .map(EmailVerification::getEmailVerified).orElse(false);
+
         if (isEmailVerified) {
             String loginId = userService.findUserIdByEmail(email);
             if (loginId != null) {
@@ -85,6 +113,7 @@ public class UserController {
     @PostMapping("/password/check-id")
     public ResponseEntity<?> checkIdPassword(@RequestBody UserDtoReq userDtoReq) {
         String loginId = userDtoReq.getLoginId();
+        logger.info("성공========================================================================= {}", loginId);
         boolean available = userService.checkIdAvailability(loginId);
         if (available) {
             return ResponseEntity.ok("확인");
@@ -101,6 +130,10 @@ public class UserController {
         String enteredCode = userDtoReq.getEnteredCode();
         //  아이디로 사용자 정보 찾기
         User user = userService.findByLoginId(loginId);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자입니다.");
+        }
         //  사용자 정보에서 이메일과 입력된 이메일이 일치하는지 확인
         if (!user.getEmail().equals(email)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("가입한 이메일과 일치 하지 않습니다.");
@@ -146,16 +179,17 @@ public class UserController {
             userService.updatePassword(loginId, password);
             return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 변경 중 오류가 발생했습니다.");
         }
     }
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserDtoReq userDtoReq) {
         String loginId = userDtoReq.getLoginId();
         String password = userDtoReq.getPassword();
+        logger.info("연결 성공========================================================================= {}", loginId);
 
         try {
             if (!userService.authenticateUser(loginId, password)) {
@@ -169,21 +203,25 @@ public class UserController {
 
             User user = userRepository.findByLoginId(loginId);
             // Refresh Token을 DB에 저장
-            LocalDateTime expirationTime = ZonedDateTime.now().plusMinutes(jwtTokenProvider.getRefreshExpiration() / 1000 / 60).toLocalDateTime();
+            Instant now = Instant.now();
+            Instant expiration = now.plusSeconds(jwtTokenProvider.getRefreshExpiration() / 1000);
 
             Token refreshTokenEntity = new Token();
             refreshTokenEntity.setRefreshToken(refreshToken);
-            refreshTokenEntity.setExpiration(expirationTime);
-//            refreshTokenEntity.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
+            refreshTokenEntity.setExpiration(LocalDateTime.ofInstant(expiration, ZoneId.systemDefault()));
             refreshTokenEntity.setUser(user);
 
             tokenRepository.save(refreshTokenEntity);
 
             // 사용자 식별 ID 가져오기
             Long userId = user.getUserId();
+            // 사용자 이름 가져오기
+            String userName = user.getUsername();
+            // 사용자 이미지 가져오기
+            String userProfile = user.getProfileUrl();
 
             // 응답 반환
-            LoginDtoRes loginDtoRes = new LoginDtoRes("로그인 성공", accessToken, refreshToken, userId);
+            LoginDtoRes loginDtoRes = new LoginDtoRes("로그인 성공", accessToken, refreshToken, userId, userName, userProfile);
             return ResponseEntity.ok(loginDtoRes);
 
         } catch (Exception e) {
@@ -203,8 +241,8 @@ public class UserController {
 
             if (isTokenValid) {
                 Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(refreshToken);
+
                 if (tokenOptional.isPresent()) {
-                    //  유효한 토큰이 존재하면 삭제
                     tokenRepository.delete(tokenOptional.get());
                     return ResponseEntity.ok("로그아웃 성공");
                 } else {
@@ -222,5 +260,25 @@ public class UserController {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    @GetMapping("/user-info")
+    public ResponseEntity<?> userInfo() {
+        Long userId = userContextUtil.getAuthenticatedUserId();
+        if (userId == null) {
+            //  인증되지 않은 경우
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        UserDtoRes userDtoRes = new UserDtoRes(
+                userId,
+                user.getUsername(),
+                user.getProfileUrl()
+        );
+        return ResponseEntity.ok(userDtoRes);
     }
 }

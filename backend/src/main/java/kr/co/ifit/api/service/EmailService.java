@@ -1,8 +1,6 @@
 package kr.co.ifit.api.service;
 
-import jakarta.persistence.Table;
 import kr.co.ifit.db.entity.EmailVerification;
-import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -47,7 +44,6 @@ public class EmailService {
         emailVerification.setUserEmail(email);      // 사용자가 입력한 이메일
         emailVerification.setEmailCode(verificationCode);       // 서버가 만든 인증 코드
         emailVerification.setExpiryTime(LocalDateTime.now().plusMinutes(5));        // 인증 번호 만료 시간
-        emailVerification.setEmailVerified(false);
 
         emailVerificationRepository.save(emailVerification);
     }

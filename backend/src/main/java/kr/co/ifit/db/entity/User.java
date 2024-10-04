@@ -1,5 +1,6 @@
 package kr.co.ifit.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 사용자 ID 자동 생성
     @Column(name = "id", nullable = false)
+//    @JsonIgnore
     private Long userId;
 
     @Column(name = "login_id", nullable = false, length = 50)

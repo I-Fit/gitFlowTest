@@ -1,5 +1,6 @@
 package kr.co.ifit.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import kr.co.ifit.api.service.JwtUserDetailService;
 import kr.co.ifit.common.model.JwtAccessTokenFilter;
 import kr.co.ifit.common.model.JwtRefreshTokenFilter;
@@ -37,16 +38,26 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/login", "/api/logout","/api/user-account",
-                                        "/api/check-id", "/api/verifyEmail",
-                                        "/api/sendVerificationCode", "/api/refresh-token",
-                                        "/api/find-id",
-                                        "api/password/check-id", "/api/password/modified", "api/password/emailVerification").permitAll()
+                                .requestMatchers("/api/user-account", "/api/check-id" ,"/api/find-id" ,"/api/password/check-id",
+                                        "/api/password/emailVerification", "/api/password/modified", "/api/login", "/api/logout",
+                                        "/api/sendVerificationCode", "/api/verifyEmail",
+                                        "/api/filter/exercises", "/api/filter/exercises/sport", "/api/filter/date", "/api/filter/time",
+                                        "/api/search", "/api/sort", "/api/group-list"
+                                ).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->
                         sessionManagement
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // 상태 비저장 세션
+                )
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling
+                                .authenticationEntryPoint((request, response, authException) -> {       // 401 에러(인증 실패시)
+                                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                                })
+                                .accessDeniedHandler((request, response, accessDeniedException) -> {    // 403 에러(권한 부족 시)
+                                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");
+                                })
                 );
 //        //  Jwt 필터 추가
 //        // 이렇게만 해놓으면 모든 요청에 대해서 필터를 적용

@@ -1,7 +1,6 @@
 package kr.co.ifit.common.model;
 
 import io.jsonwebtoken.JwtException;
-import jakarta.servlet.http.HttpServletResponse;
 import kr.co.ifit.common.auth.JwtTokenProvider;
 import kr.co.ifit.db.entity.Token;
 import kr.co.ifit.db.entity.User;
@@ -10,14 +9,9 @@ import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +23,7 @@ public class RefreshTokenCleanupTask {
 
     //  1시간 마다 실행
     //  3600000
-    @Scheduled(fixedRate = 720000)  // 이건 12분
+    @Scheduled(fixedRate = 604800000)
     public void cleanupExpiredTokens() {
         //  현재 시간을 가져옴
 //        LocalDateTime now = LocalDateTime.now();

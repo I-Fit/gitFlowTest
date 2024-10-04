@@ -7,14 +7,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import kr.co.ifit.api.service.JwtUserDetailService;
 import kr.co.ifit.common.auth.JwtTokenProvider;
 import kr.co.ifit.db.entity.Token;
-import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.TokenRepository;
-import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -22,9 +26,7 @@ import java.util.Optional;
 public class JwtRefreshTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final JwtUserDetailService userDetailService;
     private final TokenRepository tokenRepository;
-    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
@@ -33,14 +35,12 @@ public class JwtRefreshTokenFilter extends OncePerRequestFilter {
         if (uri.startsWith("/api/refresh-token")) {
             // 헤더에서 토큰 추출
             String refreshToken = resolveToken(request);
-            //  refreshToken이 null이 아니면
+
             if (refreshToken != null) {
-                //  사용자 loginId 추출
                 String loginId = jwtTokenProvider.extractUsername(refreshToken);
-                //  refreshToken의 유효성 검사 결과 (true, false)
                 boolean isTokenValid = jwtTokenProvider.validateToken(refreshToken, loginId);
 
-                //   리프레시 토큰이 유효한 경우(true), 데이터베이스에서 refreshToken을 찾는다.
+                //   리프레시 토큰이 유효한 경우, 데이터베이스에서 refreshToken을 찾는다.
                 if (isTokenValid) {
                     Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(refreshToken);
 
@@ -61,7 +61,7 @@ public class JwtRefreshTokenFilter extends OncePerRequestFilter {
                 }
             } else {
                 // 토큰이 제공되지 않은 경우
-                sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Refresh token not provided");
+                sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "토큰을 주세요.");
             }
         } else {
             try {
@@ -71,6 +71,7 @@ public class JwtRefreshTokenFilter extends OncePerRequestFilter {
             }
         }
     }
+
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("refresh-token");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {

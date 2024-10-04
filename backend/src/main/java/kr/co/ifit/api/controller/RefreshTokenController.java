@@ -19,8 +19,8 @@ public class RefreshTokenController {
         }
     }
 
-    @DeleteMapping("/tokens/user/{userId}")
-    public ResponseEntity<String> invalidRefreshToken(@PathVariable Long userId) {
-        return ResponseEntity.ok("인증 만료, 재로그인 해주세요.");
-    }
+//    @DeleteMapping("/tokens/user/{userId}")
+//    public ResponseEntity<String> invalidRefreshToken(@PathVariable Long userId) {
+//        return ResponseEntity.ok("인증 만료, 재로그인 해주세요.");
+//    }
 }

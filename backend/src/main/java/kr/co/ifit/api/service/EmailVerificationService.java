@@ -1,10 +1,10 @@
 package kr.co.ifit.api.service;
 
 import kr.co.ifit.db.entity.EmailVerification;
-import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class EmailVerificationService {
 
     private final UserRepository userRepository;
     private final EmailVerificationRepository emailVerificationRepository;
-    
+
     //  이메일과 입력된 인증 코드를 받아 검증, 인증 코드가 맞고, 만료 안됐으면, 사용자의 이메일 인증 상태를 업데이트함
     @Transactional
     public boolean verifyEmail(String email, String enteredCode) {
@@ -37,7 +37,6 @@ public class EmailVerificationService {
                 Optional<EmailVerification> optionalEmail = emailVerificationRepository.findByUserEmail(email);
                 optionalEmail.ifPresent(verification -> {
                     verification.setEmailVerified(true);        // 인증 상태 true 저장
-                    verification.setExpiryTime(LocalDateTime.now());        // 만료 시간을 즉시 만료시킨다.
                     emailVerificationRepository.save(verification); // 저장
                 });
                 return true;    //  인증 성공

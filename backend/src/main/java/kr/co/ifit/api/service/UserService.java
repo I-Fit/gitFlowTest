@@ -1,13 +1,15 @@
 package kr.co.ifit.api.service;
 
-import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.db.entity.Coupon;
 import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.CouponRepository;
 import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.UserRepository;
+import kr.co.ifit.api.request.UserDtoReq;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,11 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class UserService {
 
     private final UserRepository userRepository;
@@ -56,20 +57,7 @@ public class UserService {
                 userDtoReq.getEmail()
         );
         userRepository.save(user);
-        // 회원가입 후 이메일 테이블에 있는 이메일 삭제
         emailVerificationRepository.deleteByUserEmail(userDtoReq.getEmail());
-        
-        //  회원가입 쿠폰 생성
-        Coupon coupon = new Coupon();
-        coupon.setName("10% 할인 쿠폰(멤버십 한정)");
-        coupon.setPercentage(10.0);
-        coupon.setCreatedAt(ZonedDateTime.now().toLocalDateTime());
-        //  쿠폰의 유효 기간 설정 (예 : 7일 후)
-        coupon.setExpiredAt(ZonedDateTime.now().toLocalDateTime().plusDays(7));
-        //  쿠폰과 사용자 연결
-        coupon.setUser(user);
-
-        couponRepository.save(coupon);
     }
 
     // 아이디 중복 확인
@@ -103,9 +91,10 @@ public class UserService {
         }
     }
 
+    @Transactional
     // 아이디 찾기 - email로 사용자 정보 찾아서 loginId 반환
     public String findUserIdByEmail(String email) {
-        User user = userRepository.findFirstByEmail(email);
+        User user = userRepository.findByEmail(email);
         emailVerificationRepository.deleteByUserEmail(email);
         return user != null ? user.getLoginId() : null;
     }

@@ -62,6 +62,12 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
                     }
                     return;
                 }
+            } else {
+                try {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "로그인 후 이용해주세요.");
+                } catch (java.io.IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 
