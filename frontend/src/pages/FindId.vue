@@ -48,17 +48,18 @@
 import { useRouter } from "vue-router";
 import { useEmail } from "@/services/sendEmail";
 // import { useStore } from "vuex";
-import { default as axios } from "axios";
+import axios from "axios";
+import { ref } from "vue";
 
 export default {
   name: "FindId",
 
   setup() {
     const router = useRouter();
+    const enteredCode = ref("");
+    const email = ref("");
 
     const {
-      email,
-      enteredCode,
       sendEmail,
       verifyEmail,
       timeLeft,
@@ -70,7 +71,7 @@ export default {
 
     const sendEmailRequest = async () => {
       try {
-        await sendEmail();
+        await sendEmail(email.value);
       } catch (error) {
         alert("이메일 전송에 실패했습니다.");
       }
@@ -78,7 +79,7 @@ export default {
 
     //  이메일 인증 번호 인증 확인
     const updateEmailAfterCheck = async () => {
-      const isVerified = await verifyEmail();
+      const isVerified = await verifyEmail(email.value, enteredCode.value);
       if (isVerified) {
         alert("인증 완료");
       } else {

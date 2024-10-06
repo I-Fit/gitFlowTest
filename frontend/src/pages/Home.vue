@@ -122,14 +122,16 @@ import { ref, computed, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useStore } from "vuex";
-// import { usePagination } from "@/utils/pagination";
 import apiClient from '@/api/apiClient';
+// import { timePicker } from "vue3-timepicker";
+// import { usePagination } from "@/utils/pagination";
 // import InfiniteLoading from 'vue3-infinite-loading';
 
 
 export default {
   name: "Home",
   components: {
+    // timePicker,
     // Pagination,
     // InfiniteLoading,
   },
@@ -274,8 +276,23 @@ export default {
       loading.value = true;
       try {
         const response = await axios.get('/api/group-list');
+
+        const nonLoggedGroups = response.data;
+
+        // 로그인 상태를 가져와 로그인이 안된 상태에는 찜 상태를 모두 false로 지정
+        const isLoggedIn = computed(() => store.getters['isLogged/loggedIn']);
+        if (!isLoggedIn.value) {
+          groups.value = nonLoggedGroups.map(group => ({
+            ...group,
+            saved: 0
+          }));
+        } else {
+          // 로그인이 된 경우
+          groups.value = nonLoggedGroups;
+        }
         // 서버로부터 받은 데이터를 groups배열에 저장
-        groups.value = response.data;
+        // groups.value = response.data;
+
         page.value = 1;
         updateDisplayedGroups();
         //  처음 몇개만 표시
