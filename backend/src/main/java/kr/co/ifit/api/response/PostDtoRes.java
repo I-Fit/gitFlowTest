@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostDtoRes {
 
+    private Post post;
     private Long postId;
     private String title;
     private String content;
@@ -40,7 +41,7 @@ public class PostDtoRes {
     }
 
     public PostDtoRes(Post post, boolean isHeartFilled) {
-        this(post);     // 기존 생성자 호출
+        this.post = post;     // 기존 생성자 호출
         this.isHeartFilled = isHeartFilled;     // 좋아요 상태 설정
     }
 }

@@ -28,7 +28,6 @@ public class PostService {
                 postReq.getTitle(),
                 postReq.getContent(),
                 imageStr,
-//                postReq.getImageStr(),
                 postReq.getExercise(),
                 postReq.getLocation(),
                 postReq.getUserId()
@@ -66,7 +65,7 @@ public class PostService {
 
             post.setTitle(postReq.getTitle());
             post.setContent(postReq.getContent());
-//            post.setImageStr(String.valueOf(postReq.getImageStr()));
+//            post.setImageStr(postReq.getImageStr());
             post.setExercise(postReq.getExercise());
             post.setLocation(postReq.getLocation());
             post.setUpdatedAt(LocalDateTime.now());
@@ -100,16 +99,18 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        boolean isHeartFilled = post.getLikesCnt() > 0;
+        int likesCnt = post.getLikesCnt();
+        boolean isHeartFilled;
 
-        if (isHeartFilled) {
+        if (likesCnt > 0) {
             post.setLikesCnt(post.getLikesCnt() - 1);
+            isHeartFilled = false;
         } else {
             post.setLikesCnt(post.getLikesCnt() + 1);
+            isHeartFilled = true;
         }
         postRepository.save(post);
 
-        isHeartFilled = post.getLikesCnt() > 0;
         return new PostDtoRes(post, isHeartFilled);
     }
 

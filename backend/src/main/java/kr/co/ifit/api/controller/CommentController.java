@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8081")
 @RequestMapping("/api/comments")
 @RequiredArgsConstructor
 public class CommentController {
@@ -34,6 +35,7 @@ public class CommentController {
 
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
+            System.err.println("error creating comment: " + e.getMessage());
             response.put("status", "error");
             response.put("message", "Failed to create comment: " + e.getMessage());
 
@@ -92,9 +94,14 @@ public class CommentController {
 
     // 댓글 삭제
     @DeleteMapping("/delete/{commentId}")
-    public ResponseEntity<Map<String, String>> deleteComment(@PathVariable Long commentId
-                                                             ) {
+    public ResponseEntity<Map<String, String>> deleteComment(@PathVariable Long commentId) {
         Map<String, String> response = new HashMap<>();
+
+        if (commentId == null || commentId <= 0) {
+            response.put("status", "fail");
+            response.put("message", "Invalid comment Id");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
 
         boolean isDeleted = commentService.deleteComment(commentId);
         if (isDeleted) {

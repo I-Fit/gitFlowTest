@@ -84,11 +84,23 @@ public class CommentService {
     // 댓글 삭제
     public boolean deleteComment(Long commentId) {
         if (commentRepository.existsById(commentId)) {
-            commentRepository.deleteById(commentId);
-            return true;
-        } else {
-            return false;
+            Comment comment = commentRepository.findById(commentId).orElse(null);
+            if (comment != null) {
+                Long postId = comment.getPostId();
+                commentRepository.deleteById(commentId);
+                updateCommentsCount(postId);
+                return true;
+            }
         }
+        return false;
     }
 
+    private void updateCommentsCount(Long postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post != null) {
+            post.setCommentsCnt(post.getCommentsCnt() - 1);
+            postRepository.save(post);
+        }
+    }
 }
+

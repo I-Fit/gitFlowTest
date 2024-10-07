@@ -27,7 +27,7 @@ public class Post {
 
     private String content;
 
-    @Column(name = "image_url") // todo: image_str으로 변경
+    @Column(name = "image_str")
     private String imageStr;
 
     private String exercise;
@@ -62,6 +62,9 @@ public class Post {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    @Column(name = "is_heart_filled")
+    private boolean isHeartFilled;
 
     public Post(String title, String content, String imageStr, String exercise, String location, Long userId) {
         this.title = title;

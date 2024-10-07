@@ -16,18 +16,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/board")
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
-    private final PostRepository postRepository;
 
     // 게시글 생성
     @PostMapping("/new")
-    public ResponseEntity<Map<String, String>> createPost(@ModelAttribute PostDtoReq postReq, @RequestParam("imageStr") MultipartFile image) {
+    public ResponseEntity<Map<String, String>> createPost(@ModelAttribute PostDtoReq postReq, @RequestPart("imageStr") MultipartFile image) {
         Map<String, String> response = new HashMap<>();
 
         System.out.println("image file: " + image.getOriginalFilename());
@@ -47,6 +46,7 @@ public class PostController {
         } catch (Exception e) {
             response.put("status", "fail");
             response.put("message", "Failed to create post" + e.getMessage());
+            e.printStackTrace();
 
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
@@ -55,6 +55,7 @@ public class PostController {
     // 모든 게시글 가져오기
     @GetMapping("/list")
     public ResponseEntity<List<Post>> getAllPosts() {
+        System.out.println("Fetching all posts");
         List<Post> posts = postService.getAllPosts();
 
         return new ResponseEntity<>(posts, HttpStatus.OK);
