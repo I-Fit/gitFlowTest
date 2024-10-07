@@ -61,13 +61,13 @@
       <div class="side-bar-items">
         <div class="search-container">
           <div class="search-box">
-            <input type="text" class="search-input" placeholder="검색어를 입력하세요." v-model="searchKeyword" />
+            <input type="text" class="search-input" placeholder="검색어를 입력하세요." v-model="searchKeyword" @keydown.enter="performSearch" />
             <div class="search-icon" @click="performSearch"></div>
           </div>
         </div>
         <div class="search-list">
           <p class="list-title">Recommend category</p>
-          <button 
+          <!-- <button 
             v-for="category in categories" 
             :key="category" 
             class="list-item" 
@@ -76,7 +76,7 @@
             @click="selectCategory(category)"
           >
             {{ category }}
-          </button>
+          </button> -->
         </div>
       </div>
     </div>
@@ -87,7 +87,6 @@
 import { useRouter } from "vue-router";
 import axios from 'axios';
 import { ref, computed } from 'vue';
-
 
 export default {
   name: 'Board',
@@ -193,7 +192,8 @@ export default {
 
     const performSearch = async () => {
       if (!searchKeyword.value) {
-        alert('검색어를 입력하세요!');
+        // alert('검색어를 입력하세요!');
+        await fetchPosts();
         return;
       }
 
@@ -225,104 +225,11 @@ export default {
       viewPost,
       searchKeyword,
       performSearch,
-      // resetSearch,
       visibleDatas,
       fetchPosts,
       formattedPosts,
     }
   },
-
-  
-  // methods: {
-  //   async fetchPosts() {
-  //     try {
-  //       const response = await fetch('http://localhost:8080/api/board/list');
-  //       if (!response.ok) {
-  //         throw new Error('Network response was not ok');
-  //       }
-  //       const data = await response.json();
-  //       console.log(data);  // 데이터 확인
-  //       this.visibleDatas = data;
-  //     } catch (error) {
-  //       console.error('게시글 불러오기 실패: ', error);
-  //     }
-  //   },
-
-  //   sortPosts() {
-  //     const [order, direction] = this.selectedSort.split('_');
-
-  //     fetch(`http://localhost:8080/api/board/sort?sort=${order}&direction=${direction}`)
-  //       .then(response => {
-  //         if (!response.ok) {
-  //           throw new Error('Network response was not ok');
-  //         }
-  //         return response.json();
-  //       })
-  //       .then(data => {
-  //         this.visibleDatas = data;
-  //       })
-  //       .catch(error => {
-  //         console.error('Error fetching sorted posts: ', error);
-  //       });
-  //   },
-  // },
-
-  // data() {
-  //   return {
-  //     visibleDatas: [],
-  //     selectedSort: '',
-  //   };
-  // },
-
-  // mounted() {
-  //   this.fetchPosts();  // 컴포넌트가 마운트될 때 게시글 목록 가져오기
-  // },
-
-//   setup() {
-//     const router = useRouter();
-
-//     const categories = ref(['러닝', '웨이트', '라이딩', '요가', '수영', '등산', '테니스', '클라이밍', '필라테스', 'GX']);
-//     const searchQuery = ref('');
-//     const selectedCategory = ref('');
-
-//     const postUpload = () => {
-//       router.push("/upload-post");
-//     };
-
-//     const viewPost = (postId) => {
-//       router.push({ name: 'Post', params: { id: postId } });
-//     };
-
-//     const commentPost = (postId) => {
-//       router.push({ name: 'Post', params: { id: postId } });
-//     };
-
-//     const selectCategory = (category) => {
-//       selectedCategory.value = category;
-//       searchQuery.value = ''; // 검색어를 초기화하거나 유지할 수 있습니다
-//     };
-
-//     const toggleHeart = (postId) => {
-//       const post = posts.value.find(post => post.id === postId);
-//       if (post) {
-//         post.isHeartFilled = !post.isHeartFilled;
-//       }
-//     };
-
-//     return {
-//       categories,
-//       searchQuery,
-//       selectedCategory,
-//       postUpload,
-//       viewPost,
-//       commentPost,
-//       selectCategory,
-//       toggleHeart,
-//       currentPage,
-//       totalPages,
-//       onPageChange,
-//     };
-//   },
 };
 </script>
 

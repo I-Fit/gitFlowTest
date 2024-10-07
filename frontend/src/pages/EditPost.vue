@@ -14,9 +14,9 @@
         <div class="content-box" ref="contentBox" contenteditable="true" @input="onContentInput" placeholder="내용을 입력하세요">
           <div v-html="formData.content"></div>
         </div>
-        <div class="content-image">
-          <img v-if="formData.imageStr" :src="formData.imageStr" alt="게시글 이미지" style="width: 100%; height: auto; margin-bottom: 10px;" />
-        </div>
+        <!-- <div class="content-image">
+          <img :src="formData.imageStr" alt="게시글 이미지" style="width: 100%; height: auto; margin-bottom: 10px;" />
+        </div> -->
         <div class="content-topic">
           <p class="item topic-item" v-if="formData.exercise">{{ formData.exercise }}</p>
           <p class="item topic-item" id="location" v-if="formData.location">{{ formData.location }}</p>
@@ -169,22 +169,15 @@ export default {
         formData.value.content = post.content;
         formData.value.exercise = post.exercise;
         formData.value.location = post.location;
-        formData.value.imageStr = post.imageStr;
-
+        // formData.value.imageStr = post.imageStr;
+        
         if (post.imageStr) {
-          const img = `<img src="${post.imageStr}" style="width: 100%; height: auto; margin-bottom: 10px;" alt="게시글 이미지" />`;
-          // const contentBox = document.querySelector('.content-box');
-          
-          formData.value.content = img + formData.value.content;
-
-          // const img = document.createElement('img');
-          // img.src = post.imageStr;
-          // img.style.width = '100%';
-          // img.style.height = 'auto';
-          // img.style.marginBottom = '10px';
-          
-          // contentBox.appendChild(img);
-          
+          formData.value.imageStr = post.imageStr;
+          const img = `<img src="${formData.value.imageStr}" style="width: 100%; height: auto; margin-bottom: 10px" alt="게시글 이미지" />`;
+          formData.value.content = img + post.content;
+        } else {
+          formData.value.imageStr = null;
+          formData.value.content = post.content;
         }
       } catch (error) {
         console.error('게시글 로드 실패: ', error);
@@ -213,7 +206,14 @@ export default {
     };
 
     const onContentInput = (event) => {
-      formData.value.content = event.target.innerHTML;
+      const content = event.target.innerHTML;
+
+      if(formData.value.imageStr) {
+        const img = `<img src="${formData.value.imageStr}" alt="게시글 이미지" style="width: 100%; height: auto; margin-bottom: 10px;" />`
+        formData.value.content = img + content;
+      } else {
+        formData.value.content = content;
+      }
     };
 
     const confirmSubmit = async () => {

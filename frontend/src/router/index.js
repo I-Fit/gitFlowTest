@@ -106,7 +106,7 @@ const routes = [
     component: Post,
     props: true,
   },
-
+  
   {
     path: "/create-post",
     name: "CreatePost",

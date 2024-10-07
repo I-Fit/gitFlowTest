@@ -50,6 +50,14 @@
       <div v-else>
         <p>게시글 로드중...</p>
       </div>
+
+      <NewComment :postId="Number(postId)" :userId="Number(userId)" @commentAdded="fetchComments" />
+
+      <div class="comments-list">
+        <div v-for="comment in comments" :key="comment.id" class="comment">
+          <p>{{ comment.content }}</p>
+        </div>
+      </div>
     </div>
   </main>
 </template>
@@ -59,11 +67,13 @@ import PostActions from '@/components/common/PostActions.vue';
 import axios from 'axios';
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import NewComment from './NewComment.vue';
 
 export default {
   name: 'Post',
   components: {
     PostActions,
+    NewComment,
   },
   
   setup() {
@@ -71,10 +81,12 @@ export default {
     const router = useRouter();
 
     const post = ref(null); // 게시글 데이터 저장할 변수
-    
+    const comments = ref([]);
+
     const userId = ref('')
     const createdAt = ref('');
     const postId = route.params.id;
+    // const postId = Number(route.params.id);
 
     const isHeartFilled = ref(false);
     const showActions = ref(false);
@@ -88,8 +100,18 @@ export default {
         userId.value = response.data.userId;
         createdAt.value = response.data.createdAt;
         isHeartFilled.value = response.data.isHeartFilled;
+        // fetchComments();
       } catch (error) {
         console.error('게시글 로드 실패: ', error);
+      }
+    };
+
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/comments/on/${postId}`);
+        comments.value = response.data;
+      } catch (error) {
+        console.error('댓글 로드 실패: ', error);
       }
     };
 
@@ -142,19 +164,23 @@ export default {
       }
     };
 
-    onMounted(() => {
-      fetchPost();
+    onMounted(async () => {
+      await fetchPost();
+      await fetchComments();
     });
 
     return {
+      postId,
       post,
       userId,
+      comments,
       formattedCreatedAt,
       isHeartFilled,
       toggleHeart,
       showActions,
       toggleActions,
       handleNavigation,
+      fetchComments,
     };
   },
 };

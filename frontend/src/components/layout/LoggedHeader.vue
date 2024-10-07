@@ -39,15 +39,19 @@ export default {
     const home = () => {
       router.push({ name: "Home" });
     };
+
     const creategroup = () => {
       router.push({ name: "AddNewGroup" });
     };
+
     const post = () => {
       router.push({ name: "Board" });
     };
+
     const membership = () => {
       router.push({ name: "Membership" });
     };
+
     const mypage = () => {
       router.push({ name: "Mypage" });
     };
