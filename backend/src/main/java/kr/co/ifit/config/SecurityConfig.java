@@ -41,7 +41,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/user-account", "/api/check-id" ,"/api/find-id" ,"/api/password/check-id",
                                         "/api/password/emailVerification", "/api/password/modified", "/api/login", "/api/logout",
                                         "/api/sendVerificationCode", "/api/verifyEmail",
-                                        "/api/filter/exercises", "/api/filter/exercises/sport", "/api/filter/date", "/api/filter/time",
+                                        "/api/filter/exercises", "/api/filter/exercises/sport", "/api/filter/location", "/api/filter/date", "/api/filter/time",
                                         "/api/search", "/api/sort", "/api/group-list"
                                 ).permitAll()
                                 .anyRequest().authenticated()

@@ -281,4 +281,33 @@ public class UserController {
         );
         return ResponseEntity.ok(userDtoRes);
     }
+
+//    // 회원탈퇴
+//    @GetMapping("/delete-account")
+//    public ResponseEntity<?> deleteAccount(HttpServletRequest request) {
+//        String refreshToken = resolveToken(request);
+//
+//        if (refreshToken != null) {
+//            String loginId = jwtTokenProvider.extractUsername(refreshToken);
+//            boolean isTokenValid = jwtTokenProvider.validateToken(refreshToken, loginId);
+//
+//            if (isTokenValid) {
+//                Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(refreshToken);
+//                if (tokenOptional.isPresent()) {
+//                    // 사용자 Id 가져오기
+//                    Long userId = tokenOptional.get().getUser().getUserId();
+//
+//                    // 사용자 삭제 및 관련 데이터 삭제
+//                    boolean isDeleted = userService.deleteUserAndRelatedData(userId);
+//
+//                    if (isDeleted) {
+//                        return ResponseEntity.ok().body(Map.of("message", "회원 탈퇴가 완료되었습니다."));
+//                    } else {
+//                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                                .body(Map.of("message", "회원 탈퇴에 실패했습니다."));
+//                    }
+//                }
+//            }
+//        }
+//    }
 }

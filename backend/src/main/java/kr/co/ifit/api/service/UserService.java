@@ -1,5 +1,6 @@
 package kr.co.ifit.api.service;
 
+import kr.co.ifit.api.response.CouponDtoRes;
 import kr.co.ifit.db.entity.Coupon;
 import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.entity.User;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -32,6 +34,7 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtUserDetailService userDetailService;
     private final CouponRepository couponRepository;
+    private final CouponService couponService;
 
 
     // 회원가입
@@ -58,6 +61,16 @@ public class UserService {
         );
         userRepository.save(user);
         emailVerificationRepository.deleteByUserEmail(userDtoReq.getEmail());
+
+        // 회원가입 후 쿠폰 추가
+
+        CouponDtoRes couponDtoRes = couponService.addWelcomeCoupon(user);
+//        couponRepository.save(couponDtoRes)
+
+//        // 회원 가입 후 토큰 저장
+//        String refreshToken = tokenService.generateRefreshToken();  // 토큰 생성 로직 추가
+//        LocalDateTime expiresAt = LocalDateTime.now().plusDays(7);  // 7일 유효기간 부여
+//        tokenService.saveOrUpdateToken(user, refreshToken, expiresAt);  // 토큰 저장
     }
 
     // 아이디 중복 확인
@@ -108,5 +121,16 @@ public class UserService {
         user.setPassword(encodedPassword);
         userRepository.save(user);
         emailVerificationRepository.deleteByUserEmail(user.getEmail());
+    }
+
+    @Transactional
+    public boolean deleteUserAndRelatedData(Long userId) {
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            userRepository.delete(userOptional.get());
+            return true;
+        }
+        return false;
     }
 }

@@ -1,5 +1,6 @@
 package kr.co.ifit.api.service;
 
+import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.UserRepository;
@@ -44,5 +45,36 @@ public class EmailVerificationService {
         }
 
         return false;       // 인증 정보가 없으면
+    }
+
+    @Transactional
+    public boolean verifyUpdateEmail(UserDtoReq userDtoReq) {
+        String email = userDtoReq.getEmail();
+        String enteredCode = userDtoReq.getEnteredCode();
+
+        return verifyEmail(email, enteredCode);
+    }
+
+    // 이메일 변경을 위한 메서드
+    @Transactional
+    public boolean updateUserEmail(UserDtoReq dto) {
+
+        boolean isVerified = emailVerificationRepository.findByUserEmail(dto.getEmail())
+                .map(EmailVerification::getEmailVerified).orElse(false);
+
+        if (!isVerified) {
+            return false;
+        }
+        return userRepository.findById(dto.getUserId())
+                .map(user -> {
+                    user.setEmail(dto.getEmail());    // 새로운 이메일로 변경
+                    userRepository.save(user);  // 변경된 정보 저장
+
+                    // 이메일 변경 후, 기존의 이메일 인증 데이터 삭제?
+                    emailVerificationRepository.deleteByUserEmail(dto.getEmail());
+
+                    return true;    // 성공적으로 업데이트
+                })
+                .orElse(false); // 사용자가 존재하지 않으면 false 반환
     }
 }

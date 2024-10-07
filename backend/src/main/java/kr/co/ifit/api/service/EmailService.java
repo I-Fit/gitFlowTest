@@ -1,5 +1,6 @@
 package kr.co.ifit.api.service;
 
+import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.UserRepository;
@@ -53,5 +54,12 @@ public class EmailService {
         Random random = new Random();
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
+    }
+
+    //  마이페이지에서 이메일 변경 이메일에 인증번호 전송
+    @Transactional
+    public void sendVerificationUpdateEmail(UserDtoReq dto) {
+        String newEmail = dto.getEmail();
+        sendVerificationEmail(newEmail);
     }
 }
