@@ -27,7 +27,7 @@ public class Post {
 
     private String content;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url") // todo: image_str으로 변경
     private String imageStr;
 
     private String exercise;

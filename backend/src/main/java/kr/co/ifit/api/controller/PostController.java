@@ -105,22 +105,25 @@ public class PostController {
     // 게시글 좋아요
     @PostMapping("/{id}/like")
     public ResponseEntity<PostDtoRes> likePost(@PathVariable Long id) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        post.setLikesCnt(post.getLikesCnt() + 1);
-        postRepository.save(post);
-
-        return ResponseEntity.ok(new PostDtoRes(post));
+        PostDtoRes response = postService.likePost(id);
+        return ResponseEntity.ok(response);
     }
 
-    // 운동명으로 게시글 검색
+    // 키워드로 게시글 검색
     @GetMapping("/search")
-    public ResponseEntity<List<Post>> searchByExercise(@RequestParam String exercise) {
-        List<Post> posts = postService.searchByExercise(exercise);
+    public ResponseEntity<List<Post>> searchByKeyword(@RequestParam String keyword) {
+        List<Post> posts = postService.searchByKeyword(keyword);
 
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
+
+    // 운동명으로 게시글 검색
+//    @GetMapping("/search")
+//    public ResponseEntity<List<Post>> searchByExercise(@RequestParam String exercise) {
+//        List<Post> posts = postService.searchByExercise(exercise);
+//
+//        return new ResponseEntity<>(posts, HttpStatus.OK);
+//    }
 
     // 게시글 정렬
     @GetMapping("/sort")

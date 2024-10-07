@@ -22,6 +22,7 @@ public class PostDtoRes {
     private LocalDateTime updatedAt;
     private int likesCnt;
     private int commentsCnt;
+    private boolean isHeartFilled;
 
     public PostDtoRes(Post post) {
         this.postId = post.getPostId();
@@ -35,5 +36,11 @@ public class PostDtoRes {
         this.updatedAt = post.getUpdatedAt();
         this.likesCnt = post.getLikesCnt();
         this.commentsCnt = post.getCommentsCnt();
+        this.isHeartFilled = post.getLikesCnt() > 0;    // 초기화
+    }
+
+    public PostDtoRes(Post post, boolean isHeartFilled) {
+        this(post);     // 기존 생성자 호출
+        this.isHeartFilled = isHeartFilled;     // 좋아요 상태 설정
     }
 }

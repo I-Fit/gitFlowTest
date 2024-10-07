@@ -6,6 +6,7 @@ import kr.co.ifit.db.entity.Post;
 import kr.co.ifit.db.repository.CommentRepository;
 import kr.co.ifit.db.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,6 +93,29 @@ public class PostService {
     // 게시글 목록
     public List<Post> getAllPosts() {
         return postRepository.findAll();
+    }
+
+    // 게시글 좋아요
+    public PostDtoRes likePost(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        boolean isHeartFilled = post.getLikesCnt() > 0;
+
+        if (isHeartFilled) {
+            post.setLikesCnt(post.getLikesCnt() - 1);
+        } else {
+            post.setLikesCnt(post.getLikesCnt() + 1);
+        }
+        postRepository.save(post);
+
+        isHeartFilled = post.getLikesCnt() > 0;
+        return new PostDtoRes(post, isHeartFilled);
+    }
+
+    // 키워드로 게시글 검색
+    public List<Post> searchByKeyword(String keyword) {
+        return postRepository.searchByKeyword(keyword);
     }
 
     // 운동명으로 게시글 검색
