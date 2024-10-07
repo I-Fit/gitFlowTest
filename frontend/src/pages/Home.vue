@@ -23,12 +23,9 @@
             <option v-for="sport in sports" :key="sport.key" :value="sport.sport">{{ sport.sport }}</option>
           </select>
 
-          <select class="list-select" title="지역" @click="fetchLocationData">
-            <option value="" selected disabled>지역</option>
-            <option v-for="location in locations" :key="location.id" :value="location.id">
-              {{ location.name }}
-            </option>
-          </select>
+          <div class="list-select" @click="openDaumApi">
+            <input class="input-event" v-model="locationInput" type="text" placeholder="지역" />
+          </div>
 
           <div>
             <VueDatePicker class="date-picker" placeholder="날짜" locale="ko" v-model="date" :enable-time-picker="false"
@@ -36,12 +33,12 @@
           </div>
 
           <div>
-            <VueDatePicker class="time-picker" placeholder="시간" locale="ko" v-model="time" time-picker select-text="확인"
-              cancel-text="취소" @change="timeSelcet">
+            <vue-date-picker class="time-picker" placeholder="시간" locale="ko" v-model="time" time-picker
+              select-text="확인" cancel-text="취소" @date-update="timeSelcet">
               <template #input-icon>
                 <img class="input-slot-image" src="@/assets/images/clock-icon.png" />
               </template>
-            </VueDatePicker>
+            </Vue-date-picker>
           </div>
 
           <form class="search-box">
@@ -61,7 +58,7 @@
 
         <!-- 생성된 모임 영역 -->
         <div class="group">
-          <div v-for="group in groups" :key="group.communityId" class="group-container">
+          <div v-for="group in displayedGroups" :key="group.communityId" class="group-container">
             <div class="unicode-box">
               <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal(group)" />
 
@@ -105,8 +102,6 @@
               </div>
             </div>
           </div>
-          <!-- <infinite-loading @infinite="load"></infinite-loading> -->
-          <!-- <div v-if="loading">Loading...</div> -->
         </div>
       </div>
     </div>
@@ -127,14 +122,16 @@ import { ref, computed, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useStore } from "vuex";
-// import { usePagination } from "@/utils/pagination";
 import apiClient from '@/api/apiClient';
+// import { timePicker } from "vue3-timepicker";
+// import { usePagination } from "@/utils/pagination";
 // import InfiniteLoading from 'vue3-infinite-loading';
 
 
 export default {
   name: "Home",
   components: {
+    // timePicker,
     // Pagination,
     // InfiniteLoading,
   },
@@ -261,10 +258,11 @@ export default {
 
     // 여러 모임 데이터 배열에 저장
     const groups = ref([]);
-    // const displayedGroups = ref([]);
-    const perPage = 12;
+    const displayedGroups = ref([]);
+    const page = ref(1);
+    const pageSize = 12;
     const loading = ref(false);
-    let page = ref(1);
+    const isEnd = ref(false);
 
     const sports = ref([]);   // 운동 종목을 저장할 객체
     const searchTerm = ref('');   // 검색어를 저장할 객체
@@ -272,19 +270,31 @@ export default {
 
     // const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, PerPage);
 
-    onBeforeMount(async () => {
-      await sportList();
-      await groupList();
-    });
-
     // creategroup에서 생성한 모임에 사용자 식별 ID값을 같이 보내줘서
     // 서버에서 username, user_img를 받아옴
     const groupList = async () => {
       loading.value = true;
       try {
         const response = await axios.get('/api/group-list');
+
+        const nonLoggedGroups = response.data;
+
+        // 로그인 상태를 가져와 로그인이 안된 상태에는 찜 상태를 모두 false로 지정
+        const isLoggedIn = computed(() => store.getters['isLogged/loggedIn']);
+        if (!isLoggedIn.value) {
+          groups.value = nonLoggedGroups.map(group => ({
+            ...group,
+            saved: 0
+          }));
+        } else {
+          // 로그인이 된 경우
+          groups.value = nonLoggedGroups;
+        }
         // 서버로부터 받은 데이터를 groups배열에 저장
-        groups.value = response.data;
+        // groups.value = response.data;
+
+        page.value = 1;
+        updateDisplayedGroups();
         //  처음 몇개만 표시
       } catch (error) {
         console.error("Error", error);
@@ -292,6 +302,53 @@ export default {
         loading.value = false;
       }
     };
+
+    // 현재 페이지에 보여줄 그룹 업데이트
+    const updateDisplayedGroups = () => {
+      const start = (page.value - 1) * pageSize;
+      const end = start + pageSize;
+      displayedGroups.value = groups.value.slice(start, end);
+
+      // 데이터가 더 이상 없으면 isEnd를 true로 설정
+      if (displayedGroups.value.length >= groups.value.length) {
+        isEnd.value = true;
+      }
+    };
+
+    // // 스크롤 핸들링
+    // const handleScroll = () => {
+    //   console.log('Scrolling...');
+    //   const routerView = document.querySelector('.router-view');
+    //   const scrollTop = routerView.scrollTop + routerView.clientHeight;
+    //   const offsetHeight = routerView.scrollHeight;
+
+    //   if (scrollTop >= offsetHeight - 100 && !loading.value && !isEnd.value) {
+    //     page.value++;             // 페이지 번호 증가
+    //     updateDisplayedGroups();  // 새 데이터 업데이트
+    //   }
+    // };
+
+    const loadMore = () => {
+      if (!loading.value && !isEnd.value) {
+        loading.value = true;
+        page.value++;
+        updateDisplayedGroups();
+        loading.value = false;
+      }
+    };
+
+    onBeforeMount(async () => {
+      await sportList();
+      await groupList();
+    });
+
+    // onBeforeMount(() => {
+    //   window.removeEventListener('scroll', handleScroll);
+    // });
+
+    // onMounted(() => {
+    //   window.addEventListener('scroll', handleScroll);
+    // });
 
     // const load = async ($state) => {
     //   if (loading.value) return;
@@ -351,15 +408,39 @@ export default {
         }
       }
     };
+    const locationInput = ref("");
+    const openDaumApi = () => {
+      new window.daum.Postcode({
+        oncomplete: (data) => {
+          console.log("받은 주소 : ", data)
+          locationInput.value = data.sigungu;
+          // fetchLocationData();
+        }
+      }).open();
+    };
+
+    // 지역
+    const fetchLocationData = async () => {
+      try {
+        console.log(locationInput.value);
+        const response = await axios.get("/api/filter/location", {
+          params: {
+            location: locationInput.value,
+          }
+        });
+        groups.value = response.data;
+      } catch (error) {
+        console.error("오류가 발생", error)
+      }
+    };
 
     //  날짜 필터
     const date = ref(null); //  선택된 날짜
 
     const dateClicked = async (date) => {
       try {
-        console.log(`Selected ${date}`);
+        // console.log(`Selected ${date}`);
         const isoDate = date.toISOString();
-        console.log(`Selected ${isoDate}`);
 
         const response = await axios.get("/api/filter/date", {
           params: {
@@ -375,13 +456,14 @@ export default {
 
     // 시간 필터
     const time = ref(null);
-    console.log(`Select${time.value}`);
-
+    console.log(time.value);
     const timeSelcet = async () => {
-      if (!time.value) {
+      console.log(`Selected Time: ${time.value}`);
+      if (time.value == null) {
         alert("시간을 다시 선택해 주세요.");
         return;
       }
+      // time.value = selectedTime;
       try {
         const response = await axios.post('/api/filter/time', {
           time: time.value,
@@ -446,12 +528,17 @@ export default {
       }
 
       try {
-        await apiClient.post('/home/join-group', {
+        await apiClient.post('/join-group', {
           communityId: communityId,
         });
         router.push({ name: "JoinedGroups" });
         alert("모임 참석 완료")
       } catch (error) {
+        if (error.response && error.response.status === 400) {
+          alert(error.response.data);
+        } else {
+          alert("모임 참석 중 오류가 발생했습니다.");
+        }
         console.error("Error", error);
       } finally {
         showConfirmPopup.value = false;
@@ -494,6 +581,10 @@ export default {
     }
 
     return {
+      loadMore,
+      fetchLocationData,
+      openDaumApi,
+      locationInput,
       likeGroup,
       selectedOption,
       options,
@@ -502,12 +593,12 @@ export default {
       time,
       timeSelcet,
       groups,
-      // displayedGroups,
+      displayedGroups,
       loading,
       // load,
       userId,
       page,
-      perPage,
+      pageSize,
 
       showConfirmPopup,
       toggleTooltip,
@@ -634,23 +725,25 @@ main {
   text-align: center;
   color: black;
   background-color: #fff;
-  border: 0.1px solid grey;
+  /* border: 0.1px solid grey; */
   font-size: 14px;
   cursor: pointer;
-  /* box-sizing: border-box; */
   padding-right: 10px;
-  /* 텍스트와 화살표 사이의 간격 확보 */
-  /* -webkit-appearance: none; */
-  /* 기본 화살표 제거 */
-  /* -moz-appearance: none; */
   appearance: none;
-  /* background-image: url('@/assets/images/custom-arrow.png'); */
-  /* 커스텀 화살표 이미지 경로 */
-  /* background-repeat: no-repeat; */
-  /* background-position: right 15px center; */
-  /* 아이콘 위치 조정 */
-  /* background-size: 12px; */
-  /* 아이콘 크기 조정 */
+
+}
+
+.input-event {
+  width: 204px;
+  height: 50px;
+  border-radius: 3px;
+  text-align: center;
+  border: 0.1px solid grey;
+}
+
+.input-event::placeholder {
+  text-align: center;
+  font-size: 14px;
 }
 
 .date-picker {

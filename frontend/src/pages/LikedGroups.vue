@@ -35,13 +35,14 @@
 
               <img class="group-join-icon" src="@/assets/images/plus-icon2.png"
                 @click="showConfirmPopup = true; currentGroupId = group.communityId" />
+
               <div v-if="showConfirmPopup && currentGroupId === group.communityId" class="confirm-popup">
                 <div class="popup-content">
-                  <p>모임 참석을 취소 하시겠습니까?</p>
+                  <p>모임에 참여하시겠습니까?</p>
                   <button class="confirm-btn" @click="confirmDeletion(group.communityId)">
                     확인
                   </button>
-                  <button class="cancle-btn" @click="cancelDeletion">
+                  <button class="cancle-btn" @click="cancelDeletion(group)">
                     취소
                   </button>
                 </div>
@@ -70,7 +71,7 @@
             </div>
           </div>
         </div>
-        <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchLikegroups" />
+        <!-- <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="fetchLikegroups" /> -->
       </div>
       <div class="likegroups-floor">
       </div>
@@ -89,8 +90,8 @@ import AppNav from '@/components/layout/AppNav.vue';
 import { useRouter } from 'vue-router';
 import { ref, onBeforeMount } from 'vue';
 // import { useStore } from 'vuex';
-import Pagination from "@/components/common/Pagination.vue";
-import { usePagination } from '@/utils/pagination';
+// import Pagination from "@/components/common/Pagination.vue";
+// import { usePagination } from '@/utils/pagination';
 // import axios from 'axios';
 import apiClient from '@/api/apiClient';
 
@@ -98,7 +99,7 @@ export default {
   name: "LikedGroups",
   components: {
     AppNav,
-    Pagination,
+    // Pagination,
   },
 
   data() {
@@ -126,7 +127,7 @@ export default {
     const searchTerm = ref('');   // 검색어를 저장할 변수
     const groups = ref([]);
 
-    const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
+    // const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, 6);
 
     const myCreategroup = () => {
       router.push({ name: "CreatedGroups" });
@@ -155,18 +156,6 @@ export default {
     onBeforeMount(async () => {
       await loadGroups();
     });
-
-    // const confirmDeletion = async (communityId) => {
-    //   try {
-    //     await apiClient.delete('/', {
-    //       data: communityId,
-    //     });
-
-    //     await loadGroups;
-    //   } catch (error) {
-    //     console.error("error", error);
-    //   }
-    // };
 
     //  검색어
     const searchGroups = async () => {
@@ -209,6 +198,42 @@ export default {
       }
     };
 
+    const showConfirmPopup = ref(false);
+    const currentGroupId = ref(null);
+
+    const confirmDeletion = async (communityId) => {
+      const group = groups.value.find(group => group.communityId === communityId);
+
+      if (!group) {
+        console.error("유효하지 않는 모임 입니다.", communityId);
+        return;
+      }
+
+      try {
+        await apiClient.post('/join-group', {
+          communityId: communityId,
+        });
+        router.push({ name: "JoinedGroups" });
+        alert("모임 참석 완료")
+      } catch (error) {
+        if (error.response && error.response.status === 400) {
+          alert(error.response.data);
+        } else {
+          alert("모임 참석 중 오류가 발생했습니다.");
+        }
+        console.error("Error", error);
+      } finally {
+        showConfirmPopup.value = false;
+        currentGroupId.value = null;
+      }
+    };
+    //  참석 모달 닫기
+    const cancelDeletion = () => {
+      showConfirmPopup.value = false;
+      currentGroupId.value = null;
+    };
+
+
     // 하트 클릭
     const likeGroup = async (communityId) => {
       const group = groups.value.find(g => g.communityId === communityId);
@@ -239,12 +264,14 @@ export default {
 
     return {
       loadGroups,
-      currentPage,
-      totalPages,
-      visibleDatas,
-      fetchdatas,
-      onPageChange,
-      // confirmDeletion,
+      // currentPage,
+      // totalPages,
+      // visibleDatas,
+      // fetchdatas,
+      // onPageChange,
+      showConfirmPopup,
+      confirmDeletion,
+      cancelDeletion,
       likeGroup,
 
       groups,
@@ -590,6 +617,50 @@ h2 {
   width: 28px;
   height: 28px;
   cursor: pointer;
+}
+
+/* 팝업 스타일링 */
+.confirm-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-weight: bold;
+}
+
+.popup-content button {
+  margin: 20px;
+  width: 100px;
+  height: 35px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  border: none;
+  color: white;
+  background-color: #1a73e8;
+}
+
+.popup-content button:hover {
+  background-color: #87cefa;
+}
+
+.popup-content button:active {
+  background-color: #87cefa;
+  transform: scale(0.98);
+  /* 클릭 시 버튼 크기 살짝 축소 */
 }
 
 /* 모임 참석 버튼 */

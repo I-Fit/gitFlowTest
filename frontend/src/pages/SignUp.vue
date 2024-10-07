@@ -12,7 +12,8 @@
             </span>
           </label>
           <div class="signup-field">
-            <input type="text" id="id" name="id" placeholder="아이디를 입력하세요." class="signup-input" v-model="formData.loginId" />
+            <input type="text" id="id" name="id" placeholder="아이디를 입력하세요." class="signup-input"
+              v-model="formData.loginId" />
             <button type="button" class="signup-btn" @click="checkId">
               중복 확인
             </button>
@@ -258,7 +259,7 @@ export default {
         alert("회원가입 성공!");
 
         localStorage.removeItem('signupData');
-        
+
         router.push({ name: "SignIn" });
       } catch (error) {
         console.log("회원가입 시 서버와 통신 에러");

@@ -12,7 +12,7 @@
         </div>
         <div class="topwrap-tag">
           <p class="tag-item">{{ formData.sport }}</p>
-          <p class="item" id="location">{{ formData.location }}</p>
+          <p class="item" id="location">{{ locationInput }}</p>
         </div>
       </div>
       <div class="contain-category">
@@ -147,7 +147,7 @@ export default {
       new window.daum.Postcode({
         oncomplete: (data) => {
           console.log("받은 주소 : ", data)
-          formData.value.location = data.sigungu;
+          formData.value.location = data.address;
           locationInput.value = data.sigungu;
         }
       }).open();
@@ -172,7 +172,7 @@ export default {
     const registerGroup = async () => {
       formData.value.title = title.value;
       title.value = '';
-      
+
 
       const requiredFields = [
         { key: 'title', label: '모임 제목' },

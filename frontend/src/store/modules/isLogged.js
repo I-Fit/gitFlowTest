@@ -60,7 +60,7 @@ export default {
                     commit('SET_ACCESSTOKEN', response.data.accessToken);
                     commit('SET_REFRESHTOKEN', response.data.refreshToken);
                     commit('SET_USERID', response.data.userId);
-                    commit('SET_USERNAME', response.data.username);
+                    commit('SET_USERNAME', response.data.userName);
                     commit('SET_USERIMAGE', response.data.userImage);
                     
                     // userImage가 null 일 경우 기본 이미지로 설정
