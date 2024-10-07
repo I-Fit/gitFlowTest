@@ -18,14 +18,14 @@
       </div>
       <div class="main-feature">
         <p class="topic-text">Choose Category</p>
-        <div class="feature-topic">
+        <!-- <div class="feature-topic">
           <div class="topic-category">
             <button class="category-tag" type="button" v-for="category in categories" :key="category"
             :class="{ selected: formData.exercise === category }" @click="selectCategory(category)">
             {{ category }}
             </button>
           </div>
-        </div>
+        </div> -->
         <div class="feature-input">
           <input
             class="input-box" 
@@ -75,8 +75,9 @@ export default {
         exercise: '',
         location: '',
         isScriptLoaded: false,
-        userId: null,
+        userId: 1,
       },
+      exerciseInput: '',
       responseMessage: '',
     };
   },
@@ -109,7 +110,7 @@ export default {
     },
 
     onContentInput(event) {
-      this.formData.content = event.target.innerText;
+      this.formData.content = event.target.innerHTML;
     },
 
     setExercise() {
@@ -134,11 +135,18 @@ export default {
 
     async confirmSubmit() {
       const formData = new FormData();
-      formData.append('userId', 1);
+      formData.append('userId', this.formData.userId);
       formData.append('title', this.formData.title);
       formData.append('content', this.formData.content);
       formData.append('exercise', this.formData.exercise);
       formData.append('location', this.formData.location);
+
+      // 요청 데이터 확인
+      // console.log('userId:', this.formData.userId);
+      // console.log('title:', this.formData.title);
+      // console.log('content:', this.formData.content);
+      // console.log('exercise:', this.formData.exercise);
+      // console.log('location:', this.formData.location);
 
       if (this.formData.imageStr) {
         formData.append('imageStr', this.formData.imageStr);  // 파일을 'imageStr' 키로 추가
@@ -156,6 +164,9 @@ export default {
           }
         } catch (error) {
           console.error('게시글 작성 실패: ', error);
+          if (error.response) {
+            console.error('서버 응답: ', error.response.data);
+          }
           alert('게시글 작성에 실패했습니다.');
         }
       } else {

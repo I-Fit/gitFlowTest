@@ -14,9 +14,6 @@
         <div class="content-box" ref="contentBox" contenteditable="true" @input="onContentInput" placeholder="내용을 입력하세요">
           <div v-html="formData.content"></div>
         </div>
-        <!-- <div class="content-image">
-          <img :src="formData.imageStr" alt="게시글 이미지" style="width: 100%; height: auto; margin-bottom: 10px;" />
-        </div> -->
         <div class="content-topic">
           <p class="item topic-item" v-if="formData.exercise">{{ formData.exercise }}</p>
           <p class="item topic-item" id="location" v-if="formData.location">{{ formData.location }}</p>
@@ -173,7 +170,7 @@ export default {
         
         if (post.imageStr) {
           formData.value.imageStr = post.imageStr;
-          const img = `<img src="${formData.value.imageStr}" style="width: 100%; height: auto; margin-bottom: 10px" alt="게시글 이미지" />`;
+          const img = `<img src="data:image/png;base64,${formData.value.imageStr}" style="width: 100%; height: auto; margin-bottom: 10px" alt="게시글 이미지" />`;
           formData.value.content = img + post.content;
         } else {
           formData.value.imageStr = null;

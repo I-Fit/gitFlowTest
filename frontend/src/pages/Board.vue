@@ -17,7 +17,7 @@
           </button>
         </div>
         <div class="list">
-          <div v-for="post in visibleDatas" :key="post.id" class="post-box">
+          <div v-for="post in visibleDatas" :key="post.postId" class="post-box">
             <div class="post-items">
               <div class="post-info">
                 <div class="writer-profile-image"></div>
@@ -26,7 +26,7 @@
               </div>
               <div class="title-and-content">
                 <h2 class="title" @click="viewPost(post)">{{ post.title }}</h2>
-                <span class="text" @click="viewPost(post)">{{ post.content }}</span>
+                <span class="text" @click="viewPost(post)" v-html="post.contentWithoutImage"></span>
               </div>
               <div class="post-tags">
                 <div class="tag-items">
@@ -52,7 +52,7 @@
                 </div>
               </div>
             </div>
-            <img class="post-image" :src="`data:image/png;base64,${post.imageStr}`" alt="게시글 이미지" @click="viewPost(post)" />
+            <img class="post-image" :src="post.imageStr ? `data:image/png;base64,${post.imageStr}` : ''" alt="게시글 이미지" @click="viewPost(post)" />
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@
 <script>
 import { useRouter } from "vue-router";
 import axios from 'axios';
-import { ref, computed } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
 export default {
   name: 'Board',
@@ -108,12 +108,20 @@ export default {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log(data);
+        console.log('fetching posts: ', data);
         visibleDatas.value = data;
       } catch (error) {
         console.error('게시글 불러오기 실패: ', error);
       }
     };
+
+    const processedPosts = computed(() => {
+      return visibleDatas.value.map(post => ({
+        ...post,
+        formattedCreatedAt: formatDate(post.createdAt),
+        contentWithoutImage: post.content.replace(/<img[^>]*>/g, ''),
+      }))
+    })
 
     const sortPosts = () => {
       let sort = '';
@@ -151,24 +159,6 @@ export default {
           console.error('Error fetching sorted posts: ', error);
         });
     };
-
-    // const sortPosts = () => {
-    //   const [order, direction] = selectedSort.value.split('_');
-
-    //   fetch(`http://localhost:8080/api/board/sort?sort=${order}&direction=${direction}`)
-    //     .then(response => {
-    //       if (!response.ok) {
-    //         throw new Error('Network response was not ok');
-    //       }
-    //       return response.json();
-    //     })
-    //     .then(data => {
-    //       visibleDatas.value = data;
-    //     })
-    //     .catch(error => {
-    //       console.error('Error fetching sorted posts: ', error);
-    //     });
-    // };
 
     const formatDate = (dateString) => {
       const date = new Date(dateString);
@@ -216,7 +206,9 @@ export default {
       }
     };
 
-    fetchPosts();
+    onMounted(() => {
+      fetchPosts();
+    })
 
     return {
       goToCreatePost,
@@ -228,6 +220,8 @@ export default {
       visibleDatas,
       fetchPosts,
       formattedPosts,
+      formatDate,
+      processedPosts
     }
   },
 };
@@ -289,7 +283,7 @@ export default {
     background-color: #ccc;
     margin: 5px 0 0 10px;
     position: absolute;
-    bottom: -10px; /* Adjust to position the line properly */
+    bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
   }
@@ -345,7 +339,6 @@ export default {
     justify-content: center;
     position: relative;
     margin-top: 20px;
-    /* border: 1px solid whitesmoke; */
     border-radius: 10px;
   }
   
@@ -357,7 +350,7 @@ export default {
     background-color: #ccc;
     margin: 5px 0 0 10px;
     position: absolute;
-    bottom: -10px; /* Adjust to position the line properly */
+    bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
   }
@@ -409,7 +402,7 @@ export default {
     align-items: center;
   }
   
-  /* 게시글에 올라간 사진 이미지 */
+  /* 게시글 이미지 */
   .post-image {
     width: 180px;
     height: 150px;
@@ -581,24 +574,16 @@ export default {
 
 .empty-heart::before {
   content: "\2764";
-  /* 빈 하트 문자 */
   font-size: 25px;
-  /* 하트의 크기 */
   color: transparent;
-  /* 하트의 내부는 투명하게 */
   -webkit-text-stroke: 1px black;
-  /* 하트의 테두리 색상 */
 }
 
 .filled-heart::before {
   content: "\2764";
-  /* 채워진 하트 문자 */
   font-size: 25px;
-  /* 하트의 크기 */
   color: red;
-  /* 채워진 하트의 색상 */
   -webkit-text-stroke: none;
-  /* 채워진 하트의 테두리 제거 */
 }
 
 .pagination {

@@ -37,8 +37,8 @@
       </div>
 
       <!-- 줄 바꿈이나 다른 html 태그가 그대로 렌더링된다 -->
-      <p v-if="post" class="content-box">{{ post.content }}</p>
-      <!-- <div class="content-box" v-html="formattedContent">{{ post.con }}</div> -->
+      <p v-if="post" class="content-box" v-html="post.content"></p>
+      <!-- <p v-if="post" class="content-box">{{ post.content }}</p> -->
 
       <!-- 태그 -->
       <div v-if="post" class="content-topic">
@@ -54,8 +54,11 @@
       <NewComment :postId="Number(postId)" :userId="Number(userId)" @commentAdded="fetchComments" />
 
       <div class="comments-list">
-        <div v-for="comment in comments" :key="comment.id" class="comment">
-          <p>{{ comment.content }}</p>
+        <div v-for="comment in comments" :key="comment.commentId" class="comment">
+          <div class="comment-content">
+            <p>{{ comment.content }}</p>
+          </div>
+          <button @click="deleteComment(comment.commentId)">삭제</button>
         </div>
       </div>
     </div>
@@ -100,18 +103,43 @@ export default {
         userId.value = response.data.userId;
         createdAt.value = response.data.createdAt;
         isHeartFilled.value = response.data.isHeartFilled;
-        // fetchComments();
+
+        post.value.content = cleanContent(post.value.content);
       } catch (error) {
         console.error('게시글 로드 실패: ', error);
       }
     };
 
+    const cleanContent = (content) => {
+      return content.replace(/<img[^>]*>/g, '');
+    }
+
     const fetchComments = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/comments/on/${postId}`);
         comments.value = response.data;
+        console.log('fetched comments: ', comments.value);
       } catch (error) {
         console.error('댓글 로드 실패: ', error);
+      }
+    };
+
+    const deleteComment = async (commentId) => {
+      console.log('deleting comment with id: ', commentId);
+      if (!commentId || typeof commentId !== 'number') {
+        alert('유효하지 않은 댓글 id');
+        return;
+      }
+
+      if (confirm('정말 댓글을 삭제하시겠습니까?')) {
+        try {
+          await axios.delete(`http://localhost:8080/api/comments/delete/${commentId}`);
+          alert('댓글 삭제 완료!');
+          await fetchComments();
+        } catch (error) {
+          console.error('댓글 삭제 실패: ', error);
+          alert('댓글 삭제 실패!' + (error.response.data.message || ''));
+        }
       }
     };
 
@@ -158,6 +186,7 @@ export default {
     const deletePost = async () => {
       try {
         await axios.delete(`http://localhost:8080/api/board/post/${postId}`);
+        alert('게시글 삭제 완료!');
         router.push(`/board`);
       } catch(error) {
         console.error('게시물 삭제 실패: ', error);
@@ -181,6 +210,7 @@ export default {
       toggleActions,
       handleNavigation,
       fetchComments,
+      deleteComment,
     };
   },
 };
@@ -369,141 +399,5 @@ input {
   margin: 5px 10px;
   font-weight: lighter;
   font-size: 13px;
-}
-
-.content-comment {
-  width: 100%;
-  margin: 10px;
-}
-
-.comment-table {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  float: left;
-}
-
-.table-item {
-  display: flex;
-  width: 100%;
-  margin: 10px auto;
-}
-
-.item-user {
-  width: 150px;
-  font-size: 15px;
-  font-weight: bold;
-}
-
-.item-text {
-  width: 400px;
-  font-size: 15px;
-  color: #757575;
-}
-
-.content-add {
-  display: flex;
-  width: 580px;
-  height: 45px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  /* 추가했는데 별로면 수정. */
-}
-
-.content-add input {
-  border: none;
-  padding: 5px 0px 5px 10px;
-  font-size: 15px;
-  opacity: 0.5;
-  height: 35px;
-  width: 100%;
-}
-
-.comment-upload {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  font-size: 24px;
-  color: #007bff;
-}
-
-.comment-upload:hover {
-  background-color: #0056b3;
-}
-
-.comment-table .table-item {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  position: relative;
-}
-
-.author-comment {
-  background-color: #e0f7fa;
-  font-weight: bold;
-  border-left: 4px solid #00796b;
-}
-
-.comment-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-}
-
-.reply-button {
-  cursor: pointer;
-  color: #00796b;
-  font-size: 14px;
-}
-
-.reply-input {
-  margin-top: 10px;
-  padding: 10px;
-  border-top: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-}
-
-.reply-upload {
-  cursor: pointer;
-  color: #00796b;
-  margin-right: 10px;
-}
-
-.reply-input input {
-  flex: 1;
-}
-
-.reply-item {
-  margin-left: 20px;
-  margin-top: 5px;
-}
-
-.comment-container {
-  border-bottom: 1px solid #ddd;
-  padding: 10px;
-  position: relative;
-}
-
-.author-comment {
-  background-color: #e0f7fa;
-  font-weight: bold;
-  border-left: 4px solid #00796b;
-}
-
-.reply-item {
-  border-left: 3px solid #00796b;
-  padding-left: 10px;
-  margin-top: 5px;
-}
-
-.highlighted {
-  border: 2px solid red; /* 강조 스타일 추가 */
-  background-color: #fdd; /* 강조 스타일 추가 */
 }
 </style>
