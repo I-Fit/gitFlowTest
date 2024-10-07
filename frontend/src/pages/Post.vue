@@ -21,13 +21,13 @@
       <div v-if="post" class="content-title">
         <h1>{{ post.title }}</h1>
         <div class="title-heart" @click="toggleHeart(post.id)">
-          <!-- <div :class="isHeartFilled ? 'filled-heart' : 'empty-heart'"></div> -->
-          <div
+          <div :class="isHeartFilled ? 'filled-heart' : 'empty-heart'"></div>
+          <!-- <div
             :class="{
               'filled-heart': isHeartFilled,
               'empty-heart': !isHeartFilled,
             }"
-          ></div>
+          ></div> -->
         </div>
       </div>
 
@@ -56,9 +56,9 @@
       <div class="comments-list">
         <div v-for="comment in comments" :key="comment.commentId" class="comment">
           <div class="comment-content">
-            <p>{{ comment.content }}</p>
+            <p class="comnment-text">{{ comment.content }}</p>
           </div>
-          <button @click="deleteComment(comment.commentId)">삭제</button>
+          <button class="delete-btn" @click="deleteComment(comment.commentId)">삭제</button>
         </div>
       </div>
     </div>
@@ -157,12 +157,12 @@ export default {
     const toggleHeart = async () => {
       try {
         const response = await axios.post(`http://localhost:8080/api/board/${postId}/like`);
-
+        
         if (response.status === 200) {
-          isHeartFilled.value = !isHeartFilled.value;
-          // isHeartFilled.value = response.data.isHeartFilled;
-          post.value = response.data;
+          isHeartFilled.value = response.data.isHeartFilled;
+          await fetchPost();
         }
+        console.log(response.data);
       } catch (error) {
         console.error('좋아요 토글 실패: ', error);
       }
@@ -316,6 +316,7 @@ input {
 
 .content-box {
   white-space: pre-wrap; /*줄 바꿈과 공백 유지*/
+  margin-bottom: 30px;
 }
 
 .title-heart {
@@ -379,6 +380,7 @@ input {
   display: flex;
   flex-direction: row;
   margin: 10px;
+  margin-top: 10px;
 }
 
 .topic-item {
@@ -399,5 +401,38 @@ input {
   margin: 5px 10px;
   font-weight: lighter;
   font-size: 13px;
+}
+
+/* 댓글 */
+.comments-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.comment {
+  display: flex;
+  justify-content: space-between; /* 댓글 내용과 삭제 버튼을 양쪽으로 배치 */
+  align-items: center; /* 세로 중앙 정렬 */
+  margin-bottom: 10px; /* 댓글 사이에 간격 추가 */
+}
+
+.comment-text {
+  font-size: 13px;
+}
+
+.delete-btn {
+  width: 55px;
+  height: 30px;
+  margin-left: 10px; /* 댓글 내용과 버튼 사이에 약간의 간격 추가 */
+  background-color: #1a73e8; /* 버튼 색상 (예시) */
+  color: white; /* 글자 색상 */
+  border: none; /* 기본 테두리 제거 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  cursor: pointer; /* 커서 변경 */
+  padding: 5px 10px; /* 버튼 안쪽 여백 */
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f; /* 호버 시 색상 변경 */
 }
 </style>

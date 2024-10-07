@@ -128,7 +128,15 @@ export default {
       new window.daum.Postcode({
         oncomplete: (data) => {
           console.log("받은 주소 : ", data)
-          this.formData.location = data.sigungu;
+
+          const sido = data.sido;
+          const sigungu = data.sigungu;
+
+          if (sido.length <= 2) {
+            this.formData.location = `${sido} ${sigungu}`;
+          } else {
+            this.formData.location = sigungu;
+          }
         }
       }).open();
     },

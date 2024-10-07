@@ -17,7 +17,7 @@
           </button>
         </div>
         <div class="list">
-          <div v-for="post in visibleDatas" :key="post.postId" class="post-box">
+          <div v-for="post in formattedPosts" :key="post.postId" class="post-box">
             <div class="post-items">
               <div class="post-info">
                 <div class="writer-profile-image"></div>
@@ -110,6 +110,8 @@ export default {
         const data = await response.json();
         console.log('fetching posts: ', data);
         visibleDatas.value = data;
+
+        sortPosts();
       } catch (error) {
         console.error('게시글 불러오기 실패: ', error);
       }
@@ -443,6 +445,8 @@ export default {
     justify-content: center;
     align-items: center;
     color: #757575;
+    max-width: 300px;
+    min-width: 90px;
   }
   
   .scale {

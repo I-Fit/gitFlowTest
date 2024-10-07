@@ -1,7 +1,7 @@
 <template>
     <div class="new-comment">
         <input type="text" v-model="commentText" placeholder="댓글을 입력해주세요" @keydown.enter="submitComment" />
-        <button @click="submitComment">작성</button>
+        <button class="submit-btn" @click="submitComment">작성</button>
     </div>
 </template>
 
@@ -56,10 +56,22 @@ export default {
 .new-comment {
     display: flex;
     align-items: center;
+    height: 50px;
 }
 
 .new-comment input {
     flex: 1;
     margin-right: 8px;
+    padding-left: 8px;
+    height: 35px;
+}
+
+.submit-btn {
+    width: 55px;
+    height: 35px;
+    color: white;
+    background-color: #1a73e8;
+    border: none;
+    border-radius: 5px;
 }
 </style>
