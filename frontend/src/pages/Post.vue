@@ -6,21 +6,22 @@
         <div class="user-post">
           <div class="post-profile"></div>
           <span class="user-name">{{ userId }}</span>
-          <span class="creation-date">{{ createdAt }}</span>
+          <span class="creation-date">{{ formattedCreatedAt }}</span>
         </div>
         <div class="user-option" @click="toggleActions">
           <div class="dot-icon"></div>
-        </div>
-        <PostActions 
+          <PostActions 
           :visible="showActions"
           @navigate="handleNavigation"
         />
+        </div>
       </div>
 
       <!-- 제목 및 좋아요 버튼 -->
       <div v-if="post" class="content-title">
         <h1>{{ post.title }}</h1>
         <div class="title-heart" @click="toggleHeart(post.id)">
+          <!-- <div :class="isHeartFilled ? 'filled-heart' : 'empty-heart'"></div> -->
           <div
             :class="{
               'filled-heart': isHeartFilled,
@@ -41,9 +42,9 @@
 
       <!-- 태그 -->
       <div v-if="post" class="content-topic">
-        <p class="topic-item">라이딩</p>
-        <p class="item">부산</p>
-        <p class="item">소규모</p>
+        <p class="topic-item">{{ post.exercise }}</p>
+        <p class="item">{{ post.location }}</p>
+        <!-- <p class="item">소규모</p> -->
       </div>
 
       <div v-else>
@@ -56,7 +57,7 @@
 <script>
 import PostActions from '@/components/common/PostActions.vue';
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 export default {
@@ -70,6 +71,7 @@ export default {
     const router = useRouter();
 
     const post = ref(null); // 게시글 데이터 저장할 변수
+    
     const userId = ref('')
     const createdAt = ref('');
     const postId = route.params.id;
@@ -91,13 +93,25 @@ export default {
       }
     };
 
+    const formattedCreatedAt = computed(() => {
+      if (createdAt.value) {
+        const date = new Date(createdAt.value);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      return '';
+    });
+
     const toggleHeart = async () => {
       try {
-        const response = await axios.post(`http://localhost:8080/api/board/post/${postId}`);
+        const response = await axios.post(`http://localhost:8080/api/board/${postId}/like`);
 
         if (response.status === 200) {
+          isHeartFilled.value = !isHeartFilled.value;
+          // isHeartFilled.value = response.data.isHeartFilled;
           post.value = response.data;
-          isHeartFilled.value = post.value.isHeartFilled;
         }
       } catch (error) {
         console.error('좋아요 토글 실패: ', error);
@@ -113,18 +127,18 @@ export default {
         showActions.value = false;
         router.push({ path: `/edit-post/${postId}` });
       } else if (action === 'delete') {
-        await deletePost();
+        if (confirm('정말 삭제하시겠습니까?')) {
+          await deletePost();
+        }
       }
     };
 
     const deletePost = async () => {
-      if (confirm('정말로 삭제하시겠습니까?')) {
-        try {
-          await axios.delete(`http://localhost:8080/api/board/post/${postId}`);
-          router.push(`/board`);
-        } catch(error) {
-          console.error('게시물 삭제 실패: ', error);
-        }
+      try {
+        await axios.delete(`http://localhost:8080/api/board/post/${postId}`);
+        router.push(`/board`);
+      } catch(error) {
+        console.error('게시물 삭제 실패: ', error);
       }
     };
 
@@ -135,7 +149,7 @@ export default {
     return {
       post,
       userId,
-      createdAt,
+      formattedCreatedAt,
       isHeartFilled,
       toggleHeart,
       showActions,
@@ -227,10 +241,11 @@ input {
 }
 
 .post-actions {
-  top: -5px; /* Adjust this value as needed */
-  right: -50px;
-  z-index: 10;
-  /* You may need to further style or adjust based on your layout */
+  position: absolute;
+  top: -10%;
+  left: 123%;
+  transform: translateX(-100%);
+  z-index: 1000;
 }
 
 .content-title {

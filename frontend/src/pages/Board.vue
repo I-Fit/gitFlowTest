@@ -22,11 +22,11 @@
               <div class="post-info">
                 <div class="writer-profile-image"></div>
                 <span class="writer-name">{{ post.writerName }}</span>
-                <span class="created-at">{{ post.createdAt }}</span>
+                <span class="created-at">{{ post.formattedCreatedAt }}</span>
               </div>
               <div class="title-and-content">
                 <h2 class="title" @click="viewPost(post)">{{ post.title }}</h2>
-                <span class="text">{{ post.content }}</span>
+                <span class="text" @click="viewPost(post)">{{ post.content }}</span>
               </div>
               <div class="post-tags">
                 <div class="tag-items">
@@ -42,17 +42,17 @@
                         'empty-heart': !post.isHeartFilled,
                       }"></div>
                     </div>
-                    <span>{{ post.likes }}</span>
+                    <span>{{ post.likesCnt }}</span>
                   </div>
                   <div class="comment" @click="commentPost(post.id)">
                     <div class="comment-icon"></div>
-                    <span>{{ post.comments }}</span>
+                    <span>{{ post.commentsCnt }}</span>
                   </div>
                   <div class="option-icon"></div>
                 </div>
               </div>
             </div>
-            <img class="post-image" :src="`data:image/png;base64,${post.imageStr}`" alt="게시글 이미지" />
+            <img class="post-image" :src="`data:image/png;base64,${post.imageStr}`" alt="게시글 이미지" @click="viewPost(post)" />
           </div>
         </div>
       </div>
@@ -61,8 +61,8 @@
       <div class="side-bar-items">
         <div class="search-container">
           <div class="search-box">
-            <input type="text" class="search-input" placeholder="검색어를 입력하세요." v-model="searchQuery" />
-            <div class="search-icon"></div>
+            <input type="text" class="search-input" placeholder="검색어를 입력하세요." v-model="searchKeyword" />
+            <div class="search-icon" @click="performSearch"></div>
           </div>
         </div>
         <div class="search-list">
@@ -85,30 +85,60 @@
 
 <script>
 import { useRouter } from "vue-router";
+import axios from 'axios';
+import { ref, computed } from 'vue';
+
 
 export default {
   name: 'Board',
 
-  
-  methods: {
-    async fetchPosts() {
+  setup() {
+    const router = useRouter();
+    const searchKeyword = ref('');
+    const visibleDatas = ref([]);
+    const selectedSort = ref('');
+
+    const goToCreatePost = () => {
+      router.push("/create-post");
+    };
+
+    const fetchPosts = async () => {
       try {
         const response = await fetch('http://localhost:8080/api/board/list');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log(data);  // 데이터 확인
-        this.visibleDatas = data;
+        console.log(data);
+        visibleDatas.value = data;
       } catch (error) {
         console.error('게시글 불러오기 실패: ', error);
       }
-    },
+    };
 
-    sortPosts() {
-      const [order, direction] = this.selectedSort.split('_');
+    const sortPosts = () => {
+      let sort = '';
+      let direction = 'DESC';
 
-      fetch(`http://localhost:8080/api/board/sort?sort=${order}&direction=${direction}`)
+      switch (selectedSort.value) {
+        case 'popularity':
+          sort = 'morePopular';
+          direction = 'DESC';
+          break;
+        case 'latest':
+          sort = 'createdAt';
+          direction = 'DESC';
+          break;
+        case 'oldest':
+          sort = 'createdAt';
+          direction = 'ASC';
+          break;
+        default:
+          sort = 'createdAt';
+          direction = 'DESC';
+      }
+
+      fetch(`http://localhost:8080/api/board/sort?sort=${sort}&direction=${direction}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -116,42 +146,137 @@ export default {
           return response.json();
         })
         .then(data => {
-          this.visibleDatas = data;
+          visibleDatas.value = data;
         })
         .catch(error => {
           console.error('Error fetching sorted posts: ', error);
         });
-    },
-  },
-
-  data() {
-    return {
-      visibleDatas: [],
-      selectedSort: '',
     };
-  },
 
-  mounted() {
-    this.fetchPosts();  // 컴포넌트가 마운트될 때 게시글 목록 가져오기
-  },
+    // const sortPosts = () => {
+    //   const [order, direction] = selectedSort.value.split('_');
 
-  setup() {
-    const router = useRouter();
-    
-    const goToCreatePost = () => {
-      router.push("/create-post");
+    //   fetch(`http://localhost:8080/api/board/sort?sort=${order}&direction=${direction}`)
+    //     .then(response => {
+    //       if (!response.ok) {
+    //         throw new Error('Network response was not ok');
+    //       }
+    //       return response.json();
+    //     })
+    //     .then(data => {
+    //       visibleDatas.value = data;
+    //     })
+    //     .catch(error => {
+    //       console.error('Error fetching sorted posts: ', error);
+    //     });
+    // };
+
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     };
+
+    const formattedPosts = computed(() => {
+      return visibleDatas.value.map(post => ({
+        ...post,
+        formattedCreatedAt: formatDate(post.createdAt),
+      }));
+    });
 
     const viewPost = (post) => {
       console.log('Navigating to post: ', post);
       router.push({ path: `/post/${post.postId}` });
     }
 
+    const performSearch = async () => {
+      if (!searchKeyword.value) {
+        alert('검색어를 입력하세요!');
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:8080/api/board/search`, {
+          params: { keyword: searchKeyword.value },
+        });
+
+        console.log('검색 결과: ', response.data);
+
+        if (response.data.length > 0) {
+          visibleDatas.value = response.data;
+        } else {
+          alert('검색 결과가 없습니다.');
+          visibleDatas.value = [];
+        }
+      } catch (error) {
+        console.log('검색 실패: ', error);
+        alert('검색 실패!');
+      }
+    };
+
+    fetchPosts();
+
     return {
       goToCreatePost,
+      selectedSort,
+      sortPosts,
       viewPost,
+      searchKeyword,
+      performSearch,
+      // resetSearch,
+      visibleDatas,
+      fetchPosts,
+      formattedPosts,
     }
-  }
+  },
+
+  
+  // methods: {
+  //   async fetchPosts() {
+  //     try {
+  //       const response = await fetch('http://localhost:8080/api/board/list');
+  //       if (!response.ok) {
+  //         throw new Error('Network response was not ok');
+  //       }
+  //       const data = await response.json();
+  //       console.log(data);  // 데이터 확인
+  //       this.visibleDatas = data;
+  //     } catch (error) {
+  //       console.error('게시글 불러오기 실패: ', error);
+  //     }
+  //   },
+
+  //   sortPosts() {
+  //     const [order, direction] = this.selectedSort.split('_');
+
+  //     fetch(`http://localhost:8080/api/board/sort?sort=${order}&direction=${direction}`)
+  //       .then(response => {
+  //         if (!response.ok) {
+  //           throw new Error('Network response was not ok');
+  //         }
+  //         return response.json();
+  //       })
+  //       .then(data => {
+  //         this.visibleDatas = data;
+  //       })
+  //       .catch(error => {
+  //         console.error('Error fetching sorted posts: ', error);
+  //       });
+  //   },
+  // },
+
+  // data() {
+  //   return {
+  //     visibleDatas: [],
+  //     selectedSort: '',
+  //   };
+  // },
+
+  // mounted() {
+  //   this.fetchPosts();  // 컴포넌트가 마운트될 때 게시글 목록 가져오기
+  // },
 
 //   setup() {
 //     const router = useRouter();
@@ -368,6 +493,7 @@ export default {
   
   .text {
     margin-left: 10px;
+    cursor: pointer;
   }
   
   .post-tags {

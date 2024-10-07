@@ -9,14 +9,14 @@
       </button>
       <button 
         class="action-btn" 
-        @click="confirmDelete" 
+        @click="navigate('delete')" 
         style="background-color: white; color: black;"
       >
         삭제
       </button>
   
       <!-- 모달 창 -->
-      <div v-if="showDeleteModal" class="modal">
+      <!-- <div v-if="showDeleteModal" class="modal">
         <div class="modal-content">
           <p>정말로 삭제하시겠습니까?</p>
           <div class="modal-actions">
@@ -24,7 +24,7 @@
             <button class="modal-btn" @click="closeModal">취소</button>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </template>
   
@@ -37,25 +37,25 @@
         required: true,
       },
     },
-    data() {
-      return {
-        showDeleteModal: false,
-      };
-    },
+    // data() {
+    //   return {
+    //     showDeleteModal: false,
+    //   };
+    // },
     methods: {
       navigate(action) {
         this.$emit("navigate", action);
       },
-      confirmDelete() {
-        this.showDeleteModal = true;
-      },
-      closeModal() {
-        this.showDeleteModal = false;
-      },
-      deletePost() {
-        this.$emit("navigate", "delete");
-        this.closeModal();
-      },
+      // confirmDelete() {
+      //   this.showDeleteModal = true;
+      // },
+      // closeModal() {
+      //   this.showDeleteModal = false;
+      // },
+      // deletePost() {
+      //   this.$emit("navigate", "delete");
+      //   this.closeModal();
+      // },
     },
   };
   </script>
@@ -65,7 +65,7 @@
     position: absolute;
     top: 30px;
     right: -15px;
-    border: none;
+    /* border: none; */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 2;
