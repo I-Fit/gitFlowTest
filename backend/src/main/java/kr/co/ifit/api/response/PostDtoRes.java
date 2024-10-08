@@ -17,7 +17,7 @@ public class PostDtoRes {
     private String title;
     private String content;
     private String imageStr;
-    private User user;
+    private Long userId;
     private String exercise;
     private String location;
     private LocalDateTime createdAt;
@@ -31,7 +31,7 @@ public class PostDtoRes {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.imageStr = post.getImageStr();
-        this.user = post.getUser();
+        this.userId = post.getUser().getUserId();
         this.exercise = post.getExercise();
         this.location = post.getLocation();
         this.createdAt = post.getCreatedAt();

@@ -66,6 +66,7 @@ public class PostService {
     public boolean updatePost(Long id, PostDtoReq postReq, Long userId) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
+
         if (!post.getUser().getUserId().equals(userId)) {
             throw new RuntimeException("You do not have permission to update this post");
         }
@@ -103,9 +104,9 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
 
-        if (post == null) {
-            return false;
-        }
+//        if (post == null) {
+//            return false;
+//        }
 
         if (!post.getUser().getUserId().equals(userId)) {
             throw new RuntimeException("You do not have permission to delete this post");

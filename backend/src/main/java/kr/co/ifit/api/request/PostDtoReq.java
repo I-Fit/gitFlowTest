@@ -17,5 +17,5 @@ public class PostDtoReq {
 //    private String imageStr;
     private String exercise;
     private String location;
-    private User user;
+    private Long userId;
 }
