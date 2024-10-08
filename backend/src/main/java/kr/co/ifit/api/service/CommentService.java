@@ -4,8 +4,10 @@ import kr.co.ifit.api.request.CommentDtoReq;
 import kr.co.ifit.api.response.CommentDtoRes;
 import kr.co.ifit.db.entity.Comment;
 import kr.co.ifit.db.entity.Post;
+import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.CommentRepository;
 import kr.co.ifit.db.repository.PostRepository;
+import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,19 +20,20 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     // 댓글 생성
     public CommentDtoRes createComment(CommentDtoReq commentReq) {
 
         // 게시글 조회
-        Post post = postRepository.findById(commentReq.getPostId())
+        Post post = postRepository.findById(commentReq.getPost().getPostId())
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
         // 댓글 생성
         Comment comment = new Comment(
                 commentReq.getContent(),
-                commentReq.getUserId(),
-                commentReq.getPostId()
+                commentReq.getUser(),
+                commentReq.getPost()
         );
         comment.setCreatedAt(LocalDateTime.now());
 
@@ -58,12 +61,16 @@ public class CommentService {
 
     // 특정 게시글의 댓글 가져오기
     public List<Comment> getCommentsByPostId(Long postId) {
-        return commentRepository.findAllByPostId(postId);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        return commentRepository.findAllByPost(post);
     }
 
     // 특정 유저가 작성한 댓글 가져오기
     public List<Comment> getCommentsByUserId(Long userId) {
-        return commentRepository.findAllByUserId(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return commentRepository.findAllByUser(user);
     }
 
     // 댓글 수정
@@ -86,7 +93,7 @@ public class CommentService {
         if (commentRepository.existsById(commentId)) {
             Comment comment = commentRepository.findById(commentId).orElse(null);
             if (comment != null) {
-                Long postId = comment.getPostId();
+                Long postId = comment.getPost().getPostId();
                 commentRepository.deleteById(commentId);
                 updateCommentsCount(postId);
                 return true;

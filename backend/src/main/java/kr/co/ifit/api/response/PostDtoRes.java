@@ -1,6 +1,7 @@
 package kr.co.ifit.api.response;
 
 import kr.co.ifit.db.entity.Post;
+import kr.co.ifit.db.entity.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ public class PostDtoRes {
     private String title;
     private String content;
     private String imageStr;
-    private Long userId;  // User user
+    private User user;
     private String exercise;
     private String location;
     private LocalDateTime createdAt;
@@ -30,7 +31,7 @@ public class PostDtoRes {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.imageStr = post.getImageStr();
-        this.userId = post.getUserId();
+        this.user = post.getUser();
         this.exercise = post.getExercise();
         this.location = post.getLocation();
         this.createdAt = post.getCreatedAt();

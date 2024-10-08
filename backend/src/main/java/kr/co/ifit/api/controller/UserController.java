@@ -254,6 +254,7 @@ public class UserController {
         }
         return ResponseEntity.badRequest().body("refresh token 이 제공되지 않았습니다. ");
     }
+
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("refresh-token");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {

@@ -34,8 +34,9 @@ public class Post {
 
     private String location;
 
-    @Column(name = "user_id")
-    private Long userId;  // User user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP")
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
@@ -66,13 +67,13 @@ public class Post {
     @Column(name = "is_heart_filled")
     private boolean isHeartFilled;
 
-    public Post(String title, String content, String imageStr, String exercise, String location, Long userId) {
+    public Post(String title, String content, String imageStr, String exercise, String location, User user) {
         this.title = title;
         this.content = content;
         this.imageStr = imageStr;
         this.exercise = exercise;
         this.location = location;
-        this.userId = 1L;
+        this.user = user;
     }
 
 //    private int capacity;   // 총 모집인원

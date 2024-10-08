@@ -25,11 +25,13 @@ public class Comment {
 
     private String content;
 
-    @Column(name = "user_id")
-    private Long userId;  //User user
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(name = "post_id")
-    private Long postId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP")
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
@@ -41,10 +43,10 @@ public class Comment {
     @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
     private LocalDateTime updatedAt;
 
-    public Comment(String content, Long userId, Long postId) {
+    public Comment(String content,User user, Post post) {
 
         this.content = content;
-        this.userId = userId;
-        this.postId = postId;
+        this.user = user;
+        this.post = post;
     }
 }

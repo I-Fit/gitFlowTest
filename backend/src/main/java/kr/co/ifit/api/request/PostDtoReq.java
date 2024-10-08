@@ -1,10 +1,10 @@
 package kr.co.ifit.api.request;
 
+import kr.co.ifit.db.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -17,5 +17,5 @@ public class PostDtoReq {
 //    private String imageStr;
     private String exercise;
     private String location;
-    private Long userId;
+    private User user;
 }

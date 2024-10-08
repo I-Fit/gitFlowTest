@@ -3,10 +3,11 @@ package kr.co.ifit.api.service;
 import kr.co.ifit.api.request.PostDtoReq;
 import kr.co.ifit.api.response.PostDtoRes;
 import kr.co.ifit.db.entity.Post;
+import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.CommentRepository;
 import kr.co.ifit.db.repository.PostRepository;
+import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +21,14 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
 
     // 게시글 생성
-    public PostDtoRes createPost(PostDtoReq postReq, String imageStr) {
+    public PostDtoRes createPost(PostDtoReq postReq, String imageStr, Long userId) {
+        // 사용자 검증
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         // post 엔티티 생성
         Post post = new Post(
                 postReq.getTitle(),
@@ -30,9 +36,8 @@ public class PostService {
                 imageStr,
                 postReq.getExercise(),
                 postReq.getLocation(),
-                postReq.getUserId()
+                user
         );
-
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
 
@@ -48,7 +53,6 @@ public class PostService {
     public PostDtoRes getPost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
-
 //        long likeCnt = postRepository.findLikeCntById(id);
 //        long commentCnt = postRepository.findCommentCntById(id);
 
@@ -59,34 +63,56 @@ public class PostService {
     }
 
     // 게시글 수정
-    public boolean updatePost(Long id, PostDtoReq postReq) {
-        if (postRepository.existsById(id)) {
-            Post post = postRepository.findById(id).orElseThrow();
-
-            post.setTitle(postReq.getTitle());
-            post.setContent(postReq.getContent());
-//            post.setImageStr(postReq.getImageStr());
-            post.setExercise(postReq.getExercise());
-            post.setLocation(postReq.getLocation());
-            post.setUpdatedAt(LocalDateTime.now());
-
-            postRepository.save(post);
-            return true;
-        } else {
-            return false;
+    public boolean updatePost(Long id, PostDtoReq postReq, Long userId) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        if (!post.getUser().getUserId().equals(userId)) {
+            throw new RuntimeException("You do not have permission to update this post");
         }
+
+        post.setTitle(postReq.getTitle());
+        post.setContent(postReq.getContent());
+        post.setExercise(postReq.getExercise());
+        post.setLocation(postReq.getLocation());
+        post.setUpdatedAt(LocalDateTime.now());
+
+        postRepository.save(post);
+        return true;
+
+//        if (postRepository.existsById(id)) {
+//            Post post = postRepository.findById(id).orElseThrow();
+//
+//            post.setTitle(postReq.getTitle());
+//            post.setContent(postReq.getContent());
+////            post.setImageStr(postReq.getImageStr());
+//            post.setExercise(postReq.getExercise());
+//            post.setLocation(postReq.getLocation());
+//            post.setUpdatedAt(LocalDateTime.now());
+//
+//            postRepository.save(post);
+//            return true;
+//        } else {
+//            return false;
+//        }
     }
 
     // 게시글 삭제
     @Transactional
-    public boolean deletePost(Long postId) {
-        if (postRepository.existsById(postId)) {
-            commentRepository.deleteByPostId(postId);
-            postRepository.deleteById(postId);
-            return true;
-        } else {
+    public boolean deletePost(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+
+        if (post == null) {
             return false;
         }
+
+        if (!post.getUser().getUserId().equals(userId)) {
+            throw new RuntimeException("You do not have permission to delete this post");
+        }
+
+        postRepository.delete(post);
+        return true;
     }
 
     // 게시글 목록

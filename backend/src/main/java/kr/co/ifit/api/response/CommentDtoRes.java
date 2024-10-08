@@ -23,9 +23,9 @@ public class CommentDtoRes {
 
     public CommentDtoRes(Comment comment) {
         this.commentId = comment.getCommentId();
-        this.postId = comment.getPostId();
+        this.postId = comment.getPost().getPostId();
         this.content = comment.getContent();
-        this.userId = comment.getUserId();
+        this.userId = comment.getUser().getUserId();
         this.createdAt = comment.getCreatedAt();
         this.updatedAt = comment.getUpdatedAt();
     }

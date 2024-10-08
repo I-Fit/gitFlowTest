@@ -1,15 +1,15 @@
 package kr.co.ifit.api.request;
 
+import kr.co.ifit.db.entity.Post;
+import kr.co.ifit.db.entity.User;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class CommentDtoReq {
 
-    private Long postId;
+    private Post post;
     private String content;
-    private Long userId;
+    private User user;
 }

@@ -42,7 +42,7 @@ public class SecurityConfig {
                                         "/api/password/emailVerification", "/api/password/modified", "/api/login", "/api/logout",
                                         "/api/sendVerificationCode", "/api/verifyEmail",
                                         "/api/filter/exercises", "/api/filter/exercises/sport", "/api/filter/location", "/api/filter/date", "/api/filter/time",
-                                        "/api/search", "/api/sort", "/api/group-list"
+                                        "/api/search", "/api/sort", "/api/group-list", "/api/board/**", "/api/comments/**"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 )
