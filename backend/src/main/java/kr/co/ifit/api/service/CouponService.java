@@ -1,5 +1,6 @@
 package kr.co.ifit.api.service;
 
+import jakarta.transaction.Transactional;
 import kr.co.ifit.api.response.CouponDtoRes;
 import kr.co.ifit.db.entity.Coupon;
 import kr.co.ifit.db.entity.User;
@@ -23,18 +24,25 @@ public class CouponService {
     private final UserRepository userRepository;
 
     // 가입 시, 축하 쿠폰 추가
-    public CouponDtoRes addWelcomeCoupon(User user) {
-        Coupon coupon = new Coupon();
-        coupon.setName("회원가입 축하 쿠폰 10%");
-        coupon.setPercentage(10.0);
-        coupon.setCreatedAt(LocalDateTime.from(Instant.now()));
+    @Transactional
+    public void addWelcomeCoupon(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("사용자가 없습니다.");
+        }
+        try {
+            Coupon coupon = new Coupon();
+            coupon.setName("회원가입 축하 쿠폰 10%");
+            coupon.setPercentage(10.0);
+            coupon.setCreatedAt(LocalDateTime.now());
 
-        // 쿠폰 만료일 설정 (30일)
-        coupon.setExpiredAt(LocalDateTime.from(Instant.now().plusSeconds(30 * 24 * 60 * 60)));
-        coupon.setUser(user);
-        couponRepository.save(coupon);
+            // 쿠폰 만료일 설정 (30일)
+            coupon.setExpiredAt(LocalDateTime.now().plusDays(30));
+            coupon.setUser(user);
+            couponRepository.save(coupon);
 
-        return new CouponDtoRes(coupon.getName(), coupon.getExpiredAt());
+        } catch (Exception e) {
+            throw new RuntimeException("쿠폰 생성 중 오류 발생: " + e.getMessage());
+        }
     }
 
     // 사용자 쿠폰 조회 (couponDtoRes 반환)

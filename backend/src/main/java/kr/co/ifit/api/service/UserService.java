@@ -63,14 +63,7 @@ public class UserService {
         emailVerificationRepository.deleteByUserEmail(userDtoReq.getEmail());
 
         // 회원가입 후 쿠폰 추가
-
-        CouponDtoRes couponDtoRes = couponService.addWelcomeCoupon(user);
-//        couponRepository.save(couponDtoRes)
-
-//        // 회원 가입 후 토큰 저장
-//        String refreshToken = tokenService.generateRefreshToken();  // 토큰 생성 로직 추가
-//        LocalDateTime expiresAt = LocalDateTime.now().plusDays(7);  // 7일 유효기간 부여
-//        tokenService.saveOrUpdateToken(user, refreshToken, expiresAt);  // 토큰 저장
+        couponService.addWelcomeCoupon(user);
     }
 
     // 아이디 중복 확인
