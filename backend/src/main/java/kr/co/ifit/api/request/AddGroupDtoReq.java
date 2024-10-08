@@ -11,8 +11,10 @@ public class AddGroupDtoReq {
     private String title;
     private String topboxContent;
     private String sport;
+    private String fullLocation;
     private String location;
     private int person;
     private LocalDateTime date;
-//    private Long userId;
+    private Long userId;
+    private boolean saved;
 }

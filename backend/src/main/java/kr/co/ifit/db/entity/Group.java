@@ -22,6 +22,7 @@ public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+//    @JsonIgnore
     private Long communityId;
 
     @Column(name = "name", nullable = false)
@@ -33,6 +34,9 @@ public class Group {
     @Column(name = "exercise", nullable = false)
     private String sport;
 
+    @Column(name = "location", nullable = false)
+    private String fullLocation;
+
     @Column(name = "address", nullable = false)
     private String location;
 
@@ -42,11 +46,14 @@ public class Group {
     @Column(name = "party_ppl", nullable = false)
     private int peopleParticipation = 0;
 
-    @Column(name = "date_time", columnDefinition = "TIMESTAMP")
+    @Column(name = "date_time", nullable = false)
     private LocalDateTime date;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "is_saved", nullable = false)
+    private boolean saved = false;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -59,14 +66,16 @@ public class Group {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikedGroup> likedGroups = new ArrayList<>();
 
-    public Group(String title, String topboxContent, String sport, String location, int person,LocalDateTime date, User user) {
+    public Group(String title, String topboxContent, String sport, String fullLocation, String location, int person,LocalDateTime date, User user, boolean saved) {
         this.title = title;
         this.topboxContent = topboxContent;
         this.sport = sport;
+        this.fullLocation = fullLocation;
         this.location = location;
         this.person = person;
         this.date = date;
         this.user = user;
+        this.saved = saved;
     }
 
     @PrePersist

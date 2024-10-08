@@ -2,13 +2,14 @@ package kr.co.ifit.api.service;
 
 import kr.co.ifit.api.request.AddGroupDtoReq;
 import kr.co.ifit.db.entity.Group;
-import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.GroupRepository;
+import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,20 +21,24 @@ public class AddGroupService {
 
     //  메서드가 데이터베이스 상태를 변경할 수 있다
     @Transactional
-    public Group createAddGroup(AddGroupDtoReq addGroupDtoReq, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() ->
-            new RuntimeException("사용자를 찾을 수 없습니다.")
+    public Group createAddGroup(AddGroupDtoReq addGroupDtoReq) {
+        User user = userRepository.findById(addGroupDtoReq.getUserId()).orElseThrow(() ->
+                new RuntimeException("사용자를 찾을 수 없습니다.")
         );
+
+        LocalDateTime localDateTime = addGroupDtoReq.getDate().withSecond(0);
 
         //  GroupDTO 객체에서 받은 데이터를 기반으로 새로운 Group 객체를 생성
         Group group = new Group(
                 addGroupDtoReq.getTitle(),
                 addGroupDtoReq.getTopboxContent(),
                 addGroupDtoReq.getSport(),
+                addGroupDtoReq.getFullLocation(),
                 addGroupDtoReq.getLocation(),
                 addGroupDtoReq.getPerson(),
-                addGroupDtoReq.getDate(),
-                user
+                localDateTime,
+                user,
+                addGroupDtoReq.isSaved()
         );
         return groupRepository.save(group);
     }

@@ -1,17 +1,15 @@
-package kr.co.ifit.api.request;
+package kr.co.ifit.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LikedGroupDtoReq {
-    private Long userId;
-    private Long communityId;
-    private boolean saved;
+public class FilterSportDtoRes {
+    private Integer key;
+    private String sport;
 }
-

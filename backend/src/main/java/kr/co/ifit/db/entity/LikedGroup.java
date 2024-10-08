@@ -34,5 +34,4 @@ public class LikedGroup {
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
-
 }
