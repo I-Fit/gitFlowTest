@@ -56,141 +56,101 @@
         한눈에 보는 멤버십
         <!-- <p class="bottom-subtitle">membership benefits</p> -->
       </h2>
-      <div class="benefit01-box">
-        <img
-          class="emoji"
-          src="../assets/images/baby.png"
-          alt="근린이 아이콘"
-        />
-        <p class="benefit-price">5,000원/월</p>
-        <p class="benefit-rank">LV. 근린이</p>
-        <p class="benefit-full-text">
-          혜택 01제공<br />개인 맞춤형 플랜이 필요한 <br />운동을 시작하는
-          초보에게 추천!
-        </p>
-        <button
-          @click="goToPayment(memberships[0].title, memberships[0].price)"
-          class="btn"
-        >
-          혜택받기
-        </button>
-      </div>
-      <div class="benefit02-box">
-        <img class="emoji" src="../assets/images/run.png" alt="근린이 아이콘" />
-        <p class="benefit-price">10,000원/월</p>
-        <p class="benefit-rank">LV. 근성장</p>
-        <p class="benefit-full-text">
-          혜택 01 & 혜택 02 제공<br />개인 맞춤형 플랜에 더불어 <br />더욱
-          다양한 혜택이 필요한 분들에게 추천!
-        </p>
-        <button
-          @click="goToPayment(memberships[1].title, memberships[1].price)"
-          class="btn"
-        >
-          혜택받기
-        </button>
-      </div>
-      <div class="benefit03-box">
-        <img class="emoji" src="../assets/images/arm.png" alt="근린이 아이콘" />
-        <p class="benefit-price">20,000원/월</p>
-        <p class="benefit-rank">LV. 득근+</p>
-        <p class="benefit-full-text">
-          혜택 01 & 02 & 03 제공<br />I-Fit이 제공하는 모든 혜택을
-          <br />
-          누리고 싶은 분들에게 추천!
-        </p>
-        <button
-          @click="goToPayment(memberships[2].title, memberships[2].price)"
-          class="btn"
-        >
+      <div v-for="(item, index) in membership" :key="index" :class="`benefit0${index + 1}-box`">
+        <img class="emoji" :src="item.icon" :alt="`${item.grade} 아이콘`" />
+        <p class="benefit-price">{{ item.price.toLocaleString() }}원/월</p>
+        <p class="benefit-rank">LV. {{ item.grade }}</p>
+        <p class="benefit-full-text" v-html="item.description"></p>
+        <button @click="goToPayment(item.id)" class="btn">
           혜택받기
         </button>
       </div>
     </div>
   </main>
 </template>
+
 <script>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import apiClient from "@/api/apiClient";
 
 export default {
   name: "Membership",
-  mounted() {
-    // 해시가 있는 경우 해당 요소로 스크롤
-    if (this.$route.hash) {
-      const element = document.querySelector(this.$route.hash);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  },
+
   setup() {
     const router = useRouter();
 
-    const username = ref("");
-    const memberships = [
-      {
+    // 멤버십 정보를 저장할 변수
+    const membership = ref([
+      { 
         id: 1,
-        title: "근린이",
-        price: 5000,
+        grade: "근린이", 
+        price: 5000, 
+        icon: require("@/assets/images/baby.png"),
+        description: "혜택 01 제공<br />개인 맞춤형 플랜이 필요한 <br />운동을 시작하는 초보에게 추천!"
       },
-      {
+      { 
         id: 2,
-        title: "근성장",
-        price: 10000,
+        grade: "근성장", 
+        price: 10000, 
+        icon: require("@/assets/images/run.png"),
+        description: "혜택 01 & 혜택 02 제공<br />개인 맞춤형 플랜에 더불어 <br />더욱 다양한 혜택이 필요한 분들에게 추천!"
       },
-      {
+      { 
         id: 3,
-        title: "득근+",
-        price: 20000,
+        grade: "득근+", 
+        price: 20000, 
+        icon: require("@/assets/images/arm.png"),
+        description: "혜택 01 & 02 & 03 제공<br />I-Fit이 제공하는 모든 혜택을 <br />누리고 싶은 분들에게 추천!"
       },
-    ];
+    ]);
 
-    const goToPayment = (membershipType, membershipPrice) => {
-      router.push({
-        name: "Payment",
-        path: "/payment",
-        query: { membershipType, membershipPrice },
-      });
-    };
+    const goToPayment = async (id) => {
+      try {
+        const response = await apiClient.get('/payment/user-info',{
+          params: {
+            id
+          }
+        });
+        
+        const paymentData = response.data;
+
+        router.push({
+          name: "Payment",
+          query: {
+            username: paymentData.username,
+            membershipInfo : JSON.stringify(paymentData.membershipInfo),
+            points: paymentData.points,
+            coupons: JSON.stringify(paymentData.coupons)
+          }
+        });
+      } catch (error) {
+        console.log("서버와의 통신 error", error);
+      }
+    }
+
+    // 결제 페이지로 이동
+    // const goToPayment = (membershipGrade, membershipPrice) => {
+    //   console.log('혜택받기 버튼 클릭됨:', membershipGrade, membershipPrice);
+
+    //   router.push({
+    //     name: "Payment",
+    //     query: { 
+    //       membershipGrade,
+    //       membershipPrice
+    //     }
+    //   });
+    // };
+    
 
     return {
-      memberships,
-      username,
+      membership,
       goToPayment,
     };
   },
-  // data() {
-  //   return {
-  //     username: ''
-  //   }
-  // },
-  // methods: {
-  //   goToPayment(membershipType, membershipPrice) {
-  //     const router = useRouter()
-  //     router.push({
-  //       path: '/payment',
-  //       query: {
-  //         name: membershipType,
-  //         price: membershipPrice,
-  //         user: this.username
-  //       }
-  //     })
-  //   }
-  // },
-  // setup() {
-  //   const router = useRouter()
-
-  //   const goToPayment = () => {
-  //     router.push('/payment')
-  //   }
-
-  //   return {
-  //     goToPayment
-  //   }
-  // }
 };
 </script>
+
 
 <style scoped>
 /* content 부분 */
