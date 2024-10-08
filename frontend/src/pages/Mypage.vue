@@ -6,9 +6,7 @@
         <h2>마이페이지</h2>
         <div class="top-profile">
           <div class="top-image-box">
-            <!-- <div class="top-box-img"> -->
             <img :src="profileImage" alt="Profile Image" class="profile-img" />
-            <!-- </div> -->
             <div class="top-box-icon" @click="triggerFileInput">&#43;</div>
           </div>
           <!-- 숨겨진 파일 입력 요소 -->
@@ -19,12 +17,10 @@
             accept="images/*"
             style="display: none"
           />
-
           <div class="top-boxinfo">
-            <span class="boxinfo-username">김계란</span>
+            <span class="boxinfo-username">{{ username }}</span>
             <span class="boxinfo-logout" @click="logoutUser">로그아웃</span><br />
             <span class="boxinfo-membership">나는야 득근을 꿈꾸는 근린이!</span>
-
             <button
               type="submit"
               class="del-account-btn"
@@ -51,13 +47,13 @@
             <div class="left-info">
               <div class="info-title">ID</div>
               <div class="profile-frame">
-                <span id="id">ifitkosta</span>
+                <span id="id">{{ loginId }}</span>
               </div>
             </div>
             <div class="left-info">
               <div class="info-title">이메일</div>
               <div class="profile-frame">
-                <span id="phone">ifit@kosta.com</span>
+                <span id="email">{{ email }}</span>
               </div>
               <button type="submit" class="changec-btn" @click="goToEditEmail">
                 변경
@@ -66,7 +62,7 @@
             <div class="left-info">
               <div class="info-title">포인트</div>
               <div class="profile-frame">
-                <span id="point">100P</span>
+                <span id="point">{{ totalPoints }}P</span>
               </div>
             </div>
           </div>
@@ -89,7 +85,7 @@
             <div class="right-info">
               <div class="info-title">멤버 등급</div>
               <div class="profile-frame">
-                <span id="member-rank">근린이</span>
+                <span id="member-rank">{{ MembershipGrade }}</span>
               </div>
               <button type="submit" class="changem-btn" @click="goToMembership">
                 변경
@@ -98,7 +94,7 @@
             <div class="right-info">
               <div class="info-title">쿠폰</div>
               <div class="profile-frame">
-                <span id="email">1개</span>
+                <span id="coupon-count">{{ coupons.length }}개</span>
               </div>
               <button
                 type="submit"
@@ -114,7 +110,7 @@
                   <h2>보유 쿠폰 내역</h2>
                   <ul v-if="coupons.length > 0">
                     <li v-for="coupon in coupons" :key="coupon.id">
-                      {{ coupon.name }} - {{ coupon.discount }}% 할인
+                      {{ coupon.name }} - 만료일: {{ new Date(coupon.expiredAt).toLocaleDateString() }} 
                     </li>
                   </ul>
                   <p v-else>보유한 쿠폰이 없습니다.</p>
@@ -132,12 +128,13 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, onMounted, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex"
+import apiClient from "@/api/apiClient";
 import AppNav from "@/components/layout/AppNav.vue";
-// import axios from 'axios';
 import VueCookies from 'vue-cookies';
+import { mapActions, useStore } from 'vuex';
+
 
 export default {
   name: "MypageComponent",
@@ -148,9 +145,34 @@ export default {
   setup() {
     const router = useRouter();
     const store = useStore();
-
-    const profileImage = ref(require("@/assets/images/default-profile.png"));
+    const loginId = ref("");
+    const username = ref("");
+    const email = ref("");
+    const MembershipGrade = ref("");
+    const loading = ref(false); // 로딩 상태?
+    const profileImage = ref("");
     const fileInput = ref(null);
+    const coupons = ref([]);
+    const isModalOpen = ref(false);
+    const totalPoints = ref(0); // 포인트 상태
+
+
+    const fetchUserProfile = async () => {
+      try {
+        const response = await apiClient.get('/profile');
+
+        loginId.value = response.data.loginId;
+        username.value = response.data.username;
+        email.value = response.data.email;
+        profileImage.value = response.data.profileUrl || require("@/assets/images/default-profile.png");
+
+        totalPoints.value = response.data.points;
+        MembershipGrade.value = response.data.membershipGrade || "기본 회원";
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
 
     //파일 선택 창 트리거 함수
     const triggerFileInput = () => {
@@ -163,55 +185,20 @@ export default {
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          profileImage.value = e.target.result;
+          uploadImage(e.target.result);
         };
         reader.readAsDataURL(file);
       }
     };
 
-    // 쿠폰 내역 상태
-    const coupons = ref([]);
-    const isModalOpen = ref(false);
-
-    // 쿠폰 조회 함수
-    const fetchCoupons = async () => {
+    const uploadImage = async (dataUrl) => {
       try {
-        const response = await fetch("/api/coupons?userId=${userId}"); // userId로 찾기
-        if (!response.ok) {
-          throw new Error("네트워크 응답이 정상적이지 않습니다.");
-        }
-        const data = await response.json();
-        coupons.value = data;
+        const base64Image = dataUrl.split(',')[1];
+        const response = await apiClient.post('/api/profile/upload', { image: base64Image });
+        profileImage.value = response.data.profileUrl;
       } catch (error) {
-        console.error("쿠폰 조회 중 오류 발생:", error);
+        console.error("Error uploading profile image:", error);
       }
-    };
-
-    // 모달 열기
-    const openModal = async () => {
-      await fetchCoupons();
-      isModalOpen.value = true;
-    };
-
-    // 모달 닫기
-    const closeModal = () => {
-      isModalOpen.value = false;
-    };
-
-    const goToMembership = () => {
-      router.push({ path: "/membership", hash: "#target" });
-    };
-
-    const goToChangePassword = () => {
-      router.push("/find-password");
-    };
-
-    const goToAccountDeleted = () => {
-      router.push("/account-deleted");
-    };
-
-    const goToEditEmail = () => {
-      router.push("/edit-email");
     };
 
     // 로그아웃 요청
@@ -232,61 +219,121 @@ export default {
         } else {
             alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
         }
-    } catch (error) {
-        console.error("로그아웃 요청 중 오류 발생:", error);
-        alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
-    }
-};
+      } catch (error) {
+          console.error("로그아웃 요청 중 오류 발생:", error);
+          alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
+        }
+    };
+
+
+
+    // 쿠폰 조회 함수
+    const fetchCoupons = async () => {
+      try {
+        const response = await apiClient.get("/coupon"); // userId로 찾기
+        coupons.value = response.data;
+      } catch (error) {
+        console.error("쿠폰 조회 중 오류 발생:", error);
+      }
+    };
+
+    // 포인트 조회 함수
+    // const fetchPoints = async () => {
+    //   try {
+    //     const response = await apiClient.get(`point/amount'${userId.value}`); // userId로 찾기
+    //     if (!response.ok) {
+    //       throw new Error("네트워크 응답이 정상적이지 않습니다.");
+    //     }
+    //     totalPoints.value = response.data; // 받아온 포인트 값을 설정
+    //   } catch (error) {
+    //     console.error("포인트 조회 중 오류 발생:", error);
+    //   }
+    // };
+
+    onBeforeMount(async () => {
+      await fetchUserProfile();
+    })
+
+    // 마운트 시 쿠폰과 포인트 조회
+    onMounted(async () => {
+      await fetchCoupons();
+    });
+
+    // 모달 열기
+    const openModal = () => {
+      isModalOpen.value = true;
+    };
+
+    // 모달 닫기
+    const closeModal = () => { 
+      isModalOpen.value = false;
+    };
+
+    const goToMembership = () => {
+      router.push({ path: "/membership", hash: "#target" });
+    };
+
+    const goToChangePassword = () => {
+      router.push("/find-password");
+    };
+
+    const goToEditEmail = () => {
+      router.push("/edit-email");
+    };
 
     const showConfirmPopup = ref(false);
 
     const confirmDeletion = async () => {
       try {
-        // 백엔드 API 호출
-        const response = await fetch("/api/delete-account", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer YOUR_AUTH_TOKEN", // 인증 토큰이 필요한 경우
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("회원 탈퇴 요청이 실패했습니다.");
+        const success = await deleteAccount();
+        if (success) {
+          alert("회원 탈퇴가 완료되었습니다.");
+          router.push("/");
+        } else {
+          alert("회원 탈퇴에 실패했습니다. 다시 시도해주세요.");
         }
 
-        alert("회원 탈퇴가 완료되었습니다.");
-        // 성공적인 회원탈퇴 후 처리
-        window.location.href = "/account-deleted"; // 탈퇴완료 페이지로 리다이렉트
       } catch (error) {
-        console.error("회원 탈퇴 중 오류 발생:", error);
-        alert("회원 탈퇴 중 오류가 발생했습니다.");
+        console.error("회원 탈퇴 중 오류 발생: ", error);
+      } finally {
+        showConfirmPopup.value = false;
       }
-
-      showConfirmPopup.value = false;
     };
+
+    const { deleteAccount } = mapActions('isLogged' ['deleteAccount']);
 
     const cancelDeletion = () => {
       showConfirmPopup.value = false;
     };
 
+    onMounted(() => {
+      fetchUserProfile();
+    })
+
     return {
+      // userId,
+      loginId,
+      username,
+      email,
+      MembershipGrade,
       profileImage,
       fileInput,
+      showConfirmPopup,
       triggerFileInput,
       handleFileChange,
       coupons,
+      totalPoints,
       isModalOpen,
       openModal,
       closeModal,
-      showConfirmPopup,
       confirmDeletion,
       cancelDeletion,
+      deleteAccount,
       goToMembership,
       goToChangePassword,
-      goToAccountDeleted,
-      goToEditEmail,
       logoutUser,
+      goToEditEmail,
+      loading,
     };
   },
 };

@@ -4,126 +4,127 @@
       <form @submit.prevent="handleSubmit" class="edit-form">
         <h1>이메일 변경</h1>
         <div class="edit-contact input-block">
-          <label class="edit-label" for="id">이메일</label>
+          <label class="edit-label" for="email">이메일</label>
           <div class="edit-field">
             <input type="text" id="email" name="email" placeholder="변경할 이메일을 입력하세요." class="edit-field-input"
-              v-model="email" />
-            <button class="confirm-btn" type="submit" @click="sendEmail">인증</button>
+              v-model="email" :disabled="isEmailVerified" />
+            <button class="confirm-btn" type="button" @click="sendEmailRequest"
+              :disabled="(timerStarted && timeLeft > 0) || isEmailVerified">
+              인증
+            </button>
           </div>
         </div>
-        <div class="auth input-block">
+        <div class="auth input-block" v-if="isEmailSent && !isEmailVerified">
           <label class="edit-label" for="auth-number">인증번호</label>
           <span v-if="timerStarted && timeLeft > 0" class="timer">{{ minutes }}:{{ seconds }}</span>
-          <button v-if="!timerStarted && timeLeft === 0" class="re-request-btn" @click="handleReRequest">
+          <button v-if="!timerStarted && timeLeft === 0" class="re-request-btn" @click="handleReRequestToken">
             재전송
           </button>
           <div class="edit-field">
             <input type="text" id="auth-number" name="auth-number" placeholder="메일로 전송된 인증번호를 입력해주세요."
-              class="edit-field-input" v-model="authCode" />
-            <button class="confirm-btn" type="sumbit" @click="updateEmailAfterCheck">확인</button>
+              class="edit-field-input" v-model="enteredCode" />
+            <button class="confirm-btn" type="button" @click="updateEmailAfterCheck">
+              확인
+            </button>
           </div>
         </div>
-        <button type="submit" class="completed-btn" @click="goToMypage">변경 완료</button>
+        <button type="button" class="completed-btn" @click="handleSubmit">
+          변경 완료
+        </button>
       </form>
     </div>
   </main>
 </template>
 
 <script>
-import { watch, computed  } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import apiClient from "@/api/apiClient";
 import { useEmail } from "@/services/sendEmail";
-import { useStore } from "vuex";
 
 export default {
-  name: 'EditEmailComponent',
+  name: "EditEmailComponent",
   setup() {
     const router = useRouter();
-
-    const store = useStore();
-
-    const formData = computed({
-      get: () => store.state.user.formData,
-      set: (value) => store.dispatch("user/updateFormData", value),
-    });
+    const email = ref("");
+    const enteredCode = ref("");
+    const userId = ref(null);
+    const isEmailSent = ref(false);
+    const isEmailVerified = ref(false); // 이메일 인증 여부
 
     const {
-      email,
-      authCode,
-      emailKey,
-      sendEmail,
-      emailCheck,
+      sendEmailToken,
+      handleReRequestToken,
+      verifyEmailToken,
+      timerStarted,
       timeLeft,
       minutes,
       seconds,
-      handleReRequest,
-      timerStarted,
     } = useEmail();
 
-    // 이메일이 변경되면 formData를 업데이트
-    watch(email, (newEmail) => {
-      if (newEmail) {
-        formData.value.email = newEmail;
+
+    // 이메일 발송하고, 타이머 발동
+    const sendEmailRequest = async () => {
+      try {
+        await sendEmailToken(email.value);
+        isEmailSent.value = true;
+      } catch (error) {
+        alert("이메일 전송에 실패했습니다.");
       }
-    });
+    };
 
     const updateEmailAfterCheck = async () => {
       try {
-        const result = await emailCheck();
-        if (result === "확인 완료") {
-          formData.value.email = email.value; // 인증 완료 후 email을 formData에 업데이트
-        }
+        const isEmailVerified = await verifyEmailToken(email.value, enteredCode.value);
+        if (isEmailVerified) {
+          alert("이메일 인증 완료");
+        } else {
+          alert("이메일 인증번호가 틀립니다.");
+        } 
       } catch (error) {
-        console.error("이메일 인증 오류: ", error);
+        alert("이메일 인증 서버 통신 실패");
       }
     };
 
-    // const sendVerification = () => {
-    //   // 이메일로 인증 코드 전송 로직
-    //   console.log('인증 코드 전송:', email.value);
+    const handleSubmit = async () => {
+      try {
+        const response = await apiClient.post("/updateEmail", {
+          email: email.value,
+        });
 
-    //   // 인증번호가 전송되었다는 알림
-    //   alert('인증번호가 전송되었습니다.');
-    // };
-
-    // const verifyCode = () => {
-    //   // 인증 코드 확인 로직
-    //   console.log('인증 코드 확인:', authCode.value);
-
-    //   alert('본인 인증 완료!');
-    // };
-
-    // const handleSubmit = () => {
-    //   // 폼 데이터 처리 로직 (예: 서버로 보내기)
-    //   console.log('폼 제출:', email.value, authCode.value);
-
-    //   // // 폼 데이터가 유효하다고 가정하고 페이지 이동
-    //   // router.push('/mypage');
-    // };
-
-    const goToMypage = () => {
-      router.push('/mypage')
-    }
+        if (response.status === 200) {
+          alert("이메일 변경 성공");
+          router.push({ name: "Mypage" });
+        }
+      } catch (error) {
+        console.error("서버와의 통신 오류 발생");
+      }
+      
+    };
 
     return {
-      router, 
-      authCode, 
-      email, 
+      sendEmailToken,
       timeLeft,
       minutes,
       seconds,
+      isEmailSent,
+      verifyEmailToken,
+      handleReRequestToken,
       timerStarted,
-      formData,
-      handleReRequest, 
-      emailKey,
-      sendEmail,
-      emailCheck,
+      sendEmailRequest,
       updateEmailAfterCheck,
-      goToMypage
+
+      email,
+      enteredCode,
+      userId,
+      isEmailVerified,
+      
+      handleSubmit,
     };
   },
-}
+};
 </script>
+
 
 <style scoped>
 /* content 부분 */
@@ -191,7 +192,6 @@ main {
   cursor: pointer;
   font-weight: bold;
 }
-
 
 .at {
   margin-top: 6px;

@@ -7,49 +7,29 @@
           <div class="user-info">
             <p class="username">이름 : {{ username }}</p>
             <p class="product">
-              결제 상품 : iFit 멤버십 - {{ membershipType }}
+              결제 상품 : iFit 멤버십 - {{ membershipInfo.grade }}
             </p>
           </div>
           <p class="title">결제 수단 선택</p>
           <div class="payment-method">
-            <button
-              class="card-pay"
-              type="submit"
-              :class="{
-                selected: selectedPayment === 'card',
-                'payment-button': true,
-              }"
-              :disabled="selectedPayment !== null && selectedPayment !== 'card'"
-              @click="togglePayment('card')"
-            >
+            <button class="card-pay" type="submit" :class="{
+              selected: selectedPayment === 'card',
+              'payment-button': true,
+            }" :disabled="selectedPayment !== null && selectedPayment !== 'card'" @click="togglePayment('card')">
               카드 결제
             </button>
-            <button
-              class="kakao-pay"
-              type="submit"
-              :class="{
-                selected: selectedPayment === 'kakao',
-                'payment-button': true,
-              }"
-              :disabled="
-                selectedPayment !== null && selectedPayment !== 'kakao'
-              "
-              @click="togglePayment('kakao')"
-            >
+            <button class="kakao-pay" type="submit" :class="{
+              selected: selectedPayment === 'kakao',
+              'payment-button': true,
+            }" :disabled="selectedPayment !== null && selectedPayment !== 'kakao'
+                " @click="togglePayment('kakao')">
               카카오페이
             </button>
-            <button
-              class="naver-pay"
-              type="submit"
-              :class="{
-                selected: selectedPayment === 'naver',
-                'payment-button': true,
-              }"
-              :disabled="
-                selectedPayment !== null && selectedPayment !== 'naver'
-              "
-              @click="togglePayment('naver')"
-            >
+            <button class="naver-pay" type="submit" :class="{
+              selected: selectedPayment === 'naver',
+              'payment-button': true,
+            }" :disabled="selectedPayment !== null && selectedPayment !== 'naver'
+                " @click="togglePayment('naver')">
               네이버페이
             </button>
           </div>
@@ -67,13 +47,8 @@
                     }}
                   </button>
                   <div v-if="isDropdownOpen" class="dropdown-content">
-                    <div
-                      v-for="coupon in coupons"
-                      :key="coupon.id"
-                      @click="selectCoupon(coupon)"
-                      class="dropdown-item"
-                    >
-                      {{ coupon.name }}
+                    <div v-for="coupon in coupons" :key="coupon.id" @click="selectCoupon(coupon)" class="dropdown-item">
+                      {{ coupon.name }} ({{ coupon.percentage }}%)
                     </div>
                   </div>
                 </div>
@@ -82,15 +57,12 @@
             <div class="point-container">
               <label class="point" for="point">포인트</label>
               <!-- 사용 가능 포인트 데이터 가져옴 -->
-              <span class="available-point"> 사용 가능 포인트 : 0원 </span>
+              <span class="available-point">
+                사용 가능 포인트 : {{ points }}
+              </span>
               <div class="point-block">
-                <input
-                  type="number"
-                  class="point-input"
-                  name="point-check"
-                  v-model.number="pointDiscountAmount"
-                  placeholder="포인트를 입력하세요."
-                />
+                <input type="number" class="point-input" name="point-check" v-model.number="pointDiscountAmount"
+                  placeholder="포인트를 입력하세요." @input="usePoints"/>
               </div>
             </div>
           </div>
@@ -101,29 +73,21 @@
           <p class="payment-title">멤버십 결제하기</p>
           <div class="price-box">
             <p class="title">결제 금액</p>
-            <!-- <p class="product-price">멤버십 금액 : </p><p class="price-data">{{ membershipPrice }}</p>
-            <p class="coupon-amount">쿠폰 할인 금액 : {{ couponDiscountAmount }}</p>
-            <p class="point-amount">포인트 할인 금액 : {{ pointDiscountAmount }}</p>
-            <p class="payment-amount">최종 결제 금액 : {{ finalAmount }}</p> -->
-
             <div class="price-row">
-              <span class="price-label">멤버십 금액 :</span
-              ><span class="price-value">{{ membershipPrice }}원</span>
+              <span class="price-label">멤버십 금액 :</span><span class="price-value">{{
+                membershipInfo.price.toLocaleString() }}원</span>
             </div>
             <div class="price-row">
-              <span class="price-label">쿠폰 할인 금액 :</span
-              ><span class="price-value">{{ couponDiscountAmount }}원</span>
+              <span class="price-label">쿠폰 할인 금액 :</span><span class="price-value">{{ couponDiscountAmount }}원</span>
             </div>
             <div class="price-row">
-              <span class="price-label">포인트 할인 금액 :</span
-              ><span class="price-value">{{ pointDiscountAmount }}원</span>
+              <span class="price-label">포인트 할인 금액 :</span><span class="price-value">{{ pointDiscountAmount }}원</span>
             </div>
             <div class="price-row">
-              <span class="price-label">최종 결제 금액 :</span
-              ><span class="price-value">{{ finalAmount }}원</span>
+              <span class="price-label">최종 결제 금액 :</span><span class="price-value">{{ finalAmount }}원</span>
             </div>
           </div>
-          <button type="submit" class="payment-btn">
+          <button type="submit" class="payment-btn" @click="processPayment">
             위 내용을 확인하였으며, 결제 진행에 동의합니다.
           </button>
         </div>
@@ -133,78 +97,35 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
-import { useRoute } from "vue-router";
+import { ref, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import apiClient from "@/api/apiClient";
 
 export default {
   name: "PaymentComponent",
-  props: {
-    username: {
-      type: String,
-      required: true,
-    },
-    couponName: {
-      type: String,
-      required: true,
-    },
-  },
+
   setup() {
+    const router = useRouter();
     const route = useRoute();
 
+    // membership 페이지에서 받은 사용자 정보를 query로 받음
+    const username = route.query.username;
+    const membershipInfo = route.query.membershipInfo ? JSON.parse(route.query.membershipInfo) : { grade: "", price: 0 };
+    const points = Number(route.query.points) || 0;
+    const coupons = route.query.coupons ? JSON.parse(route.query.coupons) : [];
+
+    // 결제 관련
     const selectedPayment = ref(null);
-    const togglePayment = (paymentMethod) => {
-      if (selectedPayment.value === paymentMethod) {
-        // 이미 선택된 결제 수단을 다시 클릭하면 선택 해제
-        selectedPayment.value = null;
-      } else {
-        // 새로운 결제 수단을 클릭하면 선택
-        selectedPayment.value = paymentMethod;
-      }
-    };
-
-    const membershipType = ref(route.query.membershipType || 0);
-    const membershipPrice = ref(parseInt(route.query.membershipPrice) || 0);
-
-    // 쿠폰 목록을 정의
-    const coupons = ref([
-      {
-        id: 0,
-        name: "회원가입 축하 쿠폰 (10% off)",
-        discount: 0.1,
-      },
-      {
-        id: 1,
-        name: "생일 축하 쿠폰 (5% off)",
-        discount: 0.05,
-      },
-    ]);
-
-    // 드롭다운 상태와 선택한 쿠폰 상태를 정의
     const isDropdownOpen = ref(false);
     const selectedCoupon = ref(null);
-
-    // 포인트 금액
     const pointDiscountAmount = ref(0);
 
-    // 할인 금액을 계산하는 계산된 속성
-    const couponDiscountAmount = computed(() => {
-      if (selectedCoupon.value && membershipPrice.value) {
-        return membershipPrice.value * selectedCoupon.value.discount;
-      } else {
-        return 0;
-      }
-    });
+    // 결제 수단 선택 토글 함수
+    const togglePayment = (paymentMethod) => {
+      selectedPayment.value = selectedPayment.value === paymentMethod ? null : paymentMethod;
+    };
 
-    // 최종 결제 금액 계산
-    const finalAmount = computed(() => {
-      return (
-        membershipPrice.value -
-        couponDiscountAmount.value -
-        pointDiscountAmount.value
-      );
-    });
-
-    // 드롭다운 토글 함수
+    // 쿠폰 선택 드롭다운 토글 함수
     const toggleDropdown = () => {
       isDropdownOpen.value = !isDropdownOpen.value;
     };
@@ -212,24 +133,91 @@ export default {
     // 쿠폰 선택 함수
     const selectCoupon = (coupon) => {
       selectedCoupon.value = coupon;
-      isDropdownOpen.value = false; // 쿠폰 선택 후 드롭다운 닫기
+      isDropdownOpen.value = false;
     };
 
+    // 쿠폰 할인 금액을 계산하는 속성
+    const couponDiscountAmount = computed(() => {
+      if (selectedCoupon.value && membershipInfo.price) {
+        return Math.round(membershipInfo.price * (selectedCoupon.value.percentage / 100));
+      }
+      return 0;
+    });
+
+    // 포인트 사용 함수
+    const usePoints = () => {
+      if (pointDiscountAmount.value > points) {
+        alert("사용 가능한 포인트를 초과했습니다.");
+        pointDiscountAmount.value = points;         // 초과 시 최대 사용 가능한 포인트로 설정
+      }
+      // 최대 사용 가능 포인트를 멤버십 가격으로 제한
+      pointDiscountAmount.value = Math.min(pointDiscountAmount.value, membershipInfo.price);
+    };
+
+    // 최종 결제 금액 계산
+    const finalAmount = computed(() => {
+      return Math.max(
+        membershipInfo.price - couponDiscountAmount.value - pointDiscountAmount.value,
+        0
+      );
+    });
+
+    // 결제 가능 여부 확인
+    const canProcessPayment = computed(() => selectedPayment.value && finalAmount.value > 0);
+
+    // 결제 처리 함수
+    const processPayment = async () => {
+      if (!canProcessPayment.value) {
+        alert("결제 수단을 선택하고 최종 금액을 확인해 주세요.");
+        return;
+      }
+
+      try {
+        const paymentDtoReq = {
+          membershipGrade: membershipInfo.grade,
+          membershipPrice: membershipInfo.price.toLocaleString(),
+          paymentMethod: selectedPayment.value,
+          couponId: selectedCoupon.value?.id,
+          pointsUsed: pointDiscountAmount.value,
+          finalAmount: finalAmount.value
+        };
+        const response = await apiClient.post("/api/payment/process", paymentDtoReq);
+        const paymentResultDtoRes = response.data;
+        if (paymentResultDtoRes.success) {
+          alert("결제가 성공적으로 처리되었습니다.");
+          router.push({ name: "MyPage" });
+        } else {
+          alert(paymentResultDtoRes.message || "결제 처리 중 오류가 발생했습니다.");
+        }
+      } catch (error) {
+        console.error("결제 처리 중 오류가 발생했습니다:", error);
+        alert("결제 처리 중 오류가 발생했습니다. 다시 시도해 주세요.");
+      }
+    };
+
+    onMounted(async () => {
+      // await fetchUserInfo();
+    });
+
     return {
-      membershipType,
-      membershipPrice,
+      username,
+      membershipInfo,
+      points,
+      coupons,
       selectedPayment,
       togglePayment,
-      coupons,
       isDropdownOpen,
       selectedCoupon,
       couponDiscountAmount,
       toggleDropdown,
       selectCoupon,
+      usePoints,
       pointDiscountAmount,
       finalAmount,
+      canProcessPayment,
+      processPayment,
     };
-  },
+  }
 };
 </script>
 
