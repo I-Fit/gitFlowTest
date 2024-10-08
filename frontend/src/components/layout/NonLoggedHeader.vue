@@ -22,11 +22,16 @@
 
 <script>
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { computed } from "vue";
 
 export default {
   name: "NonLogged",
   setup() {
     const router = useRouter();
+    const store = useStore();
+
+    const isLoggedIn = computed(() => store.getters['isLogged/loggedIn']);
 
     const home = () => {
       router.push({ name: "Home" });
@@ -49,11 +54,21 @@ export default {
     };
 
     const mypage = () => {
-      router.push({ name: "Mypage" });
+      if (isLoggedIn.value) {
+        router.push({ name: "Mypage" });
+      } else {
+        alert("로그인 후 이용해주세요.");
+        router.push({ name: "SignIn" });
+      }
     };
 
     const creategroup = () => {
-      router.push({ name: "AddNewGroup" });
+      if (isLoggedIn.value) {
+        router.push({ name: "AddNewGroup" });
+      } else {
+        alert("로그인 후 이용해주세요.");
+        router.push({ name: "SignIn" });
+      }
     };
 
     return {
