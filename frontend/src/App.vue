@@ -3,11 +3,7 @@
   <body>
     <div class="container">
       <AppHeader />
-      <div class="router-view">
-        <router-view @load-more="loadMore"></router-view>
-        <button v-if="!isEnd && !loading" class="load-more" @click="loadMore">더 보기</button>
-        <div v-if="loading" class="loading-indicator">로딩 중...</div>
-      </div>
+        <router-view></router-view>
       <AppFooter />
     </div>
   </body>
@@ -21,15 +17,7 @@ export default {
   components: {
     AppHeader,
     AppFooter,
-  },
-  methods: {
-    loadMore() {
-      const homeComponent = this.$refs.home;
-      if (homeComponent && homeComponent.loadMore) {
-        homeComponent.loadMore();
-      }
-    }
-  },
+  }
 };
 </script>
 
@@ -50,25 +38,5 @@ body {
   width: 1536px;
   display: grid;
   grid-template-rows: 150px 1fr 150px;
-}
-
-.router-view {
-  flex: 1;
-}
-
-.load-more {
-  background-color: black;
-  cursor: pointer;
-  color: white;
-  border: none;
-  padding: 10px;
-  margin: 20px auto;
-  cursor: pointer;
-  display: block;
-}
-
-.loading-indicator {
-  text-align: center;
-  margin: 20px auto;
 }
 </style>

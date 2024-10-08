@@ -33,12 +33,7 @@
           </div>
 
           <div>
-            <vue-date-picker class="time-picker" placeholder="시간" locale="ko" v-model="time" time-picker
-              select-text="확인" cancel-text="취소" @date-update="timeSelcet">
-              <template #input-icon>
-                <img class="input-slot-image" src="@/assets/images/clock-icon.png" />
-              </template>
-            </Vue-date-picker>
+            <input type="time" class="time-picker" v-model="timeString" @change="timeSelected" placeholder="시간">
           </div>
 
           <form class="search-box">
@@ -58,7 +53,7 @@
 
         <!-- 생성된 모임 영역 -->
         <div class="group">
-          <div v-for="group in displayedGroups" :key="group.communityId" class="group-container">
+          <div v-for="group in groups" :key="group.communityId" class="group-container">
             <div class="unicode-box">
               <img class="group-detail-icon" src="@/assets/images/info-icon.png" @click="openModal(group)" />
 
@@ -110,7 +105,8 @@
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <p>모임 상세설명 : {{ selectedItem ? selectedItem.content : "" }}</p>
+        <p class="modal-description">모임 상세설명 : {{ selectedItem ? selectedItem.content : "" }}</p>
+        <p>모임 상세주소 : {{ selectedItem ? selectedItem.location : "" }}</p>
       </div>
     </div>
 
@@ -234,6 +230,7 @@ export default {
     openModal(group) {
       this.selectedItem = {
         content: group.topboxContent,
+        location: group.fullLocation
       };
       this.isModalOpen = true;
     },
@@ -293,8 +290,8 @@ export default {
         // 서버로부터 받은 데이터를 groups배열에 저장
         // groups.value = response.data;
 
-        page.value = 1;
-        updateDisplayedGroups();
+        // page.value = 1;
+        // updateDisplayedGroups();
         //  처음 몇개만 표시
       } catch (error) {
         console.error("Error", error);
@@ -408,7 +405,10 @@ export default {
         }
       }
     };
+
+    //  지역 다음 api
     const locationInput = ref("");
+
     const openDaumApi = () => {
       new window.daum.Postcode({
         oncomplete: (data) => {
@@ -419,7 +419,7 @@ export default {
       }).open();
     };
 
-    // 지역
+    // 지역 필터 저장 후 서버에 요청
     const fetchLocationData = async () => {
       try {
         console.log(locationInput.value);
@@ -455,25 +455,58 @@ export default {
     };
 
     // 시간 필터
-    const time = ref(null);
-    console.log(time.value);
-    const timeSelcet = async () => {
-      console.log(`Selected Time: ${time.value}`);
-      if (time.value == null) {
+    const timeString = ref('');
+    const time = ref({
+      hours: null,
+      minutes: null,
+    });
+
+    const timeSelected = async () => {
+      if (timeString.value) {
+        try {
+          const response = await axios.get("/api/filter/time", {
+            params: {
+              time: timeString.value,
+            }
+          });
+          groups.value = response.data;
+        } catch (error) {
+          console.error("API 요청 오류: ", error);
+        }
+        
+      } else {
         alert("시간을 다시 선택해 주세요.");
-        return;
-      }
-      // time.value = selectedTime;
-      try {
-        const response = await axios.post('/api/filter/time', {
-          time: time.value,
-        });
-        groups.value = response.data;
-      } catch (error) {
-        console.error("모임 리스트를 가져오는 중 오류 발생", error);
-        alert("모임 리스트 가져오기 실패");
       }
     }
+
+    // const timeSelected = (selectedTime) => {
+    //   console.log('선택된 시간', selectedTime);
+
+    //   if (selectedTime) {
+
+    //     const date = new Date(selectedTime);
+    //     time.value.hours = date.getHours();
+    //     time.value.minutes = date.getMinutes();
+    //     console.log("-------------------", time.value.hours, time.value.minutes);
+
+    //   }
+    //   // console.log(`Selected Time: ${time.hours}`);
+    //   if (time.value == null) {
+    //     alert("시간을 다시 선택해 주세요.");
+    //     return;
+    //   }
+    // };
+
+    // try {
+    //   const response = await axios.post('/api/filter/time', {
+    //     time: time.value,
+    //   });
+    //   groups.value = response.data;
+    // } catch (error) {
+    //   console.error("모임 리스트를 가져오는 중 오류 발생", error);
+    //   alert("모임 리스트 가져오기 실패");
+    // }
+
 
 
     //  검색어
@@ -590,8 +623,11 @@ export default {
       options,
       date,
       dateClicked,
+
       time,
-      timeSelcet,
+      timeString,
+      timeSelected,
+
       groups,
       displayedGroups,
       loading,
@@ -776,11 +812,13 @@ main {
   height: 48px;
   text-align: center;
   background-color: #fff;
+  border: 0.1px solid grey;
+  border-radius: 3px;
   font-size: 16px;
   cursor: pointer;
 }
 
-::v-deep .vue__time-picker input.vue__time-picker-input {
+/* ::v-deep .vue__time-picker input.vue__time-picker-input {
   width: 200px;
   height: 48px;
   border-radius: 3px;
@@ -795,7 +833,7 @@ main {
 ::v-deep .vue__time-picker input.vue__time-picker-input::placeholder {
   font-size: 18px;
   color: black;
-}
+} */
 
 .input-slot-image {
   height: 20px;
@@ -1090,6 +1128,10 @@ main {
 .modal-content p {
   font-size: 16px;
   text-align: start;
+}
+
+.modal-description {
+  margin-bottom: 50px;
 }
 
 

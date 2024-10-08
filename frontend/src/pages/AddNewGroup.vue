@@ -34,6 +34,7 @@
           <input class="input-event" v-model="locationInput" @keydown.enter="handleEnterKey" @click="openDaumApi"
             type="text" placeholder="위치를 검색하세요." />
         </div>
+        <input class="input-event" type="text" v-model="detailAddress" @keydown.enter="handleEnterKey" placeholder="상세 주소를 적어주세요.">
 
         <p class="category-text">Choose Date and Time</p>
         <div class="category-date">
@@ -75,6 +76,8 @@ export default {
     const sportInput = ref('');
     const locationInput = ref('');
     const personInput = ref('');
+    const detailAddress = ref('');
+    console.log(toRaw(detailAddress.value));
     // 날짜
     const date = ref(null);
 
@@ -92,6 +95,7 @@ export default {
       title: "",
       topboxContent: "",
       sport: "종목",
+      fullLocation: "",
       location: "",
       person: "",
       date: "",
@@ -147,7 +151,8 @@ export default {
       new window.daum.Postcode({
         oncomplete: (data) => {
           console.log("받은 주소 : ", data)
-          formData.value.location = data.address;
+          formData.value.fullLocation = data.address;     //  전체 주소
+          formData.value.location = data.sigungu;         // 시, 군 만
           locationInput.value = data.sigungu;
         }
       }).open();
@@ -172,6 +177,12 @@ export default {
     const registerGroup = async () => {
       formData.value.title = title.value;
       title.value = '';
+
+      if (detailAddress.value) {
+        formData.value.fullLocation += ` ${detailAddress.value}`;
+      } else {
+        alert("상세 주소를 입력해주세요.");
+      }
 
 
       const requiredFields = [
@@ -200,6 +211,7 @@ export default {
         alert("모임 등록에 실패했습니다.");
       }
     };
+
     return {
       title,
       sportInput,
@@ -207,6 +219,7 @@ export default {
       personInput,
       date,
       openDaumApi,
+      detailAddress,
 
       formData,
       updateFormData,
