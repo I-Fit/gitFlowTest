@@ -20,14 +20,9 @@
       <!-- 제목 및 좋아요 버튼 -->
       <div v-if="post" class="content-title">
         <h1>{{ post.title }}</h1>
-        <div class="title-heart" @click="toggleHeart(post.id)">
+        <p>isHeartFilled: {{ isHeartFilled }}</p>
+        <div class="title-heart" @click="toggleHeart(post.postId)">
           <div :class="isHeartFilled ? 'filled-heart' : 'empty-heart'"></div>
-          <!-- <div
-            :class="{
-              'filled-heart': isHeartFilled,
-              'empty-heart': !isHeartFilled,
-            }"
-          ></div> -->
         </div>
       </div>
 
@@ -92,6 +87,7 @@ export default {
     // const postId = Number(route.params.id);
 
     const isHeartFilled = ref(false);
+    const likesCnt = ref(0);
     const showActions = ref(false);
     
     // 게시글 데이터 가져오기
@@ -154,15 +150,22 @@ export default {
       return '';
     });
 
-    const toggleHeart = async () => {
+    const toggleHeart = async (postId) => {
+      console.log("postId: ", postId);
       try {
         const response = await axios.post(`http://localhost:8080/api/board/${postId}/like`);
         
         if (response.status === 200) {
-          isHeartFilled.value = response.data.isHeartFilled;
-          await fetchPost();
+          const { likesCnt: newLikesCnt, heartFilled:newIsHeartFilled } = response.data;
+          
+          console.log("좋아요수 : ", newLikesCnt);
+          console.log("isheartfilled (서버 응답): ", newIsHeartFilled);
+
+          likesCnt.value = newLikesCnt;
+          isHeartFilled.value = newIsHeartFilled;
+          // await fetchPost();
         }
-        console.log(response.data);
+        console.log("server response", response.data);
       } catch (error) {
         console.error('좋아요 토글 실패: ', error);
       }
@@ -205,6 +208,7 @@ export default {
       comments,
       formattedCreatedAt,
       isHeartFilled,
+      likesCnt,
       toggleHeart,
       showActions,
       toggleActions,
