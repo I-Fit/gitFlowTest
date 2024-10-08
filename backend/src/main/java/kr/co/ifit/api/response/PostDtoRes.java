@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostDtoRes {
 
-    private Post post;
+//    private Post post;
     private Long postId;
     private String title;
     private String content;
@@ -37,11 +37,12 @@ public class PostDtoRes {
         this.updatedAt = post.getUpdatedAt();
         this.likesCnt = post.getLikesCnt();
         this.commentsCnt = post.getCommentsCnt();
-        this.isHeartFilled = post.getLikesCnt() > 0;    // 초기화
+        this.isHeartFilled = post.isHeartFilled();
     }
 
-    public PostDtoRes(Post post, boolean isHeartFilled) {
-        this.post = post;     // 기존 생성자 호출
+    public PostDtoRes(int likesCnt, boolean isHeartFilled) {
+        this.likesCnt = likesCnt;
         this.isHeartFilled = isHeartFilled;     // 좋아요 상태 설정
     }
+
 }

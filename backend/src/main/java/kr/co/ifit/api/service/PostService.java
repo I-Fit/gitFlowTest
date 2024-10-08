@@ -102,16 +102,20 @@ public class PostService {
         int likesCnt = post.getLikesCnt();
         boolean isHeartFilled;
 
-        if (likesCnt > 0) {
-            post.setLikesCnt(post.getLikesCnt() - 1);
+        if (post.isHeartFilled()) {
+            post.setLikesCnt(likesCnt - 1);
             isHeartFilled = false;
         } else {
-            post.setLikesCnt(post.getLikesCnt() + 1);
+            post.setLikesCnt(likesCnt + 1);
             isHeartFilled = true;
         }
+
+        post.setIsHeartFilled(isHeartFilled);
         postRepository.save(post);
 
-        return new PostDtoRes(post, isHeartFilled);
+        System.out.println("likesCnt & isheartfilled" + likesCnt + isHeartFilled);
+
+        return new PostDtoRes(post.getLikesCnt(), isHeartFilled);
     }
 
     // 키워드로 게시글 검색
