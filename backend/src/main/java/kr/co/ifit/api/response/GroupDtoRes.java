@@ -1,12 +1,14 @@
 package kr.co.ifit.api.response;
 
 import kr.co.ifit.db.entity.Group;
+import kr.co.ifit.db.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.Locale;
 
 @Setter
@@ -25,6 +27,7 @@ public class GroupDtoRes {
     private String date;
     private String username;
     private boolean saved;
+    private String profileUrl;
 
     public GroupDtoRes(Long communityId, String title, String topboxContent, String sport, String location, String fullLocation, int person, int peopleParticipation, String date, User user, boolean saved) {
         this.communityId = communityId;
@@ -38,6 +41,7 @@ public class GroupDtoRes {
         this.date = date;
         this.username = user != null ? user.getUsername() : null;
         this.saved = saved;
+        this.profileUrl = user != null ? user.getProfileUrl() : null;
     }
 
     public static GroupDtoRes convertToDto(Group group) {

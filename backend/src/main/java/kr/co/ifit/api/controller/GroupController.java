@@ -1,11 +1,14 @@
 package kr.co.ifit.api.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.co.ifit.api.request.*;
 import kr.co.ifit.api.response.AddGroupDtoRes;
 import kr.co.ifit.api.response.FilterDtoRes;
 import kr.co.ifit.api.response.GroupDtoRes;
 import kr.co.ifit.api.service.*;
+import kr.co.ifit.common.util.UserContextUtil;
 import kr.co.ifit.db.entity.Group;
+import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -19,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -88,6 +92,7 @@ public class GroupController {
     // 홈페이지에서 지역 필터 부분
     @GetMapping("/filter/location")
     public ResponseEntity<List<GroupDtoRes>> getAllLocation(@RequestParam("location") String location) {
+        logger.info("=================================================================={}", location);
         List<GroupDtoRes> groups = homeGroupService.getAllLocations(location);
         return ResponseEntity.ok(groups);
     }
@@ -113,6 +118,9 @@ public class GroupController {
         List<GroupDtoRes> groups = homeGroupService.getGroupsByTime(parsedTime);
         return ResponseEntity.ok(groups);
     }
+//
+//    //  홈페이지에 있는 필터 부분 - 장소
+//    @PostMapping("/filter/location")
 
     //  전달한 검색어로 모임을 검색하여 결과를 반환    - 지역으로 해야된다고 합니다
     @GetMapping("/search")
@@ -167,7 +175,7 @@ public class GroupController {
 
             return ResponseEntity.ok(likedGroupDtoReq.isSaved() ? "추가" : "취소");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 

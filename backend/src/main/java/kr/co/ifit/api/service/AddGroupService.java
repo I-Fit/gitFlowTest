@@ -2,6 +2,7 @@ package kr.co.ifit.api.service;
 
 import kr.co.ifit.api.request.AddGroupDtoReq;
 import kr.co.ifit.db.entity.Group;
+import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.GroupRepository;
 import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service

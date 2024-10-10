@@ -16,5 +16,5 @@ public class AddGroupDtoReq {
     private int person;
     private LocalDateTime date;
     private Long userId;
-    private boolean saved;
+    private boolean isSaved;
 }

@@ -2,9 +2,10 @@ package kr.co.ifit.api.service;
 
 import kr.co.ifit.api.request.LikedGroupDtoReq;
 import kr.co.ifit.api.response.GroupDtoRes;
-import kr.co.ifit.common.exception.GroupJoinException;
+import kr.co.ifit.common.exception.GroupException;
 import kr.co.ifit.db.entity.JoinedGroup;
 import kr.co.ifit.db.entity.Group;
+import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.GroupRepository;
 import kr.co.ifit.db.repository.JoinedGroupRepository;
 import kr.co.ifit.db.repository.UserRepository;
@@ -61,6 +62,7 @@ public class JoinedGroupService {
 
     }
 
+
     // userId, communityId를 받아서 해당 User, group에 조회한 후 새로운 Join 엔티티를 생성하고 저장
     public void joinGroup(Long userId, Long communityId) {
         // userId로 사용자 조회
@@ -69,11 +71,11 @@ public class JoinedGroupService {
         Group group = groupRepository.findById(communityId).orElseThrow(() -> new RuntimeException("모임을 찾을 수 없습니다."));
 
         if (group.getUser().getUserId().equals(userId)) {
-            throw new GroupJoinException("자신이 만든 모임에는 참여할 수 없습니다.");
+            throw new GroupException("자신이 만든 모임에는 참여할 수 없습니다.");
         }
 
         if (joinedGroupRepository.existsByUserAndGroup(user, group)) {
-            throw new GroupJoinException("이미 참여 중인 모임입니다.");
+            throw new GroupException("이미 참여 중인 모임입니다.");
         }
 
         JoinedGroup joinedGroup = new JoinedGroup();
@@ -89,9 +91,11 @@ public class JoinedGroupService {
             group.incrementPeopleParticipation();
             groupRepository.save(group);
         } else {
-            throw new GroupJoinException("모임이 가득 찼습니다.");
+            throw new GroupException("모임이 가득 찼습니다.");
         }
     }
+
+
 
     //  참석한 모임 중 삭제를 했을 때
     public boolean deleteJoinedGroup(Long userId, Long communityId) {
@@ -117,4 +121,24 @@ public class JoinedGroupService {
             likedGroupService.removeLike(likedGroupDtoReq);
         }
     }
+
+//    private GroupDtoRes convertToDto(Group group) {
+//
+//        LocalDateTime dateTime = group.getDate();
+//
+//        DateTimeFormatter customDate = DateTimeFormatter.ofPattern("yy.MM.dd (E) HH:mm", Locale.KOREAN);
+//        String formattedDate = dateTime.format(customDate);
+//
+//        return new GroupDtoRes(
+//                group.getCommunityId(),
+//                group.getTitle(),
+//                group.getTopboxContent(),
+//                group.getSport(),
+//                group.getLocation(),
+//                group.getPerson(),
+//                group.getPeopleParticipation(),
+////                group.getDate(),
+//                formattedDate,
+//                group.getUser());
+//    }
 }

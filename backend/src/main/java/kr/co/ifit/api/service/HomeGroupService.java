@@ -1,19 +1,26 @@
 package kr.co.ifit.api.service;
 
+import kr.co.ifit.api.request.FilterDtoReq;
 import kr.co.ifit.api.request.LikedGroupDtoReq;
-import kr.co.ifit.api.response.FilterSportDtoRes;
+import kr.co.ifit.api.response.FilterDtoRes;
 import kr.co.ifit.api.response.GroupDtoRes;
 import kr.co.ifit.db.entity.Group;
 import kr.co.ifit.db.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,7 +33,6 @@ public class HomeGroupService {
 
     //  Group 엔티티를 GroupResponseDTO 객체로 변환
     public List<GroupDtoRes> getAllGroups() {
-
         List<Group> groups = groupRepository.findAll();
         return groups.stream().map(GroupDtoRes::convertToDto).collect(Collectors.toList());     // 변환된 DTO 객체를 리스트로 수집
     }
@@ -82,14 +88,14 @@ public class HomeGroupService {
 //    }
 
     // 운동 종목 필터
-    public List<FilterSportDtoRes> getAllExercises() {
+    public List<FilterDtoRes> getAllExercises() {
         List<String> sports = groupRepository.findAllExercises();
         // 모든 Group 객체를 가져온 후 sport 필드만 추출하고 중복을 제거한다.
-        List<FilterSportDtoRes> responses = new ArrayList<>();
+        List<FilterDtoRes> responses = new ArrayList<>();
 
         int key = 1;
         for (String sport : sports) {
-            FilterSportDtoRes dto = new FilterSportDtoRes(key, sport);
+            FilterDtoRes dto = new FilterDtoRes(key, sport);
             dto.setSport(sport);
             dto.setKey(key);
             responses.add(dto);

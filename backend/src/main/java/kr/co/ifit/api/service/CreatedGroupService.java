@@ -1,8 +1,11 @@
 package kr.co.ifit.api.service;
 
+import kr.co.ifit.api.request.CreatedGroupDtoReq;
+import kr.co.ifit.api.request.FilterDtoReq;
 import kr.co.ifit.api.request.LikedGroupDtoReq;
 import kr.co.ifit.api.response.GroupDtoRes;
 import kr.co.ifit.db.entity.Group;
+import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.GroupRepository;
 import kr.co.ifit.db.repository.JoinedGroupRepository;
 import kr.co.ifit.db.repository.UserRepository;

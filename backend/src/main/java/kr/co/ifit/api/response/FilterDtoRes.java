@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FilterSportDtoRes {
+public class FilterDtoRes {
     private Integer key;
     private String sport;
 }

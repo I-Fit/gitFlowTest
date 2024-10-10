@@ -2,8 +2,10 @@ package kr.co.ifit.api.service;
 
 import kr.co.ifit.api.request.LikedGroupDtoReq;
 import kr.co.ifit.api.response.GroupDtoRes;
+import kr.co.ifit.common.exception.GroupException;
 import kr.co.ifit.db.entity.Group;
 import kr.co.ifit.db.entity.LikedGroup;
+import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.GroupRepository;
 import kr.co.ifit.db.repository.LikedGroupRepository;
 import kr.co.ifit.db.repository.UserRepository;
@@ -57,6 +59,10 @@ public class LikedGroupService {
     public void toggleLike(LikedGroupDtoReq dto) {
         User user = userRepository.findById(dto.getUserId()).orElseThrow(() -> new RuntimeException("사용자가 없습니다."));
         Group group = groupRepository.findById(dto.getCommunityId()).orElseThrow(() -> new RuntimeException("모임이 없습니다."));
+
+        if (group.getUser().getUserId().equals(user.getUserId())) {
+            throw new GroupException("자신이 만든 모임은 찜할 수 없습니다.");
+        }
 
         if (likedGroupRepository.existsByUserAndGroup(user, group)) {
             throw new RuntimeException("이미 찜한 모임입니다.");
