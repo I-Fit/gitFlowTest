@@ -4,29 +4,15 @@
     <div class="comment">
       <div class="comment-top">
         <h2>게시글 관리</h2>
-        <p class="line text01" @click="navigateTo('MyPosts')">내가 쓴 게시물</p>
-        <p class="line text02" @click="navigateTo('CommentPosts')">
-          내가 쓴 댓글
-        </p>
-        <p class="text03" @click="navigateTo('LikedPosts')">좋아요 한 게시물</p>
+        <p class="line text01" @click="myPosts">내가 쓴 게시글</p>
+        <p class="line text02" @click="myComments">내가 쓴 댓글</p>
+        <p class="text03" @click="likedPosts">좋아요 한 게시물</p>
       </div>
       <div class="comment-middle">
         <div class="middle-filter">
           <div class="middle-filter-search-box">
-            <input
-              type="text"
-              name="search"
-              class="search-box-input"
-              placeholder="검색어를 입력하세요."
-              v-model="searchQuery"
-              @input="onInput"
-            />
-            <img
-              src="@/assets/images/search.icon.png"
-              alt="search"
-              class="search-box-icon"
-              @click="onSearch"
-            />
+            <input type="text" name="search" class="search-input" placeholder="검색어를 입력하세요." v-model="searchKeyword" @keydown.enter="performSearch" />
+            <div class="search-icon" @click="performSearch"></div>
           </div>
           <select title="정렬" class="middle-filter-sort">
             <option value="" selected="selected" disabled="disabled">
@@ -36,8 +22,27 @@
             <option value="latest">최신순</option>
           </select>
         </div>
-        <div class="comment-bottom-table">
-          <!-- 댓글 반복 렌더링 -->
+
+        <div class="comments-list">
+          <div v-if="comments.length === 0" class="no-comments">
+            <p>작성한 댓글이 없습니다.</p>
+          </div>
+          <ul>
+            <li v-for="comment in comments" :key="comment.commentId" class="comment-item">
+              <div class="comment-content">
+                <p>{{ comment.postId }}</p>
+                <p>{{ comment.content }}</p>
+                <p class="comment-date">{{ formattedCreatedAt }}</p>
+              </div>
+              <!-- 댓글 수정 삭제 메뉴 추가-->
+              <button @click="deleteComment(comment.commentId)">삭제</button>
+            </li>
+          </ul>
+        </div>
+
+
+        <!-- <div class="comment-bottom-table">
+          // 댓글 반복 렌더링
           <div
             class="bottom-table"
             v-for="(comment, index) in paginatedComments"
@@ -71,14 +76,9 @@
               />
             </div>
           </div>
-        </div>
-        <div class="pagination-container">
-          <Pagination
-            :currentPage="currentPage"
-            :totalPages="totalPages"
-            @page-changed="fetchComments"
-          />
-        </div>
+        </div> -->
+
+
       </div>
     </div>
   </main>
@@ -86,160 +86,148 @@
 
 
 <script>
-import { defineComponent } from "vue";
-import PostActions from "@/components/common/PostActions.vue";
+import { ref, onBeforeMount, computed } from 'vue';
 import AppNav from "@/components/layout/AppNav.vue";
-import Pagination from "@/components/common/Pagination.vue";
+import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
+import apiClient from '@/api/apiClient';
+// import PostActions from "@/components/common/PostActions.vue";
 
-export default defineComponent({
+export default {
   components: {
-    PostActions,
     AppNav,
-    Pagination,
   },
+  setup() {
+    const route = useRoute();
+    const router = useRouter();
 
-  data() {
-    return {
-      searchQuery: "",
-      comments: [
-        {
-          id: 1,
-          userName: "김계란",
-          content: "감사합니다! 열심히 했어요!!",
-          postTitle: "종주할 때 사진 모아봤습니다.",
-          creationDate: "6일 전",
-          showActions: false,
-        },
+    const postId = route.params.postId;
+    const userId = route.params.userId;
+    const commentId = route.params.commentId;
+    const visibleDatas = ref([]);
+    const comments = ref([]);
+    const searchKeyword = ref('');
+    const createdAt = ref('');
 
-        {
-          id: 2,
-          userName: "김계란",
-          content: "5일 걸렸습니다.",
-          postTitle: "종주할 때 사진 모아봤습니다.",
-          creationDate: "6일 전",
-          showActions: false,
-        },
-
-        {
-          id: 3,
-          userName: "김계란",
-          content: "시원할 때, 다시 해보고 싶네요.",
-          postTitle: "종주할 때 사진 모아봤습니다.",
-          creationDate: "6일 전",
-          showActions: false,
-        },
-
-        {
-          id: 4,
-          userName: "김계란",
-          content: "일정 넉넉하게 잡으시면 누구든 가능합니다! 도전 ㄱㄱ",
-          postTitle: "종주할 때 사진 모아봤습니다.",
-          creationDate: "6일 전",
-          showActions: false,
-        },
-
-        {
-          id: 5,
-          userName: "김계란",
-          content: "댓글 남겨주셔서 감사합니다. 이따가 댓글 달아볼게요.",
-          postTitle: "종주할 때 사진 모아봤습니다.",
-          creationDate: "6일 전",
-          showActions: false,
-        },
-
-        {
-          id: 6,
-          userName: "김계란",
-          content: "제 능력으로 3일 컷은 무리입니다 ㅋㅋ",
-          postTitle: "종주할 때 사진 모아봤습니다.",
-          creationDate: "6일 전",
-          showActions: false,
-        },
-
-        {
-          id: 7,
-          userName: "김계란",
-          content: "기분이 좋으시군요 ㅋㅋㅋ",
-          postTitle: "종주할 때 사진 모아봤습니다.",
-          creationDate: "6일 전",
-          showActions: false,
-        },
-
-        {
-          id: 8,
-          userName: "김계란",
-          content: "마지막날 200km 달렸고요.. 다른 날들은 100km 정도로..",
-          postTitle: "종주할 때 사진 모아봤습니다.",
-          creationDate: "6일 전",
-          showActions: false,
-        },
-
-        {
-          id: 9,
-          userName: "김계란",
-          content: "예전에 신청해서 받았어요!",
-          postTitle: "종주할 때 사진 모아봤습니다.",
-          creationDate: "6일 전",
-          showActions: false,
-        },
-
-        {
-          id: 10,
-          userName: "김계란",
-          content: "조만간 같이 공 찹시다 ㅋㅋ",
-          postTitle: "종주할 때 사진 모아봤습니다.",
-          creationDate: "6일 전",
-          showActions: false,
-        },
-      ],
-      currentPage: 1,
-      commentsPerPage: 4,
+    const myPosts = () => {
+      router.push({ name: "MyPosts" });
     };
-  },
 
-  computed: {
-    totalPages() {
-      return Math.ceil(this.comments.length / this.commentsPerPage);
-    },
-    paginatedComments() {
-      const startIndex = (this.currentPage - 1) * this.commentsPerPage;
-      return this.comments.slice(startIndex, startIndex + this.commentsPerPage);
-    },
-  },
+    const myComments = () => {
+      router.push({ name: "MyComments" });
+    };
 
-  methods: {
-    toggleActions(index) {
-      this.comments.forEach((comment, idx) => {
-        comment.showActions = idx === index ? !comment.showActions : false;
-      });
-    },
-    handleNavigation(action) {
-      if (action === "EditPost") {
-        this.$router.push("/edit-post");
-      } else if (action === "delete") {
-        this.$router.push("/my-comments");
+    const likedPosts = () => {
+      router.push({ name: "LikedPosts" });
+    };
+
+    // const fetchComments = async () => {
+    //   try {
+    //     // const response = await fetch(`/comments/user/${userId}`); // 실제 API 경로로 수정
+    //     const response = await apiClient.get('/comments/by');
+    //     if (!response.ok) {
+    //       throw new Error('Network response was not ok');
+    //     }
+    //     comments.value = await response.json();
+    //     console.log('fetching comments: ', comments.value);
+    //   } catch (error) {
+    //     console.error('댓글 불러오기 실패: ', error);
+    //   }
+    // };
+
+    const fetchComments = async () => {
+      try {
+        const response = await apiClient.get('/comments/by');
+        comments.value = response.data;
+      } catch (error) {
+        console.error('댓글 로드 실패: ', error);
       }
-    },
-    onInput(event) {
-      this.searchQuery = event.target.value;
-    },
-    onSearch() {
-      console.log("Searching for:", this.searchQuery);
-    },
-    navigateTo(routeName) {
-      this.$router.push({ name: routeName });
-    },
+    };
 
-    navigateToPost(postId, commentId) {
-      this.$router.push({ name: 'Post', query: { commentId }});
-    },
+    // viewPost -> viewComment로 변경?
+    const viewPost = (post) => {
+      console.log('Navigating to post: ', post);
+      router.push({ path: `/post/${post.postId}` });
+    }
 
-    fetchComments(page) {
-      this.currentPage = page;
-      console.log("Fetching comments for page:", page);
-    },
+    const performSearch = async () => {
+      if (!searchKeyword.value) {
+        // alert('검색어를 입력하세요!');
+        await fetchComments();
+        return;
+      }
+
+      try {
+        const response = await axios.get(`/api/board/search`, {
+          params: { keyword: searchKeyword.value },
+        });
+
+        console.log('검색 결과: ', response.data);
+
+        if (response.data.length > 0) {
+          visibleDatas.value = response.data;
+        } else {
+          alert('검색 결과가 없습니다.');
+          visibleDatas.value = [];
+        }
+      } catch (error) {
+        console.log('검색 실패: ', error);
+        alert('검색 실패!');
+      }
+    };
+
+    const deleteComment = async (commentId) => {
+      console.log('deleting comment with id: ', commentId);
+      if (!commentId || typeof commentId !== 'number') {
+        alert('유효하지 않은 댓글 id');
+        return;
+      }
+
+      if (confirm('정말 댓글을 삭제하시겠습니까?')) {
+        try {
+          await axios.delete(`/api/comments/delete/${commentId}`);
+          alert('댓글 삭제 완료!');
+          await fetchComments();
+        } catch (error) {
+          console.error('댓글 삭제 실패: ', error);
+          alert('댓글 삭제 실패!' + (error.response.data.message || ''));
+        }
+      }
+    };
+
+    const formattedCreatedAt = computed(() => {
+      if (createdAt.value) {
+        const date = new Date(createdAt.value);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      return '';
+    });
+
+    onBeforeMount(() => {
+      fetchComments();
+    });
+
+    return {
+      postId,
+      commentId,
+      userId,
+      fetchComments,
+      viewPost,
+      performSearch,
+      deleteComment,
+      myPosts,
+      myComments,
+      likedPosts,
+      formattedCreatedAt,
+      comments,
+      searchKeyword,
+    }
   },
-});
+}
+
 </script>
 
 <style scoped>
@@ -361,7 +349,60 @@ h2 {
   margin-top: 180px;
 }
 
-.comment-bottom-table {
+.comments-list {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.comments-list h3 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.no-comments {
+  text-align: center;
+  color: #888;
+}
+
+.comment-item {
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+
+.comment-item:last-child {
+  border-bottom: none; /* 마지막 댓글의 경계선 제거 */
+}
+
+.comment-content {
+  margin-bottom: 5px;
+}
+
+.comment-content p {
+  margin: 5px 0;
+}
+
+.comment-date {
+  font-size: 12px;
+  color: #888;
+}
+
+/* 삭제 버튼 스타일 */
+.comment-item button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.comment-item button:hover {
+  background-color: #e60000;
+}
+
+/* .comment-bottom-table {
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
@@ -380,15 +421,15 @@ h2 {
 
 .user-info {
   display: flex;
-  flex-direction: column; /* 세로 방향으로 정렬 */
-  align-items: center; /* 가운데 정렬 */
+  flex-direction: column;
+  align-items: center;
 }
 
 .user-info-img {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  margin-bottom: 5px; /* 이미지와 이름 사이에 간격 추가 */
+  margin-bottom: 5px;
 }
 
 .user-info-name {
@@ -398,34 +439,34 @@ h2 {
 
 .user-comment {
   display: flex;
-  justify-content: space-between; /* 요소들 사이에 공간을 균등하게 배치 */
+  justify-content: space-between;
   align-items: center;
   font-size: 14px;
   color: #333;
   line-height: 1.5;
-  gap: 10px; /* 요소들 간의 간격을 좁히기 위해 추가 */
+  gap: 10px;
 }
 
 .post-title {
   font-weight: bold;
   color: #555;
-  margin-right: 100px; /* 제목과 콘텐츠 사이 간격을 좁게 설정 */
+  margin-right: 100px;
   margin-left: 50px;
-  white-space: nowrap; /* 제목이 길어지면 줄바꿈 없이 표시 */
+  white-space: nowrap;
 }
 
 .comment-content {
-  flex: 1; /* comment content가 가로 공간을 차지하도록 설정 */
-  /* margin-right: px; content와 date 사이 간격을 좁게 설정 */
-  /* text-align: center; content를 중앙 정렬 */
+  flex: 1;
+  /* margin-right: px;
+  /* text-align: center;
   color: #333;
 }
 
 .creation-date {
   font-size: 12px;
   color: #999;
-  white-space: nowrap; /* 날짜가 줄바꿈 없이 표시 */
-  margin-right: 50px; /* date와 content 사이 간격을 좁게 설정 */
+  white-space: nowrap;
+  margin-right: 50px;
 }
 
 .relative-container {
@@ -444,10 +485,5 @@ h2 {
   top: 5px;
   left: 20px;
   z-index: 10;
-  /* 클릭 우선순위 조정 */
-}
-
-.pagination-container {
-  margin-top: 153px;
-}
+} */
 </style>

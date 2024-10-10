@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import axios from "axios";
 import { useTimer } from "@/utils/timer";
+import apiClient from "@/api/apiClient";
 
 export function useEmail() {
   const sendStatus = ref(null); // 이메일 전송 상태 저장

@@ -53,101 +53,14 @@
 <script>
 import axios from "axios";
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import apiClient from "@/api/apiClient";
 
 export default {
   name: 'EditPost',
-  // data() {
-  //   return {
-  //     formData: {
-  //       title: '',
-  //       content: '',
-  //       imageStr: null,
-  //       exercise: '',
-  //       location: '',
-  //     },
-  //     responseMessage: '',
-  //     exerciseInput: '',
-  //     categories: ['운동1', '운동2', '운동3'],  // todo
-  //   };
-  // },
-  // methods: {
-  //   triggerFileInput() {
-  //     this.$refs.fileInput.click();
-  //   },
-
-  //   onFileChange(event) {
-  //     const file = event.target.files[0];
-  //     if (file) {
-  //       this.formData.imageStr = file;
-        
-  //       const reader = new FileReader();
-  //       reader.onload = (e) => {
-  //         //content-box에 이미지 추가
-  //         const img = document.createElement('img');
-  //         img.src = e.target.result;
-  //         img.style.width = '100%';
-  //         img.style.height = 'auto';
-  //         img.style.marginBottom = '10px';
-
-  //         const contentBox = this.$refs.contentBox;
-  //         contentBox.innerHTML += img.outerHTML;
-  //         contentBox.focus();
-  //       };
-  //       reader.readAsDataURL(file);
-  //     }
-  //   },
-
-  //   onContentInput(event) {
-  //     this.formData.content = event.target.innerText;
-  //   },
-
-  //   setExercise() {
-  //     this.formData.exercise = this.exerciseInput;
-  //     this.exerciseInput = '';
-  //   },
-
-  //   openDaumApi() {
-  //     new window.daum.Postcode({
-  //       oncomplete: (data) => {
-  //         console.log("받은 주소: ", data);
-  //         this.formData.location = data.sigungu;
-  //       }
-  //     }).open();
-  //   },
-
-  //   async confirmSubmit() {
-  //     const formData = new FormData();
-  //     formData.append('title', this.formData.title);
-  //     formData.append('content', this.formData.content);
-  //     formData.append('exercise', this.formData.exercise);
-  //     formData.append('location', this.formData.location);
-
-  //     if (this.formData.imageStr) {
-  //       formData.append('imageStr', this.formData.imageStr);
-  //     }
-
-  //     try {
-  //       const response = await axios.put(`http://localhost:8080/api/board/update/${this.postId}`, formData, {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       });
-
-  //       if (response.data.status === "success") {
-  //         alert('게시글이 성공적으로 수정되었습니다!');
-  //         this.$router.push(`/post/${this.postId}`);  // 수정 후 상세 페이지로 리다이렉션
-  //       }
-  //     } catch (error) {
-  //       console.error('게시글 수정 실패: ', error);
-  //       alert('게시글 수정이 실패했습니다.');
-  //     }
-
-  //   }
-  // },
-  
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const postId = route.params.id;
     const formData = ref({
       title: '',
@@ -159,7 +72,7 @@ export default {
 
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/board/post/${postId}`);
+        const response = await axios.get(`/api/board/post/${postId}`);
 
         const post = response.data;
         formData.value.title = post.title;
@@ -167,7 +80,7 @@ export default {
         formData.value.exercise = post.exercise;
         formData.value.location = post.location;
         // formData.value.imageStr = post.imageStr;
-        
+
         if (post.imageStr) {
           formData.value.imageStr = post.imageStr;
           const img = `<img src="data:image/png;base64,${formData.value.imageStr}" style="width: 100%; height: auto; margin-bottom: 10px" alt="게시글 이미지" />`;
@@ -186,7 +99,7 @@ export default {
     };
 
     const onFileChange = (event) => {
-      const file= event.target.files[0];
+      const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -205,7 +118,7 @@ export default {
     const onContentInput = (event) => {
       const content = event.target.innerHTML;
 
-      if(formData.value.imageStr) {
+      if (formData.value.imageStr) {
         const img = `<img src="${formData.value.imageStr}" alt="게시글 이미지" style="width: 100%; height: auto; margin-bottom: 10px;" />`
         formData.value.content = img + content;
       } else {
@@ -225,7 +138,7 @@ export default {
       }
 
       try {
-        const response = await axios.put(`http://localhost:8080/api/board/update/${postId}`, formDataToSend, {
+        const response = await apiClient.put(`/board/update/${postId}`, formDataToSend, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -233,7 +146,7 @@ export default {
 
         if (response.data.status === "success") {
           alert('게시글이 성공적으로 수정되었습니다!');
-          this.$router.push('/board');
+          router.push('/board');
         }
       } catch (error) {
         console.error('게시글 수정 실패: ', error);

@@ -63,9 +63,10 @@
 <script>
 import PostActions from '@/components/common/PostActions.vue';
 import axios from 'axios';
-import { ref, onMounted, computed } from 'vue';
+import { ref, computed, onBeforeMount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import NewComment from './NewComment.vue';
+import apiClient from '@/api/apiClient';
 
 export default {
   name: 'Post',
@@ -73,32 +74,38 @@ export default {
     PostActions,
     NewComment,
   },
-  
   setup() {
     const route = useRoute();
     const router = useRouter();
-
     const post = ref(null); // 게시글 데이터 저장할 변수
     const comments = ref([]);
 
     const userId = ref('')
     const createdAt = ref('');
     const postId = route.params.id;
+    // const isLoggedIn = ref(false);
     // const postId = Number(route.params.id);
 
     const isHeartFilled = ref(false);
     const likesCnt = ref(0);
     const showActions = ref(false);
     
+    // 로그인 상태 업데이트 로직
+    // const updateLoginStatus = (status) => {
+    //   isLoggedIn.value = status;
+    // };
+
     // 게시글 데이터 가져오기
     const fetchPost = async () => {
       console.log(`Fetching post with Id: ${postId}`);
       try {
-        const response = await axios.get(`http://localhost:8080/api/board/post/${postId}`);
+        const response = await axios.get(`/api/board/post/${postId}`);
+        console.log('fetched post data: ', response.data);
+
         post.value = response.data;
         userId.value = response.data.userId;
         createdAt.value = response.data.createdAt;
-        isHeartFilled.value = response.data.isHeartFilled;
+        isHeartFilled.value = response.data.heartFilled;
 
         post.value.content = cleanContent(post.value.content);
       } catch (error) {
@@ -112,7 +119,7 @@ export default {
 
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/comments/on/${postId}`);
+        const response = await apiClient.get(`/comments/post/${postId}`);
         comments.value = response.data;
         console.log('fetched comments: ', comments.value);
       } catch (error) {
@@ -129,7 +136,7 @@ export default {
 
       if (confirm('정말 댓글을 삭제하시겠습니까?')) {
         try {
-          await axios.delete(`http://localhost:8080/api/comments/delete/${commentId}`);
+          await apiClient.delete(`/comments/delete/${commentId}`);
           alert('댓글 삭제 완료!');
           await fetchComments();
         } catch (error) {
@@ -151,25 +158,67 @@ export default {
     });
 
     const toggleHeart = async (postId) => {
-      console.log("postId: ", postId);
-      try {
-        const response = await axios.post(`http://localhost:8080/api/board/${postId}/like`);
-        
-        if (response.status === 200) {
-          const { likesCnt: newLikesCnt, heartFilled:newIsHeartFilled } = response.data;
-          
-          console.log("좋아요수 : ", newLikesCnt);
-          console.log("isheartfilled (서버 응답): ", newIsHeartFilled);
+        console.log("postId: ", postId);
+        console.log("초기 좋아요 수: ", likesCnt.value);
+        console.log("초기 하트 상태: ", isHeartFilled.value);
 
-          likesCnt.value = newLikesCnt;
-          isHeartFilled.value = newIsHeartFilled;
-          // await fetchPost();
+      try {
+        const method = isHeartFilled.value ? 'DELETE' : 'POST';
+        const url = '/board/like';
+
+        const response = await apiClient({
+          method: method,
+          url: url,
+          data: {
+            postId,
+            // isHeartFilled: !isHeartFilled.value,
+          },
+        });
+
+        if (response.status === 200) {
+          isHeartFilled.value = !isHeartFilled.value;
+          // isHeartFilled.value = response.data.isHeartFilled;
+          await fetchPost();
         }
-        console.log("server response", response.data);
+        console.log(response.data);
       } catch (error) {
         console.error('좋아요 토글 실패: ', error);
       }
     };
+
+
+    // const toggleHeart = async (postId) => {
+    //   console.log("postId: ", postId);
+    //   console.log("초기 좋아요 수: ", likesCnt.value);
+    //   console.log("초기 하트 상태: ", isHeartFilled.value);
+
+    //   try {
+    //     const method = isHeartFilled.value ? 'DELETE' : 'POST';
+    //     const url = '/board/like';
+
+    //     const response = await apiClient({
+    //       method: method,
+    //       url: url,
+    //       data: {
+    //         postId,
+    //         isHeartFilled: !isHeartFilled.value,
+    //       },
+    //     });
+        
+    //     if (response.status === 200) {
+    //       const { likesCnt: newLikesCnt, heartFilled:newIsHeartFilled } = response.data;
+          
+    //       likesCnt.value = newLikesCnt;
+    //       isHeartFilled.value = newIsHeartFilled;
+    //     }
+    //     console.log("서버 응답: ", response.data);
+    //     console.log("좋아요 수 (업데이트 후): ", likesCnt.value);
+    //     console.log("하트 상태 (업데이트 후): ", isHeartFilled.value);
+    //     // console.log("server response", response.data);
+    //   } catch (error) {
+    //     console.error('좋아요 토글 실패: ', error);
+    //   }
+    // };
 
     const toggleActions = () => {
       showActions.value = !showActions.value;
@@ -188,7 +237,7 @@ export default {
 
     const deletePost = async () => {
       try {
-        await axios.delete(`http://localhost:8080/api/board/post/${postId}`);
+        await apiClient.delete(`/board/delete/${postId}`);
         alert('게시글 삭제 완료!');
         router.push(`/board`);
       } catch(error) {
@@ -196,19 +245,19 @@ export default {
       }
     };
 
-    onMounted(async () => {
-      await fetchPost();
-      await fetchComments();
+    onBeforeMount(async () => {
+      fetchPost();
+      fetchComments();
     });
 
     return {
       postId,
-      post,
       userId,
       comments,
       formattedCreatedAt,
       isHeartFilled,
       likesCnt,
+      post,
       toggleHeart,
       showActions,
       toggleActions,

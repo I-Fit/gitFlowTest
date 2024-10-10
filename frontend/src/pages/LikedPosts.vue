@@ -5,27 +5,15 @@
       <div class="post-null-block"></div>
       <div class="post-top">
         <h2>게시글 관리</h2>
-        <p class="line text01" @click="postHistory">내가 쓴 게시물</p>
+        <p class="line text01" @click="myPosts">내가 쓴 게시글</p>
         <p class="line text02" @click="myComments">내가 쓴 댓글</p>
-        <p class="text03">좋아요 한 게시물</p>
+        <p class="text03" @click="likedPosts">좋아요 한 게시물</p>
       </div>
       <div class="post-middle">
         <div class="middle-filter">
           <div class="middle-filter-search-box">
-            <input
-              type="text"
-              name="search"
-              class="search-box-input"
-              placeholder="검색어를 입력하세요."
-              v-model="searchQuery"
-              @input="onInput"
-            />
-            <img
-              src="@/assets/images/search.icon.png"
-              alt="search"
-              class="search-box-icon"
-              @click="onSearch"
-            />
+            <input type="text" name="search" class="search-input" placeholder="검색어를 입력하세요." v-model="searchKeyword" @keydown.enter="performSearch" />
+            <div class="search-icon" @click="performSearch"></div>
           </div>
           <select title="정렬" class="middle-filter-sort" v-model="sortOrder">
             <option value="" disabled>정렬</option>
@@ -43,18 +31,14 @@
                 alt="dot"
                 @click="toggleActions(post.id)"
               />
-              <PostActions
+              <!-- <PostActions
                 class="post-actions"
                 :visible="showActionsForPostId(post.id)"
                 @navigate="handleNavigation"
-              />
+              /> -->
             </div>
             <div class="table-group-postimg">
-              <img
-                class="table-group-post-images"
-                :src="post.images"
-                alt="게시글 이미지"
-              />
+              <img class="post-image" :src="post.imageStr ? `data:image/png;base64,${post.imageStr}` : ''" alt="게시글 이미지" @click="viewPost(post)" />
             </div>
             <div class="table-group-btn">
               <div class="likes">
@@ -81,11 +65,6 @@
             </div>
           </div>
         </div>
-        <Pagination
-          :currentPage="currentPage"
-          :totalPages="totalPages"
-          @page-changed="onPageChange"
-        />
       </div>
       <div class="like-floor"></div>
     </div>
@@ -93,158 +72,33 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, onBeforeMount } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
-import PostActions from "@/components/common/PostActions.vue";
-import Pagination from "@/components/common/Pagination.vue";
 import AppNav from "@/components/layout/AppNav.vue";
-import { usePagination } from '@/utils/pagination';
+import apiClient from '@/api/apiClient';
 
 export default {
   name: "LikedPosts",
   components: {
-    Pagination,
-    PostActions,
     AppNav,
   },
 
   setup() {
+    const route = useRoute();
     const router = useRouter();
-    const posts = ref([
-      {
-        id: 1,
-        images: require('@/assets/images/riding-1.png'),
-        likes: 23,
-        comments: 20,
-        title: "종주할 때 사진 모아봤습니다.",
-        content: "힘들었지만, 보람된 시간이였습니다."
-      },
-      {
-        id: 2,
-        images: require('@/assets/images/riding-3.png'),
-        likes: 72,
-        comments: 17,
-        title: "부산 하구둑 인증합니다. :)",
-        content: "국토종주 마지막 날이였습니다..."
-      },
-      {
-        id: 3,
-        images: require('@/assets/images/riding-2.jpg'),
-        likes: 87,
-        comments: 10,
-        title: "아라뱃길 정서진까지 라이딩",
-        content: "목동 한강 합수부에서 만나서..."
-      },
-      {
-        id: 4,
-        images: require('@/assets/images/doginvade.jpg'),
-        likes: 123,
-        comments: 34,
-        title: "골든리트리버 난입한 썰",
-        content: "공 차는데 큰 개 한마리가 들어왔어요!!"
-      },
-      {
-        id: 5,
-        images: require('@/assets/images/rainfootball.jpg'),
-        likes: 33,
-        comments: 19,
-        title: "비오는 날, 모임한 날",
-        content: "날씨가 좋지 않음에도 참석해주신 분들이 많았습니다."
-      },
-      {
-        id: 6,
-        images: require('@/assets/images/dmfootball.jpg'),
-        likes: 54,
-        comments: 19,
-        title: "광복절에 용산에서 축구",
-        content: "날씨가 무척 더워서 힘들었습니다."
-      },
-      {
-        id: 7,
-        images: require('@/assets/images/medal.jpg'),
-        likes: 144,
-        comments: 45,
-        title: "국토종주 메달왔습니다 인증!!.jpg.",
-        content: "메달이 왔네요ㅎㅎ"
-      },
-      {
-        id: 8,
-        images: require('@/assets/images/certinfo.jpg'),
-        likes: 144,
-        comments: 45,
-        title: "국토종주 인증서도 왔어요!!",
-        content: "드디어 인증서 도착이요 ^^"
-      },
-      {
-        id: 9,
-        images: require('@/assets/images/winterfootball.jpg'),
-        likes: 144,
-        comments: 45,
-        title: "추운 날씨에...",
-        content: "다친 분 없이 모임이 끝나서 다행입니다."
-      },
-    ]);
 
-    const { currentPage, totalPages, visibleDatas, onPageChange, fetchdatas } = usePagination(posts, 3);
-
-    const searchQuery = ref('');
+    const postId = route.params.postId;
+    const userId = route.params.userId;
+    const visibleDatas = ref([]);
+    const searchKeyword = ref('');
+    const selectedSort = ref('');
     const sortOrder = ref('');
     const showActions = ref(false);
-    const selectedPostId = ref(null);
-
-    const showActionsForPostId = (postId) => {
-      return showActions.value && selectedPostId.value === postId;
-    };
-
-    const toggleActions = (postId) => {
-      if (selectedPostId.value === postId) {
-        showActions.value = !showActions.value;
-      } else {
-        selectedPostId.value = postId;
-        showActions.value = true;
-      }
-    };
-
-    const handleNavigation = (action) => {
-      if (action === "EditPost") {
-        router.push(`/PostModify/${selectedPostId.value}`);
-      } else if (action === "delete") {
-        deletePost(selectedPostId.value);
-      }
-    };
-
-    const deletePost = (postId) => {
-      axios
-        .delete(`https://api.example.com/posts/${postId}`)
-        .then(() => {
-          alert("게시물이 삭제되었습니다.");
-          fetchdatas(); // 게시물 목록 갱신
-        })
-        .catch((error) => {
-          console.error("삭제 실패:", error);
-          alert("게시물 삭제 중 오류가 발생했습니다.");
-        });
-    };
-
-    const isHeartFilled = ref(true);
-    const toggleHeart = (postId) => {
-      const post = posts.value.find(post => post.id === postId);
-      if (post) {
-        post.isHeartFilled = !post.isHeartFilled;
-      }
-    };
-
-    const onInput = (event) => {
-      searchQuery.value = event.target.value;
-    };
-
-    const onSearch = () => {
-      console.log("Searching for:", searchQuery.value);
-      // 검색 로직 추가
-    };
-
-    const postHistory = () => {
+    const isHeartFilled = ref(false);
+    const likesCnt = ref(0);
+    
+    const myPosts = () => {
       router.push({ name: "MyPosts" });
     };
 
@@ -252,34 +106,164 @@ export default {
       router.push({ name: "MyComments" });
     };
 
-    const boardDetail = (postId) => {
-      router.push(`/Post/${postId}`);
+    // 상세
+    const viewPost = (post) => {
+      console.log('Navigating to post: ', post);
+      router.push({ path: `/post/${post.postId}` });
+    }
+
+    // 게시글 불러오기
+    const fetchPosts = async () => {
+      try {
+        const response = await apiClient.get(`/board/posts/by`);
+
+        // if (!response.ok) {
+        //   throw new Error('Network response was not ok');
+        // }
+        const data = response.data;
+        visibleDatas.value = data;
+        console.log('fetching posts: ', data);
+        // sortPosts();
+      } catch (error) {
+        console.error('게시글 불러오기 실패: ', error);
+      }
     };
 
-    onMounted(() => {
-      fetchdatas(1);
+    // 검색
+    const performSearch = async () => {
+      if (!searchKeyword.value) {
+        // alert('검색어를 입력하세요!');
+        await fetchPosts();
+        return;
+      }
+
+      try {
+        const response = await axios.get(`/api/board/search`, {
+          params: { keyword: searchKeyword.value },
+        });
+
+        console.log('검색 결과: ', response.data);
+
+        if (response.data.length > 0) {
+          visibleDatas.value = response.data;
+        } else {
+          alert('검색 결과가 없습니다.');
+          visibleDatas.value = [];
+        }
+      } catch (error) {
+        console.log('검색 실패: ', error);
+        alert('검색 실패!');
+      }
+    };
+
+    // 정렬
+    const sortPosts = () => {
+      let sort = '';
+      let direction = 'DESC';
+
+      switch (selectedSort.value) {
+        case 'popularity':
+          sort = 'popularity';
+          direction = 'DESC';
+          break;
+        case 'latest':
+          sort = 'createdAt';
+          direction = 'DESC';
+          break;
+        case 'oldest':
+          sort = 'createdAt';
+          direction = 'ASC';
+          break;
+        // default:
+        //   sort = 'createdAt';
+        //   direction = 'DESC';
+      }
+
+      console.log('sort: ', sort);
+      console.log('direction: ', direction);
+
+      fetch(`/api/board/sort?sort=${sort}&direction=${direction}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          visibleDatas.value = data;
+        })
+        .catch(error => {
+          console.error('Error fetching sorted posts: ', error);
+        });
+    };
+
+
+    // 좋아요
+    const toggleHeart = async (postId) => {
+      console.log("postId: ", postId);
+
+      try {
+        const response = await axios.post(`/api/board/${postId}/like`);
+        
+        if (response.status === 200) {
+          const { likesCnt: newLikesCnt, heartFilled:newIsHeartFilled } = response.data;
+          
+          // console.log("좋아요수 : ", newLikesCnt);
+          // console.log("isheartfilled (서버 응답): ", newIsHeartFilled);
+
+          likesCnt.value = newLikesCnt;
+          isHeartFilled.value = newIsHeartFilled;
+        }
+        // console.log("server response", response.data);
+      } catch (error) {
+        console.error('좋아요 토글 실패: ', error);
+      }
+    };
+
+    // 수정/삭제 메뉴
+    const toggleActions = () => {
+      showActions.value = !showActions.value;
+    };
+
+    const handleNavigation = async (action) => {
+      if (action === 'EditPost') {
+        showActions.value = false;
+        router.push({ path: `/edit-post/${postId}` });
+      } else if (action === 'delete') {
+        if (confirm('정말 삭제하시겠습니까?')) {
+          await deletePost();
+        }
+      }
+    };
+
+    const deletePost = async () => {
+      try {
+        await apiClient.delete(`/board/delete/${postId}`);
+        alert('게시글 삭제 완료!');
+        router.push(`/board`);
+      } catch(error) {
+        console.error('게시물 삭제 실패: ', error);
+      }
+    };
+
+    onBeforeMount(() => {
+      fetchPosts();
     });
 
     return {
+      myPosts,
       isHeartFilled,
       toggleHeart,
-      posts,
-      currentPage,
-      totalPages,
       visibleDatas,
-      searchQuery,
       sortOrder,
       showActions,
-      selectedPostId,
-      showActionsForPostId,
       toggleActions,
       handleNavigation,
-      onInput,
-      onSearch,
-      onPageChange,
-      postHistory,
       myComments,
-      boardDetail,
+      sortPosts,
+      performSearch,
+      viewPost,
+      userId,
     };
   },
 };
@@ -382,19 +366,20 @@ h2 {
   padding: 20px;
 }
 
-.search-box-input {
+.search-input {
   border: none;
   outline: none;
   padding: 5px 0px 5px 10px;
   width: 100%;
 }
 
-.search-box-icon {
-  width: 15px;
-  height: 15px;
-  position: absolute;
-  margin-left: 218px;
-  cursor: pointer;
+.search-icon {
+    width: 15px;
+    height: 15px;
+    background-image: url("@/assets/images/search.icon.png");
+    background-size: contain;
+    cursor: pointer;
+    margin: 0 10px;
 }
 
 .middle-filter-sort {
@@ -467,11 +452,18 @@ h2 {
   justify-content: center;
 }
 
+.post-image {
+  width: 263px;
+  height: 222px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+/* 
 .table-group-post-images {
   width: 263px;
   height: 222px;
   margin-top: 5px;
-}
+} */
 
 .table-group-btn {
   display: flex;

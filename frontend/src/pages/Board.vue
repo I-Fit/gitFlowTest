@@ -26,7 +26,7 @@
               </div>
               <div class="title-and-content">
                 <h2 class="title" @click="viewPost(post)">{{ post.title }}</h2>
-                <span class="text" @click="viewPost(post)" v-html="post.contentWithoutImage"></span>
+                <!-- <span class="text" @click="viewPost(post)" v-html="post.contentWithoutImage"></span> -->
               </div>
               <div class="post-tags">
                 <div class="tag-items">
@@ -86,7 +86,7 @@
 <script>
 import { useRouter } from "vue-router";
 import axios from 'axios';
-import { ref, onMounted, computed } from 'vue';
+import { ref, computed, onBeforeMount } from 'vue';
 
 export default {
   name: 'Board',
@@ -103,27 +103,27 @@ export default {
 
     const fetchPosts = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/board/list');
+        const response = await fetch('/api/board/list');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log('fetching posts: ', data);
         visibleDatas.value = data;
+        console.log('fetching posts: ', data);
 
-        sortPosts();
+        // sortPosts();
       } catch (error) {
         console.error('게시글 불러오기 실패: ', error);
       }
     };
 
-    const processedPosts = computed(() => {
-      return visibleDatas.value.map(post => ({
-        ...post,
-        formattedCreatedAt: formatDate(post.createdAt),
-        contentWithoutImage: post.content.replace(/<img[^>]*>/g, ''),
-      }))
-    })
+    // const processedPosts = computed(() => {
+    //   return visibleDatas.value.map(post => ({
+    //     ...post,
+    //     formattedCreatedAt: formatDate(post.createdAt),
+    //     contentWithoutImage: post.content.replace(/<img[^>]*>/g, ''),
+    //   }))
+    // })
 
     const sortPosts = () => {
       let sort = '';
@@ -131,7 +131,7 @@ export default {
 
       switch (selectedSort.value) {
         case 'popularity':
-          sort = 'morePopular';
+          sort = 'popularity';
           direction = 'DESC';
           break;
         case 'latest':
@@ -142,12 +142,15 @@ export default {
           sort = 'createdAt';
           direction = 'ASC';
           break;
-        default:
-          sort = 'createdAt';
-          direction = 'DESC';
+        // default:
+        //   sort = 'createdAt';
+        //   direction = 'DESC';
       }
 
-      fetch(`http://localhost:8080/api/board/sort?sort=${sort}&direction=${direction}`)
+      console.log('sort: ', sort);
+      console.log('direction: ', direction);
+
+      fetch(`/api/board/sort?sort=${sort}&direction=${direction}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -174,6 +177,7 @@ export default {
       return visibleDatas.value.map(post => ({
         ...post,
         formattedCreatedAt: formatDate(post.createdAt),
+        contentWithoutImage: post.content.replace(/<img[^>]*>/g, ''),
       }));
     });
 
@@ -190,7 +194,7 @@ export default {
       }
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/board/search`, {
+        const response = await axios.get(`/api/board/search`, {
           params: { keyword: searchKeyword.value },
         });
 
@@ -208,7 +212,7 @@ export default {
       }
     };
 
-    onMounted(() => {
+    onBeforeMount(() => {
       fetchPosts();
     })
 
@@ -223,7 +227,7 @@ export default {
       fetchPosts,
       formattedPosts,
       formatDate,
-      processedPosts
+      // processedPosts
     }
   },
 };

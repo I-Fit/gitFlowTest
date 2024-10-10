@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/api/apiClient';
 
 export default {
   name: 'CreatePost',
@@ -74,8 +74,8 @@ export default {
         imageStr: null,
         exercise: '',
         location: '',
-        isScriptLoaded: false,
-        userId: 1,
+        // isScriptLoaded: false,
+        userId: '',
       },
       exerciseInput: '',
       responseMessage: '',
@@ -140,6 +140,7 @@ export default {
         }
       }).open();
     },
+    
 
     async confirmSubmit() {
       const formData = new FormData();
@@ -160,7 +161,7 @@ export default {
         formData.append('imageStr', this.formData.imageStr);  // 파일을 'imageStr' 키로 추가
 
         try {
-          const response = await axios.post('http://localhost:8080/api/board/new', formData, {
+          const response = await apiClient.post('/board/new', formData, {
             headers: {
               'Content-Type': 'multipart/form-data', // 멀티파트로 요청 보냄
             },
@@ -181,8 +182,10 @@ export default {
         alert('이미지를 첨부해주세요!');
       }
     }
-    
+
   },
+
+}
 
   // setup() {
   //   const exerciseInput = ref('');
@@ -214,7 +217,7 @@ export default {
   //   }
   // }
   
-}
+
 </script>
 
 

@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '@/api/apiClient';
 import { ref } from 'vue';
 
 export default {
@@ -31,15 +31,17 @@ export default {
             }
 
             try {
-                await axios.post(`http://localhost:8080/api/comments/new`, {
+                await apiClient.post(`/comments/new`, {
                     postId: props.postId,
                     content: commentText.value,
                     userId: props.userId,
                 });
+
                 commentText.value = '';
                 emit('commentAdded'); // 부모 컴포넌트에 이벤트 발생
             } catch (error) {
                 console.error('댓글 작성 실패: ', error);
+                console.log('userid: ', props.userId);
                 alert('댓글 작성 실패!');
             }
         };
@@ -73,5 +75,6 @@ export default {
     background-color: #1a73e8;
     border: none;
     border-radius: 5px;
+    cursor: pointer;
 }
 </style>
