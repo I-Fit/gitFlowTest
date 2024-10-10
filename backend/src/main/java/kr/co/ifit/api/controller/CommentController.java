@@ -3,8 +3,12 @@ package kr.co.ifit.api.controller;
 import kr.co.ifit.api.request.CommentDtoReq;
 import kr.co.ifit.api.response.CommentDtoRes;
 import kr.co.ifit.api.service.CommentService;
+import kr.co.ifit.common.util.UserContextUtil;
 import kr.co.ifit.db.entity.Comment;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +23,22 @@ import java.util.Map;
 public class CommentController {
 
     private final CommentService commentService;
+    private final UserContextUtil userContextUtil;
+
+    private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
 
     // 댓글 생성
     @PostMapping("/new")
     public ResponseEntity<Map<String, String>> createComment(@RequestBody CommentDtoReq commentReq) {
+        Long userId = userContextUtil.getAuthenticatedUserId();
+        if (userId == null) {
+            //  인증되지 않은 경우
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        commentReq.setUserId(userId);
         Map<String, String> response = new HashMap<>();
+        logger.info("성공========================================================================= {}", commentReq.getPostId());
+        logger.info("성공========================================================================= {}", commentReq.getContent());
 
         try {
             CommentDtoRes comment = commentService.createComment(commentReq);
@@ -52,23 +67,47 @@ public class CommentController {
 
     // 모든 댓글 리스트 가져오기
     @GetMapping("/list")
-    public ResponseEntity<List<Comment>> getAllComments() {
-        List<Comment> comments = commentService.getAllComments();
+    public ResponseEntity<List<CommentDtoRes>> getAllComments() {
+        List<CommentDtoRes> comments = commentService.getAllComments();
 
-        return new ResponseEntity<>(comments, HttpStatus.OK);
+        return ResponseEntity.ok(comments);
     }
 
     // 특정 게시글의 댓글 가져오기
-    @GetMapping("/on/{postId}")
-    public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable Long postId) {
-        List<Comment> comments = commentService.getCommentsByPostId(postId);
+    @GetMapping("/post/{postId}")
+    public ResponseEntity<List<CommentDtoRes>> getCommentsByPostId(@PathVariable Long postId) {
+
+        Long userId = userContextUtil.getAuthenticatedUserId();
+        if (userId == null) {
+            //  인증되지 않은 경우
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        logger.info("========================================================================= {}", postId);
+
+        List<CommentDtoRes> comments = commentService.getCommentsByPostId(postId);
 
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
     // 특정 유저가 작성한 댓글 가져오기
-    @GetMapping("/by/{userId}")
-    public ResponseEntity<List<Comment>> getCommentsByUserId(@PathVariable Long userId) {
+//    @GetMapping("/user/{userId}")
+//    public ResponseEntity<List<Comment>> getCommentsByUserId(@PathVariable Long userId) {
+//
+//        List<Comment> comments = commentService.getCommentsByUserId(userId);
+//
+//        return ResponseEntity.ok(comments);
+//    }
+
+    // 내가 쓴 댓글
+    @GetMapping("/by")
+    public ResponseEntity<List<Comment>> getCommentsByUserId() {
+        Long userId = userContextUtil.getAuthenticatedUserId();
+        if (userId == null) {
+            //  인증되지 않은 경우
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         List<Comment> comments = commentService.getCommentsByUserId(userId);
 
         return new ResponseEntity<>(comments, HttpStatus.OK);
@@ -94,6 +133,12 @@ public class CommentController {
     // 댓글 삭제
     @DeleteMapping("/delete/{commentId}")
     public ResponseEntity<Map<String, String>> deleteComment(@PathVariable Long commentId) {
+        Long userId = userContextUtil.getAuthenticatedUserId();
+        if (userId == null) {
+            //  인증되지 않은 경우
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         Map<String, String> response = new HashMap<>();
 
         if (commentId == null || commentId <= 0) {

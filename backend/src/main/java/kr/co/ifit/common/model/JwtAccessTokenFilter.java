@@ -38,7 +38,9 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
                 || uri.startsWith("/api/joined/sort") || uri.startsWith("/api/joined/search")
                 || uri.startsWith("/api/liked") || uri.startsWith("/api/liked/sort") || uri.startsWith("/api/liked/search")
                 || uri.startsWith("/api/user-info") || uri.startsWith("/api/home/like-group") || uri.startsWith("/api/join-group")
-                || uri.startsWith("/api/board/**") || uri.startsWith("/api/comments/**")
+                || uri.startsWith("/api/board/new") || uri.startsWith("/api/board/update") || uri.startsWith("/api/board/delete")
+                || uri.startsWith("/api/comments/new") || uri.startsWith("/api/comments/post") || uri.startsWith("/api/comments/delete")
+                || uri.startsWith("/api/comments/by") || uri.startsWith("/api/board/posts/by")
         ) {
 
             String token = resolveToken(request);

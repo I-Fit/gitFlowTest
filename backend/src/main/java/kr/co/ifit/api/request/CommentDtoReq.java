@@ -9,7 +9,9 @@ import lombok.*;
 @Data
 public class CommentDtoReq {
 
-    private Post post;
+//    private Post post;
+//    private User user;
+    private Long postId;
+    private Long userId;
     private String content;
-    private User user;
 }

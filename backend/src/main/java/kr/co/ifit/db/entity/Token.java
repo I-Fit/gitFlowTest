@@ -21,7 +21,7 @@ public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)     //  token 테이블 PK
     @Column(name = "id")
-    private Long token_Id;
+    private Long id;
 
     @Column(name = "refresh_token", nullable = false)
     private String refreshToken;

@@ -54,6 +54,9 @@ public class Post {
     @Column(name = "comments_cnt")
     private int commentsCnt;
 
+    @Column(name = "is_heart_filled")
+    private boolean isHeartFilled;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
@@ -64,9 +67,6 @@ public class Post {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @Column(name = "is_heart_filled")
-    private boolean isHeartFilled;
-
     public Post(String title, String content, String imageStr, String exercise, String location, User user) {
         this.title = title;
         this.content = content;
@@ -74,6 +74,28 @@ public class Post {
         this.exercise = exercise;
         this.location = location;
         this.user = user;
+    }
+
+    public Post(String title, String content, String imageStr, String exercise, String location, User user, boolean heartFilled) {
+        this.title = title;
+        this.content = content;
+        this.imageStr = imageStr;
+        this.exercise = exercise;
+        this.location = location;
+        this.user = user;
+        this.isHeartFilled = isHeartFilled();
+    }
+
+    public void increaseLikesCnt() {
+        this.likesCnt++;
+    }
+
+    public void decreaseLikesCnt() {
+        this.likesCnt--;
+    }
+
+    public void setIsHeartFilled(boolean isHeartFilled) {
+        this.isHeartFilled = isHeartFilled;
     }
 
 //    private int capacity;   // 총 모집인원

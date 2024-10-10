@@ -12,10 +12,14 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PostDtoReq {
 
+    private Long postId;
     private String title;
     private String content;
 //    private String imageStr;
     private String exercise;
     private String location;
     private Long userId;
+    private int likesCnt;
+    private int commentsCnt;
+    private boolean isHeartFilled;
 }
