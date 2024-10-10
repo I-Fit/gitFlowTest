@@ -18,6 +18,7 @@
             <button class="finder-field-btn" type="button" @click="sendEmailRequest">
               인증요청
             </button>
+            <div v-if="loading" class="spinner"></div>
           </div>
         </div>
         <div class="finder-email-auth input-block">
@@ -67,6 +68,7 @@ export default {
       seconds,
       handleReRequest,
       timerStarted,
+      loading
     } = useEmail();
 
     const sendEmailRequest = async () => {
@@ -120,6 +122,7 @@ export default {
       seconds,
       handleReRequest,
       timerStarted,
+      loading,
 
       sendEmailRequest,
       updateEmailAfterCheck,
@@ -130,6 +133,23 @@ export default {
 </script>
 
 <style scoped>
+.spinner {
+  border: 4px solid black;
+  border-radius: 50%;
+  border-top: 4px solid #ccc;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+/* 애니메이션 */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .timer {
   color: red;
   font-size: 14px;

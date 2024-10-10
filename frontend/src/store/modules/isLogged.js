@@ -61,10 +61,10 @@ export default {
                     commit('SET_REFRESHTOKEN', response.data.refreshToken);
                     commit('SET_USERID', response.data.userId);
                     commit('SET_USERNAME', response.data.userName);
-                    commit('SET_USERIMAGE', response.data.userImage);
+                    commit('SET_USERIMAGE', response.data.userProfile);
                     
                     // userImage가 null 일 경우 기본 이미지로 설정
-                    const userImage = response.data.userImage || require('@/assets/images/default-profile.png');
+                    const userImage = response.data.userProfile ? `data:image/png;base64,${response.data.userProfile}` : require('@/assets/images/default-profile.png');
                     commit('SET_USERIMAGE', userImage);
 
                     //  쿠키에 토큰 저장 (7일?)
@@ -121,10 +121,10 @@ export default {
                     });
                     if (response.data) {
                         commit('SET_USERID', response.data.userId);
-                        commit('SET_USERNAME', response.data.username);
-                        commit('SET_USERIMAGE', response.data.userImage);
+                        commit('SET_USERNAME', response.data.userName);
+                        commit('SET_USERIMAGE', response.data.userProfile);
 
-                        const userImage = response.data.userImage || require('@/assets/images/default-profile.png');
+                        const userImage = response.data.userProfile ? `data:image/png;base64,${response.data.userProfile}` : require('@/assets/images/default-profile.png');
                         commit('SET_USERIMAGE', userImage);
                     }
                 } catch (error) {

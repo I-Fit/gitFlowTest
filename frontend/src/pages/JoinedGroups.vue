@@ -60,8 +60,9 @@
                 <p class="sport-text">{{ group.sport }}</p>
                 <div class="user-info">
                   <span class="user-name">{{ group.username }}</span>
-                  <img :src="group.user_img || require('@/assets/images/default-profile.png')" alt="사용자 이미지"
-                    class="user-img">
+                  <img
+                    :src="group.profileUrl ? `data:image/png;base64,${group.profileUrl}` : require('@/assets/images/default-profile.png')"
+                    alt="사용자 이미지" class="user-img">
                 </div>
               </div>
               <div class="group-text">

@@ -22,14 +22,14 @@
               selected: selectedPayment === 'kakao',
               'payment-button': true,
             }" :disabled="selectedPayment !== null && selectedPayment !== 'kakao'
-                " @click="togglePayment('kakao')">
+              " @click="togglePayment('kakao')">
               카카오페이
             </button>
             <button class="naver-pay" type="submit" :class="{
               selected: selectedPayment === 'naver',
               'payment-button': true,
             }" :disabled="selectedPayment !== null && selectedPayment !== 'naver'
-                " @click="togglePayment('naver')">
+              " @click="togglePayment('naver')">
               네이버페이
             </button>
           </div>
@@ -56,13 +56,12 @@
             </div>
             <div class="point-container">
               <label class="point" for="point">포인트</label>
-              <!-- 사용 가능 포인트 데이터 가져옴 -->
               <span class="available-point">
                 사용 가능 포인트 : {{ points }}
               </span>
               <div class="point-block">
                 <input type="number" class="point-input" name="point-check" v-model.number="pointDiscountAmount"
-                  placeholder="포인트를 입력하세요." @input="usePoints"/>
+                  placeholder="포인트를 입력하세요." @input="usePoints" />
               </div>
             </div>
           </div>
@@ -74,17 +73,20 @@
           <div class="price-box">
             <p class="title">결제 금액</p>
             <div class="price-row">
-              <span class="price-label">멤버십 금액 :</span><span class="price-value">{{
-                membershipInfo.price.toLocaleString() }}원</span>
+              <span class="price-label">멤버십 금액 :</span>
+              <span class="price-value">{{ membershipInfo.price.toLocaleString() }}원</span>
             </div>
             <div class="price-row">
-              <span class="price-label">쿠폰 할인 금액 :</span><span class="price-value">{{ couponDiscountAmount }}원</span>
+              <span class="price-label">쿠폰 할인 금액 :</span>
+              <span class="price-value">{{ couponDiscountAmount.toLocaleString() }}원</span>
             </div>
             <div class="price-row">
-              <span class="price-label">포인트 할인 금액 :</span><span class="price-value">{{ pointDiscountAmount }}원</span>
+              <span class="price-label">포인트 할인 금액 :</span>
+              <span class="price-value">{{ pointDiscountAmount.toLocaleString() }}원</span>
             </div>
             <div class="price-row">
-              <span class="price-label">최종 결제 금액 :</span><span class="price-value">{{ finalAmount }}원</span>
+              <span class="price-label">최종 결제 금액 :</span>
+              <span class="price-value">{{ finalAmount.toLocaleString() }}원</span>
             </div>
           </div>
           <button type="submit" class="payment-btn" @click="processPayment">
@@ -97,7 +99,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import apiClient from "@/api/apiClient";
 
@@ -108,64 +110,75 @@ export default {
     const router = useRouter();
     const route = useRoute();
 
-    // membership 페이지에서 받은 사용자 정보를 query로 받음
-    const username = route.query.username;
-    const membershipInfo = route.query.membershipInfo ? JSON.parse(route.query.membershipInfo) : { grade: "", price: 0 };
-    const points = Number(route.query.points) || 0;
-    const coupons = route.query.coupons ? JSON.parse(route.query.coupons) : [];
+    const username = ref(route.query.username);
+    const membershipInfo = reactive(
+      route.query.membershipInfo
+        ? JSON.parse(route.query.membershipInfo)
+        : { grade: "", price: 0 }
+    );
+    const points = ref(Number(route.query.points) || 0);
+    const coupons = ref(
+      route.query.coupons ? JSON.parse(route.query.coupons) : []
+    );
 
-    // 결제 관련
     const selectedPayment = ref(null);
     const isDropdownOpen = ref(false);
     const selectedCoupon = ref(null);
     const pointDiscountAmount = ref(0);
 
-    // 결제 수단 선택 토글 함수
+    // 토글
     const togglePayment = (paymentMethod) => {
-      selectedPayment.value = selectedPayment.value === paymentMethod ? null : paymentMethod;
+      selectedPayment.value =
+        selectedPayment.value === paymentMethod ? null : paymentMethod;
     };
 
-    // 쿠폰 선택 드롭다운 토글 함수
+    // 드롭다운
     const toggleDropdown = () => {
       isDropdownOpen.value = !isDropdownOpen.value;
     };
 
-    // 쿠폰 선택 함수
     const selectCoupon = (coupon) => {
       selectedCoupon.value = coupon;
       isDropdownOpen.value = false;
     };
 
-    // 쿠폰 할인 금액을 계산하는 속성
+    // 쿠폰 할인
     const couponDiscountAmount = computed(() => {
       if (selectedCoupon.value && membershipInfo.price) {
-        return Math.round(membershipInfo.price * (selectedCoupon.value.percentage / 100));
+        return Math.round(
+          membershipInfo.price * (selectedCoupon.value.percentage / 100)
+        );
       }
       return 0;
     });
 
-    // 포인트 사용 함수
+    // 사용가능한 포인트
     const usePoints = () => {
-      if (pointDiscountAmount.value > points) {
+      if (pointDiscountAmount.value > points.value) {
         alert("사용 가능한 포인트를 초과했습니다.");
-        pointDiscountAmount.value = points;         // 초과 시 최대 사용 가능한 포인트로 설정
+        pointDiscountAmount.value = points.value;
       }
-      // 최대 사용 가능 포인트를 멤버십 가격으로 제한
-      pointDiscountAmount.value = Math.min(pointDiscountAmount.value, membershipInfo.price);
+      pointDiscountAmount.value = Math.min(
+        pointDiscountAmount.value,
+        membershipInfo.price
+      );
     };
 
-    // 최종 결제 금액 계산
+    // 최종 결제 금액
     const finalAmount = computed(() => {
       return Math.max(
-        membershipInfo.price - couponDiscountAmount.value - pointDiscountAmount.value,
+        membershipInfo.price -
+        couponDiscountAmount.value -
+        pointDiscountAmount.value,
         0
       );
     });
 
-    // 결제 가능 여부 확인
-    const canProcessPayment = computed(() => selectedPayment.value && finalAmount.value > 0);
+    const canProcessPayment = computed(
+      () => selectedPayment.value && finalAmount.value > 0
+    );
 
-    // 결제 처리 함수
+    // 카카오페이 결제 처리
     const processPayment = async () => {
       if (!canProcessPayment.value) {
         alert("결제 수단을 선택하고 최종 금액을 확인해 주세요.");
@@ -173,21 +186,38 @@ export default {
       }
 
       try {
-        const paymentDtoReq = {
-          membershipGrade: membershipInfo.grade,
-          membershipPrice: membershipInfo.price.toLocaleString(),
-          paymentMethod: selectedPayment.value,
-          couponId: selectedCoupon.value?.id,
-          pointsUsed: pointDiscountAmount.value,
-          finalAmount: finalAmount.value
-        };
-        const response = await apiClient.post("/api/payment/process", paymentDtoReq);
-        const paymentResultDtoRes = response.data;
-        if (paymentResultDtoRes.success) {
-          alert("결제가 성공적으로 처리되었습니다.");
-          router.push({ name: "MyPage" });
+        if (selectedPayment.value === "kakao") {
+          const response = await apiClient.post("/payment/kakao/ready", {
+            membershipGrade: membershipInfo.grade,
+            totalAmount: finalAmount.value,
+          }, {
+            headers: {
+              'X-Secret-key': "PRD1571247185ADD402D69782F93E56D9CD5EE3E",
+            }
+          });
+          window.location.href = response.data.next_redirect_pc_url;
         } else {
-          alert(paymentResultDtoRes.message || "결제 처리 중 오류가 발생했습니다.");
+          const paymentDtoReq = {
+            membershipGrade: membershipInfo.grade,
+            membershipPrice: membershipInfo.price,
+            paymentMethod: selectedPayment.value,
+            couponId: selectedCoupon.value?.id,
+            pointsUsed: pointDiscountAmount.value,
+            finalAmount: finalAmount.value,
+          };
+          const response = await apiClient.post(
+            "/api/payment/process",
+            paymentDtoReq
+          );
+          const paymentResultDtoRes = response.data;
+          if (paymentResultDtoRes.success) {
+            alert("결제가 성공적으로 처리되었습니다.");
+            router.push({ name: "MyPage" });
+          } else {
+            alert(
+              paymentResultDtoRes.message || "결제 처리 중 오류가 발생했습니다."
+            );
+          }
         }
       } catch (error) {
         console.error("결제 처리 중 오류가 발생했습니다:", error);
@@ -195,8 +225,31 @@ export default {
       }
     };
 
-    onMounted(async () => {
-      // await fetchUserInfo();
+    // 카카오페이 결제 완료 후, 처리
+    const handleKakaoPaymentComplete = async () => {
+      const pgToken = route.query.pg_token;
+      if (pgToken) {
+        try {
+          const response = await apiClient.post("/payment/kakao/approve", {
+            pgToken: pgToken,
+          });
+          if (response.data.success) {
+            alert("카카오페이 결제가 성공적으로 완료되었습니다.");
+            router.push({ name: "MyPage" });
+          } else {
+            alert("카카오페이 결제 승인 중 오류가 발생했습니다.");
+          }
+        } catch (error) {
+          console.error("카카오페이 결제 승인 중 오류 발생:", error);
+          alert(
+            "카카오페이 결제 승인 중 오류가 발생했습니다. 관리자에게 문의해주세요."
+          );
+        }
+      }
+    };
+
+    onMounted(() => {
+      handleKakaoPaymentComplete();
     });
 
     return {
@@ -217,7 +270,7 @@ export default {
       canProcessPayment,
       processPayment,
     };
-  }
+  },
 };
 </script>
 

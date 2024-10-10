@@ -10,22 +10,12 @@
             <div class="top-box-icon" @click="triggerFileInput">&#43;</div>
           </div>
           <!-- 숨겨진 파일 입력 요소 -->
-          <input
-            type="file"
-            ref="fileInput"
-            @change="handleFileChange"
-            accept="images/*"
-            style="display: none"
-          />
+          <input type="file" ref="fileInput" @change="handleFileChange" accept="images/*" style="display: none" />
           <div class="top-boxinfo">
             <span class="boxinfo-username">{{ username }}</span>
             <span class="boxinfo-logout" @click="logoutUser">로그아웃</span><br />
             <span class="boxinfo-membership">나는야 득근을 꿈꾸는 근린이!</span>
-            <button
-              type="submit"
-              class="del-account-btn"
-              @click="showConfirmPopup = true"
-            >
+            <button type="submit" class="del-account-btn" @click="showConfirmPopup = true">
               회원 탈퇴
             </button>
             <!-- 확인 팝업 -->
@@ -74,11 +64,7 @@
               <div class="profile-frame">
                 <span id="password">*******</span>
               </div>
-              <button
-                type="submit"
-                class="changep-btn"
-                @click="goToChangePassword"
-              >
+              <button type="submit" class="changep-btn" @click="goToChangePassword">
                 변경
               </button>
             </div>
@@ -96,11 +82,7 @@
               <div class="profile-frame">
                 <span id="coupon-count">{{ coupons.length }}개</span>
               </div>
-              <button
-                type="submit"
-                class="search-coupon-btn"
-                @click="openModal"
-              >
+              <button type="submit" class="search-coupon-btn" @click="openModal">
                 조회
               </button>
               <!-- 쿠폰 조회버튼 클릭 시 모달창 오픈 -->
@@ -110,7 +92,7 @@
                   <h2>보유 쿠폰 내역</h2>
                   <ul v-if="coupons.length > 0">
                     <li v-for="coupon in coupons" :key="coupon.id">
-                      {{ coupon.name }} - 만료일: {{ new Date(coupon.expiredAt).toLocaleDateString() }} 
+                      {{ coupon.name }} - 만료일: {{ new Date(coupon.expiredAt).toLocaleDateString() }}
                     </li>
                   </ul>
                   <p v-else>보유한 쿠폰이 없습니다.</p>
@@ -164,7 +146,7 @@ export default {
         loginId.value = response.data.loginId;
         username.value = response.data.username;
         email.value = response.data.email;
-        profileImage.value = response.data.profileUrl || require("@/assets/images/default-profile.png");
+        profileImage.value = `data:image/png;base64,${response.data.profileUrl}` || require("@/assets/images/default-profile.png");
 
         totalPoints.value = response.data.points;
         MembershipGrade.value = response.data.membershipGrade || "기본 회원";
@@ -183,19 +165,22 @@ export default {
     const handleFileChange = (event) => {
       const file = event.target.files[0];
       if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          uploadImage(e.target.result);
-        };
-        reader.readAsDataURL(file);
+        uploadImage(file);
       }
     };
 
-    const uploadImage = async (dataUrl) => {
+    const uploadImage = async (file) => {
+      const formData = new FormData();
+      formData.append('image', file);
+
       try {
-        const base64Image = dataUrl.split(',')[1];
-        const response = await apiClient.post('/api/profile/upload', { image: base64Image });
-        profileImage.value = response.data.profileUrl;
+        const response = await apiClient.post('/profile/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        profileImage.value = `data:image/png;base64,${response.data.profileUrl}`;
       } catch (error) {
         console.error("Error uploading profile image:", error);
       }
@@ -204,7 +189,7 @@ export default {
     // 로그아웃 요청
     const logoutUser = async () => {
       const refreshToken = VueCookies.get('refreshToken');
-      
+
       if (!refreshToken) {
         alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
         return;
@@ -214,15 +199,15 @@ export default {
         const success = await store.dispatch('isLogged/logout'); // Vuex 액션 호출
 
         if (success) {
-            router.push('/'); // 로그아웃 성공 시 홈페이지로 리디렉션
-            alert("로그아웃 성공"); // 로그아웃 성공 메시지
+          router.push('/'); // 로그아웃 성공 시 홈페이지로 리디렉션
+          alert("로그아웃 성공"); // 로그아웃 성공 메시지
         } else {
-            alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
-        }
-      } catch (error) {
-          console.error("로그아웃 요청 중 오류 발생:", error);
           alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
         }
+      } catch (error) {
+        console.error("로그아웃 요청 중 오류 발생:", error);
+        alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
+      }
     };
 
 
@@ -265,7 +250,7 @@ export default {
     };
 
     // 모달 닫기
-    const closeModal = () => { 
+    const closeModal = () => {
       isModalOpen.value = false;
     };
 
@@ -274,7 +259,7 @@ export default {
     };
 
     const goToChangePassword = () => {
-      router.push("/find-password");
+      router.push("/change-password");
     };
 
     const goToEditEmail = () => {
@@ -300,7 +285,7 @@ export default {
       }
     };
 
-    const { deleteAccount } = mapActions('isLogged' ['deleteAccount']);
+    const { deleteAccount } = mapActions('isLogged'['deleteAccount']);
 
     const cancelDeletion = () => {
       showConfirmPopup.value = false;
@@ -569,7 +554,9 @@ main {
 .profile-img {
   width: 102px;
   height: 102px;
-  object-fit: cover;
+  border-radius: 50%;
+  /* object-fit: cover; */
+  image-rendering: crisp-edges;
 }
 
 /* 모달 오버레이 스타일 */

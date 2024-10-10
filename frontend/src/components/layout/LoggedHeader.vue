@@ -13,7 +13,7 @@
       <a href="#" @click="mypage">마이페이지</a>
 
       <div class="sign-in-btn">
-        <img :src="userImage" alt="사용자 이미지" />
+        <img :src="userImage" alt="사용자 이미지" class="user_img"/>
         <p class="sign-in-user-name">{{ userName }}</p>
         <span>님, 환영합니다!</span>
       </div>
@@ -119,5 +119,11 @@ a:nth-child(1) {
 
 .sign-in-user-name {
   font-weight: bold;
+}
+
+.user_img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 </style>
