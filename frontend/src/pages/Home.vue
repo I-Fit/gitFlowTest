@@ -84,8 +84,9 @@
                 <p class="sport-text">{{ group.sport }}</p>
                 <div class="user-info">
                   <span class="user-name">{{ group.username }}</span>
-                  <img :src="group.user_img || require('@/assets/images/default-profile.png')" alt="사용자 이미지"
-                    class="user-img">
+                  <img
+                    :src="group.profileUrl ? `data:image/png;base64,${group.profileUrl}` : require('@/assets/images/default-profile.png')"
+                    alt="사용자 이미지" class="user-img">
                 </div>
               </div>
               <div class="group-text">
@@ -267,8 +268,7 @@ export default {
 
     // const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, PerPage);
 
-    // creategroup에서 생성한 모임에 사용자 식별 ID값을 같이 보내줘서
-    // 서버에서 username, user_img를 받아옴
+    //  홈 페이지에 전체 모임 데이터
     const groupList = async () => {
       loading.value = true;
       try {
@@ -311,19 +311,6 @@ export default {
         isEnd.value = true;
       }
     };
-
-    // // 스크롤 핸들링
-    // const handleScroll = () => {
-    //   console.log('Scrolling...');
-    //   const routerView = document.querySelector('.router-view');
-    //   const scrollTop = routerView.scrollTop + routerView.clientHeight;
-    //   const offsetHeight = routerView.scrollHeight;
-
-    //   if (scrollTop >= offsetHeight - 100 && !loading.value && !isEnd.value) {
-    //     page.value++;             // 페이지 번호 증가
-    //     updateDisplayedGroups();  // 새 데이터 업데이트
-    //   }
-    // };
 
     const loadMore = () => {
       if (!loading.value && !isEnd.value) {
@@ -414,7 +401,8 @@ export default {
         oncomplete: (data) => {
           console.log("받은 주소 : ", data)
           locationInput.value = data.sigungu;
-          // fetchLocationData();
+
+          fetchLocationData();
         }
       }).open();
     };
@@ -473,41 +461,11 @@ export default {
         } catch (error) {
           console.error("API 요청 오류: ", error);
         }
-        
+
       } else {
         alert("시간을 다시 선택해 주세요.");
       }
     }
-
-    // const timeSelected = (selectedTime) => {
-    //   console.log('선택된 시간', selectedTime);
-
-    //   if (selectedTime) {
-
-    //     const date = new Date(selectedTime);
-    //     time.value.hours = date.getHours();
-    //     time.value.minutes = date.getMinutes();
-    //     console.log("-------------------", time.value.hours, time.value.minutes);
-
-    //   }
-    //   // console.log(`Selected Time: ${time.hours}`);
-    //   if (time.value == null) {
-    //     alert("시간을 다시 선택해 주세요.");
-    //     return;
-    //   }
-    // };
-
-    // try {
-    //   const response = await axios.post('/api/filter/time', {
-    //     time: time.value,
-    //   });
-    //   groups.value = response.data;
-    // } catch (error) {
-    //   console.error("모임 리스트를 가져오는 중 오류 발생", error);
-    //   alert("모임 리스트 가져오기 실패");
-    // }
-
-
 
     //  검색어
     const searchGroups = async () => {
@@ -609,7 +567,11 @@ export default {
           console.error("찜 실패", response.data.message);
         }
       } catch (error) {
-        console.error("Error", error);
+        if (error.response && error.response.status === 400) {
+          alert(error.response.data);
+        } else {
+          console.error("Error", error);
+        }
       }
     }
 

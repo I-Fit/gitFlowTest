@@ -14,7 +14,7 @@ export function useEmail() {
       alert("이메일을 입력해주세요.");
       return;
     }
-    loading.value = true;
+    loading.value = true; // 로딩 시작
     try {
       const response = await axios.post("/api/sendVerificationCode", {
         email: email, // data 키를 제거하고 직접 이메일을 전송
@@ -61,7 +61,7 @@ export function useEmail() {
   };
 
   // ==============================================================
-
+  //  로그인 후 마이페이지에서 이메일 변경을 할 때 토큰이 필요해서 따로 이메일 인증하는 코드 구현
   const sendEmailToken = async (email) => {
     if (email == "") {
       alert("이메일을 입력해주세요.");
@@ -93,11 +93,13 @@ export function useEmail() {
     }
   };
 
+  //  이메일 시간 오버되고 다시 재전송
   const handleReRequestToken = async () => {
     reset();
     await sendEmailToken();
   };
 
+  //  이메일과 인증 번호를 보내서 인증 번호가 맞는지 확인
   const verifyEmailToken = async (email, enteredCode) => {
     try {
       const response = await apiClient.post("/updateEmail/verifyEmail", {
@@ -125,6 +127,7 @@ export function useEmail() {
     handleReRequestToken,
     verifyEmailToken,
 
+    loading,
     timeLeft,
     minutes,
     seconds,

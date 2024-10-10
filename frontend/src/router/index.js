@@ -25,6 +25,7 @@ import CreatedGroups from "@/pages/CreatedGroups.vue";
 import JoinedGroups from "@/pages/JoinedGroups.vue";
 import LikedGroups from "@/pages/LikedGroups.vue";
 import AddNewGroup from "@/pages/AddNewGroup.vue";
+import ChangePassword from "@/pages/ChangePassword.vue";
 
 const routes = [
   {
@@ -63,6 +64,12 @@ const routes = [
     path: "/find-password",
     name: "FindPassword",
     component: FindPassword,
+  },
+
+  {
+    path: "/change-password",
+    name: "ChangePassword",
+    component: ChangePassword,
   },
 
   {

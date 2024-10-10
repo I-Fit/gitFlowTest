@@ -52,17 +52,19 @@
               v-model="formData.phoneNumber" />
           </div>
         </div>
+
         <div class="signup-email input-block">
           <label class="signup-label" for="email">이메일</label>
           <div class="signup-field">
             <input type="text" id="email" name="email" placeholder="이메일을 입력해주세요." class="signup-input"
-              v-model="emailValue" />
+            v-model="emailValue" />
             <button type="button" class="signup-btn" @click="sendEmailRequest" :disabled="timerStarted">
               인증 요청
             </button>
+            <div v-if="loading" class="spinner"></div>
           </div>
-          <!-- <div v-if="loading" class="loading-indicator"></div> -->
         </div>
+
         <div class="signup-email-auth input-block">
           <label class="signup-label" for="email-number">이메일 인증번호
             <span v-if="timerStarted && timeLeft > 0" class="timer">{{ minutes }}:{{ seconds }}</span>
@@ -299,6 +301,7 @@ export default {
       seconds,
       handleReRequest,
       timerStarted,
+      loading,
     } = useEmail();
 
     return {
@@ -324,6 +327,7 @@ export default {
       verifyEmail,
       handleReRequest,
       sendEmailRequest,
+      loading,
 
       formData,
       idAvailable,
@@ -337,6 +341,23 @@ export default {
 </script>
 
 <style scoped>
+.spinner {
+  border: 4px solid black;
+  border-radius: 50%;
+  border-top: 4px solid #ccc;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+/* 애니메이션 */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .timer {
   color: red;
   font-size: 14px;
