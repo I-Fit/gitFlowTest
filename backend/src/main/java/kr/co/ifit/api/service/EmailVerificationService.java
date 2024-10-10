@@ -43,7 +43,6 @@ public class EmailVerificationService {
                 return true;    //  인증 성공
             }
         }
-
         return false;       // 인증 정보가 없으면
     }
 

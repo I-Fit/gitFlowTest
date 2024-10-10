@@ -182,6 +182,24 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 변경 중 오류가 발생했습니다.");
         }
     }
+
+//    @PostMapping("/user/password/change")
+//    public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDtoReq passwordChangeDtoReq) {
+//        Long userId = userContextUtil.getAuthenticatedUserId();
+//        if (userId == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//        passwordChangeDtoReq.setUserId(userId);
+//
+//        try {
+//            passwordChangeService.changePassword(passwordChangeDtoReq);
+//            return ResponseEntity.ok().body(Map.of("message", "비밀번호 변경 성공"));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(Map.of("message", "비밀번호 변경 실패: " + e.getMessage()));
+//        }
+//    }
+
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     // 로그인
@@ -282,32 +300,33 @@ public class UserController {
         return ResponseEntity.ok(userDtoRes);
     }
 
-//    // 회원탈퇴
-//    @GetMapping("/delete-account")
-//    public ResponseEntity<?> deleteAccount(HttpServletRequest request) {
-//        String refreshToken = resolveToken(request);
-//
-//        if (refreshToken != null) {
-//            String loginId = jwtTokenProvider.extractUsername(refreshToken);
-//            boolean isTokenValid = jwtTokenProvider.validateToken(refreshToken, loginId);
-//
-//            if (isTokenValid) {
-//                Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(refreshToken);
-//                if (tokenOptional.isPresent()) {
-//                    // 사용자 Id 가져오기
-//                    Long userId = tokenOptional.get().getUser().getUserId();
-//
-//                    // 사용자 삭제 및 관련 데이터 삭제
-//                    boolean isDeleted = userService.deleteUserAndRelatedData(userId);
-//
-//                    if (isDeleted) {
-//                        return ResponseEntity.ok().body(Map.of("message", "회원 탈퇴가 완료되었습니다."));
-//                    } else {
-//                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                                .body(Map.of("message", "회원 탈퇴에 실패했습니다."));
-//                    }
-//                }
-//            }
-//        }
-//    }
+    // 회원탈퇴
+    @GetMapping("/delete-account")
+    public ResponseEntity<?> deleteAccount(HttpServletRequest request) {
+        String refreshToken = resolveToken(request);
+
+        if (refreshToken != null) {
+            String loginId = jwtTokenProvider.extractUsername(refreshToken);
+            boolean isTokenValid = jwtTokenProvider.validateToken(refreshToken, loginId);
+
+            if (isTokenValid) {
+                Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(refreshToken);
+                if (tokenOptional.isPresent()) {
+                    // 사용자 Id 가져오기
+                    Long userId = tokenOptional.get().getUser().getUserId();
+
+                    // 사용자 삭제 및 관련 데이터 삭제
+                    boolean isDeleted = userService.deleteUserAndRelatedData(userId);
+
+                    if (isDeleted) {
+                        return ResponseEntity.ok().body(Map.of("message", "회원 탈퇴가 완료되었습니다."));
+                    } else {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(Map.of("message", "회원 탈퇴에 실패했습니다."));
+                    }
+                }
+            }
+        }
+        return ResponseEntity.badRequest().body("refresh token 이 제공되지 않았습니다."); // 토큰이 제공되지 않은 경우의 응답
+    }
 }
