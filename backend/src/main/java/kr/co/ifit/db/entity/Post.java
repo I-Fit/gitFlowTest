@@ -55,7 +55,7 @@ public class Post {
     private int commentsCnt;
 
     @Column(name = "is_heart_filled")
-    private boolean isHeartFilled;
+    private boolean isHeartFilled = false;
 
     @PrePersist
     public void prePersist() {
@@ -76,27 +76,13 @@ public class Post {
         this.user = user;
     }
 
-    public Post(String title, String content, String imageStr, String exercise, String location, User user, boolean heartFilled) {
-        this.title = title;
-        this.content = content;
-        this.imageStr = imageStr;
-        this.exercise = exercise;
-        this.location = location;
-        this.user = user;
-        this.isHeartFilled = isHeartFilled();
-    }
+//    public void setIsHeartFilled(boolean isHeartFilled) {
+//        this.isHeartFilled = isHeartFilled;
+//    }
 
-    public void increaseLikesCnt() {
-        this.likesCnt++;
-    }
-
-    public void decreaseLikesCnt() {
-        this.likesCnt--;
-    }
-
-    public void setIsHeartFilled(boolean isHeartFilled) {
-        this.isHeartFilled = isHeartFilled;
-    }
+//    public void setIsHeartFilled(boolean isHeartFilled) {
+//        this.isHeartFilled = isHeartFilled;
+//    }
 
 //    private int capacity;   // 총 모집인원
 //    @Column(name = "party_cnt")

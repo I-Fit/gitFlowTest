@@ -1,5 +1,7 @@
 package kr.co.ifit.api.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import kr.co.ifit.api.request.LikeDtoReq;
 import kr.co.ifit.api.request.PostDtoReq;
 import kr.co.ifit.api.response.PostDtoRes;
 import kr.co.ifit.api.service.PostService;
@@ -11,12 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.attribute.UserPrincipal;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -173,13 +173,35 @@ public class PostController {
 //        PostDtoRes response = postService.likePost(postReq);
 //        return ResponseEntity.ok(response);
 //    }
+    @RequestMapping(value = "/like", method = {RequestMethod.POST, RequestMethod.DELETE})
+    public ResponseEntity<String> toggleLike(@RequestBody LikeDtoReq likeReq, HttpServletRequest request) {
+        try {
+            Long userId = userContextUtil.getAuthenticatedUserId();
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            likeReq.setUserId(userId);
 
-    @PostMapping("/{id}/like")
-    public ResponseEntity<PostDtoRes> likePost(@PathVariable Long id,
-                                               @AuthenticationPrincipal UserPrincipal currentUser) {
-        PostDtoRes response = postService.likePost(id, currentUser);
-        return ResponseEntity.ok(response);
+            if (request.getMethod().equalsIgnoreCase("POST")) {
+                postService.likePost(likeReq);
+                return ResponseEntity.ok("좋아요 추가");
+            } else if (request.getMethod().equalsIgnoreCase("DELETE")) {
+                postService.unlikePost(likeReq);
+                return ResponseEntity.ok("좋아요 취소");
+            } else {
+                return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
+
+//    @PostMapping("/{id}/like")
+//    public ResponseEntity<PostDtoRes> likePost(@PathVariable Long id,
+//                                               @AuthenticationPrincipal UserPrincipal currentUser) {
+//        PostDtoRes response = postService.likePost(id, currentUser);
+//        return ResponseEntity.ok(response);
+//    }
 
 //    @DeleteMapping("/{id}/like")
 //    public ResponseEntity<PostDtoRes> unlikePost(@PathVariable Long id, @RequestBody PostDtoReq postReq) {
@@ -211,9 +233,5 @@ public class PostController {
         List<PostDtoRes> posts = postService.getSortedPosts(sort, direction);
         System.out.println("received sort: " + sort + " direction: " + direction);
         return ResponseEntity.ok(posts);
-    }
-
-    private Long extractUserIdFromToken(String token) {
-        return 3L;
     }
 }

@@ -1,5 +1,6 @@
 package kr.co.ifit.api.service;
 
+import kr.co.ifit.api.request.LikeDtoReq;
 import kr.co.ifit.api.request.PostDtoReq;
 import kr.co.ifit.api.response.PostDtoRes;
 import kr.co.ifit.db.entity.Like;
@@ -14,10 +15,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -41,8 +40,7 @@ public class PostService {
                 imageStr,
                 postReq.getExercise(),
                 postReq.getLocation(),
-                user,
-                postReq.isHeartFilled()
+                user
         );
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
@@ -111,36 +109,82 @@ public class PostService {
     }
 
     // 게시글 좋아요
-    public PostDtoRes likePost(Long id, UserPrincipal currentUser) {
-        Post post = postRepository.findById(id)
+    public void likePost(LikeDtoReq likeReq) {
+        System.out.println("좋아요 생성: " + likeReq);
+        User user = userRepository.findById(likeReq.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Post post = postRepository.findById(likeReq.getPostId())
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        boolean alreadyLiked = checkIfUserLikedPost((User) currentUser, post);
-
-        int likesCnt = post.getLikesCnt();
-        boolean isHeartFilled;
-
-        if (alreadyLiked) {
-            post.setLikesCnt(likesCnt - 1);
-            isHeartFilled = false;
-            removeLikeForUser((User) currentUser, post);
-        } else {
-            post.setLikesCnt(likesCnt + 1);
-            isHeartFilled = true;
-            addLikeForUser((User) currentUser, post);
+        if (likeRepository.existsByUserAndPost(user, post)) {
+            throw new RuntimeException("이미 좋아요한 게시글입니다");
         }
 
-        post.setIsHeartFilled(isHeartFilled);
-        postRepository.save(post);
+        Like like = new Like();
+        like.setUser(user);
+        like.setPost(post);
 
-        return new PostDtoRes(post.getLikesCnt(), isHeartFilled);
+        likeRepository.save(like);
+
+        post.setHeartFilled(true);
+        post.setLikesCnt(post.getLikesCnt() + 1);
+        postRepository.save(post);
     }
+
+    public void unlikePost(LikeDtoReq likeReq) {
+        System.out.println("좋아요 취소: " + likeReq);
+        User user = userRepository.findById(likeReq.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Post post = postRepository.findById(likeReq.getPostId())
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        Like like = likeRepository.findByUserAndPost(user, post);
+        if (like != null) {
+            likeRepository.delete(like);
+
+            post.setHeartFilled(false);
+            post.setLikesCnt(post.getLikesCnt() - 1);
+            postRepository.save(post);
+        } else {
+            throw new RuntimeException("좋아요한 게시글이 없습니다");
+        }
+    }
+
+//    public PostDtoRes likePost(Long id, UserPrincipal currentUser) {
+//        User user = (User)currentUser;
+//        Post post = postRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Post not found"));
+//
+//        boolean alreadyLiked = checkIfUserLikedPost(user, post);
+//
+//        int likesCnt = post.getLikesCnt();
+//        boolean isHeartFilled;
+//
+//        if (alreadyLiked) {
+//            post.setLikesCnt(likesCnt - 1);
+//            isHeartFilled = false;
+//            removeLikeForUser(user, post);
+//        } else {
+//            post.setLikesCnt(likesCnt + 1);
+//            isHeartFilled = true;
+//            addLikeForUser(user, post);
+//        }
+//
+//        postRepository.save(post);
+//
+//        return new PostDtoRes(post.getLikesCnt(), isHeartFilled);
+//    }
 
     private boolean checkIfUserLikedPost(User user, Post post) {
         return likeRepository.existsByUserAndPost(user, post);
     }
 
     private void addLikeForUser(User user, Post post) {
+        System.out.println("유저 객체 : " + user);
+//        System.out.println("유저아이디 : " + user.getUserId());
+//        System.out.println("게시글 아이디: " + post.getPostId());
         Like like = new Like();
         like.setUser(user);
         like.setPost(post);
@@ -148,13 +192,18 @@ public class PostService {
     }
 
     private void removeLikeForUser(User user, Post post) {
+//        Like like = likeRepository.findByUserAndPost(user, post);
+//        if (like != null) {
+//            likeRepository.delete(like);
+//        }
         likeRepository.deleteByUserAndPost(user, post);
     }
 
     // 키워드로 게시글 검색
     public List<PostDtoRes> searchByKeyword(String keyword) {
         List<Post> posts = postRepository.searchByKeyword(keyword);
-        return posts.stream().map(PostDtoRes::convertToDto).collect(Collectors.toList());
+        return posts.stream().map(PostDtoRes::new).toList();
+//        return posts.stream().map(PostDtoRes::convertToDto).collect(Collectors.toList());
     }
 
     // 운동명으로 게시글 검색
@@ -190,7 +239,8 @@ public class PostService {
 
         }
         System.out.println("sorting by: " + sort + "direction: " + direction);
-        return posts.stream().map(PostDtoRes::convertToDto).collect(Collectors.toList());
+//        return posts.stream().map(PostDtoRes::convertToDto).collect(Collectors.toList());
+        return posts.stream().map(PostDtoRes::new).toList();
     }
 
     // 내가 쓴 게시글
@@ -202,4 +252,35 @@ public class PostService {
         return postRepository.findAllByUser(user);
     }
 
+
+    public PostDtoRes convertToDto(Post post, User user) {
+        PostDtoRes dto = new PostDtoRes();
+        dto.setPostId(post.getPostId());
+        dto.setTitle(post.getTitle());
+        dto.setContent(post.getContent());
+        dto.setImageStr(post.getImageStr());
+        dto.setExercise(post.getExercise());
+        dto.setLocation(post.getLocation());
+        dto.setUpdatedAt(LocalDateTime.now());
+        dto.setCreatedAt(LocalDateTime.now());
+        dto.setLikesCnt(post.getLikesCnt());
+        dto.setCommentsCnt(post.getCommentsCnt());
+        dto.setIsHeartFilled(checkIfUserLikedPost(user, post));
+
+        return dto;
+//        return PostDtoRes.builder()
+//                .userId(post.getUser().getUserId())
+//                .postId(post.getPostId())
+//                .title(post.getTitle())
+//                .content(post.getContent())
+//                .imageStr(post.getImageStr())
+//                .exercise(post.getExercise())
+//                .location(post.getLocation())
+//                .createdAt(LocalDateTime.now())
+//                .updatedAt(LocalDateTime.now())
+//                .likesCnt(post.getLikesCnt())
+//                .commentsCnt(post.getCommentsCnt())
+//                .isHeartFilled(checkIfUserLikedPost(post.getUser(), post));
+//                .build();
+    }
 }

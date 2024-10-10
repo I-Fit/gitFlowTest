@@ -24,6 +24,7 @@ public class PostDtoRes {
     private LocalDateTime updatedAt;
     private int likesCnt;
     private int commentsCnt;
+
     private boolean isHeartFilled;
 
     public PostDtoRes(Post post) {
@@ -55,34 +56,8 @@ public class PostDtoRes {
         this.isHeartFilled = isHeartFilled;
     }
 
-    public static PostDtoRes convertToDto(Post post) {
-//        return new PostDtoRes(
-//                post.getPostId(),
-//                post.getTitle(),
-//                post.getContent(),
-//                post.getExercise(),
-//                post.getLocation(),
-//                post.getImageStr(),
-//                post.getUser(),
-//                post.isHeartFilled(),
-//                post.getCreatedAt(),
-//                post.getUpdatedAt(),
-//                post.getLikesCnt(),
-//                post.getCommentsCnt()
-//        );
-        return PostDtoRes.builder()
-                .userId(post.getUser().getUserId())
-                .postId(post.getPostId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .imageStr(post.getImageStr())
-                .exercise(post.getExercise())
-                .location(post.getLocation())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .likesCnt(post.getLikesCnt())
-                .commentsCnt(post.getCommentsCnt())
-                .isHeartFilled(post.isHeartFilled())
-                .build();
+
+    public void setIsHeartFilled(boolean b) {
+        this.isHeartFilled = b;
     }
 }
