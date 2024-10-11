@@ -1,6 +1,5 @@
 package kr.co.ifit.api.service;
 
-import kr.co.ifit.api.response.CouponDtoRes;
 import kr.co.ifit.db.entity.Coupon;
 import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.entity.User;
@@ -20,7 +19,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -62,7 +60,7 @@ public class UserService {
         userRepository.save(user);
         emailVerificationRepository.deleteByUserEmail(userDtoReq.getEmail());
 
-        // 회원가입 후 쿠폰 추가
+        //  회원가입 쿠폰 생성
         couponService.addWelcomeCoupon(user);
     }
 
@@ -115,7 +113,7 @@ public class UserService {
         userRepository.save(user);
         emailVerificationRepository.deleteByUserEmail(user.getEmail());
     }
-
+    //  회원탈퇴 시 user와 관련된 엔티티 모두 삭제
     @Transactional
     public boolean deleteUserAndRelatedData(Long userId) {
 

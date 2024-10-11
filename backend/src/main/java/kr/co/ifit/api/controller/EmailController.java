@@ -7,7 +7,10 @@ import kr.co.ifit.common.util.UserContextUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -40,7 +43,7 @@ public class EmailController {
         }
     }
 
-//    =========================================================================================
+//    --------------------------------------------------------------------------------------------------------------
 
     // 이메일 변경 시 이메일 인증 발송 및 확인
     @PostMapping("/updateEmail/sendVerificationCode")

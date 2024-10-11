@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserDtoRes {
     private Long userId;
-    private String username;
-    private String profileUrl;
+    private String userName;
+    private String userprofile;
 }
