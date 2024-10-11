@@ -115,7 +115,7 @@ export default {
     // 게시글 불러오기
     const fetchPosts = async () => {
       try {
-        const response = await apiClient.get(`/board/posts/by`);
+        const response = await apiClient.get(`/board/posts/liked`);
 
         // if (!response.ok) {
         //   throw new Error('Network response was not ok');

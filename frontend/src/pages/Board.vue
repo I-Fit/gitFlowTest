@@ -23,7 +23,7 @@
             <div class="post-items">
               <div class="post-info">
                 <div class="writer-profile-image"></div>
-                <span class="writer-name">{{ post.writerName }}</span>
+                <span class="writer-name">{{ post.username }}</span>
                 <span class="created-at">{{ post.formattedCreatedAt }}</span>
               </div>
               <div class="title-and-content">
@@ -95,6 +95,8 @@ export default {
 
   setup() {
     const router = useRouter();
+
+    const username = ref('');
     const searchKeyword = ref('');
     const visibleDatas = ref([]);
     const selectedSort = ref('');
@@ -181,6 +183,7 @@ export default {
         ...post,
         formattedCreatedAt: formatDate(post.createdAt),
         contentWithoutImage: post.content.replace(/<img[^>]*>/g, ''),
+        username: post.username,
       }));
     });
 
@@ -220,6 +223,7 @@ export default {
     })
 
     return {
+      username,
       goToCreatePost,
       selectedSort,
       sortPosts,

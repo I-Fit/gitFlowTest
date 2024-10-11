@@ -5,7 +5,7 @@
       <div class="user">
         <div class="user-post">
           <div class="post-profile"></div>
-          <span class="user-name">{{ userId }}</span>
+          <span class="user-name">{{ username }}</span>
           <span class="creation-date">{{ formattedCreatedAt }}</span>
         </div>
         <div class="user-option" @click="toggleActions">
@@ -20,7 +20,7 @@
       <!-- 제목 및 좋아요 버튼 -->
       <div v-if="post" class="content-title">
         <h1>{{ post.title }}</h1>
-        <p>isHeartFilled: {{ isHeartFilled }}</p>
+        <!-- <p>isHeartFilled: {{ isHeartFilled }}</p> -->
         <div class="title-heart" @click="toggleHeart(post.postId)">
           <div :class="isHeartFilled ? 'filled-heart' : 'empty-heart'"></div>
         </div>
@@ -80,6 +80,7 @@ export default {
     const post = ref(null); // 게시글 데이터 저장할 변수
     const comments = ref([]);
 
+    const username = ref('');
     const userId = ref('')
     const createdAt = ref('');
     const postId = route.params.id;
@@ -99,13 +100,14 @@ export default {
     const fetchPost = async () => {
       console.log(`Fetching post with Id: ${postId}`);
       try {
-        const response = await axios.get(`/api/board/post/${postId}`);
+        const response = await apiClient.get(`/board/post/${postId}`);
         console.log('fetched post data: ', response.data);
 
         post.value = response.data;
         userId.value = response.data.userId;
         createdAt.value = response.data.createdAt;
         isHeartFilled.value = response.data.heartFilled;
+        username.value = response.data.username;
 
         post.value.content = cleanContent(post.value.content);
       } catch (error) {
@@ -115,11 +117,12 @@ export default {
 
     const cleanContent = (content) => {
       return content.replace(/<img[^>]*>/g, '');
-    }
+    };
 
     const fetchComments = async () => {
+      console.log('Fetching comments with postId: ', postId);
       try {
-        const response = await axios.get(`/comments/post/${postId}`);
+        const response = await axios.get(`http://localhost:8080/api/comments/post/${postId}`);
         comments.value = response.data;
         console.log('fetched comments: ', comments.value);
       } catch (error) {
@@ -240,7 +243,7 @@ export default {
 
     const deletePost = async () => {
       try {
-        await apiClient.delete(`/board/delete/${postId}`);
+        await apiClient.delete(`/board/delete`, { params: { postId } });
         alert('게시글 삭제 완료!');
         router.push(`/board`);
       } catch(error) {
@@ -249,8 +252,8 @@ export default {
     };
 
     onBeforeMount(async () => {
-      fetchPost();
-      fetchComments();
+      await fetchPost();
+      await fetchComments();
     });
 
     return {
@@ -261,6 +264,7 @@ export default {
       isHeartFilled,
       likesCnt,
       post,
+      username,
       toggleHeart,
       showActions,
       toggleActions,

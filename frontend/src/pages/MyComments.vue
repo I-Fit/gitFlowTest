@@ -138,9 +138,17 @@ export default {
     const fetchComments = async () => {
       try {
         const response = await apiClient.get('/comments/by');
-        comments.value = response.data;
+        if (response.status === 200) {
+          comments.value = response.data;
+        } else {
+          console.error('댓글 로드 실패: ', response.data);
+        }
       } catch (error) {
-        console.error('댓글 로드 실패: ', error);
+        if (error.response) {
+          console.error('내가 쓴 댓글 로드 실패: ', error.response.status);
+        } else {
+          console.error('내가 쓴 댓글 로드 실패: ', error.message);
+        }
       }
     };
 
