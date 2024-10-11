@@ -232,9 +232,14 @@ public class PostService {
                 break;
             case "oldest":
                 posts = postRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt"));
+                System.out.println();
                 break;
+//            case "latest":
+//                posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+//                break;
             default:
                 posts = postRepository.findAll(Sort.by(sortDirection, "createdAt"));
+                System.out.println();
                 break;
 
         }
