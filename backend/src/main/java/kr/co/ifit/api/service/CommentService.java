@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -71,10 +72,12 @@ public class CommentService {
 
     // 특정 게시글의 댓글 가져오기
     public List<CommentDtoRes> getCommentsByPostId(Long postId) {
+        System.out.println("fetching comments for postid: " + postId);
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
         List<Comment> comments = commentRepository.findAllByPost(post);
+        System.out.println("Comments size: " + comments.size());
 
         return comments.stream()
                 .map(comment -> new CommentDtoRes(
@@ -88,10 +91,14 @@ public class CommentService {
     }
 
     // 특정 유저가 작성한 댓글 가져오기
-    public List<Comment> getCommentsByUserId(Long userId) {
+    public List<CommentDtoRes> getCommentsByUserId(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return commentRepository.findAllByUser(user);
+
+        List<Comment> comments = commentRepository.findAllByUser(user);
+
+        return comments.stream().map(comment -> new CommentDtoRes(comment.getCommentId(), comment.getContent()))
+                .collect(Collectors.toList());
     }
 
     // 댓글 수정

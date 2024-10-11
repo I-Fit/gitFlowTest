@@ -77,38 +77,34 @@ public class PostController {
     }
 
     // 모든 게시글 가져오기
+    //정상코드
+//    @GetMapping("/list")
+//    public ResponseEntity<List<PostDtoRes>> getAllPosts() {
+//        System.out.println("Fetching all posts");
+//        List<PostDtoRes> posts = postService.getAllPosts();
+//
+////        if (posts.isEmpty()) {
+////            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+////        }
+//        return ResponseEntity.ok(posts);
+//    }
+
     @GetMapping("/list")
     public ResponseEntity<List<PostDtoRes>> getAllPosts() {
         System.out.println("Fetching all posts");
-        List<PostDtoRes> posts = postService.getAllPosts();
-
-//        if (posts.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-//        }
-
+        List<PostDtoRes> posts = postService.getAllPosts(); // 수정된 서비스 메서드 호출
         return ResponseEntity.ok(posts);
     }
 
+
     // 특정 게시글 가져오기
-    @GetMapping("/post/{id}")
-    public ResponseEntity<PostDtoRes> getPost(@PathVariable Long id) {
-        PostDtoRes postRes = postService.getPost(id);
-
-        return ResponseEntity.ok(postRes);
-    }
-
-    // 내가 쓴 게시글
-    @GetMapping("/posts/by")
-    public ResponseEntity<List<Post>> getPostsByUserId() {
+    @GetMapping("/post/{postId}")
+    public ResponseEntity<PostDtoRes> getPost(@PathVariable Long postId) {
         Long userId = userContextUtil.getAuthenticatedUserId();
-        System.out.println("Authenticated UserId: " + userId);
-        if (userId == null) {
-            //  인증되지 않은 경우
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
 
-        List<Post> posts = postService.getPostsByUserId(userId);
-        return new ResponseEntity<>(posts, HttpStatus.OK);
+        PostDtoRes post = postService.getPost(postId, userId);
+//        PostDtoRes post = postService.getPost(postId);
+        return ResponseEntity.ok(post);
     }
 
     // 게시글 수정
@@ -233,5 +229,32 @@ public class PostController {
         List<PostDtoRes> posts = postService.getSortedPosts(sort, direction);
         System.out.println("received sort: " + sort + " direction: " + direction);
         return ResponseEntity.ok(posts);
+    }
+
+    // 게시글 관리
+    // 내가 쓴 게시글
+    @GetMapping("/posts/by")
+    public ResponseEntity<List<Post>> getPostsByUserId() {
+        Long userId = userContextUtil.getAuthenticatedUserId();
+        System.out.println("Authenticated UserId: " + userId);
+        if (userId == null) {
+            //  인증되지 않은 경우
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        List<Post> posts = postService.getPostsByUserId(userId);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    // 내가 좋아요한 게시글
+    @GetMapping("/posts/liked")
+    public ResponseEntity<List<PostDtoRes>> getLikedPostsByUserId() {
+        Long userId = userContextUtil.getAuthenticatedUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        List<PostDtoRes> likedPosts = postService.getLikedPostsByUserId(userId);
+        return new ResponseEntity<>(likedPosts, HttpStatus.OK);
     }
 }

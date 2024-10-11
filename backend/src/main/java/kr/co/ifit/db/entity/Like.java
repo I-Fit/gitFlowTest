@@ -29,4 +29,8 @@ public class Like {
     public void setPost(Post post) {
         this.post = post;
     }
+
+    public Post getPost() {
+        return post;
+    }
 }

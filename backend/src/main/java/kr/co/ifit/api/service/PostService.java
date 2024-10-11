@@ -3,9 +3,11 @@ package kr.co.ifit.api.service;
 import kr.co.ifit.api.request.LikeDtoReq;
 import kr.co.ifit.api.request.PostDtoReq;
 import kr.co.ifit.api.response.PostDtoRes;
+import kr.co.ifit.common.util.UserContextUtil;
 import kr.co.ifit.db.entity.Like;
 import kr.co.ifit.db.entity.Post;
 import kr.co.ifit.db.entity.User;
+import kr.co.ifit.db.repository.CommentRepository;
 import kr.co.ifit.db.repository.LikeRepository;
 import kr.co.ifit.db.repository.PostRepository;
 import kr.co.ifit.db.repository.UserRepository;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -26,6 +29,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
+    private final UserContextUtil userContextUtil;
 
     // 게시글 생성
     public PostDtoRes createPost(PostDtoReq postReq, String imageStr) {
@@ -50,16 +55,43 @@ public class PostService {
     }
 
     // 게시글 상세
-//    @Transactional(readOnly = true)
-    public PostDtoRes getPost(Long id) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-//        long likeCnt = postRepository.findLikeCntById(id);
-//        long commentCnt = postRepository.findCommentCntById(id);
+    // 정상 코드
+//    public PostDtoRes getPost(Long postId, Long userId) {
+//        Post post = postRepository.findById(postId)
+//                .orElseThrow(() -> new RuntimeException("Post not found"));
+//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        boolean isHeartFilled = false;
+//        if (user != null) {
+//            System.out.println("유저아이디: " + userId);
+//            isHeartFilled = likeRepository.existsByUserAndPost(user, post);
+//        }
+//
+//        return new PostDtoRes(post, isHeartFilled);
+//    }
 
-//        postRes.setLikesCnt(likeCnt);
-//        postRes.setCommentsCnt(commentCnt);
-        return new PostDtoRes(post);
+    public PostDtoRes getPost(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // 게시글의 작성자 User 객체
+        User postUser = post.getUser();
+        String username = postUser != null ? postUser.getUsername() : null;
+
+        boolean isHeartFilled = false;
+        if (userId != null) {
+            // 사용자가 존재하는지 확인하고, 그에 따라 isHeartFilled 설정
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            isHeartFilled = likeRepository.existsByUserAndPost(user, post);
+        }
+
+        // PostDtoRes 생성 및 반환
+        PostDtoRes response = new PostDtoRes(post, isHeartFilled);
+        response.setUsername(username); // username 설정
+
+        return response;
     }
 
     // 게시글 수정
@@ -88,10 +120,8 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-
-//        if (post == null) {
-//            return false;
-//        }
+        likeRepository.deleteByPost(post);
+        commentRepository.deleteByPost(post);
 
         if (!post.getUser().getUserId().equals(userId)) {
             throw new RuntimeException("You do not have permission to delete this post");
@@ -102,10 +132,21 @@ public class PostService {
     }
 
     // 게시글 목록
+    // 정상코드
+//    public List<PostDtoRes> getAllPosts() {
+//        List<Post> posts = postRepository.findAll();
+//        return posts.stream().map(PostDtoRes::new).toList();
+//    }
+
     public List<PostDtoRes> getAllPosts() {
         List<Post> posts = postRepository.findAll();
-        return posts.stream().map(PostDtoRes::new).toList();
-//        return posts.stream().map(PostDtoRes::convertToDto).collect(Collectors.toList());
+        return posts.stream().map(post -> {
+            // PostDtoRes 생성 시 username 설정
+            User user = post.getUser(); // 게시글 작성자 정보 가져오기
+            PostDtoRes dto = new PostDtoRes(post);
+            dto.setUsername(user.getUsername()); // username 설정
+            return dto;
+        }).toList();
     }
 
     // 게시글 좋아요
@@ -257,6 +298,17 @@ public class PostService {
         return postRepository.findAllByUser(user);
     }
 
+    // 내가 좋아요한 게시글
+    public List<PostDtoRes> getLikedPostsByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Like> likes = likeRepository.findByUser_UserId(userId);
+
+        return likes.stream().map(like -> new PostDtoRes(like.getPost()))
+                .collect(Collectors.toList());
+    }
+
 
     public PostDtoRes convertToDto(Post post, User user) {
         PostDtoRes dto = new PostDtoRes();
@@ -288,4 +340,6 @@ public class PostService {
 //                .isHeartFilled(checkIfUserLikedPost(post.getUser(), post));
 //                .build();
     }
+
+
 }

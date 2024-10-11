@@ -29,4 +29,9 @@ public class CommentDtoRes {
         this.createdAt = comment.getCreatedAt();
         this.updatedAt = comment.getUpdatedAt();
     }
+
+    public CommentDtoRes(Long commentId, String content) {
+        this.commentId = commentId;
+        this.content = content;
+    }
 }

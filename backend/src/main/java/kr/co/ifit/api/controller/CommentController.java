@@ -77,15 +77,12 @@ public class CommentController {
     @GetMapping("/post/{postId}")
     public ResponseEntity<List<CommentDtoRes>> getCommentsByPostId(@PathVariable Long postId) {
 
+        System.out.println("받은 postid: " + postId);
         Long userId = userContextUtil.getAuthenticatedUserId();
-        if (userId == null) {
-            //  인증되지 않은 경우
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
 
         logger.info("========================================================================= {}", postId);
-
         List<CommentDtoRes> comments = commentService.getCommentsByPostId(postId);
+        System.out.println("fetched comments for postId: " + postId);
 
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
@@ -101,14 +98,14 @@ public class CommentController {
 
     // 내가 쓴 댓글
     @GetMapping("/by")
-    public ResponseEntity<List<Comment>> getCommentsByUserId() {
+    public ResponseEntity<List<CommentDtoRes>> getCommentsByUserId() {
         Long userId = userContextUtil.getAuthenticatedUserId();
         if (userId == null) {
             //  인증되지 않은 경우
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        List<Comment> comments = commentService.getCommentsByUserId(userId);
+        List<CommentDtoRes> comments = commentService.getCommentsByUserId(userId);
 
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }

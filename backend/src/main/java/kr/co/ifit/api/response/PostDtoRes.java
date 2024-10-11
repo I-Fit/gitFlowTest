@@ -27,6 +27,8 @@ public class PostDtoRes {
 
     private boolean isHeartFilled;
 
+    private String username;
+
     public PostDtoRes(Post post) {
         this.postId = post.getPostId();
         this.title = post.getTitle();
@@ -43,8 +45,18 @@ public class PostDtoRes {
     }
 
     public PostDtoRes(Post post, boolean isHeartFilled) {
-        this.post = post;
-        this.isHeartFilled = isHeartFilled;     // 좋아요 상태 설정
+        this.postId = post.getPostId();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.imageStr = post.getImageStr();
+        this.userId = post.getUser().getUserId();
+        this.exercise = post.getExercise();
+        this.location = post.getLocation();
+        this.createdAt = post.getCreatedAt();
+        this.updatedAt = post.getUpdatedAt();
+        this.likesCnt = post.getLikesCnt();
+        this.commentsCnt = post.getCommentsCnt();
+        this.isHeartFilled = isHeartFilled; // 좋아요 상태 설정
     }
 
     public PostDtoRes(Long postId, String message) {
@@ -55,7 +67,6 @@ public class PostDtoRes {
         this.likesCnt = likesCnt;
         this.isHeartFilled = isHeartFilled;
     }
-
 
     public void setIsHeartFilled(boolean b) {
         this.isHeartFilled = b;
