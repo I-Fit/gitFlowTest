@@ -7,14 +7,16 @@
               <div class="add-btn" @click="goToCreatePost">+</div>
             <span>운동을 인증해보세요!</span>
           </div>
-          <button type="button" class="feature-sort">
-            <select class="sort" v-model="selectedSort" @change="sortPosts" title="정렬">
+          <!-- <button type="button" class="feature-sort"> -->
+            <div class="feature-sort">
+              <select class="sort" v-model="selectedSort" @change="sortPosts" title="정렬">
               <option value="" disabled>정렬</option>
               <option value="popularity">인기순</option>
               <option value="latest">최신순</option>
               <option value="oldest">오래된순</option>
             </select>
-          </button>
+            </div>
+          <!-- </button> -->
         </div>
         <div class="list">
           <div v-for="post in formattedPosts" :key="post.postId" class="post-box">
@@ -127,7 +129,7 @@ export default {
 
     const sortPosts = () => {
       let sort = '';
-      let direction = 'DESC';
+      let direction = '';
 
       switch (selectedSort.value) {
         case 'popularity':
@@ -142,13 +144,14 @@ export default {
           sort = 'createdAt';
           direction = 'ASC';
           break;
-        // default:
-        //   sort = 'createdAt';
-        //   direction = 'DESC';
+        default:
+          sort = 'createdAt';
+          direction = 'DESC';
       }
 
       console.log('sort: ', sort);
       console.log('direction: ', direction);
+      console.log('selectedSort: ', selectedSort.value);
 
       fetch(`/api/board/sort?sort=${sort}&direction=${direction}`)
         .then(response => {
