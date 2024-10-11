@@ -119,7 +119,7 @@ export default {
 
     const fetchComments = async () => {
       try {
-        const response = await apiClient.get(`/comments/post/${postId}`);
+        const response = await axios.get(`/comments/post/${postId}`);
         comments.value = response.data;
         console.log('fetched comments: ', comments.value);
       } catch (error) {
@@ -177,10 +177,13 @@ export default {
 
         if (response.status === 200) {
           isHeartFilled.value = !isHeartFilled.value;
+          console.log()
           // isHeartFilled.value = response.data.isHeartFilled;
           await fetchPost();
         }
+
         console.log(response.data);
+        console.log(response.data.heartFilled);
       } catch (error) {
         console.error('좋아요 토글 실패: ', error);
       }

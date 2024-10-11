@@ -113,7 +113,7 @@ export default {
         visibleDatas.value = data;
         console.log('fetching posts: ', data);
 
-        // sortPosts();
+        sortPosts();
       } catch (error) {
         console.error('게시글 불러오기 실패: ', error);
       }
