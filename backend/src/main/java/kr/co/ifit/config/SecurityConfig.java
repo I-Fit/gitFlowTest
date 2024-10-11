@@ -42,9 +42,8 @@ public class SecurityConfig {
                                         "/api/password/emailVerification", "/api/password/modified", "/api/login", "/api/logout",
                                         "/api/sendVerificationCode", "/api/verifyEmail",
                                         "/api/filter/exercises", "/api/filter/exercises/sport", "/api/filter/location", "/api/filter/date", "/api/filter/time",
-                                        "/api/search", "/api/sort", "/api/group-list", "/api/board/**", "/api/comments/**",
-                                        "/api/board/new", "/api/board/delete", "/api/comments/new", "/api/comments/delete/",
-                                        "/api/comments/by", "/api/board/posts/by", "/api/board/like"
+                                        "/api/search", "/api/sort", "/api/group-list",
+                                        "/api/board/list", "/api/board/post/", "/api/board/search", "/api/board/sort", "/api/comments/post/"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 )
