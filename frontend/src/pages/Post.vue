@@ -4,16 +4,17 @@
       <!-- 사용자 정보 및 옵션 -->
       <div class="user">
         <div class="user-post">
-          <div class="post-profile"></div>
+          <!-- <div class="post-profile"> -->
+          <img
+            :src="profileUrl ? `data:image/png;base64,${profileUrl}` : require('@/assets/images/default-profile.png')"
+            alt="작성자 이미지" class="post-profile">
+          <!-- </div> -->
           <span class="user-name">{{ username }}</span>
           <span class="creation-date">{{ formattedCreatedAt }}</span>
         </div>
         <div class="user-option" @click="toggleActions">
           <div class="dot-icon"></div>
-          <PostActions 
-          :visible="showActions"
-          @navigate="handleNavigation"
-        />
+          <PostActions :visible="showActions" @navigate="handleNavigation" />
         </div>
       </div>
 
@@ -65,6 +66,7 @@ import PostActions from '@/components/common/PostActions.vue';
 import axios from 'axios';
 import { ref, computed, onBeforeMount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 import NewComment from './NewComment.vue';
 import apiClient from '@/api/apiClient';
 
@@ -77,9 +79,11 @@ export default {
   setup() {
     const route = useRoute();
     const router = useRouter();
+    const store = useStore();
+
     const post = ref(null); // 게시글 데이터 저장할 변수
     const comments = ref([]);
-
+    const profileUrl = ref('');
     const username = ref('');
     const userId = ref('')
     const createdAt = ref('');
@@ -90,7 +94,7 @@ export default {
     const isHeartFilled = ref(false);
     const likesCnt = ref(0);
     const showActions = ref(false);
-    
+
     // 로그인 상태 업데이트 로직
     // const updateLoginStatus = (status) => {
     //   isLoggedIn.value = status;
@@ -108,6 +112,7 @@ export default {
         createdAt.value = response.data.createdAt;
         isHeartFilled.value = response.data.heartFilled;
         username.value = response.data.username;
+        profileUrl.value = response.data.profileUrl;
 
         post.value.content = cleanContent(post.value.content);
       } catch (error) {
@@ -161,9 +166,9 @@ export default {
     });
 
     const toggleHeart = async (postId) => {
-        console.log("postId: ", postId);
-        console.log("초기 좋아요 수: ", likesCnt.value);
-        console.log("초기 하트 상태: ", isHeartFilled.value);
+      console.log("postId: ", postId);
+      console.log("초기 좋아요 수: ", likesCnt.value);
+      console.log("초기 하트 상태: ", isHeartFilled.value);
 
       try {
         const method = isHeartFilled.value ? 'DELETE' : 'POST';
@@ -210,10 +215,10 @@ export default {
     //         isHeartFilled: !isHeartFilled.value,
     //       },
     //     });
-        
+
     //     if (response.status === 200) {
     //       const { likesCnt: newLikesCnt, heartFilled:newIsHeartFilled } = response.data;
-          
+
     //       likesCnt.value = newLikesCnt;
     //       isHeartFilled.value = newIsHeartFilled;
     //     }
@@ -231,10 +236,21 @@ export default {
     };
 
     const handleNavigation = async (action) => {
+      const loggedUserId = computed(() => store.getters['isLogged/userId']);
+      const postUserId = userId.value;
+
       if (action === 'EditPost') {
+        if (loggedUserId.value !== postUserId) {
+          alert("수정 권한이 없습니다.");
+          return;
+        }
         showActions.value = false;
         router.push({ path: `/edit-post/${postId}` });
       } else if (action === 'delete') {
+        if (loggedUserId.value !== postUserId) {
+          alert("삭제 권한이 없습니다.");
+          return;
+        }
         if (confirm('정말 삭제하시겠습니까?')) {
           await deletePost();
         }
@@ -246,7 +262,7 @@ export default {
         await apiClient.delete(`/board/delete`, { params: { postId } });
         alert('게시글 삭제 완료!');
         router.push(`/board`);
-      } catch(error) {
+      } catch (error) {
         console.error('게시물 삭제 실패: ', error);
       }
     };
@@ -257,6 +273,7 @@ export default {
     });
 
     return {
+      profileUrl,
       postId,
       userId,
       comments,
@@ -329,16 +346,17 @@ input {
 }
 
 .post-profile {
-  width: 50px;
+  width: 40px;
   height: 40px;
-  background-image: url("@/assets/images/user_img.png");
+  border-radius: 50%;
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 .user-option {
-  position: relative; /* Make it a positioned element */
+  position: relative;
+  /* Make it a positioned element */
   width: 37px;
   height: 10px;
   margin-right: 4px;
@@ -375,7 +393,8 @@ input {
 }
 
 .content-box {
-  white-space: pre-wrap; /*줄 바꿈과 공백 유지*/
+  white-space: pre-wrap;
+  /*줄 바꿈과 공백 유지*/
   margin-bottom: 30px;
 }
 
@@ -471,9 +490,12 @@ input {
 
 .comment {
   display: flex;
-  justify-content: space-between; /* 댓글 내용과 삭제 버튼을 양쪽으로 배치 */
-  align-items: center; /* 세로 중앙 정렬 */
-  margin-bottom: 10px; /* 댓글 사이에 간격 추가 */
+  justify-content: space-between;
+  /* 댓글 내용과 삭제 버튼을 양쪽으로 배치 */
+  align-items: center;
+  /* 세로 중앙 정렬 */
+  margin-bottom: 10px;
+  /* 댓글 사이에 간격 추가 */
 }
 
 .comment-text {
@@ -483,16 +505,24 @@ input {
 .delete-btn {
   width: 55px;
   height: 30px;
-  margin-left: 10px; /* 댓글 내용과 버튼 사이에 약간의 간격 추가 */
-  background-color: #1a73e8; /* 버튼 색상 (예시) */
-  color: white; /* 글자 색상 */
-  border: none; /* 기본 테두리 제거 */
-  border-radius: 5px; /* 모서리 둥글게 */
-  cursor: pointer; /* 커서 변경 */
-  padding: 5px 10px; /* 버튼 안쪽 여백 */
+  margin-left: 10px;
+  /* 댓글 내용과 버튼 사이에 약간의 간격 추가 */
+  background-color: #1a73e8;
+  /* 버튼 색상 (예시) */
+  color: white;
+  /* 글자 색상 */
+  border: none;
+  /* 기본 테두리 제거 */
+  border-radius: 5px;
+  /* 모서리 둥글게 */
+  cursor: pointer;
+  /* 커서 변경 */
+  padding: 5px 10px;
+  /* 버튼 안쪽 여백 */
 }
 
 .delete-btn:hover {
-  background-color: #d32f2f; /* 호버 시 색상 변경 */
+  background-color: #d32f2f;
+  /* 호버 시 색상 변경 */
 }
 </style>

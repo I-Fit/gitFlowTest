@@ -80,7 +80,8 @@
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <p>모임 상세설명 : {{ selectedItem ? selectedItem.content : "" }}</p>
+        <p class="modal-description">모임 상세설명 : {{ selectedItem ? selectedItem.content : "" }}</p>
+        <p>모임 상세주소 : {{ selectedItem ? selectedItem.location : "" }}</p>
       </div>
     </div>
   </main>
@@ -114,6 +115,7 @@ export default {
     openModal(group) {
       this.selectedItem = {
         content: group.topboxContent,
+        location: group.fullLocation
       };
       this.isModalOpen = true;
     },
@@ -611,6 +613,10 @@ h2 {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+}
+
+.modal-description {
+  margin-bottom: 50px;
 }
 
 /* 모임 찜 버튼 */

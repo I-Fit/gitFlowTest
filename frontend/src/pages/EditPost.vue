@@ -11,7 +11,8 @@
         <div class="content-title">
           <textarea v-model="formData.title" placeholder="제목을 입력하세요." required></textarea>
         </div>
-        <div class="content-box" ref="contentBox" contenteditable="true" @input="onContentInput" placeholder="내용을 입력하세요">
+        <div class="content-box" ref="contentBox" contenteditable="true" @input="onContentInput"
+          placeholder="내용을 입력하세요">
           <div v-html="formData.content"></div>
         </div>
         <div class="content-topic">
@@ -31,12 +32,14 @@
           </div>
         </div>
         <div class="feature-input">
-          <input class="input-box" type="text" v-model="exerciseInput" @keydown.enter="setExercise" placeholder="운동명을 입력하세요." />
+          <input class="input-box" type="text" v-model="exerciseInput" @keydown.enter="setExercise"
+            placeholder="운동명을 입력하세요." />
           <button class="confirm-btn" @click="setExercise">확인</button>
         </div>
         <p class="category-text">Choose Location</p>
         <div class="feature-input">
-          <input class="input-box" type="text" v-model="formData.location" @click="openDaumApi" placeholder="위치를 검색하세요." />
+          <input class="input-box" type="text" v-model="formData.location" @click="openDaumApi"
+            placeholder="위치를 검색하세요." />
           <button class="confirm-btn" @click="setLocation">확인</button>
         </div>
         <!-- <p class="category-text">Choose Group Size</p>
@@ -51,7 +54,7 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import apiClient from "@/api/apiClient";
@@ -72,7 +75,7 @@ export default {
 
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`/api/board/post/${postId}`);
+        const response = await apiClient.get(`/board/post/${postId}`);
 
         const post = response.data;
         formData.value.title = post.title;

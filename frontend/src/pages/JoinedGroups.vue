@@ -84,7 +84,8 @@
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <p>모임 상세설명: {{ selectedItem ? selectedItem.content : "" }}</p>
+        <p class="modal-description">모임 상세설명 : {{ selectedItem ? selectedItem.content : "" }}</p>
+        <p>모임 상세주소 : {{ selectedItem ? selectedItem.location : "" }}</p>
       </div>
     </div>
   </main>
@@ -114,6 +115,7 @@ export default {
     openModal(group) {
       this.selectedItem = {
         content: group.topboxContent,
+        location: group.fullLocation
       };
       this.isModalOpen = true;
     },
@@ -625,6 +627,10 @@ h2 {
 .modal-content p {
   font-size: 16px;
   text-align: start;
+}
+
+.modal-description {
+  margin-bottom: 50px;
 }
 
 /* 팝업 스타일링 */

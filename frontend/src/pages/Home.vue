@@ -4,7 +4,7 @@
     <div class="carousel">
       <div class="carousel-box" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
         <div class="carousel-item" v-for="item in items" :key="item.id">
-          <img :src="item.images" :alt="item.content" class="slide-images" />
+          <img :src="item.images" :alt="item.content" class="slide-images" @click="carouselGroups(item.id)" />
           <div class="slide-content">
             {{ item.content }}
           </div>
@@ -138,6 +138,7 @@ export default {
       currentIndex: 0,
       items: [
         {
+          //  참석자 별로 안남은 모임순
           id: 1,
           // content: "slide1",
           popularity: 2,
@@ -146,6 +147,7 @@ export default {
           images: require('@/assets/images/slide1.png')
         },
         {
+          //  토, 일 모임만 표시
           id: 2,
           // content: "slide2",
           popularity: 5,
@@ -154,6 +156,7 @@ export default {
           images: require('@/assets/images/slide2.png')
         },
         {
+          //  오전 6시 ~ 10시 모임만 표시
           id: 3,
           // content: "slide3",
           popularity: 1,
@@ -267,6 +270,29 @@ export default {
     const userId = computed(() => store.getters['isLogged/userId']);
 
     // const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, PerPage);
+
+    const carouselGroups = async (id) => {
+      try {
+        const response = await axios.get('/api/carousel-groups', {
+          params: {
+            imageId: id,
+          }
+        });
+
+        const nonLoggedGroups = response.data;
+        const isLoggedIn = computed(() => store.getters['isLogged/loggedIn']);
+        if (!isLoggedIn.value) {
+          groups.value = nonLoggedGroups.map(group => ({
+            ...group,
+            saved: 0
+          }));
+        } else {
+          groups.value = nonLoggedGroups;
+        }
+      } catch (error) {
+        console.log("Error", error);
+      }
+    }
 
     //  홈 페이지에 전체 모임 데이터
     const groupList = async () => {
@@ -525,12 +551,17 @@ export default {
         router.push({ name: "JoinedGroups" });
         alert("모임 참석 완료")
       } catch (error) {
-        if (error.response && error.response.status === 400) {
-          alert(error.response.data);
+        if (error.response) {
+          if (error.response.status === 400) {
+            alert(error.response.data); // 400 에러 처리
+          } else if (error.response.status === 401) {
+            alert("로그인 후 이용 가능합니다."); // catch 블록에서 401 에러 처리
+          } else {
+            console.error("Error", error);
+          }
         } else {
-          alert("모임 참석 중 오류가 발생했습니다.");
+          console.error("Error", error);
         }
-        console.error("Error", error);
       } finally {
         showConfirmPopup.value = false;
         currentGroupId.value = null;
@@ -567,8 +598,14 @@ export default {
           console.error("찜 실패", response.data.message);
         }
       } catch (error) {
-        if (error.response && error.response.status === 400) {
-          alert(error.response.data);
+        if (error.response) {
+          if (error.response.status === 400) {
+            alert(error.response.data); // 400 에러 처리
+          } else if (error.response.status === 401) {
+            alert("로그인 후 이용 가능합니다."); // catch 블록에서 401 에러 처리
+          } else {
+            console.error("Error", error);
+          }
         } else {
           console.error("Error", error);
         }
@@ -576,6 +613,7 @@ export default {
     }
 
     return {
+      carouselGroups,
       loadMore,
       fetchLocationData,
       openDaumApi,
