@@ -56,12 +56,18 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
             "LOWER(g.location) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
     List<Group> findByUserIdAndAnyFieldContaining(@Param("userId") Long userId, @Param("searchTerm") String searchTerm);
 
-//    List<Group> findByTitleContaining(String searchTerm);
-
     // 캐러셀 이미지 ID와 관련된 모임을 조회
-//    @Query("SELECT g FROM Group g WHERE g.imageId = :imageId ORDER BY g.date")
-//    List<Group> findByImageIdOrderByDate(@Param("imageId") Long imageId);
-//    List<Group> findByImageId(Long imageId);
+    // 참석자 남음 순서
+    @Query("SELECT g FROM Group g ORDER BY g.peopleParticipation DESC")
+    List<Group> findGroupsByParticipation();
+
+    // 토, 일 모임
+    @Query("SELECT g FROM Group g WHERE FUNCTION('DAYOFWEEK', g.date) IN (1, 7)")
+    List<Group> findWeekendGroups();
+
+    // 오전 6시 ~ 오전 10시
+    @Query("SELECT g FROM Group g WHERE HOUR(g.date) >= 6 AND HOUR(g.date) < 10")
+    List<Group> findMorningGroups();
 
     // 정렬순에 관련한 메서드 - homeGroup
     @Query("SELECT g FROM Group g ORDER BY CASE " +

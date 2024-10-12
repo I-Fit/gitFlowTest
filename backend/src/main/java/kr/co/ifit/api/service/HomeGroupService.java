@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 
 import java.awt.print.Pageable;
 import java.lang.reflect.Field;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -46,45 +48,21 @@ public class HomeGroupService {
     }
 
 //    //  캐러셀
-//    public List<GroupDtoRes> findGroupsByImageId(Long imageId) {
-//        // 이미지 Id와 관련됨 모든 모임을 조회
-//        List<Group> groups = groupRepository.findByImageId(imageId);
-//
-//        LocalDate today = LocalDate.now();
-//        LocalTime startMorning = LocalTime.of(6, 0);
-//        LocalTime endMorning = LocalTime.of(9, 0);
-//
-//        List<Group> filteredGroups = groups.stream()
-//                .filter(group -> {
-//                    LocalDateTime dateTime = group.getDate();
-//
-//                    if (imageId.equals(1L)) {// 날짜가 오늘 기준으로 임박한 모임
-//                        return dateTime.toLocalDate().isAfter(today) || dateTime.toLocalDate().isEqual(today);
-//
-//                    } else if (imageId.equals(2L)) {//  주말인 경우의 모임 (토요일 또는 일요일)
-//                        DayOfWeek dayOfWeek = dateTime.getDayOfWeek();
-//                        return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
-//
-//                    } else if (imageId.intValue() == 3) {//  오전 6시부터 9시 사이의 모임
-//                        LocalTime time = dateTime.toLocalTime();
-//                        return !time.isBefore(startMorning) && !time.isAfter(endMorning);
-//
-//                    }//  조건이 없으면 모든 모임 반환
-//                    return true;
-//                })
-//                .sorted(Comparator.comparing(Group::getDate))   //  닐짜 기준으로 정렬
-//                .toList();
-//        return filteredGroups.stream()
-//                .map(group -> new GroupDtoRes(
-//                        group.getCommunityId(),
-//                        group.getTitle(),
-//                        group.getTopboxContent(),
-//                        group.getSport(),
-//                        group.getLocation(),
-//                        group.getPerson(),
-//                        group.getPeopleParticipation(),
-//                        group.getDate())).collect(Collectors.toList());
-//    }
+    public List<GroupDtoRes> findGroupsByImageId(int imageId) {
+        // 이미지 Id와 관련됨 모든 모임을 조회
+        List<Group> groups;
+
+        if (imageId == 1) {
+            groups = groupRepository.findGroupsByParticipation();
+        } else if (imageId == 2) {
+            groups = groupRepository.findWeekendGroups();
+        } else if (imageId == 3) {
+            groups = groupRepository.findMorningGroups();
+        } else {
+            groups = groupRepository.findAll();
+        }
+        return groups.stream().map(GroupDtoRes::convertToDto).collect(Collectors.toList());
+    }
 
     // 운동 종목 필터
     public List<FilterDtoRes> getAllExercises() {

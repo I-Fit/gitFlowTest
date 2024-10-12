@@ -65,12 +65,12 @@ public class GroupController {
     }
 
     // Home 페이지에 보여지는 그룹 부분
-//    // 캐러셀
-//    @GetMapping("/carusel/{imageId}")
-//    public ResponseEntity<List<GroupDtoRes>> getGroupsByImageId(@PathVariable Long imageId) {
-//        List<GroupDtoRes> groups = homeGroupService.findGroupsByImageId(imageId);
-//        return ResponseEntity.ok(groups);
-//    }
+    // 캐러셀
+    @GetMapping("/carousel-groups")
+    public ResponseEntity<List<GroupDtoRes>> getGroupsByImageId(@RequestParam int imageId) {
+        List<GroupDtoRes> groups = homeGroupService.findGroupsByImageId(imageId);
+        return ResponseEntity.ok(groups);
+    }
 
 
     // 홈 페이지에 있는 필터 부분 - 운동 종목

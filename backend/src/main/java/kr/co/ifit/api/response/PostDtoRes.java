@@ -1,9 +1,11 @@
 package kr.co.ifit.api.response;
 
 import kr.co.ifit.db.entity.Post;
+import kr.co.ifit.db.entity.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,6 +30,8 @@ public class PostDtoRes {
     private boolean isHeartFilled;
 
     private String username;
+    private String profileUrl;
+
 
     public PostDtoRes(Post post) {
         this.postId = post.getPostId();
@@ -35,6 +39,8 @@ public class PostDtoRes {
         this.content = post.getContent();
         this.imageStr = post.getImageStr();
         this.userId = post.getUser().getUserId();
+        this.username = post.getUser().getUsername();
+        this.profileUrl = post.getUser().getProfileUrl();
         this.exercise = post.getExercise();
         this.location = post.getLocation();
         this.createdAt = post.getCreatedAt();
@@ -50,6 +56,8 @@ public class PostDtoRes {
         this.content = post.getContent();
         this.imageStr = post.getImageStr();
         this.userId = post.getUser().getUserId();
+        this.username = post.getUser().getUsername();
+        this.profileUrl = post.getUser().getProfileUrl();
         this.exercise = post.getExercise();
         this.location = post.getLocation();
         this.createdAt = post.getCreatedAt();

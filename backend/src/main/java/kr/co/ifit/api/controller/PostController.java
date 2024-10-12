@@ -88,7 +88,7 @@ public class PostController {
 ////        }
 //        return ResponseEntity.ok(posts);
 //    }
-
+    // 전체 게시글 목록
     @GetMapping("/list")
     public ResponseEntity<List<PostDtoRes>> getAllPosts() {
         System.out.println("Fetching all posts");
@@ -103,7 +103,6 @@ public class PostController {
         Long userId = userContextUtil.getAuthenticatedUserId();
 
         PostDtoRes post = postService.getPost(postId, userId);
-//        PostDtoRes post = postService.getPost(postId);
         return ResponseEntity.ok(post);
     }
 

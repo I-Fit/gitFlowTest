@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,25 +74,16 @@ public class PostService {
     public PostDtoRes getPost(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        // 게시글의 작성자 User 객체
-        User postUser = post.getUser();
-        String username = postUser != null ? postUser.getUsername() : null;
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("user not found"));
 
         boolean isHeartFilled = false;
-        if (userId != null) {
-            // 사용자가 존재하는지 확인하고, 그에 따라 isHeartFilled 설정
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (user != null) {
+//            profileUrl = user.getProfileUrl();
+            // 사용자가 존재하는지 확인하고, 그에 따라 isHeartFilled 설정
             isHeartFilled = likeRepository.existsByUserAndPost(user, post);
         }
-
-        // PostDtoRes 생성 및 반환
-        PostDtoRes response = new PostDtoRes(post, isHeartFilled);
-        response.setUsername(username); // username 설정
-
-        return response;
+        return new PostDtoRes(post, isHeartFilled);
     }
 
     // 게시글 수정
@@ -140,13 +132,14 @@ public class PostService {
 
     public List<PostDtoRes> getAllPosts() {
         List<Post> posts = postRepository.findAll();
-        return posts.stream().map(post -> {
-            // PostDtoRes 생성 시 username 설정
-            User user = post.getUser(); // 게시글 작성자 정보 가져오기
-            PostDtoRes dto = new PostDtoRes(post);
-            dto.setUsername(user.getUsername()); // username 설정
-            return dto;
-        }).toList();
+        return posts.stream().map(PostDtoRes::new).toList();
+//        return posts.stream().map(post -> {
+//            // PostDtoRes 생성 시 username 설정
+//            User user = post.getUser(); // 게시글 작성자 정보 가져오기
+//            PostDtoRes dto = new PostDtoRes(post);
+//            dto.setUsername(user.getUsername()); // username 설정
+//            return dto;
+//        }).toList();
     }
 
     // 게시글 좋아요

@@ -11,5 +11,5 @@ import lombok.Setter;
 public class UserDtoRes {
     private Long userId;
     private String userName;
-    private String userprofile;
+    private String userProfile;
 }

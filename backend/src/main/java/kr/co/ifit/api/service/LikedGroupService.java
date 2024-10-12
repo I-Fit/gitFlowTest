@@ -58,6 +58,10 @@ public class LikedGroupService {
     //  좋아요 기능 추가 및 삭제
     @Transactional
     public void toggleLike(LikedGroupDtoReq dto) {
+        if (dto.getUserId() == null) {
+            throw new RuntimeException("로그인 후 이용 가능합니다.");
+        }
+
         User user = userRepository.findById(dto.getUserId()).orElseThrow(() -> new RuntimeException("사용자가 없습니다."));
         Group group = groupRepository.findById(dto.getCommunityId()).orElseThrow(() -> new RuntimeException("모임이 없습니다."));
 
