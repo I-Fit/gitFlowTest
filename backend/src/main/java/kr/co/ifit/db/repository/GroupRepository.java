@@ -1,9 +1,11 @@
 package kr.co.ifit.db.repository;
 
+import jakarta.transaction.Transactional;
 import kr.co.ifit.api.response.GroupDtoRes;
 import kr.co.ifit.db.entity.Group;
 import kr.co.ifit.db.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,6 +20,12 @@ import java.util.List;
 public interface GroupRepository extends JpaRepository<Group, Long> {
     //  userId로 Group 리스트를 조회하는 메서드 정의
     List<Group> findByUser(User user);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Group g WHERE g.user.userId = :userId")
+    void deleteByUser_UserId(@Param("userId") Long userId);
+
 
     //  모든 exercise 값을 가져오는 메서드 정의
     @Query("SELECT DISTINCT g.sport FROM Group g WHERE g.sport IS NOT NULL")

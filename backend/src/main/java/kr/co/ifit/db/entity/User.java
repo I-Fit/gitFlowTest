@@ -60,6 +60,12 @@ public class User {
     @Column(name = "liked_post_id") // liked_post_id 컬럼 이름
     private List<Long> likedPosts = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private EmailVerification emailVerification;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Token token;
+
     // 매개변수를 받는 생성자
     public User(String loginId, String password, String username, String phoneNumber, String email) {
         this.loginId = loginId;

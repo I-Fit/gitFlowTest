@@ -29,8 +29,8 @@ public class Token {
     @Column(name = "expired_at", nullable = false)
     private LocalDateTime expiration;           // 만료 시간
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @OneToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public void updateToken(String newRefreshToken, LocalDateTime newExpiration) {

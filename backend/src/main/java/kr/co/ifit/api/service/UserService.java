@@ -3,9 +3,7 @@ package kr.co.ifit.api.service;
 import kr.co.ifit.db.entity.Coupon;
 import kr.co.ifit.db.entity.EmailVerification;
 import kr.co.ifit.db.entity.User;
-import kr.co.ifit.db.repository.CouponRepository;
-import kr.co.ifit.db.repository.EmailVerificationRepository;
-import kr.co.ifit.db.repository.UserRepository;
+import kr.co.ifit.db.repository.*;
 import kr.co.ifit.api.request.UserDtoReq;
 
 import lombok.RequiredArgsConstructor;
@@ -14,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,17 +21,31 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+import static com.mysql.cj.conf.PropertyKey.logger;
+
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class UserService {
 
-    private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailVerificationRepository emailVerificationRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUserDetailService userDetailService;
-    private final CouponRepository couponRepository;
     private final CouponService couponService;
+
+    private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
+    private final LikedGroupRepository likedGroupRepository;
+    private final JoinedGroupRepository joinedGroupRepository;
+    private final GroupRepository groupRepository;
+    private final PointRepository pointRepository;
+    private final PaymentRepository paymentRepository;
+    private final TokenRepository tokenRepository;
+    private final CouponRepository couponRepository;
+    private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
+    private final TransactionRepository transactionRepository;
+
 
 
     // 회원가입
@@ -113,15 +126,35 @@ public class UserService {
         userRepository.save(user);
         emailVerificationRepository.deleteByUserEmail(user.getEmail());
     }
+
     //  회원탈퇴 시 user와 관련된 엔티티 모두 삭제
     @Transactional
     public boolean deleteUserAndRelatedData(Long userId) {
+        try {
+            commentRepository.deleteByUser_UserId(userId);
+            likeRepository.deleteByUser_UserId(userId);
+            postRepository.deleteByUser_UserId(userId);
+            likedGroupRepository.deleteByUser_UserId(userId);
+            joinedGroupRepository.deleteByUser_UserId(userId);
+            groupRepository.deleteByUser_UserId(userId);
+            transactionRepository.deleteByUser_UserId(userId);
+            pointRepository.deleteByUser_UserId(userId);
+            couponRepository.deleteByUser_UserId(userId);
+            paymentRepository.deleteByUser_UserId(userId);
+            tokenRepository.deleteByUser_UserId(userId);
 
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isPresent()) {
-            userRepository.delete(userOptional.get());
+            userRepository.deleteById(userId);
             return true;
+        } catch (Exception e) {
+            return false;
         }
-        return false;
     }
+
+//        Optional<User> userOptional = userRepository.findById(userId);
+//        if (userOptional.isPresent()) {
+//            userRepository.delete(userOptional.get());
+//            return true;
+//        }
+//        return false;
+//    }
 }

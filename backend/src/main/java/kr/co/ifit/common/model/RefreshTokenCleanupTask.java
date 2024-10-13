@@ -54,9 +54,13 @@ public class RefreshTokenCleanupTask {
     }
     private void invalidateUserToken (Long userId){
         //  사용자 Id에 해당하는 모든 토큰을 찾는다
-        List<Token> userTokens = tokenRepository.findByUser_UserId(userId);
+        Token userTokens = tokenRepository.findByUser_UserId(userId);
         //  토큰 삭제
-        tokenRepository.deleteAll(userTokens);
-        System.out.println("인증 만료, 재로그인 해주세요.");
+        if (userTokens != null) {
+            tokenRepository.delete(userTokens);
+            System.out.println("인증 만료, 재로그인 해주세요.");
+        } else {
+            System.out.println("사용자 ID에 해당하는 토큰이 존재하지 않습니다.");
+        }
     }
 }

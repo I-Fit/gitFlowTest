@@ -1,9 +1,11 @@
 package kr.co.ifit.db.repository;
 
+import jakarta.transaction.Transactional;
 import kr.co.ifit.db.entity.Group;
 import kr.co.ifit.db.entity.LikedGroup;
 import kr.co.ifit.db.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -14,6 +16,12 @@ public interface LikedGroupRepository extends JpaRepository<LikedGroup, Long> {
     List<LikedGroup> findByUser(User user);
     LikedGroup findByUserAndGroup(User user, Group group);
     boolean existsByUserAndGroup(User user, Group group);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM LikedGroup lg WHERE lg.user.userId = :userId")
+    void deleteByUser_UserId(@Param("userId") Long userId);
+
 
     // 정렬된 모임을 반환하는 메서드
 //    @Query("SELECT l FROM LikedGroup l WHERE l.user = :user ORDER BY CASE " +

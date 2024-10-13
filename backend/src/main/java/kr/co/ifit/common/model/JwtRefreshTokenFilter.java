@@ -32,7 +32,7 @@ public class JwtRefreshTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
 
         String uri = request.getRequestURI();
-        if (uri.startsWith("/api/refresh-token")) {
+        if (uri.startsWith("/api/refresh-token") || uri.startsWith("/api/payment/**")) {
             // 헤더에서 토큰 추출
             String refreshToken = resolveToken(request);
 

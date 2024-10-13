@@ -1,6 +1,7 @@
 package kr.co.ifit.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.api.response.LoginDtoRes;
 import kr.co.ifit.api.response.UserDtoRes;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -245,7 +247,8 @@ public class UserController {
     }
 
     //  로그아웃 - refreshToken을 보내서 검증 후 데이터베이스에서 찾아서 삭제 후 로그아웃 성공
-    @PostMapping("/logout")
+    @DeleteMapping("/logout")
+    @Transactional
     public ResponseEntity<?> logoutUser(HttpServletRequest request) {
         String refreshToken = resolveToken(request);
 
@@ -253,20 +256,28 @@ public class UserController {
             String loginId = jwtTokenProvider.extractUsername(refreshToken);
             boolean isTokenValid = jwtTokenProvider.validateToken(refreshToken, loginId);
 
+
             if (isTokenValid) {
                 Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(refreshToken);
 
                 if (tokenOptional.isPresent()) {
-                    tokenRepository.delete(tokenOptional.get());
+                    Token token = tokenOptional.get();
+                    User user = token.getUser();
+                    Long userId = user.getUserId();
+
+                    logger.info("사용자Id 뭐가 뜨나========================================================================= {}", userId);
+
+                    // 사용자 ID로 토큰을 찾기
+                    tokenRepository.deleteByUser_UserId(userId);
                     return ResponseEntity.ok("로그아웃 성공");
                 } else {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이미 로그아웃 처리되었습니다.");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("토큰을 찾을 수 없습니다.");
                 }
             } else {
                 return ResponseEntity.badRequest().body("토큰이 만료 되었습니다.");
             }
         }
-        return ResponseEntity.badRequest().body("refresh token 이 제공되지 않았습니다. ");
+        return ResponseEntity.badRequest().body("refresh token 이 제공되지 않았습니다.");
     }
 
     private String resolveToken(HttpServletRequest request) {
@@ -298,7 +309,8 @@ public class UserController {
     }
 
     // 회원탈퇴
-    @GetMapping("/delete-account")
+    @DeleteMapping("/delete-account")
+    @Transactional
     public ResponseEntity<?> deleteAccount(HttpServletRequest request) {
         String refreshToken = resolveToken(request);
 
@@ -306,17 +318,25 @@ public class UserController {
             String loginId = jwtTokenProvider.extractUsername(refreshToken);
             boolean isTokenValid = jwtTokenProvider.validateToken(refreshToken, loginId);
 
+            logger.info("아이디 뭐가 뜨나========================================================================= {}", loginId);
+
             if (isTokenValid) {
                 Optional<Token> tokenOptional = tokenRepository.findByRefreshToken(refreshToken);
-                if (tokenOptional.isPresent()) {
-                    // 사용자 Id 가져오기
-                    Long userId = tokenOptional.get().getUser().getUserId();
 
+                if (tokenOptional.isPresent()) {
+                    Token token = tokenOptional.get();
+                    User user = token.getUser();
+                    Long userId = user.getUserId();
+
+                    logger.info("=회원탈퇴====================================================================== {}", userId);
+
+//                    userRepository.deleteByUserId(userId);
+//                    return ResponseEntity.ok().build();
                     // 사용자 삭제 및 관련 데이터 삭제
                     boolean isDeleted = userService.deleteUserAndRelatedData(userId);
 
                     if (isDeleted) {
-                        return ResponseEntity.ok().body(Map.of("message", "회원 탈퇴가 완료되었습니다."));
+                        return ResponseEntity.ok().build();
                     } else {
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(Map.of("message", "회원 탈퇴에 실패했습니다."));

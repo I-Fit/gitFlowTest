@@ -33,7 +33,7 @@ public class EmailVerification {
     @Column(name = "expired_at", nullable = true)
     private LocalDateTime expiryTime;
 
-    @OneToOne(optional = true)          //  User 엔티티와 1대1 관계 설정
+    @OneToOne(optional = false)          //  User 엔티티와 1대1 관계 설정
     @JoinColumn(name = "user_id", nullable = true)
     private User user;
 }

@@ -15,5 +15,6 @@ public class UserDtoReq {
     private String email;
     private String enteredCode;
     private String passwordCheck;
+    private String currentPassword;
     private Long userId;
 }
