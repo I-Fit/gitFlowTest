@@ -2,6 +2,7 @@ package kr.co.ifit.api.service;
 
 import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.db.entity.EmailVerification;
+import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.EmailVerificationRepository;
 import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -61,5 +62,14 @@ public class EmailService {
     public void sendVerificationUpdateEmail(UserDtoReq dto) {
         String newEmail = dto.getEmail();
         sendVerificationEmail(newEmail);
+    }
+
+    @Transactional
+    public void sendVerificationPasswordChangeEmail(UserDtoReq dto) {
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 기존의 sendVerificationEmail 메서드 호출
+        sendVerificationEmail(user.getEmail());
     }
 }
