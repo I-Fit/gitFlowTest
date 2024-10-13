@@ -11,11 +11,7 @@
       </div>
       <div class="benefit-table">
         <div class="benefit01-bubble">
-          <img
-            class="circle"
-            src="../assets/images/멤버십 혜택 동글.png"
-            alt="혜택이미지 칸"
-          />
+          <img class="circle" src="../assets/images/멤버십 혜택 동글.png" alt="혜택이미지 칸" />
           <p class="benefit01-text">혜택 01</p>
           <p class="benefit01-title">개인 맞춤형 운동플랜 제공</p>
           <p class="benefit01-content">
@@ -24,11 +20,7 @@
           </p>
         </div>
         <div class="benefit02-bubble">
-          <img
-            class="circle"
-            src="../assets/images/멤버십 혜택 동글.png"
-            alt="혜택이미지 칸"
-          />
+          <img class="circle" src="../assets/images/멤버십 혜택 동글.png" alt="혜택이미지 칸" />
           <p class="benefit02-text">혜택 02</p>
           <p class="benefit02-title">원데이 클래스 수강권 & 할인쿠폰 제공</p>
           <p class="benefit02-content">
@@ -37,11 +29,7 @@
           </p>
         </div>
         <div class="benefit03-bubble">
-          <img
-            class="circle"
-            src="../assets/images/멤버십 혜택 동글.png"
-            alt="혜택이미지 칸"
-          />
+          <img class="circle" src="../assets/images/멤버십 혜택 동글.png" alt="혜택이미지 칸" />
           <p class="benefit03-text">혜택 03</p>
           <p class="benefit03-title">PT 세션 & 1:1 컨설팅 서비스 제공</p>
           <p class="benefit03-content">
@@ -70,8 +58,9 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import apiClient from "@/api/apiClient";
 
 export default {
@@ -79,47 +68,56 @@ export default {
 
   setup() {
     const router = useRouter();
+    const store = useStore();
 
     // 멤버십 정보를 저장할 변수
     const membership = ref([
-      { 
+      {
         id: 1,
-        grade: "근린이", 
-        price: 5000, 
+        grade: "근린이",
+        price: 5000,
         icon: require("@/assets/images/baby.png"),
         description: "혜택 01 제공<br />개인 맞춤형 플랜이 필요한 <br />운동을 시작하는 초보에게 추천!"
       },
-      { 
+      {
         id: 2,
-        grade: "근성장", 
-        price: 10000, 
+        grade: "근성장",
+        price: 10000,
         icon: require("@/assets/images/run.png"),
         description: "혜택 01 & 혜택 02 제공<br />개인 맞춤형 플랜에 더불어 <br />더욱 다양한 혜택이 필요한 분들에게 추천!"
       },
-      { 
+      {
         id: 3,
-        grade: "득근+", 
-        price: 20000, 
+        grade: "득근+",
+        price: 20000,
         icon: require("@/assets/images/arm.png"),
         description: "혜택 01 & 02 & 03 제공<br />I-Fit이 제공하는 모든 혜택을 <br />누리고 싶은 분들에게 추천!"
       },
     ]);
 
     const goToPayment = async (id) => {
+      const isLoggedIn = computed(() => store.getters['isLogged/loggedIn']);
+
+      if (!isLoggedIn.value) {
+        alert("로그인 후 이용해 주세요.");
+        router.push({ name: "SignIn" });
+        return;
+      }
+
       try {
-        const response = await apiClient.get('/payment/user-info',{
+        const response = await apiClient.get('/payment/user-info', {
           params: {
             id
           }
         });
-        
+
         const paymentData = response.data;
 
         router.push({
           name: "Payment",
           query: {
             username: paymentData.username,
-            membershipInfo : JSON.stringify(paymentData.membershipInfo),
+            membershipInfo: JSON.stringify(paymentData.membershipInfo),
             points: paymentData.points,
             coupons: JSON.stringify(paymentData.coupons)
           }
@@ -141,7 +139,7 @@ export default {
     //     }
     //   });
     // };
-    
+
 
     return {
       membership,
@@ -182,6 +180,7 @@ main {
   flex-direction: column;
   align-items: center;
 }
+
 .text-membership {
   width: 400px;
   height: 200px;

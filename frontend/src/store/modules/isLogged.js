@@ -87,7 +87,7 @@ export default {
                 const refreshToken = Cookies.get('refreshToken');
 
                 if (refreshToken) {
-                    await axios.post('/api/logout', {}, {
+                    await axios.delete('/api/logout', {
                         headers: {
                             'refresh-token': `Bearer ${refreshToken}`,
                         },
@@ -134,29 +134,28 @@ export default {
                 commit('LOGOUT');
             }
         },
-        // async deleteAccount({ commit }) {
-        //     const Cookies = VueCookies;
-        //     try {
-        //         const refreshToken = Cookies.get('refreshToken');
+        async deleteAccount({ commit }) {
+            const Cookies = VueCookies;
+            try {
+                const refreshToken = Cookies.get('refreshToken');
 
-        //         if (refreshToken) {
+                if (refreshToken) {
 
-        //             await axios.delete("/delete-account", {}, {
-        //                 headers: {
-        //                     'refresh-token': `Bearer ${refreshToken}`,
-        //                 },
-        //             });
-        //         }
-
-        //         commit('LOGOUT');
-        //         Cookies.remove('accessToken');
-        //         Cookies.remove('refreshToken');
-        //         return true;
-        //     } catch (error) {
-        //         console.error("회원 탈퇴 요청 중 오류 발생", error);
-        //         return false;
-        //     }
-        // },
+                     await axios.delete("/api/delete-account", {
+                        headers: {
+                            'refresh-token': `Bearer ${refreshToken}`,
+                        },
+                    });
+                    commit('LOGOUT');
+                    Cookies.remove('accessToken');
+                    Cookies.remove('refreshToken');
+                    return true;
+                }
+            } catch (error) {
+                console.error("회원 탈퇴 요청 중 오류 발생", error);
+                return false;
+            }
+        },
     },
 
     getters: {

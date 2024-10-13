@@ -142,6 +142,12 @@ export default {
         return;
       }
 
+      const isLoggedIn = computed(() => store.getters['isLogged/userId']);
+      if (isLoggedIn.value !== userId.value) {
+        alert("삭제 권한이 없습니다.");
+        return;
+      }
+
       if (confirm('정말 댓글을 삭제하시겠습니까?')) {
         try {
           await apiClient.delete(`/comments/delete/${commentId}`);

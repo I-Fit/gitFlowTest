@@ -115,7 +115,7 @@ import { useRouter } from "vue-router";
 import apiClient from "@/api/apiClient";
 import AppNav from "@/components/layout/AppNav.vue";
 import VueCookies from 'vue-cookies';
-import { mapActions, useStore } from 'vuex';
+import { useStore } from 'vuex';
 
 
 export default {
@@ -127,6 +127,7 @@ export default {
   setup() {
     const router = useRouter();
     const store = useStore();
+
     const loginId = ref("");
     const username = ref("");
     const email = ref("");
@@ -146,7 +147,7 @@ export default {
         loginId.value = response.data.loginId;
         username.value = response.data.username;
         email.value = response.data.email;
-        profileImage.value = `data:image/png;base64,${response.data.profileUrl}` || require("@/assets/images/default-profile.png");
+        profileImage.value = response.data.profileUrl ? `data:image/png;base64,${response.data.profileUrl}` : require("@/assets/images/default-profile.png");
 
         totalPoints.value = response.data.points;
         MembershipGrade.value = response.data.membershipGrade || "기본 회원";
@@ -267,10 +268,11 @@ export default {
     };
 
     const showConfirmPopup = ref(false);
+    // const { deleteAccount } = mapActions('isLogged', ['deleteAccount']);
 
     const confirmDeletion = async () => {
       try {
-        const success = await deleteAccount();
+        const success = await store.dispatch('isLogged/deleteAccount');
         if (success) {
           alert("회원 탈퇴가 완료되었습니다.");
           router.push("/");
@@ -285,7 +287,6 @@ export default {
       }
     };
 
-    const { deleteAccount } = mapActions('isLogged'['deleteAccount']);
 
     const cancelDeletion = () => {
       showConfirmPopup.value = false;
@@ -313,7 +314,7 @@ export default {
       closeModal,
       confirmDeletion,
       cancelDeletion,
-      deleteAccount,
+      // deleteAccount,
       goToMembership,
       goToChangePassword,
       logoutUser,
