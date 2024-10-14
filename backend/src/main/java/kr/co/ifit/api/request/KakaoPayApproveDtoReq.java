@@ -12,4 +12,8 @@ public class KakaoPayApproveDtoReq {
     private String partnerOrderId;
     private String partnerUserId;
     private String pgToken;
+
+    public KakaoPayApproveDtoReq(String pgToken) {
+        this.pgToken = pgToken;
+    }
 }

@@ -1,4 +1,4 @@
-package kr.co.ifit.api.service;  // 패키지 선언
+package kr.co.ifit.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.co.ifit.api.request.KakaoPayApproveDtoReq;
@@ -19,11 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Slf4j  // Lombok의 로깅 기능 활성화
-@Service  // 스프링 서비스 빈으로 등록
+@Slf4j
+@Service
 public class KakaoPayService {
 
-    @Value("${kakao.pay.host}")  // application.properties에서 값 주입
+    @Value("${kakao.pay.host}")
     private String host;
 
     @Value("${kakao.pay.ready.url}")
@@ -38,82 +38,105 @@ public class KakaoPayService {
     @Value("${kakao.pay.cid}")
     private String cid;
 
-    private final RestTemplate restTemplate;  // REST API 호출을 위한 객체
-    private final ObjectMapper objectMapper;  // JSON 변환을 위한 객체
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
-    @Autowired  // 생성자 주입
+    private String latestTid;
+    private String latestPartnerOrderId;
+    private String latestPartnerUserId;
+
+    @Autowired
     public KakaoPayService(RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
     }
 
-    // 카카오페이 결제창 연결
     public KakaoPayReadyDtoRes readyToKakaoPay(KakaoPayReadyDtoReq request) {
         try {
-            HttpHeaders headers = new HttpHeaders();  // HTTP 헤더 객체 생성
-            headers.add("Authorization", "SECRET_KEY " + secretKey);  // 인증 헤더 추가
-            headers.setContentType(MediaType.APPLICATION_JSON);  // JSON 형식으로 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "SECRET_KEY " + secretKey);
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-            Map<String, Object> params = new HashMap<>();  // 요청 파라미터 맵 생성
-            params.put("cid", cid);  // 가맹점 코드
-            params.put("partner_order_id", UUID.randomUUID().toString());  // 주문 ID 생성
-            params.put("partner_user_id", request.getPartnerUserId());  // 파트너 사용자 ID
-            params.put("item_name", "iFit 멤버십 - " + request.getMembershipGrade());  // 상품명
-            params.put("quantity", 1);  // 수량
-            params.put("total_amount", request.getTotalAmount());  // 총 금액
-            params.put("tax_free_amount", 0);  // 비과세 금액
-            params.put("approval_url", "http://localhost:8080/api/payment/kakao/success");  // 성공 시 리다이렉트 URL
-            params.put("cancel_url", "http://localhost:8080/api/payment/kakao/cancel");  // 취소 시 리다이렉트 URL
-            params.put("fail_url", "http://localhost:8080/api/payment/kakao/fail");  // 실패 시 리다이렉트 URL
+            Map<String, Object> params = new HashMap<>();
+            params.put("cid", cid);
+            params.put("partner_order_id", UUID.randomUUID().toString());
+            params.put("partner_user_id", request.getPartnerUserId());
+            params.put("item_name", "iFit 멤버십 - " + request.getMembershipGrade());
+            params.put("quantity", 1);
+            params.put("total_amount", request.getTotalAmount());
+            params.put("tax_free_amount", 0);
+            params.put("approval_url", "http://localhost:8080/api/payment/kakao/success");
+            params.put("cancel_url", "http://localhost:8080/api/payment/kakao/cancel");
+            params.put("fail_url", "http://localhost:8080/api/payment/kakao/fail");
 
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(params, headers);  // HTTP 요청 엔티티 생성
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(params, headers);
 
-            log.info("Sending request to Kakao Pay. URL: {}, Headers: {}, Body: {}", readyUrl, headers, params);  // 요청 로깅
+            log.info("Sending request to Kakao Pay. URL: {}, Headers: {}, Body: {}", readyUrl, headers, params);
 
-            KakaoPayReadyDtoRes response = restTemplate.postForObject(readyUrl, entity, KakaoPayReadyDtoRes.class);  // API 호출
+            KakaoPayReadyDtoRes response = restTemplate.postForObject(readyUrl, entity, KakaoPayReadyDtoRes.class);
 
-            log.info("Received response from Kakao Pay: {}", response);  // 응답 로깅
+            log.info("Received response from Kakao Pay: {}", response);
 
-            // partner_order_id를 응답에 포함
             if (response != null) {
                 response.setPartner_order_id((String) params.get("partner_order_id"));
+                saveTransactionInfo(response.getTid(), (String) params.get("partner_order_id"), request.getPartnerUserId());
             }
-            return response;  // 응답 반환
-        } catch (Exception e) {  // HTTP 클라이언트 에러 처리
+            return response;
+        } catch (Exception e) {
             log.error("Error in readyToKakaoPay", e);
             throw new RuntimeException("카카오페이 결제 준비 중 오류가 발생했습니다.", e);
         }
     }
 
-    // 카카오페이 결제 승인
     public KakaoPayApproveDtoRes approveKakaoPay(KakaoPayApproveDtoReq request) {
         try {
-            HttpHeaders headers = new HttpHeaders();  // HTTP 헤더 객체 생성
-            headers.add("Authorization", "SECRET_KEY " + secretKey);  // 인증 헤더 추가
-            headers.setContentType(MediaType.APPLICATION_JSON);  // JSON 형식으로 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "SECRET_KEY " + secretKey);
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-            Map<String, Object> params = new HashMap<>();  // 요청 파라미터 맵 생성
-            params.put("cid", cid);  // 가맹점 코드
-            params.put("tid", request.getTid());  // 거래 ID
-            params.put("partner_order_id", request.getPartnerOrderId());  // 주문 ID
-            params.put("partner_user_id", request.getPartnerUserId());  // 파트너 사용자 ID
-            params.put("pg_token", request.getPgToken());  // PG 토큰
+            Map<String, Object> params = new HashMap<>();
+            params.put("cid", cid);
+            params.put("tid", request.getTid());
+            params.put("partner_order_id", request.getPartnerOrderId());
+            params.put("partner_user_id", request.getPartnerUserId());
+            params.put("pg_token", request.getPgToken());
 
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(params, headers);  // HTTP 요청 엔티티 생성
+            HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(params, headers);
 
-            log.info("Sending approval request to Kakao Pay. URL: {}, Headers: {}, Body: {}", approveUrl, headers, params);  // 요청 로깅
+            log.info("Sending approval request to Kakao Pay. URL: {}, Headers: {}, Body: {}", approveUrl, headers, params);
 
-            KakaoPayApproveDtoRes response = restTemplate.postForObject(approveUrl, entity, KakaoPayApproveDtoRes.class);  // API 호출
+            KakaoPayApproveDtoRes response = restTemplate.postForObject(approveUrl, requestEntity, KakaoPayApproveDtoRes.class);
 
-            log.info("Received approval response from Kakao Pay: {}", response);  // 응답 로깅
+            log.info("Received approval response from Kakao Pay: {}", response);
 
-            return response;  // 응답 반환
-        } catch (HttpClientErrorException e) {  // HTTP 클라이언트 에러 처리
+            return response;
+        } catch (HttpClientErrorException e) {
             log.error("Kakao Pay API error during approval. Status: {}, Response: {}", e.getStatusCode(), e.getResponseBodyAsString());
             throw new RuntimeException("카카오페이 결제 승인 중 오류가 발생했습니다.", e);
-        } catch (Exception e) {  // 기타 예외 처리
+        } catch (Exception e) {
             log.error("Unexpected error during Kakao Pay approval process", e);
             throw new RuntimeException("카카오페이 결제 승인 중 예상치 못한 오류가 발생했습니다.", e);
         }
+    }
+
+    private void saveTransactionInfo(String tid, String partnerOrderId, String partnerUserId) {
+        this.latestTid = tid;
+        this.latestPartnerOrderId = partnerOrderId;
+        this.latestPartnerUserId = partnerUserId;
+        // 여기에 tid, partnerOrderId, partnerUserId를 저장하는 추가 로직을 구현?
+        // 예: 데이터베이스에 저장
+    }
+
+    // 새로 추가된 메서드들
+    public String getLatestTid() {
+        return this.latestTid;
+    }
+
+    public String getLatestPartnerOrderId() {
+        return this.latestPartnerOrderId;
+    }
+
+    public String getLatestPartnerUserId() {
+        return this.latestPartnerUserId;
     }
 }

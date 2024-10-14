@@ -1,5 +1,6 @@
 package kr.co.ifit.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @Entity
-@ToString
+@ToString(exclude = "user")
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "token")
@@ -31,9 +32,10 @@ public class Token {
     @Column(name = "expired_at", nullable = false)
     private LocalDateTime expiration;           // 만료 시간
 
-    @OneToOne(optional = false)
+    @OneToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
     public void updateToken(String newRefreshToken, LocalDateTime newExpiration) {

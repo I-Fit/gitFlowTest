@@ -86,7 +86,10 @@ public class CommentService {
                         comment.getContent(),
                         comment.getUser().getUserId(), // 사용자 ID 추가
                         comment.getCreatedAt(),
-                        comment.getUpdatedAt()))
+                        comment.getUpdatedAt(),
+                        comment.getUser().getUsername(),
+                        comment.getPost().getTitle()
+                ))
                 .toList();
     }
 

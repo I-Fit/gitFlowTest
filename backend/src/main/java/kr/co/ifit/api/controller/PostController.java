@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/board")
@@ -233,7 +234,7 @@ public class PostController {
     // 게시글 관리
     // 내가 쓴 게시글
     @GetMapping("/posts/by")
-    public ResponseEntity<List<Post>> getPostsByUserId() {
+    public ResponseEntity<List<PostDtoRes>> getPostsByUserId() {
         Long userId = userContextUtil.getAuthenticatedUserId();
         System.out.println("Authenticated UserId: " + userId);
         if (userId == null) {
@@ -242,7 +243,9 @@ public class PostController {
         }
 
         List<Post> posts = postService.getPostsByUserId(userId);
-        return new ResponseEntity<>(posts, HttpStatus.OK);
+        List<PostDtoRes> postList = posts.stream()
+                .map(PostDtoRes::new).toList();
+        return new ResponseEntity<>(postList, HttpStatus.OK);
     }
 
     // 내가 쓴 게시글 검색
@@ -280,10 +283,8 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        List<PostDtoRes> likedPosts = postService.getLikedPostsByUserId(userId);
-        likedPosts.sort(Comparator.comparing(PostDtoRes::getTitle));
-
-        return new ResponseEntity<>(likedPosts, HttpStatus.OK);
+        List<PostDtoRes> sortedLikedPosts = postService.getSortedLikedPostsByUserId(userId);
+        return new ResponseEntity<>(sortedLikedPosts, HttpStatus.OK);
     }
 
     // 내가 좋아요한 게시글 검색

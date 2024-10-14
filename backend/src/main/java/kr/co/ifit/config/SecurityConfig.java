@@ -51,7 +51,7 @@ public class SecurityConfig {
                                         "/api/user/password/change",
                                         "/api/payment/kakao/ready", "/api/payment/kakao/success", "/api/payment/kakao/success/**",
                                         "/api/payment/kakao/approve"
-                                        ).permitAll()
+                                ).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->

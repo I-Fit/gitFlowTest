@@ -1,5 +1,6 @@
 package kr.co.ifit.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "user")
-@ToString
+@ToString(exclude = "token")
 @NoArgsConstructor
 public class User {
     @Id
@@ -64,6 +65,7 @@ public class User {
     private EmailVerification emailVerification;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Token token;
 
     // 매개변수를 받는 생성자

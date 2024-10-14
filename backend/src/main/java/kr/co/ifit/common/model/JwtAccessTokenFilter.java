@@ -38,12 +38,18 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
                 || uri.startsWith("/api/joined/sort") || uri.startsWith("/api/joined/search")
                 || uri.startsWith("/api/liked") || uri.startsWith("/api/liked/sort") || uri.startsWith("/api/liked/search")
                 || uri.startsWith("/api/user-info") || uri.startsWith("/api/home/like-group") || uri.startsWith("/api/join-group")
+
                 || uri.startsWith("/api/board/new")
                 || uri.startsWith("/api/board/posts/by") || uri.startsWith("/api/board/update") || uri.startsWith("/api/board/delete")
                 || uri.startsWith("/api/board/like") || uri.startsWith("/api/board/posts/liked") || uri.startsWith("/api/board/post/")
                 || uri.startsWith("/api/comments/new") || uri.startsWith("/api/comments/by") || uri.startsWith("/api/comments/delete")
                 || uri.startsWith("/api/board/posts/liked/sort") || uri.startsWith("/api/board/posts/liked/search")
                 || uri.startsWith("/api/board/myposts/search")
+
+                || uri.startsWith("/api/profile") || uri.startsWith("/api/coupon")
+                || uri.startsWith("/api/updateEmail/sendVerificationCode") || uri.startsWith("/api/updateEmail/verifyEmail") || uri.startsWith("/api/updateEmail")
+                || uri.startsWith("/api/payment/user-info") || uri.startsWith("/api/payment/kakao/**")
+                || uri.startsWith("/api/user/password/change")
         ) {
 
             String token = resolveToken(request);

@@ -107,7 +107,7 @@ public class PostService {
     }
 
     // 게시글 삭제
-//    @Transactional
+    @Transactional
     public boolean deletePost(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -301,7 +301,7 @@ public class PostService {
         List<Post> filteredPosts = myPosts.stream()
                 .filter(post -> post.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
                         post.getContent().toLowerCase().contains(keyword.toLowerCase()))
-                .collect(Collectors.toList());
+                .toList();
 
         return filteredPosts.stream().map(PostDtoRes::new).collect(Collectors.toList());
     }
@@ -347,7 +347,7 @@ public class PostService {
         List<Post> filteredPosts = likedPosts.stream()
                 .filter(post -> post.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
                         post.getContent().toLowerCase().contains(keyword.toLowerCase()))
-                .collect(Collectors.toList());
+                .toList();
 
         return filteredPosts.stream().map(PostDtoRes::new).collect(Collectors.toList());
     }

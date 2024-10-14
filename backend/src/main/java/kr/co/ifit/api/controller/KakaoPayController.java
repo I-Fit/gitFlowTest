@@ -5,10 +5,11 @@ import kr.co.ifit.api.request.KakaoPayReadyDtoReq;
 import kr.co.ifit.api.response.KakaoPayApproveDtoRes;
 import kr.co.ifit.api.response.KakaoPayReadyDtoRes;
 import kr.co.ifit.api.service.KakaoPayService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -37,9 +38,22 @@ public class KakaoPayController {
 
     @GetMapping("/success")
     public ResponseEntity<?> paymentSuccess(@RequestParam("pg_token") String pgToken) {
-        log.info("Payment successful. PG Token: {}", pgToken);
+        try {
+            log.info("Payment success callback received with pg_token: {}", pgToken);
+            // KakaoPayService에서 저장된 tid와 다른 필요한 정보를 가져옵니다.
+            String tid = kakaoPayService.getLatestTid();
+            String partnerOrderId = kakaoPayService.getLatestPartnerOrderId();
+            String partnerUserId = kakaoPayService.getLatestPartnerUserId();
 
-        return ResponseEntity.ok("결제가 성공적으로 완료되었습니다.");
+            KakaoPayApproveDtoReq approveRequest = new KakaoPayApproveDtoReq(tid, partnerOrderId, partnerUserId, pgToken);
+            KakaoPayApproveDtoRes approvalResponse = kakaoPayService.approveKakaoPay(approveRequest);
+
+            log.info("Payment approved successfully: {}", approvalResponse);
+            return ResponseEntity.ok(approvalResponse);
+        } catch (Exception e) {
+            log.error("Error approving payment", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error approving payment: " + e.getMessage());
+        }
     }
 
     @PostMapping("/approve")

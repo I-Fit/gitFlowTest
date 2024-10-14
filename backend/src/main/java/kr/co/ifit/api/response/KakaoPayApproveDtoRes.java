@@ -1,10 +1,10 @@
 package kr.co.ifit.api.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class KakaoPayApproveDtoRes {
@@ -20,14 +20,16 @@ public class KakaoPayApproveDtoRes {
     private String created_at;
     private String approved_at;
 
-
-
+    @Getter
+    @Setter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Amount {
         private int total;
         private int tax_free;
         private int vat;
         private int point;
         private int discount;
-
     }
 }
