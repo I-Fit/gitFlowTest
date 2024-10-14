@@ -50,7 +50,7 @@ public class SecurityConfig {
                                         "/api/payment/process","/api/payment/kakao/ready",
                                         "/api/user/password/change",
                                         "/api/payment/kakao/ready", "/api/payment/kakao/success", "/api/payment/kakao/success/**",
-                                        "/api/payment/kakao/approve"
+                                        "/api/payment/kakao/approve", "/", "/index.html", "/css/**", "js/**", "img/**"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 )
