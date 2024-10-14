@@ -360,7 +360,7 @@ main {
   /* width: 100%; */
   height: 159px;
   align-items: center;
-  margin-left: 60px;
+  margin-left: 75px;
 }
 
 .top-image-box {
@@ -425,7 +425,7 @@ main {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  margin-left: 65px;
+  margin-left: 75px;
 }
 
 .left-section {
@@ -491,7 +491,7 @@ main {
 .search-coupon-btn {
   width: 85px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: 0.1875rem;
   border: none;
   background-color: #1a73e8;
   color: #fff;
@@ -519,19 +519,19 @@ main {
 .del-account-btn {
   width: 98px;
   height: 45px;
-  border-radius: 8px;
+  border-radius: 0.1875rem;
   border: none;
-  background-color: #1a73e8;
+  background-color: #a5a5a9;
   color: #fff;
   font-size: 15px;
   font-weight: bold;
-  margin-left: 850px;
-  margin-top: -100px;
+  margin-left: 440px;
+  margin-top: 290px;
   cursor: pointer;
 }
 
 .del-account-btn:hover {
-  background-color: #87cefa;
+  background-color: #ddd;
 }
 
 .del-account-btn:active {
@@ -591,7 +591,7 @@ main {
   color: #fff;
   background-color: #dc3545;
   border: none;
-  border-radius: 5px;
+  border-radius: 0.1875rem;
   cursor: pointer;
 }
 

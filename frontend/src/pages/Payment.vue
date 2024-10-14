@@ -22,7 +22,12 @@
         </div>
         <div class="point-section">
           <label for="point">포인트 사용:</label>
-          <input type="number" v-model.number="pointsToUse" @input="applyPoints" :max="points" />
+          <input
+            type="number"
+            v-model.number="pointsToUse"
+            @input="applyPoints"
+            :max="points"
+          />
           <p>사용 가능 포인트: {{ points }}</p>
         </div>
       </div>
@@ -38,13 +43,23 @@
       <div class="payment-options">
         <h2>결제 수단 선택</h2>
         <div class="button-container">
-          <button @click="showPreparingMessage('일반 카드 결제')" class="card-payment-button">
+          <button
+            @click="showPreparingMessage('일반 카드 결제')"
+            class="card-payment-button"
+          >
             일반 카드 결제
           </button>
-          <button @click="initiateKakaoPayment" :disabled="!canProceedPayment || isLoading" class="kakao-pay-button">
+          <button
+            @click="initiateKakaoPayment"
+            :disabled="!canProceedPayment || isLoading"
+            class="kakao-pay-button"
+          >
             {{ isLoading ? "처리 중..." : "카카오페이" }}
           </button>
-          <button @click="showPreparingMessage('네이버페이')" class="naver-pay-button">
+          <button
+            @click="showPreparingMessage('네이버페이')"
+            class="naver-pay-button"
+          >
             네이버페이
           </button>
         </div>
@@ -215,7 +230,7 @@ export default {
     onMounted(() => {
       if (route.name === 'PaymentSuccess') {
         handleKakaoPaymentComplete();
-      }
+      }   
     });
 
     return {
@@ -295,14 +310,12 @@ input {
 }
 
 .card-payment-button {
-  background-color: #3498db;
-  /* 새로운 파란색 */
+  background-color: #3498db; /* 새로운 파란색 */
   color: white;
 }
 
 .card-payment-button:hover {
-  background-color: #2980b9;
-  /* 호버 시 더 진한 파란색 */
+  background-color: #2980b9; /* 호버 시 더 진한 파란색 */
 }
 
 .kakao-pay-button {

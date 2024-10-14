@@ -101,20 +101,20 @@ a {
 }
 
 a:nth-child(1) {
-  margin-left: 150px;
+  margin-left: 180px;
 }
 
 .sign-in-btn {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 20px;
+  margin-right: 30px;
 }
 
 .sign-in-btn img {
   width: 45px;
   height: 40px;
-  margin-right: 5px;
+  margin-right: 7px;
 }
 
 .sign-in-user-name {

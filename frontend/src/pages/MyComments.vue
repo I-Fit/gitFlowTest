@@ -1,95 +1,61 @@
 <template>
   <main>
     <AppNav />
-    <div class="comment">
+    <div class="comment-manage">
+      <div class="comment-null-block"></div>
       <div class="comment-top">
         <h2>게시글 관리</h2>
-        <p class="line text01" @click="myPosts">내가 쓴 게시글</p>
-        <p class="line text02" @click="myComments">내가 쓴 댓글</p>
-        <p class="text03" @click="likedPosts">좋아요 한 게시물</p>
+        <div class="sub-menu">
+          <p class="line text01" @click="myPosts">내가 쓴 게시글</p>
+          <p class="line text02" @click="myComments">내가 쓴 댓글</p>
+          <p class="text03" @click="likedPosts">좋아요 한 게시글</p>
+        </div>
       </div>
+
       <div class="comment-middle">
         <div class="middle-filter">
           <div class="middle-filter-search-box">
-            <input type="text" name="search" class="search-input" placeholder="검색어를 입력하세요." v-model="searchKeyword" @keydown.enter="performSearch" />
-            <div class="search-icon" @click="performSearch"></div>
+            <input type="text" name="search" id="search_input" placeholder="검색어를 입력하세요." class="search-box-input"
+              v-model="searchKeyword" @keydown.enter="performSearch" />
+            <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" @click="performSearch" />
           </div>
-          <select title="정렬" class="middle-filter-sort">
-            <option value="" selected="selected" disabled="disabled">
-              정렬
+
+          <select title="정렬" class="middle-filter-sort" v-model="selectedSort" @change="sortPosts">
+            <option value="" selected disabled>정렬</option>
+            <option v-for="option in options" :key="option.value" :value="option.value">
+              {{ option.text }}
             </option>
-            <option value="popular">인기순</option>
-            <option value="latest">최신순</option>
           </select>
         </div>
-
-        <div class="comments-list">
-          <div v-if="comments.length === 0" class="no-comments">
-            <p>작성한 댓글이 없습니다.</p>
+        <div class="comment">
+          <div class="comments-list">
+            <div v-if="comments.length === 0" class="no-comments">
+              <p>작성한 댓글이 없습니다.</p>
+            </div>
+            <div class="comment-container">
+              <ul>
+                <li v-for="(comment, index) in comments" :key="comment.commentId" class="comment-item" @click="viewPost(comment.postId)">
+                  <div class="comment-content">
+                    <p>{{ index + 1 }} &nbsp; {{ comment.postTitle }}</p>
+                    <p>{{ comment.content }}</p>
+                    <p class="comment-date">{{ formatDate(comment.createdAt) }}</p>
+                  </div>
+                  <button @click.stop="deleteComment(comment.commentId)">삭제</button>
+                </li>
+              </ul>
+            </div>
+            
           </div>
-          <ul>
-            <li v-for="comment in comments" :key="comment.commentId" class="comment-item">
-              <div class="comment-content">
-                <p>{{ comment.postId }}</p>
-                <p>{{ comment.content }}</p>
-                <p class="comment-date">{{ formattedCreatedAt }}</p>
-              </div>
-              <!-- 댓글 수정 삭제 메뉴 추가-->
-              <button @click="deleteComment(comment.commentId)">삭제</button>
-            </li>
-          </ul>
         </div>
-
-
-        <!-- <div class="comment-bottom-table">
-          // 댓글 반복 렌더링
-          <div
-            class="bottom-table"
-            v-for="(comment, index) in paginatedComments"
-            :key="index"
-            @click="navigateToPost(comment.postId, comment.id)"
-          >
-            <div class="user-info">
-              <img
-                class="user-info-img"
-                src="@/assets/images/user_img.png"
-                alt="User Image"
-              />
-              <p class="user-info-name">{{ comment.userName }}</p>
-            </div>
-            <div class="user-comment">
-              <p class="post-title">게시글 : {{ comment.postTitle }}</p>
-              <p class="comment-content">{{ comment.content }}</p>
-              <p class="creation-date">{{ comment.creationDate }}</p>
-            </div>
-            <div class="relative-container">
-              <img
-                class="modify-icon"
-                src="@/assets/images/dot.png"
-                alt="dot"
-                @click.stop="toggleActions(index)"
-              />
-              <PostActions
-                :visible="comment.showActions"
-                @navigate="handleNavigation"
-                class="post-actions"
-              />
-            </div>
-          </div>
-        </div> -->
-
-
       </div>
     </div>
   </main>
 </template>
 
-
 <script>
 import { ref, onBeforeMount, computed } from 'vue';
 import AppNav from "@/components/layout/AppNav.vue";
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
 import apiClient from '@/api/apiClient';
 // import PostActions from "@/components/common/PostActions.vue";
 
@@ -104,10 +70,17 @@ export default {
     const postId = route.params.postId;
     const userId = route.params.userId;
     const commentId = route.params.commentId;
-    const visibleDatas = ref([]);
     const comments = ref([]);
     const searchKeyword = ref('');
     const createdAt = ref('');
+    const selectedSort = ref('');
+
+    const options = ref([
+      // { value: '', text: '정렬' },
+      { value: 'popularity', text: '인기순' },
+      { value: 'latest', text: '최신순' },
+      { value: 'oldest', text: '오래된순' },
+    ])
 
     const myPosts = () => {
       router.push({ name: "MyPosts" });
@@ -121,25 +94,12 @@ export default {
       router.push({ name: "LikedPosts" });
     };
 
-    // const fetchComments = async () => {
-    //   try {
-    //     // const response = await fetch(`/comments/user/${userId}`); // 실제 API 경로로 수정
-    //     const response = await apiClient.get('/comments/by');
-    //     if (!response.ok) {
-    //       throw new Error('Network response was not ok');
-    //     }
-    //     comments.value = await response.json();
-    //     console.log('fetching comments: ', comments.value);
-    //   } catch (error) {
-    //     console.error('댓글 불러오기 실패: ', error);
-    //   }
-    // };
-
     const fetchComments = async () => {
       try {
         const response = await apiClient.get('/comments/by');
         if (response.status === 200) {
           comments.value = response.data;
+          console.log(comments);
         } else {
           console.error('댓글 로드 실패: ', response.data);
         }
@@ -152,11 +112,16 @@ export default {
       }
     };
 
-    // viewPost -> viewComment로 변경?
-    const viewPost = (post) => {
-      console.log('Navigating to post: ', post);
-      router.push({ path: `/post/${post.postId}` });
-    }
+    // const viewPost = (post) => {
+    //   console.log('Navigating to post: ', post);
+    //   router.push({ path: `/post/${post.postId}` });
+    // }
+
+    const viewPost = (postId) => {
+      if (postId) {
+        router.push({ path: `/post/${postId}`});
+      }
+    };
 
     const performSearch = async () => {
       if (!searchKeyword.value) {
@@ -166,20 +131,20 @@ export default {
       }
 
       try {
-        const response = await axios.get(`/api/board/search`, {
+        const response = await apiClient.get(`/comments/search`, {
           params: { keyword: searchKeyword.value },
         });
 
         console.log('검색 결과: ', response.data);
 
         if (response.data.length > 0) {
-          visibleDatas.value = response.data;
+          comments.value = response.data;
         } else {
           alert('검색 결과가 없습니다.');
-          visibleDatas.value = [];
+          comments.value = [];
         }
       } catch (error) {
-        console.log('검색 실패: ', error);
+        console.error('검색 실패: ', error);
         alert('검색 실패!');
       }
     };
@@ -193,14 +158,30 @@ export default {
 
       if (confirm('정말 댓글을 삭제하시겠습니까?')) {
         try {
-          await axios.delete(`/api/comments/delete/${commentId}`);
+          await apiClient.delete(`/comments/delete/${commentId}`);
           alert('댓글 삭제 완료!');
+
           await fetchComments();
         } catch (error) {
           console.error('댓글 삭제 실패: ', error);
           alert('댓글 삭제 실패!' + (error.response.data.message || ''));
         }
       }
+    };
+
+    const formatDate = (dateString) => {
+      if (!dateString) {
+        return '';
+      }
+
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
     };
 
     const formattedCreatedAt = computed(() => {
@@ -232,6 +213,9 @@ export default {
       formattedCreatedAt,
       comments,
       searchKeyword,
+      selectedSort,
+      options,
+      formatDate,
     }
   },
 }
@@ -246,12 +230,18 @@ main {
   grid-template-columns: 180px 1fr;
 }
 
-.comment {
+.comment-manage {
   width: 1270px;
   height: 100%;
   display: grid;
   grid-template-rows: 60px 150px 1fr;
-  margin-top: 60px;
+  margin-left: 100px;
+}
+
+.comment {
+  width: 100%;
+  height: 100%;
+  margin-left: 50px;
 }
 
 .comment-null-block {
@@ -268,9 +258,10 @@ main {
 .comment-top::after {
   content: "";
   display: block;
-  width: 100%;
+  width: 90%;
   height: 2px;
   background-color: #ccc;
+  margin-left: 50px;
 }
 
 h2 {
@@ -278,14 +269,18 @@ h2 {
   font-weight: bold;
   color: #5d5a88;
   margin: 0;
-  margin-left: 1007px;
+  margin-left: 920px;
+}
+
+.sub-menu {
+  margin-left: 50px;
 }
 
 .line::after {
   content: "|";
   color: #ccc;
   margin: 0 5px 0 5px;
-  font-weight: lighter;
+  /* font-weight: lighter; */
 }
 
 .text01,
@@ -316,6 +311,7 @@ h2 {
   display: flex;
   align-items: center;
   padding: 10px 5px;
+  margin-left: -70px;
 }
 
 .middle-filter-search-box {
@@ -326,7 +322,7 @@ h2 {
   padding: 5px;
   width: 250px;
   margin-left: 906px;
-  margin-top: 180px;
+  position: relative;
 }
 
 .search-box-input {
@@ -340,28 +336,31 @@ h2 {
   width: 15px;
   height: 15px;
   position: absolute;
-  margin-left: 218px;
+  right: 10px;
+  /* margin-left: 45px;
+  text-align: end; */
   cursor: pointer;
 }
 
 .middle-filter-sort {
   width: 75px;
   height: 37px;
-  font-size: 14px;
+  font-size: 13.3333px;
   margin-left: 30px;
   border: 1px solid #ccc;
   border-radius: 10px;
   background-color: #fff !important;
   text-align: center;
-  font-weight: lighter;
-  margin-top: 180px;
+  font-weight: 400;
 }
 
+
+/* 댓글 목록 */
 .comments-list {
+  width: 90%;
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding-left: 10px;
 }
 
 .comments-list h3 {
@@ -375,8 +374,11 @@ h2 {
 }
 
 .comment-item {
-  border-bottom: 1px solid #eee;
-  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  cursor: pointer;
 }
 
 .comment-item:last-child {
@@ -385,10 +387,15 @@ h2 {
 
 .comment-content {
   margin-bottom: 5px;
+  /* margin-left: -15px; */
 }
 
 .comment-content p {
-  margin: 5px 0;
+  margin: 10px 0;
+}
+
+.comment-content p:first-child {
+  font-weight: bold;
 }
 
 .comment-date {
@@ -407,91 +414,6 @@ h2 {
 }
 
 .comment-item button:hover {
-  background-color: #e60000;
+  background-color: #ff9999;
 }
-
-/* .comment-bottom-table {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  margin-top: 90px;
-}
-
-.bottom-table {
-  display: grid;
-  grid-template-columns: 60px 1fr 40px;
-  align-items: center;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-.user-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.user-info-img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-bottom: 5px;
-}
-
-.user-info-name {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.user-comment {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-  color: #333;
-  line-height: 1.5;
-  gap: 10px;
-}
-
-.post-title {
-  font-weight: bold;
-  color: #555;
-  margin-right: 100px;
-  margin-left: 50px;
-  white-space: nowrap;
-}
-
-.comment-content {
-  flex: 1;
-  /* margin-right: px;
-  /* text-align: center;
-  color: #333;
-}
-
-.creation-date {
-  font-size: 12px;
-  color: #999;
-  white-space: nowrap;
-  margin-right: 50px;
-}
-
-.relative-container {
-  position: relative;
-  display: inline-block;
-}
-
-.modify-icon {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-}
-
-.post-actions {
-  position: absolute;
-  top: 5px;
-  left: 20px;
-  z-index: 10;
-} */
 </style>

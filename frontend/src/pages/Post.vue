@@ -497,15 +497,22 @@ input {
 .comment {
   display: flex;
   justify-content: space-between;
-  /* 댓글 내용과 삭제 버튼을 양쪽으로 배치 */
   align-items: center;
-  /* 세로 중앙 정렬 */
   margin-bottom: 10px;
-  /* 댓글 사이에 간격 추가 */
+  margin-top: 10px;
 }
 
 .comment-text {
   font-size: 13px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.comment-user {
+  font-size: 15px;
+  font-weight: bold;
+  margin-right: 10px;
+  display: inline;
 }
 
 .delete-btn {
@@ -513,9 +520,9 @@ input {
   height: 30px;
   margin-left: 10px;
   /* 댓글 내용과 버튼 사이에 약간의 간격 추가 */
-  background-color: #1a73e8;
+  /* background-color: #1a73e8; */
   /* 버튼 색상 (예시) */
-  color: white;
+  /* color: white; */
   /* 글자 색상 */
   border: none;
   /* 기본 테두리 제거 */

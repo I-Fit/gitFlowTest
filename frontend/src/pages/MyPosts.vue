@@ -1,91 +1,110 @@
 <template>
   <main>
     <AppNav />
-    <div class="post">
+    <div class="post-manage">
       <div class="post-null-block"></div>
       <div class="post-top">
         <h2>게시글 관리</h2>
-        <p class="line text01" @click="myPosts">내가 쓴 게시글</p>
-        <p class="line text02" @click="myComments">내가 쓴 댓글</p>
-        <p class="text03" @click="likedPosts">좋아요 한 게시물</p>
+        <div class="sub-menu">
+          <p class="line text01" @click="myPosts">내가 쓴 게시글</p>
+          <p class="line text02" @click="myComments">내가 쓴 댓글</p>
+          <p class="text03" @click="likedPosts">좋아요 한 게시글</p>
+        </div>
       </div>
+
       <div class="post-middle">
         <div class="middle-filter">
           <div class="middle-filter-search-box">
-            <input type="text" name="search" class="search-input" placeholder="검색어를 입력하세요." v-model="searchKeyword" @keydown.enter="performSearch" />
-            <div class="search-icon" @click="performSearch"></div>
+            <input type="text" name="search" id="search_input" placeholder="검색어를 입력하세요." class="search-box-input"
+              v-model="searchKeyword" @keydown.enter="performSearch" />
+            <img src="@/assets/images/search.icon.png" alt="search" class="search-box-icon" @click="performSearch" />
           </div>
-          <button type="button" class="feature-sort">
-            <select class="sort" v-model="selectedSort" @change="sortPosts" title="정렬">
-              <option value="" disabled>정렬</option>
-              <option value="popularity">인기순</option>
-              <option value="latest">최신순</option>
-              <option value="oldest">오래된순</option>
-            </select>
-          </button>
+
+          <select title="정렬" class="middle-filter-sort" v-model="selectedSort" @change="sortPosts">
+            <option value="" selected disabled>정렬</option>
+            <option v-for="option in options" :key="option.value" :value="option.value">
+              {{ option.text }}
+            </option>
+          </select>
         </div>
-        <div class="post-bottom-table">
-          <div class="bottom-table-group" v-for="post in visibleDatas" :key="post.postId">
-            <div class="table-group-del">
-              <img id="modify_icon" 
-                    :src="require('@/assets/images/dot.png')" 
-                      alt="dot"
-                      @click="toggleActions(post.postId)" />
-              <PostActions 
-                :visible="showActions"
-                @navigate="handleNavigation" />
-              <!-- <PostActions 
-                :visible="showActionsForPostId(post.id)" 
-                @navigate="handleNavigation" /> -->
+
+        <!-- 게시글 목록 -->
+        <div class="post">
+          <div v-for="post in formattedPosts" :key="post.postId" class="post-container">
+            <div class="unicode-box">
+              <img class="post-edit-icon" src="@/assets/images/edit-icon.png" @click="editPost(post)" />
+              <img class="post-delete-icon" src="@/assets/images/delete-icon.png" @click="deletePost(post.postId, post.userId)" />
             </div>
-            <div class="table-group-postimg">
+
+            <div class="post-image-box">
               <img class="post-image" :src="post.imageStr ? `data:image/png;base64,${post.imageStr}` : ''" alt="게시글 이미지" @click="viewPost(post)" />
-              <!-- <img class="table-group-post-img" :src="post.image" alt="게시글 이미지" @click="detailPost2" /> -->
             </div>
-            <div class="table-group-btn">
-              <div class="likes">
-                <div class="title-heart" @click="toggleHeart(post.postId)">
-                  <!-- <div :class="isHeartFilled ? 'filled-heart' : 'empty-heart'"></div> -->
-                  <div :class="{
-                    'filled-heart': post.isHeartFilled,
-                    'empty-heart': !post.isHeartFilled,
-                  }"></div>
+            <div class="post-data">
+              <div class="user-info-and-exercise">
+                <p class="exercise-text">{{ post.exercise }}</p>
+                <div class="table-group-btn">
+                <div class="likes">
+                    <div class="title-heart" @click="toggleHeart(post.postId)">
+                      <div :class="{
+                        'filled-heart': post.isHeartFilled,
+                        'empty-heart': !post.isHeartFilled,
+                      }"></div>
+                    </div>
+                    <span id="heart-count">{{ post.likesCnt }}</span>
+                  </div>
+                  <div class="comment">
+                    <img class="btn-icon" src="@/assets/images/comment-icon5.png" alt="댓글 아이콘" />
+                    <span id="comment-count">{{ post.commentsCnt }}</span>
+                  </div>
                 </div>
-                <span id="heart-count">{{ post.likesCnt }}</span>
+                <!-- <div class="user-info">
+                  <span class="user-name">{{ post.username }}</span>
+                  <img
+                  :src="post.profileUrl ? `data:image/png;base64,${post.profileUrl}` : require('@/assets/images/default-profile.png')"
+                  alt="작성자 이미지" class="user-img">
+                </div> -->
               </div>
-              <div class="comment">
-                <img class="btn-icon" src="@/assets/images/comment.png" alt="댓글 아이콘" />
-                <span id="comment-count">{{ post.commentsCnt }}</span>
+              <div class="post-text" @click="viewPost(post)">
+                <p class="post-title">{{ post.title }}</p>
+                <p class="post-content">{{ post.contentWithoutImage }}</p>
+                <!-- 게시글 작성일 추가 -->
+                <!-- <div class="table-group-btn">
+                  <div class="likes">
+                    <div class="title-heart" @click="toggleHeart(post.postId)">
+                      <div :class="{
+                        'filled-heart': post.isHeartFilled,
+                        'empty-heart': !post.isHeartFilled,
+                      }"></div>
+                    </div>
+                    <span id="heart-count">{{ post.likesCnt }}</span>
+                  </div>
+                  <div class="comment">
+                    <img class="btn-icon" src="@/assets/images/comment.png" alt="댓글 아이콘" />
+                    <span id="comment-count">{{ post.commentsCnt }}</span>
+                  </div>
+                </div> -->
               </div>
-            </div>
-            <div class="table-group-content" @click="viewPost(post)">
-              <div class="group-content-post">
-                <p class="table-group-title">{{ post.title || "제목없음" }}</p>
-              </div>
-              <div class="group-content-ptext">
-                <p class="table-group-text">{{ post.content || "내용없음" }}</p>
-              </div>
+
             </div>
           </div>
         </div>
         <!-- <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="onPageChange" /> -->
       </div>
-      <div class="post-floor"></div>
     </div>
   </main>
 </template>
 
 <script>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
-import PostActions from "@/components/common/PostActions.vue";
+// import PostActions from "@/components/common/PostActions.vue";
 import AppNav from "@/components/layout/AppNav.vue";
 import apiClient from '@/api/apiClient';
 
 export default {
   components: {
-    PostActions,
+    // PostActions,
     AppNav,
   },
 
@@ -95,8 +114,8 @@ export default {
 
     const postId = route.params.postId;
     const userId = route.params.userId;
-    const visibleDatas = ref([]);
 
+    const visibleDatas = ref([]);
     const sortOrder = ref("");
     const showActions = ref(false);
     const selectedPostId = ref(null);
@@ -104,7 +123,13 @@ export default {
     const searchKeyword = ref('');
     const selectedSort = ref('');
 
-    
+    const options = ref([
+      // { value: '', text: '정렬' },
+      { value: 'popularity', text: '인기순' },
+      { value: 'latest', text: '최신순' },
+      { value: 'oldest', text: '오래된순' },
+    ])
+
     // 게시글 불러오기
     const fetchPosts = async () => {
       try {
@@ -121,6 +146,24 @@ export default {
         console.error('게시글 불러오기 실패: ', error);
       }
     };
+
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    const formattedPosts = computed(() => {
+      return visibleDatas.value.map(post => ({
+        ...post,
+        formattedCreatedAt: formatDate(post.createdAt),
+        contentWithoutImage: post.content.replace(/<img[^>]*>/g, '').replace(/<[^>]+>/g, ''),
+        username: post.username,
+        isHeartFilled: post.heartFilled,
+      }));
+    });
 
     // 검색
     const performSearch = async () => {
@@ -245,26 +288,23 @@ export default {
       fetchPosts,
       performSearch,
       sortOrder,
+      options,
       showActions,
       selectedPostId,
       visibleDatas,
-      toggleActions,
-      handleNavigation,
       deletePost,
-      // isHeartFilled,
-      // toggleHeart,
       myPosts,
       myComments,
       likedPosts,
       viewPost,
       sortPosts,
       selectedSort,
+      formattedPosts,
+      handleNavigation,
+      toggleActions,
     }
   },
 }
-
-// Vue Router와 Composition API 사용
-
 </script>
 
 <style scoped>
@@ -275,11 +315,49 @@ main {
   grid-template-columns: 180px 1fr;
 }
 
-.post {
+.post-manage {
   width: 1270px;
   height: 100%;
   display: grid;
   grid-template-rows: 60px 150px 1fr;
+  margin-left: 100px;
+}
+
+.post {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  margin-left: 50px;
+}
+
+.post-container {
+  display: grid;
+  grid-template-rows: 40px 250px 1fr;
+  width: 240px;
+  height: 450px;
+  margin-right: 50px;
+}
+
+.post>.post-container:nth-of-type(4n) {
+  margin-right: 0px;
+}
+
+.unicode-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 5px 0px 0px 4px;
+}
+
+.post-edit-icon,
+.post-delete-icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-left: 10px;
+  margin-right: 1px;
 }
 
 .post-null-block {
@@ -296,9 +374,10 @@ main {
 .post-top::after {
   content: "";
   display: block;
-  width: 100%;
+  width: 90%;
   height: 2px;
   background-color: #ccc;
+  margin-left: 50px;
 }
 
 h2 {
@@ -306,14 +385,18 @@ h2 {
   font-weight: bold;
   color: #5d5a88;
   margin: 0;
-  margin-left: 1007px;
+  margin-left: 920px;
+}
+
+.sub-menu {
+  margin-left: 50px;
 }
 
 .line::after {
   content: "|";
   color: #ccc;
   margin: 0 5px 0 5px;
-  font-weight: lighter;
+  /* font-weight: lighter; */
 }
 
 .text01,
@@ -344,6 +427,7 @@ h2 {
   display: flex;
   align-items: center;
   padding: 10px 5px;
+  margin-left: -70px;
 }
 
 .middle-filter-search-box {
@@ -357,38 +441,140 @@ h2 {
   position: relative;
 }
 
+/* 
 .post-floor {
   height: 50px;
   text-align: center;
   padding: 20px;
-}
+} */
 
-.search-input {
+.search-box-input {
   border: none;
   outline: none;
   padding: 5px 0px 5px 10px;
   width: 100%;
 }
 
-.search-icon {
-    width: 15px;
-    height: 15px;
-    background-image: url("@/assets/images/search.icon.png");
-    background-size: contain;
-    cursor: pointer;
-    margin: 0 10px;
+.search-box-icon {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  right: 10px;
+  /* margin-left: 45px;
+  text-align: end; */
+  cursor: pointer;
 }
 
 .middle-filter-sort {
   width: 75px;
   height: 37px;
-  font-size: 14px;
+  font-size: 13.3333px;
   margin-left: 30px;
   border: 1px solid #ccc;
   border-radius: 10px;
   background-color: #fff !important;
   text-align: center;
-  font-weight: lighter;
+  font-weight: 400;
+}
+
+/* 게시글 목록 */
+.user-info-and-exercise {
+  width: 100%;
+  height: 50px;
+  /* display: flex; */
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  display: inline;
+}
+
+.exercise-text {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  width: 60px;
+  height: 30px;
+  background-color: #1a73e8;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 10px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+/* 
+.user-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.user-name {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.user-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+} */
+
+.post-text {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  /* margin-top: 30px; */
+}
+
+.post-title {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+  font-size: 16px;
+  font-weight: bolder;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.post-content {
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.post-image-box {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.post-image {
+  width: 270px;
+  height: 250px;
+  cursor: pointer;
+}
+
+/* .post-image {
+  width: 263px;
+  height: 222px;
+  margin-top: 5px;
+  cursor: pointer;
+} */
+
+.post-data {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .post-bottom-table {
@@ -431,40 +617,35 @@ h2 {
   justify-content: center;
 }
 
-.post-image {
-  width: 263px;
-  height: 222px;
-  margin-top: 5px;
-  cursor: pointer;
-}
-
 .table-group-btn {
   display: flex;
-  margin-top: 10px;
+  margin-top: -30px;
   margin-left: 185px;
 }
 
-.table-group-btn span {
+
+/* .table-group-btn span {
   font-size: 15px;
   color: #757575;
   cursor: pointer;
-}
+} */
 
 .likes {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 10px;
+  margin: 0 1px;
 }
 
 .btn-icon {
-  width: 20px;
-  height: 20px;
-  background-image: url("@/assets/images/comment.png");
+  width: 18px;
+  height: 18px;
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
-  /* margin-right: 7px; */
+  margin-top: 2px;
+  margin-left: 5px;
+  margin-bottom: 3px;
   cursor: pointer;
 }
 
@@ -515,6 +696,7 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 1px;
 }
 
 .title-heart div {
@@ -527,23 +709,15 @@ h2 {
 
 .empty-heart::before {
   content: "\2764";
-  /* 빈 하트 문자 */
   font-size: 20px;
-  /* 하트의 크기 */
   color: transparent;
-  /* 하트의 내부는 투명하게 */
   -webkit-text-stroke: 1px black;
-  /* 하트의 테두리 색상 */
 }
 
 .filled-heart::before {
   content: "\2764";
-  /* 채워진 하트 문자 */
   font-size: 20px;
-  /* 하트의 크기 */
   color: red;
-  /* 채워진 하트의 색상 */
   -webkit-text-stroke: none;
-  /* 채워진 하트의 테두리 제거 */
 }
 </style>

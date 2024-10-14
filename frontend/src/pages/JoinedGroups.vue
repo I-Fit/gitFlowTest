@@ -297,6 +297,7 @@ main {
   height: 100%;
   display: grid;
   grid-template-rows: 60px 150px 1fr;
+  margin-left: 100px;
 }
 
 .party-null-block {
@@ -313,9 +314,10 @@ main {
 .party-top::after {
   content: "";
   display: block;
-  width: 100%;
+  width: 90%;
   height: 2px;
   background-color: #ccc;
+  margin-left: 50px;
 }
 
 h2 {
@@ -323,7 +325,11 @@ h2 {
   font-weight: bold;
   color: #5d5a88;
   margin: 0;
-  margin-left: 1056px;
+  margin-left: 970px;
+}
+
+.sub-menu {
+  margin-left: 50px;
 }
 
 .line::after {
@@ -360,6 +366,7 @@ h2 {
   display: flex;
   align-items: center;
   padding: 10px 5px;
+  margin-left: -70px;
 }
 
 .middle-filter-search-box {
@@ -416,6 +423,7 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
+  margin-left: 50px;
 }
 
 .group-container {
@@ -534,10 +542,11 @@ h2 {
 
 .group-text {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-
+  font-weight: bold;
   display: flex;
   flex-direction: column;
   margin-top: 10px;
+  margin-left: 5px;
 }
 
 .title {
@@ -555,7 +564,8 @@ h2 {
 
   font-size: 14px;
   font-weight: bolder;
-  margin-left: 6px;
+  margin-top: 5px;
+  margin-left: 5px;
   margin-bottom: 2px;
   color: grey;
 }

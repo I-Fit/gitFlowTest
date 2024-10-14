@@ -395,20 +395,28 @@ main {
 }
 
 .signup-container {
-  width: 500px;
-  height: 1190px;
+  width: 490px;
+  /* height: 1190px; */
+  height: 1250px;
   text-align: center;
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(0, 0, 0, 0.164);
+  /* margin-bottom: 100px; */
 }
 
 .signup-container h1 {
-  margin: 22px 0px;
+  margin: 50px 0px;
 }
 
-.signup-container p {
-  margin: 20px 0px;
+/* .signup-container p {
+  margin-top: -20px;
+  margin-bottom: 30px;
+} */
+
+.signup-desc {
+  margin-top: -20px;
+  margin-bottom: 30px;
 }
 
 .input-block {
@@ -507,6 +515,7 @@ input::placeholder {
   display: block;
   margin-top: 20px;
   font-weight: bold;
+  width: 400px;
 }
 
 .signup-terms-text span {
@@ -517,7 +526,7 @@ input::placeholder {
 }
 
 .signup-terms-text {
-  margin-left: 5px;
+  margin-left: 7px;
   font-size: 13px;
 }
 
@@ -531,7 +540,7 @@ input::placeholder {
   cursor: pointer;
   font-size: 20px;
   font-weight: bold;
-  margin: 40px 0px 0px 125px;
+  margin: 50px 0px -10px 143px;
 }
 
 .signup-account-check-text {
