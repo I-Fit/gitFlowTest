@@ -7,7 +7,9 @@ import kr.co.ifit.api.response.PostDtoRes;
 import kr.co.ifit.api.service.PostService;
 import kr.co.ifit.common.util.UserContextUtil;
 import kr.co.ifit.db.entity.Post;
+import kr.co.ifit.db.entity.User;
 import kr.co.ifit.db.repository.PostRepository;
+import kr.co.ifit.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/board")
@@ -32,6 +31,7 @@ public class PostController {
 
     private static final Logger logger = LoggerFactory.getLogger(PostController.class);
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
 //    public PostController(PostService postService) {
 //        this.postService = postService;
@@ -158,14 +158,6 @@ public class PostController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
-
-
-//        boolean isDeleted = postService.deletePost(postId, userId);
-//        if (isDeleted) {
-//            return ResponseEntity.ok("Post deleted successfully");
-//        } else {
-//            return ResponseEntity.status(400).body("Post not found");
-//        }
     }
 
     // 게시글 좋아요
@@ -253,6 +245,20 @@ public class PostController {
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
+    // 내가 쓴 게시글 검색
+    @GetMapping("/myposts/search")
+    public ResponseEntity<List<PostDtoRes>> searchMyPostsByKeyword(@RequestParam String keyword) {
+        Long userId = userContextUtil.getAuthenticatedUserId();
+        System.out.println("Authenticated UserId: " + userId);
+        if (userId == null) {
+            // 인증되지 않은 경우
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        List<PostDtoRes> posts = postService.searchMyPosts(userId, keyword);
+        return ResponseEntity.ok(posts);
+    }
+
     // 내가 좋아요한 게시글
     @GetMapping("/posts/liked")
     public ResponseEntity<List<PostDtoRes>> getLikedPostsByUserId() {
@@ -261,8 +267,9 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        List<PostDtoRes> likedPosts = postService.getLikedPostsByUserId(userId);
-        return new ResponseEntity<>(likedPosts, HttpStatus.OK);
+        List<PostDtoRes> posts = postService.getLikedPostsByUserId(userId);
+
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     // 내가 좋아요한 게시글 정렬
@@ -273,7 +280,27 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        List<PostDtoRes> sortedLikedPosts = postService.getSortedLikedPostsByUserId(userId);
-        return new ResponseEntity<>(sortedLikedPosts, HttpStatus.OK);
+        List<PostDtoRes> likedPosts = postService.getLikedPostsByUserId(userId);
+        likedPosts.sort(Comparator.comparing(PostDtoRes::getTitle));
+
+        return new ResponseEntity<>(likedPosts, HttpStatus.OK);
+    }
+
+    // 내가 좋아요한 게시글 검색
+    @GetMapping("/posts/liked/search")
+    public ResponseEntity<List<PostDtoRes>> searchLikedPostsByKeyword(@RequestParam String keyword) {
+        Long userId = userContextUtil.getAuthenticatedUserId();
+        if (userId == null) {
+            //  인증되지 않은 경우
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<PostDtoRes> posts = postService.searchLikedPostsByKeyword(user, keyword);
+        System.out.println("검색된 좋아요 게시글 수 : " + posts.size());
+        System.out.println("검색키워드 : " + keyword);
+        return ResponseEntity.ok(posts);
     }
 }
