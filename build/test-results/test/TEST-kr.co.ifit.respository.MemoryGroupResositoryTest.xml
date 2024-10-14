@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="kr.co.ifit.respository.MemoryGroupResositoryTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-08-26T07:11:31" hostname="WINDOWS-F3C5D31" time="0.027">
+  <properties/>
+  <testcase name="findByName()" classname="kr.co.ifit.respository.MemoryGroupResositoryTest" time="0.027"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
