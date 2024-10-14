@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -300,6 +301,22 @@ public class PostService {
 
         return likes.stream().map(like -> new PostDtoRes(like.getPost()))
                 .collect(Collectors.toList());
+    }
+
+    // 내가 좋아요한 게시글 정렬
+    public List<PostDtoRes> getSortedLikedPostsByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Like> likes = likeRepository.findByUser_UserId(userId);
+
+        // 게시글 정렬 (예: 게시글 생성 날짜 기준)
+        List<PostDtoRes> likedPosts = likes.stream()
+                .map(like -> new PostDtoRes(like.getPost()))
+                .sorted(Comparator.comparing(post -> post.getCreatedAt())) // 생성 날짜로 정렬
+                .collect(Collectors.toList());
+
+        return likedPosts;
     }
 
 

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -33,7 +35,8 @@ public class EmailVerification {
     @Column(name = "expired_at", nullable = true)
     private LocalDateTime expiryTime;
 
-    @OneToOne(optional = false)          //  User 엔티티와 1대1 관계 설정
+    @OneToOne(optional = true)
+    @OnDelete(action= OnDeleteAction.CASCADE)  //  User 엔티티와 1대1 관계 설정
     @JoinColumn(name = "user_id", nullable = true)
     private User user;
 }

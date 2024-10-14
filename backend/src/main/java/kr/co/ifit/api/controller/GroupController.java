@@ -118,9 +118,6 @@ public class GroupController {
         List<GroupDtoRes> groups = homeGroupService.getGroupsByTime(parsedTime);
         return ResponseEntity.ok(groups);
     }
-//
-//    //  홈페이지에 있는 필터 부분 - 장소
-//    @PostMapping("/filter/location")
 
     //  전달한 검색어로 모임을 검색하여 결과를 반환    - 지역으로 해야된다고 합니다
     @GetMapping("/search")

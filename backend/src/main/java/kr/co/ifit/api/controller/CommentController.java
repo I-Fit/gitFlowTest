@@ -155,4 +155,10 @@ public class CommentController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CommentDtoRes>> searchComments(@RequestParam String content) {
+        List<CommentDtoRes> comments = commentService.searchCommentsByContent(content);
+        return ResponseEntity.ok(comments);
+    }
 }

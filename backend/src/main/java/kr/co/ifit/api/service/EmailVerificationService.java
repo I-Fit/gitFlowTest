@@ -76,12 +76,4 @@ public class EmailVerificationService {
                 })
                 .orElse(false); // 사용자가 존재하지 않으면 false 반환
     }
-
-    @Transactional
-    public boolean verifyPasswordChangeEmail(UserDtoReq userDtoReq) {
-        String email = userDtoReq.getEmail();
-        String enteredCode = userDtoReq.getEnteredCode();
-
-        return verifyEmail(email, enteredCode);
-    }
 }

@@ -256,4 +256,15 @@ public class PostController {
         List<PostDtoRes> likedPosts = postService.getLikedPostsByUserId(userId);
         return new ResponseEntity<>(likedPosts, HttpStatus.OK);
     }
+
+    @GetMapping("/posts/liked/sort")
+    public ResponseEntity<List<PostDtoRes>> getSortedLikedPostsByUserId() {
+        Long userId = userContextUtil.getAuthenticatedUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        List<PostDtoRes> sortedLikedPosts = postService.getSortedLikedPostsByUserId(userId);
+        return new ResponseEntity<>(sortedLikedPosts, HttpStatus.OK);
+    }
 }

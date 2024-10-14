@@ -1,6 +1,7 @@
 package kr.co.ifit.db.repository;
 
 import jakarta.transaction.Transactional;
+import kr.co.ifit.api.response.CommentDtoRes;
 import kr.co.ifit.db.entity.Comment;
 import kr.co.ifit.db.entity.Post;
 import kr.co.ifit.db.entity.User;
@@ -20,6 +21,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findByUser_UserId(Long userId);
     List<Comment> findByPost_PostId(Long postId);
+
+    List<CommentDtoRes> findByContentContaining(String content);
 
     void deleteByPost(Post post);
 

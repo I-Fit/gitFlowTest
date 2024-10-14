@@ -43,10 +43,12 @@ public class SecurityConfig {
                                         "/api/sendVerificationCode", "/api/verifyEmail",
                                         "/api/filter/exercises", "/api/filter/exercises/sport", "/api/filter/location", "/api/filter/date", "/api/filter/time",
                                         "/api/search", "/api/sort", "/api/group-list",
-                                        "/api/board/list","/api/board/search", "/api/board/sort", "/api/board/delete", "/api/comments/post/**",
+
+                                        "/api/board/list","/api/board/search", "/api/board/sort", "/api/comments/post/**",
+
                                         "/api/point/**", "/api/coupon/**", "/api/payment/user-info",
                                         "/api/payment/process","/api/payment/kakao/ready",
-                                        "/api/user/password/send-verification-code", "/api/user/password/verify-code", "/api/user/password/change",
+                                        "/api/user/password/change",
                                         "/api/payment/kakao/ready", "/api/payment/kakao/success", "/api/payment/kakao/success/**",
                                         "/api/payment/kakao/approve"
                                         ).permitAll()

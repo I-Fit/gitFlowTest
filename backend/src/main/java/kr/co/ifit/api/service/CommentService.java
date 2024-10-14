@@ -97,7 +97,12 @@ public class CommentService {
 
         List<Comment> comments = commentRepository.findAllByUser(user);
 
-        return comments.stream().map(comment -> new CommentDtoRes(comment.getCommentId(), comment.getContent()))
+        return comments.stream().map(comment -> new CommentDtoRes(
+                        comment.getCommentId(),
+                        comment.getContent(),
+                        comment.getPost().getPostId(),
+                        comment.getPost().getTitle(),
+                        comment.getCreatedAt()))
                 .collect(Collectors.toList());
     }
 
@@ -136,6 +141,11 @@ public class CommentService {
             post.setCommentsCnt(post.getCommentsCnt() - 1);
             postRepository.save(post);
         }
+    }
+
+    // 댓글 검색
+    public List<CommentDtoRes> searchCommentsByContent(String content) {
+        return commentRepository.findByContentContaining(content);
     }
 }
 

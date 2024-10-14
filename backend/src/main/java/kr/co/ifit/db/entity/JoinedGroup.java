@@ -30,7 +30,6 @@ public class JoinedGroup {
     // 외래키 정의
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne

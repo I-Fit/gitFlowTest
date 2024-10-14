@@ -27,11 +27,12 @@ public class Comment {
 
     private String content;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @OnDelete(action=OnDeleteAction.CASCADE)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
