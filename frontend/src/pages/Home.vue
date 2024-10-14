@@ -77,7 +77,8 @@
               </div>
             </div>
             <div class="sport-image-box">
-              <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image">
+              <img :src="getSportImage(group.sport)" alt="스포츠 이미지" class="sport-image">
+              <!-- <img src="../assets/images/yoga-image.png" alt="요가 이미지" class="sport-image"> -->
             </div>
             <div class="group-information">
               <div class="user-info-and-group-sport">
@@ -106,8 +107,8 @@
     <div class="modal" v-if="isModalOpen">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <p class="modal-description">모임 상세설명 : {{ selectedItem ? selectedItem.content : "" }}</p>
-        <p>모임 상세주소 : {{ selectedItem ? selectedItem.location : "" }}</p>
+        <p class="modal-description"><strong>모임 상세설명 : </strong>{{ selectedItem ? selectedItem.content : "" }}</p>
+        <p><strong>모임 상세주소 : </strong>{{ selectedItem ? selectedItem.location : "" }}</p>
       </div>
     </div>
 
@@ -268,6 +269,15 @@ export default {
     const sports = ref([]);   // 운동 종목을 저장할 객체
     const searchTerm = ref('');   // 검색어를 저장할 객체
     const userId = computed(() => store.getters['isLogged/userId']);
+
+    const getSportImage = (sport) => {
+      const images = {
+        요가 : require('@/assets/images/yoga-image.png'),
+        러닝 : require('@/assets/images/running-image.png'),
+        웨이트 : require('@/assets/images/gym-image.png'),
+      };
+      return images[sport] || require('@/assets/images/gym-image.png');
+    }
 
     // const { currentPage, totalPages, visibleDatas, fetchdatas, onPageChange } = usePagination(groups, PerPage);
 
@@ -613,6 +623,7 @@ export default {
     }
 
     return {
+      getSportImage,
       carouselGroups,
       loadMore,
       fetchLocationData,

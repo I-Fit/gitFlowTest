@@ -52,6 +52,7 @@
       <div class="comments-list">
         <div v-for="comment in comments" :key="comment.commentId" class="comment">
           <div class="comment-content">
+            <p class="comment-user">{{ comment.username }}</p>
             <p class="comnment-text">{{ comment.content }}</p>
           </div>
           <button class="delete-btn" @click="deleteComment(comment.commentId)">삭제</button>
@@ -139,12 +140,6 @@ export default {
       console.log('deleting comment with id: ', commentId);
       if (!commentId || typeof commentId !== 'number') {
         alert('유효하지 않은 댓글 id');
-        return;
-      }
-
-      const isLoggedIn = computed(() => store.getters['isLogged/userId']);
-      if (isLoggedIn.value !== userId.value) {
-        alert("삭제 권한이 없습니다.");
         return;
       }
 

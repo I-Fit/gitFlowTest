@@ -2,7 +2,7 @@ import axios from 'axios';
 import VueCookies from 'vue-cookies';
 
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8080/api',
+    baseURL: 'http://ec2-54-175-24-210.compute-1.amazonaws.com:8080/api',
 });
 
 const Cookies = VueCookies;

@@ -15,19 +15,7 @@
             <span class="boxinfo-username">{{ username }}</span>
             <span class="boxinfo-logout" @click="logoutUser">로그아웃</span><br />
             <span class="boxinfo-membership">나는야 득근을 꿈꾸는 근린이!</span>
-            <button type="submit" class="del-account-btn" @click="showConfirmPopup = true">
-              회원 탈퇴
-            </button>
-            <!-- 확인 팝업 -->
-            <div v-if="showConfirmPopup" class="confirm-popup">
-              <div class="popup-content">
-                <p>회원 탈퇴를 진행하시겠습니까?</p>
-                <button class="confirm-btn" @click="confirmDeletion">
-                  확인
-                </button>
-                <button class="cancle-btn" @click="cancelDeletion">취소</button>
-              </div>
-            </div>
+            
           </div>
         </div>
       </div>
@@ -101,6 +89,20 @@
                   </button>
                 </div>
               </div>
+              
+            </div>
+            <button type="submit" class="del-account-btn" @click="showConfirmPopup = true">
+              회원 탈퇴
+            </button>
+            <!-- 확인 팝업 -->
+            <div v-if="showConfirmPopup" class="confirm-popup">
+              <div class="popup-content">
+                <p>회원 탈퇴를 진행하시겠습니까?</p>
+                <button class="confirm-btn" @click="confirmDeletion">
+                  확인
+                </button>
+                <button class="cancle-btn" @click="cancelDeletion">취소</button>
+              </div>
             </div>
           </div>
         </div>
@@ -115,7 +117,7 @@ import { useRouter } from "vue-router";
 import apiClient from "@/api/apiClient";
 import AppNav from "@/components/layout/AppNav.vue";
 import VueCookies from 'vue-cookies';
-import { useStore } from 'vuex';
+import { mapActions, useStore } from 'vuex';
 
 
 export default {
@@ -127,7 +129,6 @@ export default {
   setup() {
     const router = useRouter();
     const store = useStore();
-
     const loginId = ref("");
     const username = ref("");
     const email = ref("");
@@ -268,11 +269,10 @@ export default {
     };
 
     const showConfirmPopup = ref(false);
-    // const { deleteAccount } = mapActions('isLogged', ['deleteAccount']);
 
     const confirmDeletion = async () => {
       try {
-        const success = await store.dispatch('isLogged/deleteAccount');
+        const success = await deleteAccount();
         if (success) {
           alert("회원 탈퇴가 완료되었습니다.");
           router.push("/");
@@ -287,6 +287,7 @@ export default {
       }
     };
 
+    const { deleteAccount } = mapActions('isLogged'['deleteAccount']);
 
     const cancelDeletion = () => {
       showConfirmPopup.value = false;
@@ -314,7 +315,7 @@ export default {
       closeModal,
       confirmDeletion,
       cancelDeletion,
-      // deleteAccount,
+      deleteAccount,
       goToMembership,
       goToChangePassword,
       logoutUser,
