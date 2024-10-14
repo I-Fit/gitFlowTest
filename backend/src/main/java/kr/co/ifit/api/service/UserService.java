@@ -7,6 +7,8 @@ import kr.co.ifit.db.repository.*;
 import kr.co.ifit.api.request.UserDtoReq;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,18 +35,8 @@ public class UserService {
     private final JwtUserDetailService userDetailService;
     private final CouponService couponService;
 
-    private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
-    private final LikedGroupRepository likedGroupRepository;
-    private final JoinedGroupRepository joinedGroupRepository;
-    private final GroupRepository groupRepository;
-    private final PointRepository pointRepository;
-    private final PaymentRepository paymentRepository;
-    private final TokenRepository tokenRepository;
-    private final CouponRepository couponRepository;
     private final UserRepository userRepository;
-    private final LikeRepository likeRepository;
-    private final TransactionRepository transactionRepository;
+
 
 
 
@@ -126,35 +118,17 @@ public class UserService {
         userRepository.save(user);
         emailVerificationRepository.deleteByUserEmail(user.getEmail());
     }
-
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     //  회원탈퇴 시 user와 관련된 엔티티 모두 삭제
     @Transactional
     public boolean deleteUserAndRelatedData(Long userId) {
         try {
-            commentRepository.deleteByUser_UserId(userId);
-            likeRepository.deleteByUser_UserId(userId);
-            postRepository.deleteByUser_UserId(userId);
-            likedGroupRepository.deleteByUser_UserId(userId);
-            joinedGroupRepository.deleteByUser_UserId(userId);
-            groupRepository.deleteByUser_UserId(userId);
-            transactionRepository.deleteByUser_UserId(userId);
-            pointRepository.deleteByUser_UserId(userId);
-            couponRepository.deleteByUser_UserId(userId);
-            paymentRepository.deleteByUser_UserId(userId);
-            tokenRepository.deleteByUser_UserId(userId);
-
             userRepository.deleteById(userId);
             return true;
         } catch (Exception e) {
-            return false;
+            logger.error("User deletion failed: {}", e.getMessage());
+            throw e;
+//            return false;
         }
     }
-
-//        Optional<User> userOptional = userRepository.findById(userId);
-//        if (userOptional.isPresent()) {
-//            userRepository.delete(userOptional.get());
-//            return true;
-//        }
-//        return false;
-//    }
 }

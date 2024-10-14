@@ -63,13 +63,4 @@ public class EmailService {
         String newEmail = dto.getEmail();
         sendVerificationEmail(newEmail);
     }
-
-    @Transactional
-    public void sendVerificationPasswordChangeEmail(UserDtoReq dto) {
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // 기존의 sendVerificationEmail 메서드 호출
-        sendVerificationEmail(user.getEmail());
-    }
 }

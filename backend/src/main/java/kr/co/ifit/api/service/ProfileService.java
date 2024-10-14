@@ -30,28 +30,14 @@ public class ProfileService {
     @Value("${app.upload.dir:/tmp/uploads}")
     private String uploadDir;
 
-    public String saveProfileImage(String loginId, String base64Image) throws IOException {
-        User user = userRepository.findByLoginId(loginId);
-        if (user == null) {
-                throw  new UsernameNotFoundException("유저를 찾을 수 없습니다.");
-        }
+    public String saveProfileImage(Long userId, String base64Image) throws IOException {
 
-        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-        String fileName = loginId + "_profile.png";
+        User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
 
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
-
-        Path filePath = uploadPath.resolve(fileName);
-        Files.write(filePath, imageBytes);
-
-        String imageUrl = "/uploads/" + fileName;
-        user.setProfileUrl(imageUrl);
+        user.setProfileUrl(base64Image);
         userRepository.save(user);
 
-        return imageUrl;
+        return base64Image;
     }
 
     public ProfileDtoRes getUserProfile(Long userId) {

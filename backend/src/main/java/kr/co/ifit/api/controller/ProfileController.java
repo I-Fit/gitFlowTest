@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Map;
 
 @RestController
@@ -22,12 +24,18 @@ public class ProfileController {
 
     //   프로필 이미지 업로드
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadProfileImage(@RequestBody Map<String, String> payload,
-                                                Authentication authentication) {
+    public ResponseEntity<?> uploadProfileImage(@RequestParam("image") MultipartFile imageFile) {
+        Long userId = userContextUtil.getAuthenticatedUserId();
+        if (userId == null) {
+            //  인증되지 않은 경우
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         try {
-            String base64Image = payload.get("image");
-            String username = authentication.getName();
-            String imageUrl = profileService.saveProfileImage(username, base64Image);
+            byte[] imageBytes = imageFile.getBytes();
+            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+
+            String imageUrl = profileService.saveProfileImage(userId, base64Image);
             return ResponseEntity.ok().body(Map.of("profileUrl", imageUrl));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

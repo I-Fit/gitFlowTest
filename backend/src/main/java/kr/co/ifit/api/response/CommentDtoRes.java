@@ -21,17 +21,33 @@ public class CommentDtoRes {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private String username;
+    private String postTitle;
+
     public CommentDtoRes(Comment comment) {
         this.commentId = comment.getCommentId();
         this.postId = comment.getPost().getPostId();
         this.content = comment.getContent();
         this.userId = comment.getUser().getUserId();
+        this.username = comment.getUser().getUsername();
         this.createdAt = comment.getCreatedAt();
         this.updatedAt = comment.getUpdatedAt();
     }
 
-    public CommentDtoRes(Long commentId, String content) {
+    public CommentDtoRes(Long commentId, String content, Long postId, String postTitle, LocalDateTime createdAt) {
         this.commentId = commentId;
         this.content = content;
+        this.postId = postId;
+        this.postTitle = postTitle;
+        this.createdAt = createdAt;
+    }
+
+    public CommentDtoRes(Long commentId, Long postId, String content, Long userId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.commentId = commentId;
+        this.postId = postId;
+        this.content = content;
+        this.userId = userId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

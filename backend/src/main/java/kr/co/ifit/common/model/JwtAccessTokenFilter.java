@@ -42,10 +42,8 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
                 || uri.startsWith("/api/board/posts/by") || uri.startsWith("/api/board/update") || uri.startsWith("/api/board/delete")
                 || uri.startsWith("/api/board/like") || uri.startsWith("/api/board/posts/liked") || uri.startsWith("/api/board/post/")
                 || uri.startsWith("/api/comments/new") || uri.startsWith("/api/comments/by") || uri.startsWith("/api/comments/delete")
-                || uri.startsWith("/api/profile") || uri.startsWith("/api/coupon")
-                || uri.startsWith("/api/updateEmail/sendVerificationCode") || uri.startsWith("/api/updateEmail/verifyEmail") || uri.startsWith("/api/updateEmail")
-                || uri.startsWith("/api/payment/user-info") || uri.startsWith("/api/payment/kakao/**")
-                || uri.startsWith("/api/user/password/send-verification-code") || uri.startsWith("/api/user/password/verify-code") || uri.startsWith("/api/user/password/change")
+                || uri.startsWith("/api/board/posts/liked/sort") || uri.startsWith("/api/board/posts/liked/search")
+                || uri.startsWith("/api/board/myposts/search")
         ) {
 
             String token = resolveToken(request);

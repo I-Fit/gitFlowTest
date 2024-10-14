@@ -2,10 +2,12 @@ package kr.co.ifit.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
+import kr.co.ifit.api.request.PasswordChangeDtoReq;
 import kr.co.ifit.api.request.UserDtoReq;
 import kr.co.ifit.api.response.LoginDtoRes;
 import kr.co.ifit.api.response.UserDtoRes;
 import kr.co.ifit.api.service.EmailVerificationService;
+import kr.co.ifit.api.service.PasswordChangeService;
 import kr.co.ifit.api.service.UserService;
 import kr.co.ifit.common.auth.JwtTokenProvider;
 import kr.co.ifit.common.util.UserContextUtil;
@@ -44,6 +46,7 @@ public class UserController {
     private final EmailVerificationRepository emailVerificationRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserContextUtil userContextUtil;
+    private final PasswordChangeService passwordChangeService;
 
     // 회원가입
     @PostMapping("/user-account")
@@ -181,23 +184,6 @@ public class UserController {
         }
     }
 
-//    @PostMapping("/user/password/change")
-//    public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDtoReq passwordChangeDtoReq) {
-//        Long userId = userContextUtil.getAuthenticatedUserId();
-//        if (userId == null) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-//        passwordChangeDtoReq.setUserId(userId);
-//
-//        try {
-//            passwordChangeService.changePassword(passwordChangeDtoReq);
-//            return ResponseEntity.ok().body(Map.of("message", "비밀번호 변경 성공"));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body(Map.of("message", "비밀번호 변경 실패: " + e.getMessage()));
-//        }
-//    }
-
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     // 로그인
@@ -243,6 +229,24 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("서버 오류: " + e.getMessage());
+        }
+    }
+
+    //  마이페이지에서 비밀번호 변경
+    @PostMapping("/user/password/change")
+    public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDtoReq passwordChangeDtoReq) {
+        Long userId = userContextUtil.getAuthenticatedUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        passwordChangeDtoReq.setUserId(userId);
+
+        try {
+            passwordChangeService.changePassword(passwordChangeDtoReq);
+            return ResponseEntity.ok().body(Map.of("message", "비밀번호 변경 성공"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "비밀번호 변경 실패: " + e.getMessage()));
         }
     }
 

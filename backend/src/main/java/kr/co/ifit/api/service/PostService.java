@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -107,7 +107,7 @@ public class PostService {
     }
 
     // 게시글 삭제
-    @Transactional
+//    @Transactional
     public boolean deletePost(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -152,7 +152,8 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
         if (likeRepository.existsByUserAndPost(user, post)) {
-            throw new RuntimeException("이미 좋아요한 게시글입니다");
+            unlikePost(likeReq);
+            return;
         }
 
         Like like = new Like();
@@ -291,6 +292,20 @@ public class PostService {
         return postRepository.findAllByUser(user);
     }
 
+    // 내가 쓴 게시글 검색
+    public List<PostDtoRes> searchMyPosts(Long userId, String keyword) {
+        // 사용자가 작성한 게시글 가져오기
+        List<Post> myPosts = postRepository.findByUser_UserId(userId); // 사용자 ID로 게시글을 가져오는 메서드
+
+        // 제목이나 내용으로 필터링
+        List<Post> filteredPosts = myPosts.stream()
+                .filter(post -> post.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
+                        post.getContent().toLowerCase().contains(keyword.toLowerCase()))
+                .collect(Collectors.toList());
+
+        return filteredPosts.stream().map(PostDtoRes::new).collect(Collectors.toList());
+    }
+
     // 내가 좋아요한 게시글
     public List<PostDtoRes> getLikedPostsByUserId(Long userId) {
         User user = userRepository.findById(userId)
@@ -302,6 +317,40 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    // 내가 좋아요한 게시글 정렬
+    public List<PostDtoRes> getSortedLikedPostsByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Like> likes = likeRepository.findByUser_UserId(userId);
+
+        // 게시글 정렬 (예: 게시글 생성 날짜 기준)
+        List<PostDtoRes> likedPosts = likes.stream()
+                .map(like -> new PostDtoRes(like.getPost()))
+                .sorted(Comparator.comparing(post -> post.getCreatedAt())) // 생성 날짜로 정렬
+                .collect(Collectors.toList());
+
+        return likedPosts;
+    }
+
+    // 내가 좋아요한 게시글 검색
+    public List<PostDtoRes> searchLikedPostsByKeyword(User user, String keyword) {
+        List<Like> likes = likeRepository.findByUser_UserId(user.getUserId());
+
+        List<Long> postIds = likes.stream()
+                .map(like -> like.getPost().getPostId())
+                .collect(Collectors.toList());
+
+        System.out.println("좋아요한 게시글 ID 수: " + postIds.size());
+        List<Post> likedPosts = postRepository.findByPostIdIn(postIds);
+
+        List<Post> filteredPosts = likedPosts.stream()
+                .filter(post -> post.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
+                        post.getContent().toLowerCase().contains(keyword.toLowerCase()))
+                .collect(Collectors.toList());
+
+        return filteredPosts.stream().map(PostDtoRes::new).collect(Collectors.toList());
+    }
 
     public PostDtoRes convertToDto(Post post, User user) {
         PostDtoRes dto = new PostDtoRes();
