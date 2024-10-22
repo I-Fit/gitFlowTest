@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.URI;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/payment/kakao")
@@ -39,20 +41,27 @@ public class KakaoPayController {
     @GetMapping("/success")
     public ResponseEntity<?> paymentSuccess(@RequestParam("pg_token") String pgToken) {
         try {
-            log.info("Payment success callback received with pg_token: {}", pgToken);
-            // KakaoPayService에서 저장된 tid와 다른 필요한 정보를 가져옵니다.
-            String tid = kakaoPayService.getLatestTid();
-            String partnerOrderId = kakaoPayService.getLatestPartnerOrderId();
-            String partnerUserId = kakaoPayService.getLatestPartnerUserId();
+            // 결제 승인 처리
+            KakaoPayApproveDtoReq approveRequest = new KakaoPayApproveDtoReq(
+                    kakaoPayService.getLatestTid(),
+                    kakaoPayService.getLatestPartnerOrderId(),
+                    kakaoPayService.getLatestPartnerUserId(),
+                    pgToken
+            );
 
-            KakaoPayApproveDtoReq approveRequest = new KakaoPayApproveDtoReq(tid, partnerOrderId, partnerUserId, pgToken);
             KakaoPayApproveDtoRes approvalResponse = kakaoPayService.approveKakaoPay(approveRequest);
 
-            log.info("Payment approved successfully: {}", approvalResponse);
-            return ResponseEntity.ok(approvalResponse);
+            if (approvalResponse.getAid() != null) {
+                // 결제 성공 시 마이페이지로 리다이렉트
+                return ResponseEntity.status(HttpStatus.FOUND)
+                        .location(URI.create("http://localhost:8081/mypage")) // 리다이렉트할 URL
+                        .build();
+            } else {
+                return ResponseEntity.badRequest().body("결제 승인 실패");
+            }
         } catch (Exception e) {
             log.error("Error approving payment", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error approving payment: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("결제 승인 중 오류 발생: " + e.getMessage());
         }
     }
 
